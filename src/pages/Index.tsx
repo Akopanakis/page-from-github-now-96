@@ -7,11 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Slider } from '@/components/ui/slider';
 import { toast } from 'sonner';
-import { Calculator, Box, Coins, Truck, BarChart3, Tag, Users, Clock, Archive, Package, Route, Percent, Shield, FileText, Save, FolderOpen, RotateCcw } from 'lucide-react';
+import { Calculator, Box, Coins, Truck, BarChart3, Tag, Users, Clock, Archive, Package, Route, Percent, Shield, FileText, Save, FolderOpen, RotateCcw, Brain } from 'lucide-react';
 import ProductBasics from '@/components/ProductBasics';
 import CostsTab from '@/components/CostsTab';
 import TransportTab from '@/components/TransportTab';
 import AnalysisTab from '@/components/AnalysisTab';
+import AdvancedAnalysisTab from '@/components/AdvancedAnalysisTab';
 import ResultsSection from '@/components/ResultsSection';
 import { useCalculation } from '@/hooks/useCalculation';
 
@@ -26,6 +27,24 @@ const Index = () => {
     results,
     isCalculating
   } = useCalculation();
+
+  // Pre-fill with the thrapsalo example data
+  const loadThrapsaloExample = () => {
+    updateFormData({
+      productName: 'Θράψαλο Block',
+      purchasePrice: 4.5,
+      quantity: 500,
+      waste: 25,
+      icePercent: 15,
+      workerCount: 5,
+      laborHours: 1,
+      laborCost: 4.7, // Mixed wage average: (1*5 + 4*4.5)/5 = 4.6
+      distance: 150, // Kavala to Thessaloniki approximate
+      fuelCost: 0.15,
+      profitMargin: 25
+    });
+    toast.success('Φορτώθηκε το παράδειγμα του θράψαλου!');
+  };
 
   const handleCalculate = async () => {
     if (!formData.productName || !formData.purchasePrice || !formData.quantity) {
@@ -97,6 +116,10 @@ const Index = () => {
             </div>
             
             <div className="flex items-center space-x-2">
+              <Button variant="outline" size="sm" onClick={loadThrapsaloExample}>
+                <Package className="w-4 h-4 mr-2" />
+                Παράδειγμα Θράψαλο
+              </Button>
               <Button variant="outline" size="sm" onClick={handleSave}>
                 <Save className="w-4 h-4 mr-2" />
                 Αποθήκευση
@@ -117,7 +140,7 @@ const Index = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:grid-cols-5">
             <TabsTrigger value="basic" className="flex items-center space-x-2">
               <Box className="w-4 h-4" />
               <span className="hidden sm:inline">Βασικά Στοιχεία</span>
@@ -133,6 +156,10 @@ const Index = () => {
             <TabsTrigger value="analysis" className="flex items-center space-x-2">
               <BarChart3 className="w-4 h-4" />
               <span className="hidden sm:inline">Ανάλυση</span>
+            </TabsTrigger>
+            <TabsTrigger value="advanced" className="flex items-center space-x-2">
+              <Brain className="w-4 h-4" />
+              <span className="hidden sm:inline">Έξυπνη Ανάλυση</span>
             </TabsTrigger>
           </TabsList>
 
@@ -150,6 +177,10 @@ const Index = () => {
 
           <TabsContent value="analysis">
             <AnalysisTab formData={formData} updateFormData={updateFormData} />
+          </TabsContent>
+
+          <TabsContent value="advanced">
+            <AdvancedAnalysisTab formData={formData} updateFormData={updateFormData} results={results} />
           </TabsContent>
         </Tabs>
 
