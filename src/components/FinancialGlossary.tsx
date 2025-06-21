@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Search, BookOpen, TrendingUp, Calculator, Euro } from 'lucide-react';
+import { Search, BookOpen, TrendingUp, Calculator, Euro, Target, BarChart3 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import TooltipHelper from './TooltipHelper';
 
@@ -20,6 +21,7 @@ const FinancialGlossary: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   const glossaryTerms: GlossaryTerm[] = [
+    // Basic Cost Terms
     {
       id: '1',
       term: language === 'el' ? 'Περιθώριο Κέρδους' : 'Profit Margin',
@@ -31,10 +33,10 @@ const FinancialGlossary: React.FC = () => {
     },
     {
       id: '2',
-      term: language === 'el' ? 'Κόστος Πωληθέντων' : 'Cost of Goods Sold',
+      term: language === 'el' ? 'Κόστος Πωληθέντων' : 'Cost of Goods Sold (COGS)',
       definition: language === 'el' 
         ? 'Το άμεσο κόστος παραγωγής των προϊόντων που πουλήθηκαν, συμπεριλαμβανομένων των πρώτων υλών και της εργασίας.'
-        : 'The direct cost of producing goods sold, including raw materials and labor.',
+        : 'The direct cost of producing goods sold, including raw materials and direct labor.',
       category: language === 'el' ? 'Κόστος' : 'Cost',
       icon: <Calculator className="w-4 h-4 text-blue-600" />
     },
@@ -45,7 +47,7 @@ const FinancialGlossary: React.FC = () => {
         ? 'Το επίπεδο πωλήσεων στο οποίο τα συνολικά έσοδα ισούνται με τα συνολικά κόστη, δηλαδή δεν υπάρχει κέρδος ή ζημία.'
         : 'The sales level where total revenue equals total costs, meaning no profit or loss.',
       category: language === 'el' ? 'Ανάλυση' : 'Analysis',
-      icon: <Euro className="w-4 h-4 text-orange-600" />
+      icon: <Target className="w-4 h-4 text-orange-600" />
     },
     {
       id: '4',
@@ -99,7 +101,7 @@ const FinancialGlossary: React.FC = () => {
         ? 'Μέθοδος που εξετάζει πώς αλλάζουν τα αποτελέσματα όταν μεταβάλλονται οι βασικές παράμετροι του μοντέλου.'
         : 'Method examining how results change when key model parameters are modified.',
       category: language === 'el' ? 'Ανάλυση' : 'Analysis',
-      icon: <Euro className="w-4 h-4 text-orange-600" />
+      icon: <BarChart3 className="w-4 h-4 text-orange-600" />
     },
     {
       id: '10',
@@ -110,21 +112,22 @@ const FinancialGlossary: React.FC = () => {
       category: language === 'el' ? 'Κόστος' : 'Cost',
       icon: <Calculator className="w-4 h-4 text-blue-600" />
     },
+    // Extended Cost Control Terms
     {
       id: '11',
-      term: language === 'el' ? 'Άμεσο Κόστος' : 'Direct Cost',
+      term: language === 'el' ? 'Έλεγχος Κόστους' : 'Cost Control',
       definition: language === 'el' 
-        ? 'Κόστη που μπορούν να αποδοθούν άμεσα σε ένα συγκεκριμένο προϊόν ή υπηρεσία, όπως πρώτες ύλες και άμεση εργασία.'
-        : 'Costs that can be directly attributed to a specific product or service, such as raw materials and direct labor.',
-      category: language === 'el' ? 'Κόστος' : 'Cost',
-      icon: <Calculator className="w-4 h-4 text-blue-600" />
+        ? 'Σύστημα ρύθμισης και ελέγχου λειτουργίας περιορίζοντας το κόστος εντός προγραμματισμένου επιπέδου.'
+        : 'System for regulating and controlling operations by limiting costs within a planned level.',
+      category: language === 'el' ? 'Διαχείριση' : 'Management',
+      icon: <Target className="w-4 h-4 text-purple-600" />
     },
     {
       id: '12',
-      term: language === 'el' ? 'Έμμεσο Κόστος' : 'Indirect Cost',
+      term: language === 'el' ? 'Πρότυπο Κόστος' : 'Standard Cost',
       definition: language === 'el' 
-        ? 'Κόστη που δεν μπορούν να αποδοθούν άμεσα σε ένα συγκεκριμένο προϊόν, όπως ενοίκια και γενικά έξοδα διοίκησης.'
-        : 'Costs that cannot be directly attributed to a specific product, such as rent and general administrative expenses.',
+        ? 'Προκαθορισμένο κόστος που χρησιμοποιείται ως μέτρο σύγκρισης για την αξιολόγηση της απόδοσης.'
+        : 'Predetermined cost used as a benchmark for performance evaluation.',
       category: language === 'el' ? 'Κόστος' : 'Cost',
       icon: <Calculator className="w-4 h-4 text-blue-600" />
     },
@@ -139,27 +142,72 @@ const FinancialGlossary: React.FC = () => {
     },
     {
       id: '14',
-      term: language === 'el' ? 'Πρότυπο Κόστος' : 'Standard Cost',
-      definition: language === 'el' 
-        ? 'Προκαθορισμένο κόστος που χρησιμοποιείται ως μέτρο σύγκρισης για την αξιολόγηση της απόδοσης.'
-        : 'Predetermined cost used as a benchmark for performance evaluation.',
-      category: language === 'el' ? 'Κόστος' : 'Cost',
-      icon: <Calculator className="w-4 h-4 text-blue-600" />
-    },
-    {
-      id: '15',
       term: 'ABC Costing',
       definition: language === 'el' 
         ? 'Κοστολόγηση βασισμένη σε δραστηριότητες που κατανέμει το κόστος με βάση τις δραστηριότητες που καταναλώνουν πόρους.'
         : 'Activity-based costing that allocates costs based on activities that consume resources.',
       category: language === 'el' ? 'Μέθοδοι' : 'Methods',
       icon: <BookOpen className="w-4 h-4 text-purple-600" />
+    },
+    {
+      id: '15',
+      term: language === 'el' ? 'Κέντρα Κόστους' : 'Cost Centers',
+      definition: language === 'el' 
+        ? 'Τμήματα ή λειτουργίες της επιχείρησης που επιβαρύνονται ή είναι αιτία δημιουργίας κόστους.'
+        : 'Departments or functions of the business that are charged with or cause cost creation.',
+      category: language === 'el' ? 'Διαχείριση' : 'Management',
+      icon: <Target className="w-4 h-4 text-purple-600" />
+    },
+    {
+      id: '16',
+      term: language === 'el' ? 'Φορείς Κόστους' : 'Cost Carriers',
+      definition: language === 'el' 
+        ? 'Προϊόντα, εμπορεύματα ή υπηρεσίες που πρέπει να κοστολογηθούν.'
+        : 'Products, goods or services that need to be costed.',
+      category: language === 'el' ? 'Διαχείριση' : 'Management',
+      icon: <Target className="w-4 h-4 text-purple-600" />
+    },
+    {
+      id: '17',
+      term: language === 'el' ? 'Ελεύθερη Ταμειακή Ροή' : 'Free Cash Flow',
+      definition: language === 'el' 
+        ? 'Τα μετρητά που παράγει μια εταιρεία μετά την αφαίρεση των δαπανών για διατήρηση ή επέκταση των περιουσιακών στοιχείων.'
+        : 'Cash generated by a company after accounting for expenses to maintain or expand its asset base.',
+      category: language === 'el' ? 'Ανάλυση' : 'Analysis',
+      icon: <Euro className="w-4 h-4 text-orange-600" />
+    },
+    {
+      id: '18',
+      term: language === 'el' ? 'Ασφάλιστρο Κινδύνου Αγοράς' : 'Market Risk Premium',
+      definition: language === 'el' 
+        ? 'Η πρόσθετη απόδοση που απαιτείται για την ανάληψη κινδύνου σε σχέση με επενδύσεις χωρίς κίνδυνο.'
+        : 'The additional return required for taking risk relative to risk-free investments.',
+      category: language === 'el' ? 'Κερδοφορία' : 'Profitability',
+      icon: <TrendingUp className="w-4 h-4 text-green-600" />
+    },
+    {
+      id: '19',
+      term: language === 'el' ? 'Περιθώριο Συνεισφοράς' : 'Contribution Margin',
+      definition: language === 'el' 
+        ? 'Η διαφορά μεταξύ των εσόδων και των μεταβλητών κοστών. Δείχνει πόσα χρήματα μένουν για κάλυψη σταθερών κοστών.'
+        : 'The difference between revenue and variable costs. Shows how much money is left to cover fixed costs.',
+      category: language === 'el' ? 'Ανάλυση' : 'Analysis',
+      icon: <Euro className="w-4 h-4 text-orange-600" />
+    },
+    {
+      id: '20',
+      term: language === 'el' ? 'Κεφαλαιουχικές Δαπάνες' : 'Capital Expenditures (CapEx)',
+      definition: language === 'el' 
+        ? 'Δαπάνες για αγορά, αναβάθμιση ή συντήρηση φυσικών περιουσιακών στοιχείων όπως εξοπλισμός και κτίρια.'
+        : 'Expenses for purchasing, upgrading, or maintaining physical assets such as equipment and buildings.',
+      category: language === 'el' ? 'Κόστος' : 'Cost',
+      icon: <Calculator className="w-4 h-4 text-blue-600" />
     }
   ];
 
   const categories = language === 'el' 
-    ? ['all', 'Κόστος', 'Κερδοφορία', 'Ανάλυση', 'Μέθοδοι']
-    : ['all', 'Cost', 'Profitability', 'Analysis', 'Methods'];
+    ? ['all', 'Κόστος', 'Κερδοφορία', 'Ανάλυση', 'Μέθοδοι', 'Διαχείριση']
+    : ['all', 'Cost', 'Profitability', 'Analysis', 'Methods', 'Management'];
 
   const filteredTerms = glossaryTerms.filter(term => {
     const matchesSearch = term.term.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -182,8 +230,8 @@ const FinancialGlossary: React.FC = () => {
           </div>
           <p className="text-sm text-blue-700 mt-2">
             {language === 'el' 
-              ? 'Βιβλιοθήκη οικονομικών όρων και εννοιών για καλύτερη κατανόηση της κοστολόγησης'
-              : 'Library of financial terms and concepts for better understanding of costing'
+              ? 'Επεκταμένη βιβλιοθήκη οικονομικών όρων και εννοιών για καλύτερη κατανόηση της κοστολόγησης'
+              : 'Extended library of financial terms and concepts for better understanding of costing'
             }
           </p>
         </CardContent>
@@ -245,7 +293,7 @@ const FinancialGlossary: React.FC = () => {
                       {term.category}
                     </Badge>
                   </div>
-                  <p className="text-slate-600 leading-relaxed">{term.definition}</p>
+                  <p className="text-slate-600 leading-relaxed text-sm">{term.definition}</p>
                 </div>
               </div>
             </CardContent>

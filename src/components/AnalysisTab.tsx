@@ -4,8 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { PieChart, Pie, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell, Area, AreaChart } from 'recharts';
-import { TrendingUp, PieChart as PieChartIcon, BarChart3, LineChart as LineChartIcon, Eye } from 'lucide-react';
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell, Area, AreaChart } from 'recharts';
+import { TrendingUp, BarChart3, LineChart as LineChartIcon, Eye } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import TooltipHelper from './TooltipHelper';
 import ChartExplanation from './ChartExplanation';
@@ -34,10 +34,11 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({ formData, updateFormData }) =
     }
   };
 
+  // Replace pie chart with more readable bar chart
   const costData = [
     { name: language === 'el' ? 'Κόστος Αγοράς' : 'Purchase Cost', value: (formData.purchasePrice || 0) * (formData.quantity || 0), color: '#3b82f6' },
     { name: language === 'el' ? 'Εργασία' : 'Labor', value: (formData.workers || []).reduce((sum: number, w: any) => sum + (w.hourlyRate * w.hours), 0), color: '#10b981' },
-    { name: language === 'el' ? 'Μεταφορά' : 'Transport', value: ((formData.distance || 0) * (formData.fuelCost || 0)) + (formData.tolls || 0) + (formData.parkingCost || 0), color: '#f59e0b' },
+    { name: language === 'el' ? 'Μεταφορά' : 'Transport', value: ((formData.distance || 0) * (formData.fuelCost || 0)) + (formData.tolls || 0) + (formData.parkingCost || 0) + (formData.driverSalary || 0), color: '#f59e0b' },
     { name: language === 'el' ? 'Λοιπά' : 'Other', value: (formData.electricityCost || 0) + (formData.equipmentCost || 0) + (formData.insuranceCost || 0) + (formData.rentCost || 0) + (formData.communicationCost || 0) + (formData.otherCosts || 0), color: '#ef4444' }
   ];
 
@@ -88,8 +89,9 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({ formData, updateFormData }) =
                 checked={useProfitTarget}
                 onCheckedChange={handleProfitTargetChange}
               />
-              <Label htmlFor="use-profit-target" className="text-slate-700">
-                {language === 'el' ? 'Χρήση στόχου κέρδους αντί ποσοστού' : 'Use profit target instead of percentage'}
+              <Label htmlFor="use-profit-target" className="text-slate-700 flex items-center space-x-2">
+                <span>{language === 'el' ? 'Χρήση στόχου κέρδους αντί ποσοστού' : 'Use profit target instead of percentage'}</span>
+                <TooltipHelper tooltipKey="tooltip.profit.target" />
               </Label>
             </div>
             
@@ -168,12 +170,12 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({ formData, updateFormData }) =
         </CardContent>
       </Card>
 
-      {/* Cost Breakdown Chart */}
+      {/* Cost Breakdown Chart - Replaced pie with horizontal bar */}
       {selectedCharts.costBreakdown && (
         <Card className="border-slate-200 shadow-lg">
           <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-200">
             <CardTitle className="flex items-center space-x-2 text-slate-800">
-              <PieChartIcon className="w-5 h-5 text-blue-600" />
+              <BarChart3 className="w-5 h-5 text-blue-600" />
               <span>{t('cost.analysis')}</span>
             </CardTitle>
           </CardHeader>
@@ -186,24 +188,18 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({ formData, updateFormData }) =
               }} 
             />
             <ResponsiveContainer width="100%" height={400} className="mt-4">
-              <PieChart>
-                <Pie
-                  dataKey="value"
-                  data={costData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({name, percent}) => `${name}: ${(percent * 100).toFixed(1)}%`}
-                  outerRadius={120}
-                  fill="#8884d8"
-                >
+              <BarChart data={costData} layout="horizontal">
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <XAxis type="number" stroke="#64748b" />
+                <YAxis dataKey="name" type="category" stroke="#64748b" width={100} />
+                <Tooltip formatter={(value: number) => [`${value.toFixed(2)}€`, '']} />
+                <Legend />
+                <Bar dataKey="value" radius={[0, 8, 8, 0]}>
                   {costData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
-                </Pie>
-                <Tooltip formatter={(value: number) => [`${value.toFixed(2)}€`, '']} />
-                <Legend />
-              </PieChart>
+                </Bar>
+              </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
@@ -299,7 +295,7 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({ formData, updateFormData }) =
           </CardContent>
         </Card>
       )}
-
+      
       {/* Competitor Analysis */}
       <Card className="border-slate-200 shadow-lg">
         <CardHeader className="bg-gradient-to-r from-orange-50 to-red-50 border-b border-slate-200">

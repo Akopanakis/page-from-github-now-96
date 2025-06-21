@@ -12,7 +12,7 @@ interface FormData {
   purchasePrice: number;
   quantity: number;
   waste: number;
-  icePercent: number;
+  glazingPercent: number; // Updated from icePercent
   vatPercent: number;
   workers: Worker[];
   boxCost: number;
@@ -21,7 +21,9 @@ interface FormData {
   fuelCost: number;
   tolls: number;
   parkingCost: number;
+  driverSalary: number; // New field
   profitMargin: number;
+  profitTarget: number; // New field for target profit
   competitor1: number;
   competitor2: number;
   electricityCost: number;
@@ -33,6 +35,7 @@ interface FormData {
   originAddress: string;
   destinationAddress: string;
   routeCalculated: boolean;
+  estimatedDuration: string;
 }
 
 interface CalculationResults {
@@ -56,7 +59,7 @@ export const useCalculation = () => {
     purchasePrice: 0,
     quantity: 1,
     waste: 0,
-    icePercent: 0,
+    glazingPercent: 0, // Updated from icePercent
     vatPercent: 24,
     workers: [{ id: '1', hourlyRate: 4.5, hours: 1 }],
     boxCost: 0,
@@ -65,7 +68,9 @@ export const useCalculation = () => {
     fuelCost: 0,
     tolls: 0,
     parkingCost: 0,
+    driverSalary: 0, // New field
     profitMargin: 20,
+    profitTarget: 0, // New field
     competitor1: 0,
     competitor2: 0,
     electricityCost: 0,
@@ -76,7 +81,8 @@ export const useCalculation = () => {
     otherCosts: 0,
     originAddress: '',
     destinationAddress: '',
-    routeCalculated: false
+    routeCalculated: false,
+    estimatedDuration: ''
   });
 
   const [results, setResults] = useState<CalculationResults | null>(null);
@@ -93,7 +99,7 @@ export const useCalculation = () => {
 
     try {
       const netWeight = (formData.quantity || 0) * (1 - (formData.waste || 0) / 100);
-      const finalWeight = netWeight * (1 + (formData.icePercent || 0) / 100);
+      const finalWeight = netWeight * (1 + (formData.glazingPercent || 0) / 100); // Updated
       
       const purchaseCost = (formData.purchasePrice || 0) * (formData.quantity || 0);
       
@@ -106,7 +112,8 @@ export const useCalculation = () => {
       const transportCost = 
         (formData.distance || 0) * (formData.fuelCost || 0) + 
         (formData.tolls || 0) + 
-        (formData.parkingCost || 0);
+        (formData.parkingCost || 0) +
+        (formData.driverSalary || 0); // Include driver salary
       
       const additionalCosts = 
         (formData.electricityCost || 0) + 
@@ -154,7 +161,7 @@ export const useCalculation = () => {
       purchasePrice: 0,
       quantity: 1,
       waste: 0,
-      icePercent: 0,
+      glazingPercent: 0, // Updated
       vatPercent: 24,
       workers: [{ id: '1', hourlyRate: 4.5, hours: 1 }],
       boxCost: 0,
@@ -163,7 +170,9 @@ export const useCalculation = () => {
       fuelCost: 0,
       tolls: 0,
       parkingCost: 0,
+      driverSalary: 0, // New field
       profitMargin: 20,
+      profitTarget: 0, // New field
       competitor1: 0,
       competitor2: 0,
       electricityCost: 0,
@@ -174,7 +183,8 @@ export const useCalculation = () => {
       otherCosts: 0,
       originAddress: '',
       destinationAddress: '',
-      routeCalculated: false
+      routeCalculated: false,
+      estimatedDuration: ''
     });
     setResults(null);
   };
