@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -66,6 +65,10 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({ formData, updateFormData }) =
     setSelectedCharts(prev => ({ ...prev, [chartKey]: !prev[chartKey] }));
   };
 
+  const handleProfitTargetChange = (checked: boolean | 'indeterminate') => {
+    setUseProfitTarget(checked === true);
+  };
+
   return (
     <div className="space-y-6">
       {/* Profit Configuration */}
@@ -83,7 +86,7 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({ formData, updateFormData }) =
               <Checkbox 
                 id="use-profit-target"
                 checked={useProfitTarget}
-                onCheckedChange={setUseProfitTarget}
+                onCheckedChange={handleProfitTargetChange}
               />
               <Label htmlFor="use-profit-target" className="text-slate-700">
                 {language === 'el' ? 'Χρήση στόχου κέρδους αντί ποσοστού' : 'Use profit target instead of percentage'}
@@ -153,7 +156,7 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({ formData, updateFormData }) =
                   <Checkbox 
                     id={key}
                     checked={selected}
-                    onCheckedChange={() => handleChartToggle(key)}
+                    onCheckedChange={(checked) => handleChartToggle(key)}
                   />
                   <Label htmlFor={key} className="text-slate-700">
                     {labels[key as keyof typeof labels]}
