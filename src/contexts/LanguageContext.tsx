@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface LanguageContextProps {
@@ -46,6 +47,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       'communication.cost': 'Επικοινωνία (€)',
       'other.costs': 'Άλλα (€)',
       'profit.margin': 'Περιθώριο Κέρδους (%)',
+      'profit.target': 'Στόχος Κέρδους (€)',
       'competitor.price': 'Τιμή Ανταγωνιστή (€)',
       'calculate.costing': 'Υπολογισμός Κόστους',
       'reset': 'Επαναφορά',
@@ -63,7 +65,24 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       'glossary': 'Λεξικό',
       'scenario.analysis': 'Ανάλυση Σεναρίων',
       'revenue.forecasting': 'Πρόβλεψη Εσόδων',
-      'financial.glossary': 'Οικονομικό Λεξικό'
+      'financial.glossary': 'Οικονομικό Λεξικό',
+      'upload.files': 'Ανέβασμα Αρχείων',
+      'direct.cost': 'Άμεσο Κόστος',
+      'indirect.cost': 'Έμμεσο Κόστος',
+      'fixed.cost': 'Σταθερό Κόστος',
+      'variable.cost': 'Μεταβλητό Κόστος',
+      'breakeven.point': 'Νεκρό Σημείο',
+      'cost.analysis': 'Ανάλυση Κόστους',
+      'margin.analysis': 'Ανάλυση Περιθωρίων',
+      'profitability.analysis': 'Ανάλυση Κερδοφορίας',
+      'chart.explanation': 'Επεξήγηση Γραφήματος',
+      'tooltip.price.increase': 'Αύξηση τιμής: Αυξάνει την τιμή πώλησης κατά το καθορισμένο ποσοστό, επηρεάζοντας άμεσα τα έσοδα και την κερδοφορία',
+      'tooltip.cost.increase': 'Αύξηση κόστους: Αυξάνει το συνολικό κόστος παραγωγής, μειώνοντας τα περιθώρια κέρδους',
+      'tooltip.demand.change': 'Αλλαγή ζήτησης: Επηρεάζει τον όγκο πωλήσεων και συνεπώς τα συνολικά έσοδα',
+      'tooltip.profit.margin': 'Περιθώριο κέρδους: Το ποσοστό κέρδους επί των πωλήσεων - κρίσιμος δείκτης κερδοφορίας',
+      'tooltip.scenario.analysis': 'Ανάλυση Σεναρίων: Εξετάζει διαφορετικές υποθέσεις για να προβλέψει την επίδραση στην κερδοφορία',
+      'tooltip.revenue.forecasting': 'Πρόβλεψη Εσόδων: Εκτιμά μελλοντικά έσοδα βασισμένη σε ιστορικά δεδομένα και τάσεις αγοράς',
+      'tooltip.financial.glossary': 'Οικονομικό Λεξικό: Βιβλιοθήκη οικονομικών όρων και εννοιών για καλύτερη κατανόηση'
     },
     en: {
       'calculator.title': 'Cost Calculator',
@@ -95,6 +114,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       'communication.cost': 'Communication (€)',
       'other.costs': 'Other (€)',
       'profit.margin': 'Profit Margin (%)',
+      'profit.target': 'Profit Target (€)',
       'competitor.price': 'Competitor Price (€)',
       'calculate.costing': 'Calculate Costing',
       'reset': 'Reset',
@@ -112,7 +132,24 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       'glossary': 'Glossary',
       'scenario.analysis': 'Scenario Analysis',
       'revenue.forecasting': 'Revenue Forecasting',
-      'financial.glossary': 'Financial Glossary'
+      'financial.glossary': 'Financial Glossary',
+      'upload.files': 'Upload Files',
+      'direct.cost': 'Direct Cost',
+      'indirect.cost': 'Indirect Cost',
+      'fixed.cost': 'Fixed Cost',
+      'variable.cost': 'Variable Cost',
+      'breakeven.point': 'Break-even Point',
+      'cost.analysis': 'Cost Analysis',
+      'margin.analysis': 'Margin Analysis',
+      'profitability.analysis': 'Profitability Analysis',
+      'chart.explanation': 'Chart Explanation',
+      'tooltip.price.increase': 'Price increase: Raises selling price by specified percentage, directly affecting revenue and profitability',
+      'tooltip.cost.increase': 'Cost increase: Raises total production cost, reducing profit margins',
+      'tooltip.demand.change': 'Demand change: Affects sales volume and therefore total revenue',
+      'tooltip.profit.margin': 'Profit margin: Percentage of profit on sales - critical profitability indicator',
+      'tooltip.scenario.analysis': 'Scenario Analysis: Examines different assumptions to predict impact on profitability',
+      'tooltip.revenue.forecasting': 'Revenue Forecasting: Estimates future revenue based on historical data and market trends',
+      'tooltip.financial.glossary': 'Financial Glossary: Library of financial terms and concepts for better understanding'
     }
   };
 

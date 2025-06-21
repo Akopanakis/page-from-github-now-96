@@ -19,6 +19,7 @@ import PDFExport from '@/components/PDFExport';
 import ScenarioAnalysis from '@/components/ScenarioAnalysis';
 import RevenueForecasting from '@/components/RevenueForecasting';
 import FinancialGlossary from '@/components/FinancialGlossary';
+import FileUpload from '@/components/FileUpload';
 
 const Index = () => {
   const { language, setLanguage, t } = useLanguage();
@@ -35,7 +36,7 @@ const Index = () => {
 
   const loadThrapsaloExample = () => {
     updateFormData({
-      productName: 'Θράψαλο Block',
+      productName: language === 'el' ? 'Θράψαλο Block' : 'Thrapsalo Block',
       purchasePrice: 4.5,
       quantity: 500,
       waste: 25,
@@ -51,8 +52,8 @@ const Index = () => {
       distance: 150,
       fuelCost: 0.15,
       profitMargin: 25,
-      originAddress: 'Καβάλα, Ελλάδα',
-      destinationAddress: 'Θεσσαλονίκη, Ελλάδα'
+      originAddress: language === 'el' ? 'Καβάλα, Ελλάδα' : 'Kavala, Greece',
+      destinationAddress: language === 'el' ? 'Θεσσαλονίκη, Ελλάδα' : 'Thessaloniki, Greece'
     });
     toast.success(language === 'el' ? 'Φορτώθηκε το παράδειγμα του θράψαλου!' : 'Thrapsalo example loaded!');
   };
@@ -110,10 +111,15 @@ const Index = () => {
     }
   };
 
+  const handleFileDataExtracted = (data: any) => {
+    updateFormData(data);
+    toast.success(language === 'el' ? 'Τα δεδομένα εισήχθησαν από το αρχείο!' : 'Data imported from file!');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Enhanced Header */}
-      <div className="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 shadow-xl">
+      <div className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 shadow-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center space-x-4">
@@ -126,7 +132,12 @@ const Index = () => {
                 </h1>
                 <p className="text-sm text-slate-600 font-medium uppercase tracking-wide flex items-center space-x-2">
                   <Sparkles className="w-4 h-4" />
-                  <span>Επαγγελματική Πλατφόρμα Οικονομικής Ανάλυσης</span>
+                  <span>
+                    {language === 'el' 
+                      ? 'Επαγγελματική Πλατφόρμα Οικονομικής Ανάλυσης' 
+                      : 'Professional Financial Analysis Platform'
+                    }
+                  </span>
                 </p>
               </div>
             </div>
@@ -177,6 +188,11 @@ const Index = () => {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* File Upload Section */}
+        <div className="mb-8">
+          <FileUpload onDataExtracted={handleFileDataExtracted} />
+        </div>
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
           <TabsList className="grid w-full grid-cols-8 lg:w-auto lg:grid-cols-8 bg-white/60 backdrop-blur-sm border border-slate-200 shadow-xl p-1 rounded-2xl">
             <TabsTrigger value="basic" className="flex items-center space-x-2 data-[state=active]:bg-white data-[state=active]:shadow-lg rounded-xl">
@@ -197,19 +213,19 @@ const Index = () => {
             </TabsTrigger>
             <TabsTrigger value="advanced" className="flex items-center space-x-2 data-[state=active]:bg-white data-[state=active]:shadow-lg rounded-xl">
               <Brain className="w-4 h-4" />
-              <span className="hidden sm:inline">Προχωρημένα</span>
+              <span className="hidden sm:inline">{language === 'el' ? 'Προχωρημένα' : 'Advanced'}</span>
             </TabsTrigger>
             <TabsTrigger value="scenarios" className="flex items-center space-x-2 data-[state=active]:bg-white data-[state=active]:shadow-lg rounded-xl">
               <Target className="w-4 h-4" />
-              <span className="hidden sm:inline">Σενάρια</span>
+              <span className="hidden sm:inline">{language === 'el' ? 'Σενάρια' : 'Scenarios'}</span>
             </TabsTrigger>
             <TabsTrigger value="forecasting" className="flex items-center space-x-2 data-[state=active]:bg-white data-[state=active]:shadow-lg rounded-xl">
               <TrendingUp className="w-4 h-4" />
-              <span className="hidden sm:inline">Πρόβλεψη</span>
+              <span className="hidden sm:inline">{language === 'el' ? 'Πρόβλεψη' : 'Forecast'}</span>
             </TabsTrigger>
             <TabsTrigger value="glossary" className="flex items-center space-x-2 data-[state=active]:bg-white data-[state=active]:shadow-lg rounded-xl">
               <BookOpen className="w-4 h-4" />
-              <span className="hidden sm:inline">Λεξικό</span>
+              <span className="hidden sm:inline">{language === 'el' ? 'Λεξικό' : 'Glossary'}</span>
             </TabsTrigger>
           </TabsList>
 
@@ -240,8 +256,15 @@ const Index = () => {
               <Card className="border-slate-200 shadow-lg">
                 <CardContent className="p-12 text-center">
                   <Target className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-slate-600 mb-2">Απαιτείται Κοστολόγηση</h3>
-                  <p className="text-slate-500">Παρακαλώ εκτελέστε πρώτα μια κοστολόγηση για να χρησιμοποιήσετε την ανάλυση σεναρίων.</p>
+                  <h3 className="text-xl font-semibold text-slate-600 mb-2">
+                    {language === 'el' ? 'Απαιτείται Κοστολόγηση' : 'Costing Required'}
+                  </h3>
+                  <p className="text-slate-500">
+                    {language === 'el' 
+                      ? 'Παρακαλώ εκτελέστε πρώτα μια κοστολόγηση για να χρησιμοποιήσετε την ανάλυση σεναρίων.'
+                      : 'Please perform a costing calculation first to use scenario analysis.'
+                    }
+                  </p>
                 </CardContent>
               </Card>
             )}
@@ -260,8 +283,15 @@ const Index = () => {
         <Card className="mt-8 border-slate-200 shadow-2xl bg-white/90 backdrop-blur-sm">
           <CardContent className="p-10 text-center">
             <div className="mb-6">
-              <h2 className="text-2xl font-bold text-slate-800 mb-2">Εκτέλεση Κοστολόγησης</h2>
-              <p className="text-slate-600">Υπολογίστε το κόστος και τη βέλτιστη τιμή για το προϊόν σας</p>
+              <h2 className="text-2xl font-bold text-slate-800 mb-2">
+                {language === 'el' ? 'Εκτέλεση Κοστολόγησης' : 'Execute Costing'}
+              </h2>
+              <p className="text-slate-600">
+                {language === 'el' 
+                  ? 'Υπολογίστε το κόστος και τη βέλτιστη τιμή για το προϊόν σας'
+                  : 'Calculate the cost and optimal price for your product'
+                }
+              </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
@@ -301,11 +331,24 @@ const Index = () => {
                 <Calculator className="w-6 h-6 text-white" />
               </div>
               <span className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-blue-900 bg-clip-text text-transparent">
-                Υπολογιστής Κοστολόγησης Pro
+                {language === 'el' ? 'Υπολογιστής Κοστολόγησης Pro' : 'Cost Calculator Pro'}
               </span>
             </div>
-            <p className="text-slate-600 mb-2">Επαγγελματική Λύση για Ακριβή Κοστολόγηση & Οικονομική Ανάλυση</p>
-            <p className="text-sm text-slate-500">Version 3.0 - Professional Edition με Προχωρημένα Εργαλεία</p>
+            <p className="text-slate-600 mb-2">
+              {language === 'el' 
+                ? 'Επαγγελματική Λύση για Ακριβή Κοστολόγηση & Οικονομική Ανάλυση'
+                : 'Professional Solution for Accurate Costing & Financial Analysis'
+              }
+            </p>
+            <p className="text-sm text-slate-500 mb-4">
+              {language === 'el' 
+                ? 'Version 3.0 - Professional Edition με Προχωρημένα Εργαλεία'
+                : 'Version 3.0 - Professional Edition with Advanced Tools'
+              }
+            </p>
+            <p className="text-sm text-slate-400">
+              Design by <span className="font-semibold text-blue-600">Alexandros Kopanakis</span>
+            </p>
           </div>
         </div>
       </footer>

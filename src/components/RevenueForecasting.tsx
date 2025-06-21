@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { TrendingUp, Calendar, Users, Euro, Calculator } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import TooltipHelper from './TooltipHelper';
+import ChartExplanation from './ChartExplanation';
 
 interface ForecastData {
   month: string;
@@ -26,7 +28,7 @@ interface RevenueParams {
 }
 
 const RevenueForecasting: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [params, setParams] = useState<RevenueParams>({
     avgCustomersPerMonth: 100,
     avgOrderValue: 50,
@@ -37,20 +39,22 @@ const RevenueForecasting: React.FC = () => {
 
   const [forecastData, setForecastData] = useState<ForecastData[]>([]);
 
-  const months = [
-    'Ιαν', 'Φεβ', 'Μαρ', 'Απρ', 'Μαϊ', 'Ιουν',
-    'Ιουλ', 'Αυγ', 'Σεπ', 'Οκτ', 'Νοε', 'Δεκ'
-  ];
+  const months = language === 'el' 
+    ? ['Ιαν', 'Φεβ', 'Μαρ', 'Απρ', 'Μαϊ', 'Ιουν', 'Ιουλ', 'Αυγ', 'Σεπ', 'Οκτ', 'Νοε', 'Δεκ']
+    : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
   const seasonalFactors = {
     'Ιαν': 0.85, 'Φεβ': 0.90, 'Μαρ': 1.05, 'Απρ': 1.10,
     'Μαϊ': 1.15, 'Ιουν': 1.20, 'Ιουλ': 1.25, 'Αυγ': 1.15,
-    'Σεπ': 1.10, 'Οκτ': 1.05, 'Νοε': 0.95, 'Δεκ': 1.00
+    'Σεπ': 1.10, 'Οκτ': 1.05, 'Νοε': 0.95, 'Δεκ': 1.00,
+    'Jan': 0.85, 'Feb': 0.90, 'Mar': 1.05, 'Apr': 1.10,
+    'May': 1.15, 'Jun': 1.20, 'Jul': 1.25, 'Aug': 1.15,
+    'Sep': 1.10, 'Oct': 1.05, 'Nov': 0.95, 'Dec': 1.00
   };
 
   useEffect(() => {
     calculateForecast();
-  }, [params]);
+  }, [params, language]);
 
   const calculateForecast = () => {
     const data: ForecastData[] = months.map((month, index) => {
@@ -81,12 +85,31 @@ const RevenueForecasting: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Header with Tooltip */}
+      <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+        <CardContent className="p-4">
+          <div className="flex items-center space-x-2">
+            <TrendingUp className="w-5 h-5 text-blue-600" />
+            <h3 className="font-semibold text-blue-800">
+              {language === 'el' ? 'Πρόβλεψη Εσόδων' : 'Revenue Forecasting'}
+            </h3>
+            <TooltipHelper tooltipKey="tooltip.revenue.forecasting" />
+          </div>
+          <p className="text-sm text-blue-700 mt-2">
+            {language === 'el' 
+              ? 'Προβλέψτε μελλοντικά έσοδα βασισμένα σε ιστορικά δεδομένα και τάσεις αγοράς'
+              : 'Forecast future revenue based on historical data and market trends'
+            }
+          </p>
+        </CardContent>
+      </Card>
+
       {/* Parameters Input */}
       <Card className="border-slate-200 shadow-lg">
         <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-200">
           <CardTitle className="flex items-center space-x-2 text-slate-800">
             <Calculator className="w-5 h-5 text-blue-600" />
-            <span>Παράμετροι Πρόβλεψης</span>
+            <span>{language === 'el' ? 'Παράμετροι Πρόβλεψης' : 'Forecast Parameters'}</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
@@ -94,7 +117,7 @@ const RevenueForecasting: React.FC = () => {
             <div>
               <Label className="flex items-center space-x-2 text-slate-700 font-medium">
                 <Users className="w-4 h-4 text-blue-600" />
-                <span>Μέσος Αριθμός Πελατών/Μήνα</span>
+                <span>{language === 'el' ? 'Μέσος Αριθμός Πελατών/Μήνα' : 'Avg Customers per Month'}</span>
               </Label>
               <Input
                 type="number"
@@ -107,7 +130,7 @@ const RevenueForecasting: React.FC = () => {
             <div>
               <Label className="flex items-center space-x-2 text-slate-700 font-medium">
                 <Euro className="w-4 h-4 text-green-600" />
-                <span>Μέση Αξία Παραγγελίας (€)</span>
+                <span>{language === 'el' ? 'Μέση Αξία Παραγγελίας (€)' : 'Avg Order Value (€)'}</span>
               </Label>
               <Input
                 type="number"
@@ -119,7 +142,9 @@ const RevenueForecasting: React.FC = () => {
             </div>
 
             <div>
-              <Label className="text-slate-700 font-medium">Ρυθμός Ανάπτυξης (%)</Label>
+              <Label className="text-slate-700 font-medium">
+                {language === 'el' ? 'Ρυθμός Ανάπτυξης (%)' : 'Growth Rate (%)'}
+              </Label>
               <Input
                 type="number"
                 step="0.1"
@@ -130,7 +155,9 @@ const RevenueForecasting: React.FC = () => {
             </div>
 
             <div>
-              <Label className="text-slate-700 font-medium">Εποχικότητα</Label>
+              <Label className="text-slate-700 font-medium">
+                {language === 'el' ? 'Εποχικότητα' : 'Seasonality'}
+              </Label>
               <Input
                 type="number"
                 step="0.1"
@@ -143,7 +170,9 @@ const RevenueForecasting: React.FC = () => {
             </div>
 
             <div>
-              <Label className="text-slate-700 font-medium">Τάση Αγοράς</Label>
+              <Label className="text-slate-700 font-medium">
+                {language === 'el' ? 'Τάση Αγοράς' : 'Market Trend'}
+              </Label>
               <Select 
                 value={params.marketTrend} 
                 onValueChange={(value: 'up' | 'stable' | 'down') => setParams({...params, marketTrend: value})}
@@ -152,9 +181,15 @@ const RevenueForecasting: React.FC = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="up">📈 Ανοδική</SelectItem>
-                  <SelectItem value="stable">➡️ Σταθερή</SelectItem>
-                  <SelectItem value="down">📉 Καθοδική</SelectItem>
+                  <SelectItem value="up">
+                    📈 {language === 'el' ? 'Ανοδική' : 'Upward'}
+                  </SelectItem>
+                  <SelectItem value="stable">
+                    ➡️ {language === 'el' ? 'Σταθερή' : 'Stable'}
+                  </SelectItem>
+                  <SelectItem value="down">
+                    📉 {language === 'el' ? 'Καθοδική' : 'Downward'}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -164,37 +199,52 @@ const RevenueForecasting: React.FC = () => {
 
       {/* Revenue Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="border-l-4 border-l-blue-600 shadow-lg">
+        <Card className="border-l-4 border-l-blue-600 shadow-lg hover:shadow-xl transition-shadow">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-600">Ετήσια Έσοδα</p>
+                <p className="text-sm font-medium text-slate-600">
+                  {language === 'el' ? 'Ετήσια Έσοδα' : 'Annual Revenue'}
+                </p>
                 <p className="text-3xl font-bold text-blue-600">{totalRevenue.toLocaleString()}€</p>
+                <p className="text-xs text-slate-500 mt-1">
+                  {language === 'el' ? 'Συνολικός στόχος' : 'Total target'}
+                </p>
               </div>
               <TrendingUp className="w-8 h-8 text-blue-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-green-600 shadow-lg">
+        <Card className="border-l-4 border-l-green-600 shadow-lg hover:shadow-xl transition-shadow">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-600">Μέσα Μηνιαία Έσοδα</p>
+                <p className="text-sm font-medium text-slate-600">
+                  {language === 'el' ? 'Μέσα Μηνιαία Έσοδα' : 'Avg Monthly Revenue'}
+                </p>
                 <p className="text-3xl font-bold text-green-600">{Math.round(avgMonthlyRevenue).toLocaleString()}€</p>
+                <p className="text-xs text-slate-500 mt-1">
+                  {language === 'el' ? 'Μηνιαίος στόχος' : 'Monthly target'}
+                </p>
               </div>
               <Calendar className="w-8 h-8 text-green-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-purple-600 shadow-lg">
+        <Card className="border-l-4 border-l-purple-600 shadow-lg hover:shadow-xl transition-shadow">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-600">Συνολικοί Πελάτες</p>
+                <p className="text-sm font-medium text-slate-600">
+                  {language === 'el' ? 'Συνολικοί Πελάτες' : 'Total Customers'}
+                </p>
                 <p className="text-3xl font-bold text-purple-600">
                   {forecastData.reduce((sum, month) => sum + month.customers, 0).toLocaleString()}
+                </p>
+                <p className="text-xs text-slate-500 mt-1">
+                  {language === 'el' ? 'Ετήσιος στόχος' : 'Annual target'}
                 </p>
               </div>
               <Users className="w-8 h-8 text-purple-600" />
@@ -203,12 +253,17 @@ const RevenueForecasting: React.FC = () => {
         </Card>
       </div>
 
+      {/* Chart Explanation */}
+      <ChartExplanation type="forecast" />
+
       {/* Forecast Chart */}
       <Card className="border-slate-200 shadow-lg">
         <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-slate-200">
           <CardTitle className="flex items-center space-x-2 text-slate-800">
             <TrendingUp className="w-5 h-5 text-green-600" />
-            <span>Πρόβλεψη Εσόδων - 12 Μήνες</span>
+            <span>
+              {language === 'el' ? 'Πρόβλεψη Εσόδων - 12 Μήνες' : 'Revenue Forecast - 12 Months'}
+            </span>
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
@@ -222,6 +277,10 @@ const RevenueForecasting: React.FC = () => {
                 <linearGradient id="optimisticGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#10b981" stopOpacity={0.2}/>
                   <stop offset="95%" stopColor="#10b981" stopOpacity={0.05}/>
+                </linearGradient>
+                <linearGradient id="pessimisticGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#ef4444" stopOpacity={0.2}/>
+                  <stop offset="95%" stopColor="#ef4444" stopOpacity={0.05}/>
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
@@ -243,7 +302,7 @@ const RevenueForecasting: React.FC = () => {
                 stroke="#10b981" 
                 fill="url(#optimisticGradient)"
                 strokeWidth={2}
-                name="Αισιόδοξο Σενάριο"
+                name={language === 'el' ? 'Αισιόδοξο Σενάριο' : 'Optimistic Scenario'}
               />
               <Area 
                 type="monotone" 
@@ -251,18 +310,70 @@ const RevenueForecasting: React.FC = () => {
                 stroke="#3b82f6" 
                 fill="url(#revenueGradient)"
                 strokeWidth={3}
-                name="Βασική Πρόβλεψη"
+                name={language === 'el' ? 'Βασική Πρόβλεψη' : 'Base Forecast'}
               />
-              <Line 
+              <Area 
                 type="monotone" 
                 dataKey="pessimistic" 
                 stroke="#ef4444" 
+                fill="url(#pessimisticGradient)"
                 strokeWidth={2}
                 strokeDasharray="5 5"
-                name="Απαισιόδοξο Σενάριο"
+                name={language === 'el' ? 'Απαισιόδοξο Σενάριο' : 'Pessimistic Scenario'}
               />
             </AreaChart>
           </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* Detailed Monthly Breakdown */}
+      <Card className="border-slate-200 shadow-lg">
+        <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-slate-200">
+          <CardTitle className="flex items-center space-x-2 text-slate-800">
+            <Calendar className="w-5 h-5 text-indigo-600" />
+            <span>{language === 'el' ? 'Μηνιαία Ανάλυση' : 'Monthly Breakdown'}</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-200">
+                  <th className="text-left py-3 font-semibold text-slate-700">
+                    {language === 'el' ? 'Μήνας' : 'Month'}
+                  </th>
+                  <th className="text-right py-3 font-semibold text-slate-700">
+                    {language === 'el' ? 'Έσοδα' : 'Revenue'}
+                  </th>
+                  <th className="text-right py-3 font-semibold text-slate-700">
+                    {language === 'el' ? 'Πελάτες' : 'Customers'}
+                  </th>
+                  <th className="text-right py-3 font-semibold text-slate-700">
+                    {language === 'el' ? 'Αύξηση' : 'Growth'}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {forecastData.map((month, index) => {
+                  const growth = index > 0 ? ((month.revenue - forecastData[index - 1].revenue) / forecastData[index - 1].revenue * 100) : 0;
+                  return (
+                    <tr key={month.month} className="border-b border-slate-100 hover:bg-slate-50">
+                      <td className="py-3 font-medium">{month.month}</td>
+                      <td className="py-3 text-right font-semibold text-blue-600">
+                        {month.revenue.toLocaleString()}€
+                      </td>
+                      <td className="py-3 text-right text-slate-600">
+                        {month.customers.toLocaleString()}
+                      </td>
+                      <td className={`py-3 text-right text-sm ${growth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {index > 0 ? `${growth >= 0 ? '+' : ''}${growth.toFixed(1)}%` : '-'}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </CardContent>
       </Card>
     </div>
