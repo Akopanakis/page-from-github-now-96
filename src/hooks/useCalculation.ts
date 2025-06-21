@@ -1,15 +1,20 @@
 
 import { useState } from 'react';
 
+interface Worker {
+  id: string;
+  hourlyRate: number;
+  hours: number;
+}
+
 interface FormData {
   productName: string;
   purchasePrice: number;
   quantity: number;
   waste: number;
   icePercent: number;
-  workerCount: number;
-  laborHours: number;
-  laborCost: number;
+  vatPercent: number;
+  workers: Worker[];
   boxCost: number;
   bagCost: number;
   distance: number;
@@ -25,10 +30,14 @@ interface FormData {
   rentCost: number;
   communicationCost: number;
   otherCosts: number;
+  originAddress: string;
+  destinationAddress: string;
+  routeCalculated: boolean;
 }
 
 interface CalculationResults {
   totalCost: number;
+  totalCostWithVat: number;
   sellingPrice: number;
   profitPerKg: number;
   profitMargin: number;
@@ -38,6 +47,7 @@ interface CalculationResults {
   packagingCost: number;
   transportCost: number;
   additionalCosts: number;
+  vatAmount: number;
 }
 
 export const useCalculation = () => {
@@ -47,9 +57,8 @@ export const useCalculation = () => {
     quantity: 1,
     waste: 0,
     icePercent: 0,
-    workerCount: 1,
-    laborHours: 0,
-    laborCost: 0,
+    vatPercent: 24,
+    workers: [{ id: '1', hourlyRate: 4.5, hours: 1 }],
     boxCost: 0,
     bagCost: 0,
     distance: 0,
@@ -64,7 +73,10 @@ export const useCalculation = () => {
     insuranceCost: 0,
     rentCost: 0,
     communicationCost: 0,
-    otherCosts: 0
+    otherCosts: 0,
+    originAddress: '',
+    destinationAddress: '',
+    routeCalculated: false
   });
 
   const [results, setResults] = useState<CalculationResults | null>(null);
@@ -77,19 +89,19 @@ export const useCalculation = () => {
   const calculate = async (): Promise<void> => {
     setIsCalculating(true);
     
-    // Simulate calculation delay
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     try {
-      // Calculate net weight after waste
       const netWeight = (formData.quantity || 0) * (1 - (formData.waste || 0) / 100);
-      
-      // Calculate final weight with ice
       const finalWeight = netWeight * (1 + (formData.icePercent || 0) / 100);
       
-      // Calculate costs
       const purchaseCost = (formData.purchasePrice || 0) * (formData.quantity || 0);
-      const laborCost = (formData.workerCount || 0) * (formData.laborHours || 0) * (formData.laborCost || 0);
+      
+      // Calculate total labor cost from all workers
+      const laborCost = (formData.workers || []).reduce((sum, worker) => 
+        sum + (worker.hourlyRate * worker.hours), 0
+      );
+      
       const packagingCost = (formData.boxCost || 0) + (formData.bagCost || 0);
       const transportCost = 
         (formData.distance || 0) * (formData.fuelCost || 0) + 
@@ -106,14 +118,18 @@ export const useCalculation = () => {
 
       const totalCost = purchaseCost + laborCost + packagingCost + transportCost + additionalCosts;
       
-      // Calculate selling price with profit margin
-      const sellingPrice = totalCost * (1 + (formData.profitMargin || 0) / 100);
+      // Calculate VAT
+      const vatAmount = totalCost * ((formData.vatPercent || 0) / 100);
+      const totalCostWithVat = totalCost + vatAmount;
+      
+      const sellingPrice = totalCostWithVat * (1 + (formData.profitMargin || 0) / 100);
       const sellingPricePerKg = sellingPrice / finalWeight;
       
-      const profitPerKg = sellingPricePerKg - (totalCost / finalWeight);
+      const profitPerKg = sellingPricePerKg - (totalCostWithVat / finalWeight);
 
       setResults({
         totalCost,
+        totalCostWithVat,
         sellingPrice: sellingPricePerKg,
         profitPerKg,
         profitMargin: formData.profitMargin || 0,
@@ -122,7 +138,8 @@ export const useCalculation = () => {
         laborCost,
         packagingCost,
         transportCost,
-        additionalCosts
+        additionalCosts,
+        vatAmount
       });
     } catch (error) {
       console.error('Calculation error:', error);
@@ -138,9 +155,8 @@ export const useCalculation = () => {
       quantity: 1,
       waste: 0,
       icePercent: 0,
-      workerCount: 1,
-      laborHours: 0,
-      laborCost: 0,
+      vatPercent: 24,
+      workers: [{ id: '1', hourlyRate: 4.5, hours: 1 }],
       boxCost: 0,
       bagCost: 0,
       distance: 0,
@@ -155,7 +171,10 @@ export const useCalculation = () => {
       insuranceCost: 0,
       rentCost: 0,
       communicationCost: 0,
-      otherCosts: 0
+      otherCosts: 0,
+      originAddress: '',
+      destinationAddress: '',
+      routeCalculated: false
     });
     setResults(null);
   };

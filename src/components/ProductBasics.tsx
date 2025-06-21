@@ -3,8 +3,10 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Slider } from '@/components/ui/slider';
-import { Tag, Euro, Weight, Trash2, Snowflake } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Package, Euro, Percent } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import WorkersList from './WorkersList';
 
 interface ProductBasicsProps {
   formData: any;
@@ -12,103 +14,120 @@ interface ProductBasicsProps {
 }
 
 const ProductBasics: React.FC<ProductBasicsProps> = ({ formData, updateFormData }) => {
+  const { t } = useLanguage();
+
+  const workers = formData.workers || [{ id: '1', hourlyRate: 4.5, hours: 1 }];
+
+  const updateWorkers = (newWorkers: any[]) => {
+    updateFormData({ workers: newWorkers });
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
-          <Tag className="w-5 h-5" />
-          <span>Στοιχεία Προϊόντος</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div>
-          <Label className="flex items-center space-x-2">
-            <Tag className="w-4 h-4" />
-            <span>Όνομα Προϊόντος</span>
-          </Label>
-          <Input
-            placeholder="π.χ. Σουπιά"
-            value={formData.productName || ''}
-            onChange={(e) => updateFormData({ productName: e.target.value })}
-            className="mt-2"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Package className="w-5 h-5" />
+            <span>{t('tab.basic')}</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
           <div>
-            <Label className="flex items-center space-x-2">
-              <Euro className="w-4 h-4" />
-              <span>Τιμή Αγοράς (€/κιλό)</span>
-            </Label>
+            <Label>{t('product.name')}</Label>
             <Input
-              type="number"
-              step="0.01"
-              placeholder="0.00"
-              value={formData.purchasePrice || ''}
-              onChange={(e) => updateFormData({ purchasePrice: parseFloat(e.target.value) || 0 })}
+              placeholder="π.χ. Θράψαλο Block"
+              value={formData.productName || ''}
+              onChange={(e) => updateFormData({ productName: e.target.value })}
               className="mt-2"
             />
           </div>
 
-          <div>
-            <Label className="flex items-center space-x-2">
-              <Weight className="w-4 h-4" />
-              <span>Ποσότητα (κιλά)</span>
-            </Label>
-            <Input
-              type="number"
-              step="0.1"
-              value={formData.quantity || 1}
-              onChange={(e) => updateFormData({ quantity: parseFloat(e.target.value) || 1 })}
-              className="mt-2"
-            />
-          </div>
-        </div>
-
-        <div>
-          <Label className="flex items-center space-x-2">
-            <Trash2 className="w-4 h-4" />
-            <span>Φύρα (%)</span>
-          </Label>
-          <div className="mt-2 space-y-2">
-            <div className="flex items-center space-x-4">
-              <Slider
-                value={[formData.waste || 0]}
-                onValueChange={(value) => updateFormData({ waste: value[0] })}
-                max={50}
-                step={1}
-                className="flex-1"
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <Label className="flex items-center space-x-2">
+                <Euro className="w-4 h-4" />
+                <span>{t('purchase.price')}</span>
+              </Label>
+              <Input
+                type="number"
+                step="0.01"
+                placeholder="0.00"
+                value={formData.purchasePrice || ''}
+                onChange={(e) => updateFormData({ purchasePrice: parseFloat(e.target.value) || 0 })}
+                className="mt-2"
               />
-              <span className="w-16 text-center bg-blue-600 text-white px-3 py-1 rounded-md text-sm font-semibold">
-                {formData.waste || 0}%
-              </span>
+            </div>
+
+            <div>
+              <Label>{t('quantity')}</Label>
+              <Input
+                type="number"
+                step="0.1"
+                placeholder="0.0"
+                value={formData.quantity || ''}
+                onChange={(e) => updateFormData({ quantity: parseFloat(e.target.value) || 0 })}
+                className="mt-2"
+              />
             </div>
           </div>
-        </div>
 
-        <div>
-          <Label className="flex items-center space-x-2">
-            <Snowflake className="w-4 h-4" />
-            <span>Πάγος (% επί του καθαρού βάρους)</span>
-          </Label>
-          <div className="mt-2 space-y-2">
-            <div className="flex items-center space-x-4">
-              <Slider
-                value={[formData.icePercent || 0]}
-                onValueChange={(value) => updateFormData({ icePercent: value[0] })}
-                max={30}
-                step={1}
-                className="flex-1"
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <Label className="flex items-center space-x-2">
+                <Percent className="w-4 h-4" />
+                <span>{t('waste.percent')}</span>
+              </Label>
+              <Input
+                type="number"
+                step="0.1"
+                placeholder="0.0"
+                value={formData.waste || ''}
+                onChange={(e) => updateFormData({ waste: parseFloat(e.target.value) || 0 })}
+                className="mt-2"
               />
-              <span className="w-16 text-center bg-blue-600 text-white px-3 py-1 rounded-md text-sm font-semibold">
-                {formData.icePercent || 0}%
-              </span>
             </div>
-            <p className="text-sm text-slate-500">Το ποσοστό πάγου που προστίθεται στο τελικό προϊόν</p>
+
+            <div>
+              <Label className="flex items-center space-x-2">
+                <Percent className="w-4 h-4" />
+                <span>{t('ice.percent')}</span>
+              </Label>
+              <Input
+                type="number"
+                step="0.1"
+                placeholder="0.0"
+                value={formData.icePercent || ''}
+                onChange={(e) => updateFormData({ icePercent: parseFloat(e.target.value) || 0 })}
+                className="mt-2"
+              />
+            </div>
+
+            <div>
+              <Label className="flex items-center space-x-2">
+                <Percent className="w-4 h-4" />
+                <span>{t('vat.percent')}</span>
+              </Label>
+              <Select
+                value={formData.vatPercent?.toString() || '24'}
+                onValueChange={(value) => updateFormData({ vatPercent: parseFloat(value) })}
+              >
+                <SelectTrigger className="mt-2">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="0">0% (Αφορολόγητο)</SelectItem>
+                  <SelectItem value="6">6% (Μειωμένος)</SelectItem>
+                  <SelectItem value="13">13% (Μειωμένος)</SelectItem>
+                  <SelectItem value="24">24% (Κανονικός)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      <WorkersList workers={workers} updateWorkers={updateWorkers} />
+    </div>
   );
 };
 

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,8 +14,11 @@ import AnalysisTab from '@/components/AnalysisTab';
 import AdvancedAnalysisTab from '@/components/AdvancedAnalysisTab';
 import ResultsSection from '@/components/ResultsSection';
 import { useCalculation } from '@/hooks/useCalculation';
+import { useLanguage } from '@/contexts/LanguageContext';
+import PDFExport from '@/components/PDFExport';
 
 const Index = () => {
+  const { language, setLanguage, t } = useLanguage();
   const [activeTab, setActiveTab] = useState('basic');
   const [showResults, setShowResults] = useState(false);
   const {
@@ -28,7 +30,6 @@ const Index = () => {
     isCalculating
   } = useCalculation();
 
-  // Pre-fill with the thrapsalo example data
   const loadThrapsaloExample = () => {
     updateFormData({
       productName: 'Θράψαλο Block',
@@ -36,44 +37,51 @@ const Index = () => {
       quantity: 500,
       waste: 25,
       icePercent: 15,
-      workerCount: 5,
-      laborHours: 1,
-      laborCost: 4.7, // Mixed wage average: (1*5 + 4*4.5)/5 = 4.6
-      distance: 150, // Kavala to Thessaloniki approximate
+      vatPercent: 24,
+      workers: [
+        { id: '1', hourlyRate: 5, hours: 1 },
+        { id: '2', hourlyRate: 4.5, hours: 1 },
+        { id: '3', hourlyRate: 4.5, hours: 1 },
+        { id: '4', hourlyRate: 4.5, hours: 1 },
+        { id: '5', hourlyRate: 4.5, hours: 1 }
+      ],
+      distance: 150,
       fuelCost: 0.15,
-      profitMargin: 25
+      profitMargin: 25,
+      originAddress: 'Καβάλα, Ελλάδα',
+      destinationAddress: 'Θεσσαλονίκη, Ελλάδα'
     });
-    toast.success('Φορτώθηκε το παράδειγμα του θράψαλου!');
+    toast.success(language === 'el' ? 'Φορτώθηκε το παράδειγμα του θράψαλου!' : 'Thrapsalo example loaded!');
   };
 
   const handleCalculate = async () => {
     if (!formData.productName || !formData.purchasePrice || !formData.quantity) {
-      toast.error('Παρακαλώ συμπληρώστε τα βασικά στοιχεία προϊόντος');
+      toast.error(language === 'el' ? 'Παρακαλώ συμπληρώστε τα βασικά στοιχεία προϊόντος' : 'Please fill in the basic product details');
       return;
     }
 
     setShowResults(false);
     await calculate();
     setShowResults(true);
-    toast.success('Η κοστολόγηση ολοκληρώθηκε!');
+    toast.success(language === 'el' ? 'Η κοστολόγηση ολοκληρώθηκε!' : 'Costing completed!');
   };
 
   const handleReset = () => {
     resetForm();
     setShowResults(false);
     setActiveTab('basic');
-    toast.info('Η φόρμα επαναφέρθηκε');
+    toast.info(language === 'el' ? 'Η φόρμα επαναφέρθηκε' : 'The form has been reset');
   };
 
   const handleSave = () => {
-    const templateName = prompt('Όνομα προτύπου:');
+    const templateName = prompt(language === 'el' ? 'Όνομα προτύπου:' : 'Template name:');
     if (templateName) {
       localStorage.setItem(`template_${Date.now()}`, JSON.stringify({
         name: templateName,
         data: formData,
         createdAt: new Date().toISOString()
       }));
-      toast.success('Το πρότυπο αποθηκεύτηκε!');
+      toast.success(language === 'el' ? 'Το πρότυπο αποθηκεύτηκε!' : 'Template saved!');
     }
   };
 
@@ -83,18 +91,18 @@ const Index = () => {
       .map(key => JSON.parse(localStorage.getItem(key)!));
     
     if (templates.length === 0) {
-      toast.info('Δεν βρέθηκαν αποθηκευμένα πρότυπα');
+      toast.info(language === 'el' ? 'Δεν βρέθηκαν αποθηκευμένα πρότυπα' : 'No saved templates found');
       return;
     }
 
     const templateNames = templates.map(t => t.name).join('\n');
-    const selectedName = prompt(`Διαθέσιμα πρότυπα:\n${templateNames}\n\nΕισάγετε όνομα:`);
+    const selectedName = prompt((language === 'el' ? 'Διαθέσιμα πρότυπα:\n' : 'Available templates:\n') + templateNames + (language === 'el' ? '\n\nΕισάγετε όνομα:' : '\n\nEnter name:'));
     
     if (selectedName) {
       const template = templates.find(t => t.name === selectedName);
       if (template) {
         updateFormData(template.data);
-        toast.success('Το πρότυπο φορτώθηκε!');
+        toast.success(language === 'el' ? 'Το πρότυπο φορτώθηκε!' : 'Template loaded!');
       }
     }
   };
@@ -110,28 +118,34 @@ const Index = () => {
                 <Calculator className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-slate-900">Υπολογιστής Κοστολόγησης</h1>
-                <p className="text-sm text-slate-500 font-medium uppercase tracking-wide">Professional Edition</p>
+                <h1 className="text-2xl font-bold text-slate-900">{t('calculator.title')}</h1>
+                <p className="text-sm text-slate-500 font-medium uppercase tracking-wide">{t('calculator.subtitle')}</p>
               </div>
             </div>
             
             <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setLanguage(language === 'el' ? 'en' : 'el')}
+              >
+                {language === 'el' ? '🇬🇧 EN' : '🇬🇷 ΕΛ'}
+              </Button>
               <Button variant="outline" size="sm" onClick={loadThrapsaloExample}>
                 <Package className="w-4 h-4 mr-2" />
-                Παράδειγμα Θράψαλο
+                {t('example.thrapsalo')}
               </Button>
               <Button variant="outline" size="sm" onClick={handleSave}>
                 <Save className="w-4 h-4 mr-2" />
-                Αποθήκευση
+                {t('save')}
               </Button>
               <Button variant="outline" size="sm" onClick={handleLoad}>
                 <FolderOpen className="w-4 h-4 mr-2" />
-                Φόρτωση
+                {t('load')}
               </Button>
-              <Button variant="outline" size="sm">
-                <FileText className="w-4 h-4 mr-2" />
-                Εξαγωγή PDF
-              </Button>
+              {showResults && results && (
+                <PDFExport results={results} formData={formData} />
+              )}
             </div>
           </div>
         </div>
@@ -143,23 +157,23 @@ const Index = () => {
           <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:grid-cols-5">
             <TabsTrigger value="basic" className="flex items-center space-x-2">
               <Box className="w-4 h-4" />
-              <span className="hidden sm:inline">Βασικά Στοιχεία</span>
+              <span className="hidden sm:inline">{t('tab.basic')}</span>
             </TabsTrigger>
             <TabsTrigger value="costs" className="flex items-center space-x-2">
               <Coins className="w-4 h-4" />
-              <span className="hidden sm:inline">Κόστη</span>
+              <span className="hidden sm:inline">{t('tab.costs')}</span>
             </TabsTrigger>
             <TabsTrigger value="transport" className="flex items-center space-x-2">
               <Truck className="w-4 h-4" />
-              <span className="hidden sm:inline">Μεταφορά</span>
+              <span className="hidden sm:inline">{t('tab.transport')}</span>
             </TabsTrigger>
             <TabsTrigger value="analysis" className="flex items-center space-x-2">
               <BarChart3 className="w-4 h-4" />
-              <span className="hidden sm:inline">Ανάλυση</span>
+              <span className="hidden sm:inline">{t('tab.analysis')}</span>
             </TabsTrigger>
             <TabsTrigger value="advanced" className="flex items-center space-x-2">
               <Brain className="w-4 h-4" />
-              <span className="hidden sm:inline">Έξυπνη Ανάλυση</span>
+              <span className="hidden sm:inline">{t('tab.advanced')}</span>
             </TabsTrigger>
           </TabsList>
 
@@ -195,11 +209,11 @@ const Index = () => {
                 className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
               >
                 <Calculator className="w-5 h-5 mr-2" />
-                {isCalculating ? 'Υπολογισμός...' : 'Υπολογισμός Κοστολόγησης'}
+                {isCalculating ? t('calculating') : t('calculate.costing')}
               </Button>
               <Button variant="outline" size="lg" onClick={handleReset}>
                 <RotateCcw className="w-5 h-5 mr-2" />
-                Επαναφορά
+                {t('reset')}
               </Button>
             </div>
           </CardContent>
