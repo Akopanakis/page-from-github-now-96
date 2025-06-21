@@ -6,6 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Users, Clock, Euro, Archive, Package, Plus, ChevronDown } from 'lucide-react';
 import AdditionalCostsModal from '@/components/AdditionalCostsModal';
+import WorkersList from '@/components/WorkersList';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface CostsTabProps {
   formData: any;
@@ -13,95 +15,33 @@ interface CostsTabProps {
 }
 
 const CostsTab: React.FC<CostsTabProps> = ({ formData, updateFormData }) => {
+  const { t } = useLanguage();
   const [showAdditionalCosts, setShowAdditionalCosts] = useState(false);
 
-  const totalLaborHours = (formData.workerCount || 0) * (formData.laborHours || 0);
-  const totalLaborCost = totalLaborHours * (formData.laborCost || 0);
+  const workers = formData.workers || [{ id: '1', hourlyRate: 4.5, hours: 1 }];
+
+  const updateWorkers = (newWorkers: any[]) => {
+    updateFormData({ workers: newWorkers });
+  };
 
   return (
     <div className="space-y-6">
-      {/* Labor Costs */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Users className="w-5 h-5" />
-            <span>Εργασία</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Label className="flex items-center space-x-2">
-                <Users className="w-4 h-4" />
-                <span>Αριθμός Εργαζομένων</span>
-              </Label>
-              <Input
-                type="number"
-                min="1"
-                step="1"
-                value={formData.workerCount || 1}
-                onChange={(e) => updateFormData({ workerCount: parseInt(e.target.value) || 1 })}
-                className="mt-2"
-              />
-            </div>
-
-            <div>
-              <Label className="flex items-center space-x-2">
-                <Clock className="w-4 h-4" />
-                <span>Ώρες Εργασίας (ανά άτομο)</span>
-              </Label>
-              <Input
-                type="number"
-                step="0.1"
-                placeholder="0.0"
-                value={formData.laborHours || ''}
-                onChange={(e) => updateFormData({ laborHours: parseFloat(e.target.value) || 0 })}
-                className="mt-2"
-              />
-            </div>
-          </div>
-
-          <div>
-            <Label className="flex items-center space-x-2">
-              <Euro className="w-4 h-4" />
-              <span>Κόστος/Ώρα (€)</span>
-            </Label>
-            <Input
-              type="number"
-              step="0.01"
-              placeholder="0.00"
-              value={formData.laborCost || ''}
-              onChange={(e) => updateFormData({ laborCost: parseFloat(e.target.value) || 0 })}
-              className="mt-2"
-            />
-          </div>
-
-          <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-medium text-slate-600">Συνολικές Εργατοώρες:</span>
-              <span className="text-sm font-bold text-blue-600">{totalLaborHours}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-medium text-slate-600">Συνολικό Κόστος Εργασίας:</span>
-              <span className="text-sm font-bold text-blue-600">{totalLaborCost.toFixed(2)}€</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Workers Section */}
+      <WorkersList workers={workers} updateWorkers={updateWorkers} />
 
       {/* Packaging Costs */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Package className="w-5 h-5" />
+      <Card className="border-slate-200 shadow-lg">
+        <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50 border-b border-slate-200">
+          <CardTitle className="flex items-center space-x-2 text-slate-800">
+            <Package className="w-5 h-5 text-emerald-600" />
             <span>Συσκευασία</span>
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <Label className="flex items-center space-x-2">
-                <Archive className="w-4 h-4" />
+              <Label className="flex items-center space-x-2 text-slate-700 font-medium">
+                <Archive className="w-4 h-4 text-amber-600" />
                 <span>Κόστος Κούτας (€)</span>
               </Label>
               <Input
@@ -110,13 +50,13 @@ const CostsTab: React.FC<CostsTabProps> = ({ formData, updateFormData }) => {
                 placeholder="0.00"
                 value={formData.boxCost || ''}
                 onChange={(e) => updateFormData({ boxCost: parseFloat(e.target.value) || 0 })}
-                className="mt-2"
+                className="mt-2 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
 
             <div>
-              <Label className="flex items-center space-x-2">
-                <Package className="w-4 h-4" />
+              <Label className="flex items-center space-x-2 text-slate-700 font-medium">
+                <Package className="w-4 h-4 text-indigo-600" />
                 <span>Κόστος Σακούλας (€)</span>
               </Label>
               <Input
@@ -125,7 +65,7 @@ const CostsTab: React.FC<CostsTabProps> = ({ formData, updateFormData }) => {
                 placeholder="0.00"
                 value={formData.bagCost || ''}
                 onChange={(e) => updateFormData({ bagCost: parseFloat(e.target.value) || 0 })}
-                className="mt-2"
+                className="mt-2 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -133,19 +73,21 @@ const CostsTab: React.FC<CostsTabProps> = ({ formData, updateFormData }) => {
       </Card>
 
       {/* Additional Costs Toggle */}
-      <div>
-        <Button
-          variant="outline"
-          onClick={() => setShowAdditionalCosts(true)}
-          className="w-full flex items-center justify-between p-4 h-auto"
-        >
-          <div className="flex items-center space-x-2">
-            <Plus className="w-4 h-4" />
-            <span>Επιπλέον Κόστη</span>
-          </div>
-          <ChevronDown className="w-4 h-4" />
-        </Button>
-      </div>
+      <Card className="border-slate-200 shadow-lg">
+        <CardContent className="p-0">
+          <Button
+            variant="outline"
+            onClick={() => setShowAdditionalCosts(true)}
+            className="w-full flex items-center justify-between p-6 h-auto border-0 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 transition-all duration-200"
+          >
+            <div className="flex items-center space-x-2">
+              <Plus className="w-5 h-5 text-purple-600" />
+              <span className="text-lg font-medium text-slate-800">Επιπλέον Κόστη</span>
+            </div>
+            <ChevronDown className="w-5 h-5 text-slate-500" />
+          </Button>
+        </CardContent>
+      </Card>
 
       <AdditionalCostsModal 
         isOpen={showAdditionalCosts}

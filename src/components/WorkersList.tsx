@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Users, Plus, Trash2 } from 'lucide-react';
+import { Users, Plus, Trash2, TrendingUp } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Worker {
@@ -45,40 +45,44 @@ const WorkersList: React.FC<WorkersListProps> = ({ workers, updateWorkers }) => 
   );
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="border-slate-200 shadow-lg">
+      <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-200">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Users className="w-5 h-5" />
-            <span>{t('workers')}</span>
+            <Users className="w-5 h-5 text-blue-600" />
+            <span className="text-slate-800">{t('workers')}</span>
           </div>
-          <Button onClick={addWorker} size="sm">
+          <Button 
+            onClick={addWorker} 
+            size="sm"
+            className="bg-blue-600 hover:bg-blue-700 text-white shadow-md"
+          >
             <Plus className="w-4 h-4 mr-2" />
             {t('add.worker')}
           </Button>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 p-6">
         {workers.map((worker, index) => (
-          <div key={worker.id} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-lg">
+          <div key={worker.id} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gradient-to-r from-slate-50 to-slate-100 border border-slate-200 rounded-lg shadow-sm">
             <div>
-              <Label>{t('worker.hourly.rate')} #{index + 1}</Label>
+              <Label className="text-slate-700 font-medium">{t('worker.hourly.rate')} #{index + 1}</Label>
               <Input
                 type="number"
                 step="0.01"
                 value={worker.hourlyRate}
                 onChange={(e) => updateWorker(worker.id, 'hourlyRate', parseFloat(e.target.value) || 0)}
-                className="mt-1"
+                className="mt-1 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
             <div>
-              <Label>{t('worker.hours')}</Label>
+              <Label className="text-slate-700 font-medium">{t('worker.hours')}</Label>
               <Input
                 type="number"
                 step="0.1"
                 value={worker.hours}
                 onChange={(e) => updateWorker(worker.id, 'hours', parseFloat(e.target.value) || 0)}
-                className="mt-1"
+                className="mt-1 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
             <div className="flex items-end">
@@ -87,6 +91,7 @@ const WorkersList: React.FC<WorkersListProps> = ({ workers, updateWorkers }) => 
                 size="sm" 
                 onClick={() => removeWorker(worker.id)}
                 disabled={workers.length === 1}
+                className="bg-red-500 hover:bg-red-600 disabled:bg-slate-300"
               >
                 <Trash2 className="w-4 h-4 mr-2" />
                 {t('remove.worker')}
@@ -95,10 +100,15 @@ const WorkersList: React.FC<WorkersListProps> = ({ workers, updateWorkers }) => 
           </div>
         ))}
         
-        <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4 shadow-sm">
           <div className="flex justify-between items-center">
-            <span className="text-sm font-medium text-slate-600">Συνολικό Κόστος Εργασίας:</span>
-            <span className="text-sm font-bold text-blue-600">{totalLaborCost.toFixed(2)}€</span>
+            <div className="flex items-center space-x-2">
+              <TrendingUp className="w-5 h-5 text-green-600" />
+              <span className="text-sm font-medium text-green-800">Συνολικό Κόστος Εργασίας:</span>
+            </div>
+            <span className="text-lg font-bold text-green-700 bg-white px-3 py-1 rounded-md shadow-sm">
+              {totalLaborCost.toFixed(2)}€
+            </span>
           </div>
         </div>
       </CardContent>
