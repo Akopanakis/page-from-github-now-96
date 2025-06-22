@@ -1,13 +1,12 @@
 
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell } from 'recharts';
-import { Calculator, TrendingUp, DollarSign, PieChart as PieChartIcon, Zap } from 'lucide-react';
+import { TrendingUp, DollarSign, PieChart as PieChartIcon, Zap } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { FormData, CalculationResults } from '@/hooks/useCalculation';
 
@@ -16,7 +15,7 @@ interface AdvancedFinancialModelsProps {
   results: CalculationResults;
 }
 
-const AdvancedFinancialModels: React.FC<AdvancedFinancialModelsProps> = ({ formData, results }) => {
+const AdvancedFinancialModels = ({ formData, results }: AdvancedFinancialModelsProps) => {
   const { language } = useLanguage();
   const [growthData, setGrowthData] = useState({
     initialValue: 1000,
@@ -71,7 +70,7 @@ const AdvancedFinancialModels: React.FC<AdvancedFinancialModelsProps> = ({ formD
   const portfolioData = useMemo(() => {
     if (!results) return [];
     
-    const totalInvestment = 10000; // Example portfolio
+    const totalInvestment = 10000;
     return [
       { name: language === 'el' ? 'Μετοχές' : 'Stocks', value: totalInvestment * 0.6, color: '#3b82f6' },
       { name: language === 'el' ? 'Ομόλογα' : 'Bonds', value: totalInvestment * 0.3, color: '#10b981' },
@@ -108,13 +107,13 @@ const AdvancedFinancialModels: React.FC<AdvancedFinancialModelsProps> = ({ formD
 
       <Tabs defaultValue="growth" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="growth" className="text-xs">
+          <TabsTrigger value="growth">
             {language === 'el' ? 'Ανάπτυξη' : 'Growth'}
           </TabsTrigger>
-          <TabsTrigger value="present" className="text-xs">
+          <TabsTrigger value="present">
             {language === 'el' ? 'Παρ. Αξία' : 'Present Val.'}
           </TabsTrigger>
-          <TabsTrigger value="portfolio" className="text-xs">
+          <TabsTrigger value="portfolio">
             {language === 'el' ? 'Χαρτοφυλάκιο' : 'Portfolio'}
           </TabsTrigger>
         </TabsList>

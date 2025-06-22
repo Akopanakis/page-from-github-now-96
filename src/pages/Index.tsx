@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -5,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Calculator, BarChart3, TrendingUp, FileText, Globe2, Crown, Sparkles, Fish, Zap, Target } from 'lucide-react';
+import { Calculator, BarChart3, TrendingUp, FileText, Globe2, Crown, Sparkles, Fish, Zap, Target, Database } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCalculation } from '@/hooks/useCalculation';
 import ProductBasics from '@/components/ProductBasics';
@@ -22,6 +23,8 @@ import FileUpload from '@/components/FileUpload';
 import ResultsSection from '@/components/ResultsSection';
 import PDFExport from '@/components/PDFExport';
 import AdvancedFinancialModels from '@/components/AdvancedFinancialModels';
+import Dashboard from '@/components/Dashboard';
+import BatchManagement from '@/components/BatchManagement';
 
 const Index = () => {
   const { language, setLanguage } = useLanguage();
@@ -168,16 +171,28 @@ const Index = () => {
               </CardHeader>
               <CardContent className="p-0">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                  <TabsList className="grid w-full grid-cols-6 bg-gray-50 border-b">
+                  <TabsList className="grid w-full grid-cols-8 bg-gray-50 border-b">
                     <TabsTrigger value="basics" className="text-xs sm:text-sm flex items-center space-x-1">
                       <Fish className="w-3 h-3" />
                       <span>{language === 'el' ? 'Προϊόν' : 'Product'}</span>
                     </TabsTrigger>
                     {isPremium && (
-                      <TabsTrigger value="processing" className="text-xs sm:text-sm flex items-center space-x-1">
-                        <Target className="w-3 h-3" />
-                        <span>{language === 'el' ? 'Επεξεργασία' : 'Processing'}</span>
-                      </TabsTrigger>
+                      <>
+                        <TabsTrigger value="processing" className="text-xs sm:text-sm flex items-center space-x-1">
+                          <Target className="w-3 h-3" />
+                          <span>{language === 'el' ? 'Επεξεργασία' : 'Processing'}</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="batches" className="text-xs sm:text-sm flex items-center space-x-1">
+                          <Database className="w-3 h-3" />
+                          <span>{language === 'el' ? 'Παρτίδες' :
+
+  'Batches'}</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="dashboard" className="text-xs sm:text-sm flex items-center space-x-1">
+                          <BarChart3 className="w-3 h-3" />
+                          <span>{language === 'el' ? 'Dashboard' : 'Dashboard'}</span>
+                        </TabsTrigger>
+                      </>
                     )}
                     <TabsTrigger value="costs" className="text-xs sm:text-sm">
                       {language === 'el' ? 'Κόστη' : 'Costs'}
@@ -208,12 +223,22 @@ const Index = () => {
                     </TabsContent>
 
                     {isPremium && (
-                      <TabsContent value="processing" className="mt-0">
-                        <ProcessingPhases 
-                          formData={formData} 
-                          updateFormData={updateFormData}
-                        />
-                      </TabsContent>
+                      <>
+                        <TabsContent value="processing" className="mt-0">
+                          <ProcessingPhases 
+                            formData={formData} 
+                            updateFormData={updateFormData}
+                          />
+                        </TabsContent>
+
+                        <TabsContent value="batches" className="mt-0">
+                          <BatchManagement />
+                        </TabsContent>
+
+                        <TabsContent value="dashboard" className="mt-0">
+                          <Dashboard />
+                        </TabsContent>
+                      </>
                     )}
 
                     <TabsContent value="costs" className="mt-0">
@@ -230,7 +255,7 @@ const Index = () => {
 
                     <TabsContent value="advanced" className="mt-0">
                       <div className="space-y-6">
-                        {!isPremium && (
+                        {!isPremium ? (
                           <div className="text-center p-8 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
                             <Crown className="w-16 h-16 mx-auto text-purple-400 mb-4" />
                             <h3 className="text-xl font-bold text-purple-800 mb-2">
@@ -250,9 +275,7 @@ const Index = () => {
                               {language === 'el' ? 'Ενεργοποίηση Premium' : 'Enable Premium'}
                             </Button>
                           </div>
-                        )}
-                        
-                        {isPremium && (
+                        ) : (
                           <>
                             <div className="flex items-center justify-center mb-6">
                               <Badge variant="secondary" className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 text-lg">
