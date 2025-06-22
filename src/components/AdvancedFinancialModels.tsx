@@ -1,13 +1,13 @@
+
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { LineChart, Line, BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell } from 'recharts';
-import { Calculator, TrendingUp, BarChart3, DollarSign, Target, PieChart as PieChartIcon, Activity, Zap } from 'lucide-react';
+import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell } from 'recharts';
+import { Calculator, TrendingUp, DollarSign, PieChart as PieChartIcon, Zap } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { FormData, CalculationResults } from '@/hooks/useCalculation';
 
@@ -30,12 +30,6 @@ const AdvancedFinancialModels: React.FC<AdvancedFinancialModelsProps> = ({ formD
     periods: 1
   });
 
-  const [breakEvenData, setBreakEvenData] = useState({
-    fixedCosts: 1000,
-    variableCostPerUnit: 5,
-    pricePerUnit: 10
-  });
-
   // Growth Rate Calculation
   const calculateGrowthRate = () => {
     if (growthData.initialValue === 0) return 0;
@@ -46,13 +40,6 @@ const AdvancedFinancialModels: React.FC<AdvancedFinancialModelsProps> = ({ formD
   const calculatePresentValue = () => {
     const rate = presentValueData.discountRate / 100;
     return presentValueData.futureValue / Math.pow(1 + rate, presentValueData.periods);
-  };
-
-  // Break-Even Analysis
-  const calculateBreakEven = () => {
-    const contributionMargin = breakEvenData.pricePerUnit - breakEvenData.variableCostPerUnit;
-    if (contributionMargin === 0) return 0;
-    return breakEvenData.fixedCosts / contributionMargin;
   };
 
   // Memoized chart data for growth analysis
@@ -80,28 +67,6 @@ const AdvancedFinancialModels: React.FC<AdvancedFinancialModelsProps> = ({ formD
     }));
   }, [presentValueData]);
 
-  // Memoized chart data for break-even analysis
-  const breakEvenChartData = useMemo(() => {
-    const breakEvenPoint = calculateBreakEven();
-    const maxUnits = Math.ceil(breakEvenPoint * 1.5) || 100;
-    
-    return Array.from({ length: 11 }, (_, i) => {
-      const units = (maxUnits / 10) * i;
-      const revenue = units * breakEvenData.pricePerUnit;
-      const totalCosts = breakEvenData.fixedCosts + (units * breakEvenData.variableCostPerUnit);
-      const profit = revenue - totalCosts;
-      
-      return {
-        units: Math.round(units),
-        revenue,
-        totalCosts,
-        profit,
-        fixedCosts: breakEvenData.fixedCosts,
-        variableCosts: units * breakEvenData.variableCostPerUnit
-      };
-    });
-  }, [breakEvenData]);
-
   // Portfolio allocation data
   const portfolioData = useMemo(() => {
     if (!results) return [];
@@ -113,29 +78,6 @@ const AdvancedFinancialModels: React.FC<AdvancedFinancialModelsProps> = ({ formD
       { name: language === 'el' ? 'Μετρητά' : 'Cash', value: totalInvestment * 0.1, color: '#f59e0b' }
     ];
   }, [results, language]);
-
-  // Risk analysis data
-  const riskAnalysisData = useMemo(() => {
-    return Array.from({ length: 12 }, (_, i) => {
-      const month = i + 1;
-      const volatility = 0.15; // 15% volatility
-      const expectedReturn = 0.08; // 8% expected annual return
-      
-      const monthlyReturn = expectedReturn / 12;
-      const randomFactor = (Math.random() - 0.5) * volatility;
-      const actualReturn = monthlyReturn + randomFactor;
-      
-      return {
-        month: language === 'el' 
-          ? ['Ιαν', 'Φεβ', 'Μαρ', 'Απρ', 'Μαϊ', 'Ιουν', 'Ιουλ', 'Αυγ', 'Σεπ', 'Οκτ', 'Νοε', 'Δεκ'][i]
-          : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i],
-        expectedReturn: monthlyReturn * 100,
-        actualReturn: actualReturn * 100,
-        volatility: volatility * 100,
-        cumulativeReturn: (1 + actualReturn) * 100
-      };
-    });
-  }, [language]);
 
   // Custom tooltip component
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -165,21 +107,15 @@ const AdvancedFinancialModels: React.FC<AdvancedFinancialModelsProps> = ({ formD
       </div>
 
       <Tabs defaultValue="growth" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="growth" className="text-xs">
             {language === 'el' ? 'Ανάπτυξη' : 'Growth'}
           </TabsTrigger>
           <TabsTrigger value="present" className="text-xs">
             {language === 'el' ? 'Παρ. Αξία' : 'Present Val.'}
           </TabsTrigger>
-          <TabsTrigger value="breakeven" className="text-xs">
-            {language === 'el' ? 'Νεκρό Σημείο' : 'Break-Even'}
-          </TabsTrigger>
           <TabsTrigger value="portfolio" className="text-xs">
             {language === 'el' ? 'Χαρτοφυλάκιο' : 'Portfolio'}
-          </TabsTrigger>
-          <TabsTrigger value="risk" className="text-xs">
-            {language === 'el' ? 'Κίνδυνος' : 'Risk'}
           </TabsTrigger>
         </TabsList>
 
@@ -327,14 +263,39 @@ const AdvancedFinancialModels: React.FC<AdvancedFinancialModelsProps> = ({ formD
                     fill="url(#pvGradient)"
                     name={language === 'el' ? 'Παρούσα Αξία' : 'Present Value'}
                   />
-                  <Line 
-                    type="monotone" 
-                    dataKey="futureValue" 
-                    stroke="#ef4444" 
-                    strokeDasharray="5 5"
-                    name={language === 'el' ? 'Μελλοντική Αξία' : 'Future Value'}
-                  />
                 </AreaChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="portfolio" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <PieChartIcon className="w-5 h-5 text-purple-600" />
+                <span>{language === 'el' ? 'Κατανομή Χαρτοφυλακίου' : 'Portfolio Allocation'}</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={portfolioData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={100}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {portfolioData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend />
+                </PieChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
