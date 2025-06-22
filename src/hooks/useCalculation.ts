@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 
 interface Worker {
@@ -6,8 +7,17 @@ interface Worker {
   hours: number;
 }
 
+interface ProcessingPhase {
+  id: string;
+  name: string;
+  wastePercentage: number;
+  addedWeight: number; // can be negative for loss, positive for glazing
+  description: string;
+}
+
 interface FormData {
   productName: string;
+  productType: 'fish' | 'squid' | 'octopus' | 'other';
   purchasePrice: number;
   quantity: number;
   waste: number;
@@ -35,6 +45,17 @@ interface FormData {
   destinationAddress: string;
   routeCalculated: boolean;
   estimatedDuration: string;
+  // Premium fields
+  batchNumber: string;
+  supplierName: string;
+  processingPhases: ProcessingPhase[];
+  targetSellingPrice: number;
+  minimumMargin: number;
+  storageTemperature: number;
+  shelfLife: number;
+  certifications: string[];
+  customerPrice: number;
+  seasonalMultiplier: number;
 }
 
 interface CalculationResults {
@@ -50,11 +71,32 @@ interface CalculationResults {
   transportCost: number;
   additionalCosts: number;
   vatAmount: number;
+  // Premium results
+  finalProcessedWeight: number;
+  totalWastePercentage: number;
+  costBreakdown: Array<{
+    category: string;
+    amount: number;
+    percentage: number;
+  }>;
+  recommendedSellingPrice: number;
+  competitorAnalysis: {
+    ourPrice: number;
+    competitor1Diff: number;
+    competitor2Diff: number;
+    marketPosition: 'competitive' | 'expensive' | 'cheap';
+  };
+  profitAnalysis: {
+    breakEvenPrice: number;
+    marginAtCurrentPrice: number;
+    recommendedMargin: number;
+  };
 }
 
 export const useCalculation = () => {
   const [formData, setFormData] = useState<Partial<FormData>>({
     productName: '',
+    productType: 'fish',
     purchasePrice: 0,
     quantity: 1,
     waste: 0,
@@ -81,7 +123,21 @@ export const useCalculation = () => {
     originAddress: '',
     destinationAddress: '',
     routeCalculated: false,
-    estimatedDuration: ''
+    estimatedDuration: '',
+    // Premium defaults
+    batchNumber: '',
+    supplierName: '',
+    processingPhases: [
+      { id: '1', name: 'Καθάρισμα', wastePercentage: 20, addedWeight: 0, description: 'Αφαίρεση μη εδώδιμων μερών' },
+      { id: '2', name: 'Γλασσάρισμα', wastePercentage: 0, addedWeight: 15, description: 'Προσθήκη προστατευτικού πάγου' }
+    ],
+    targetSellingPrice: 0,
+    minimumMargin: 15,
+    storageTemperature: -18,
+    shelfLife: 365,
+    certifications: [],
+    customerPrice: 0,
+    seasonalMultiplier: 1
   });
 
   const [results, setResults] = useState<CalculationResults | null>(null);
@@ -98,8 +154,30 @@ export const useCalculation = () => {
     await new Promise(resolve => setTimeout(resolve, 800));
 
     try {
-      const netWeight = (formData.quantity || 0) * (1 - (formData.waste || 0) / 100);
-      const finalWeight = netWeight * (1 + (formData.glazingPercent || 0) / 100);
+      // Advanced processing calculation with multiple phases
+      let currentWeight = formData.quantity || 0;
+      let totalWastePercentage = 0;
+      
+      // Apply processing phases
+      if (formData.processingPhases && formData.processingPhases.length > 0) {
+        formData.processingPhases.forEach(phase => {
+          if (phase.wastePercentage > 0) {
+            const waste = currentWeight * (phase.wastePercentage / 100);
+            currentWeight -= waste;
+            totalWastePercentage += phase.wastePercentage;
+          }
+          if (phase.addedWeight !== 0) {
+            currentWeight += currentWeight * (phase.addedWeight / 100);
+          }
+        });
+      } else {
+        // Fallback to simple calculation
+        const netWeight = currentWeight * (1 - (formData.waste || 0) / 100);
+        currentWeight = netWeight * (1 + (formData.glazingPercent || 0) / 100);
+        totalWastePercentage = formData.waste || 0;
+      }
+
+      const finalProcessedWeight = currentWeight;
       
       const purchaseCost = (formData.purchasePrice || 0) * (formData.quantity || 0);
       
@@ -129,28 +207,74 @@ export const useCalculation = () => {
       const vatAmount = totalCost * ((formData.vatPercent || 0) / 100);
       const totalCostWithVat = totalCost + vatAmount;
       
-      const sellingPrice = totalCostWithVat * (1 + (formData.profitMargin || 0) / 100);
-      const sellingPricePerKg = sellingPrice / Math.max(finalWeight, 0.001); // Prevent division by zero
+      // Apply seasonal multiplier
+      const seasonalAdjustment = (formData.seasonalMultiplier || 1);
+      const adjustedCost = totalCostWithVat * seasonalAdjustment;
       
-      const profitPerKg = sellingPricePerKg - (totalCostWithVat / Math.max(finalWeight, 0.001));
+      const sellingPrice = adjustedCost * (1 + (formData.profitMargin || 0) / 100);
+      const sellingPricePerKg = sellingPrice / Math.max(finalProcessedWeight, 0.001);
+      
+      const profitPerKg = sellingPricePerKg - (adjustedCost / Math.max(finalProcessedWeight, 0.001));
+
+      // Cost breakdown for premium analysis
+      const costBreakdown = [
+        { category: 'Αγορά', amount: purchaseCost, percentage: (purchaseCost / totalCost) * 100 },
+        { category: 'Εργασία', amount: laborCost, percentage: (laborCost / totalCost) * 100 },
+        { category: 'Συσκευασία', amount: packagingCost, percentage: (packagingCost / totalCost) * 100 },
+        { category: 'Μεταφορά', amount: transportCost, percentage: (transportCost / totalCost) * 100 },
+        { category: 'Λοιπά', amount: additionalCosts, percentage: (additionalCosts / totalCost) * 100 }
+      ].filter(item => item.amount > 0);
+
+      // Competitor analysis
+      const competitor1Diff = (formData.competitor1 || 0) - sellingPricePerKg;
+      const competitor2Diff = (formData.competitor2 || 0) - sellingPricePerKg;
+      let marketPosition: 'competitive' | 'expensive' | 'cheap' = 'competitive';
+      
+      if (competitor1Diff > 0.5 || competitor2Diff > 0.5) {
+        marketPosition = 'cheap';
+      } else if (competitor1Diff < -0.5 || competitor2Diff < -0.5) {
+        marketPosition = 'expensive';
+      }
+
+      // Profit analysis
+      const breakEvenPrice = adjustedCost / Math.max(finalProcessedWeight, 0.001);
+      const marginAtCurrentPrice = ((sellingPricePerKg - breakEvenPrice) / sellingPricePerKg) * 100;
+      const recommendedMargin = Math.max(formData.minimumMargin || 15, 20);
+      
+      // Recommended selling price based on market analysis
+      const recommendedSellingPrice = breakEvenPrice * (1 + recommendedMargin / 100);
 
       setResults({
         totalCost,
-        totalCostWithVat,
+        totalCostWithVat: adjustedCost,
         sellingPrice: sellingPricePerKg,
         profitPerKg,
         profitMargin: formData.profitMargin || 0,
-        netWeight: finalWeight,
+        netWeight: finalProcessedWeight,
         purchaseCost,
         laborCost,
         packagingCost,
         transportCost,
         additionalCosts,
-        vatAmount
+        vatAmount,
+        finalProcessedWeight,
+        totalWastePercentage,
+        costBreakdown,
+        recommendedSellingPrice,
+        competitorAnalysis: {
+          ourPrice: sellingPricePerKg,
+          competitor1Diff,
+          competitor2Diff,
+          marketPosition
+        },
+        profitAnalysis: {
+          breakEvenPrice,
+          marginAtCurrentPrice,
+          recommendedMargin
+        }
       });
     } catch (error) {
       console.error('Calculation error:', error);
-      // Reset results on error
       setResults(null);
     } finally {
       setIsCalculating(false);
@@ -160,6 +284,7 @@ export const useCalculation = () => {
   const resetForm = useCallback(() => {
     setFormData({
       productName: '',
+      productType: 'fish',
       purchasePrice: 0,
       quantity: 1,
       waste: 0,
@@ -186,7 +311,20 @@ export const useCalculation = () => {
       originAddress: '',
       destinationAddress: '',
       routeCalculated: false,
-      estimatedDuration: ''
+      estimatedDuration: '',
+      batchNumber: '',
+      supplierName: '',
+      processingPhases: [
+        { id: '1', name: 'Καθάρισμα', wastePercentage: 20, addedWeight: 0, description: 'Αφαίρεση μη εδώδιμων μερών' },
+        { id: '2', name: 'Γλασσάρισμα', wastePercentage: 0, addedWeight: 15, description: 'Προσθήκη προστατευτικού πάγου' }
+      ],
+      targetSellingPrice: 0,
+      minimumMargin: 15,
+      storageTemperature: -18,
+      shelfLife: 365,
+      certifications: [],
+      customerPrice: 0,
+      seasonalMultiplier: 1
     });
     setResults(null);
   }, []);
