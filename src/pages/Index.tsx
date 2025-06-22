@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,6 +18,7 @@ import StatisticalModels from '@/components/StatisticalModels';
 import FileUpload from '@/components/FileUpload';
 import ResultsSection from '@/components/ResultsSection';
 import PDFExport from '@/components/PDFExport';
+import AdvancedFinancialModels from '@/components/AdvancedFinancialModels';
 
 const Index = () => {
   const { language, setLanguage } = useLanguage();
@@ -168,6 +168,8 @@ const Index = () => {
                         <ScenarioAnalysis baseResults={results} formData={formData} />
                         
                         <RevenueForecasting formData={formData} results={results} />
+
+                        <AdvancedFinancialModels formData={formData} results={results} />
                       </div>
                     </TabsContent>
 

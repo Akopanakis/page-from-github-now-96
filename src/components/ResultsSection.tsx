@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calculator, TrendingUp, AlertTriangle, CheckCircle, Info, RotateCcw } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ResultsSectionProps {
   results: any;
@@ -13,6 +14,8 @@ interface ResultsSectionProps {
 }
 
 const ResultsSection: React.FC<ResultsSectionProps> = ({ results, formData, isCalculating, onCalculate, onReset }) => {
+  const { language } = useLanguage();
+
   const getRecommendations = () => {
     if (!results) return [];
     
@@ -22,19 +25,25 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({ results, formData, isCa
       recommendations.push({
         type: 'warning',
         icon: AlertTriangle,
-        text: 'Το περιθώριο κέρδους είναι χαμηλό. Εξετάστε μείωση κόστους ή αύξηση τιμής.'
+        text: language === 'el' 
+          ? 'Το περιθώριο κέρδους είναι χαμηλό. Εξετάστε μείωση κόστους ή αύξηση τιμής.'
+          : 'Low profit margin. Consider cost reduction or price increase.'
       });
     } else if (results.profitMargin > 40) {
       recommendations.push({
         type: 'success',
         icon: CheckCircle,
-        text: 'Εξαιρετικό περιθώριο κέρδους! Η τιμολόγησή σας είναι ανταγωνιστική.'
+        text: language === 'el'
+          ? 'Εξαιρετικό περιθώριο κέρδους! Η τιμολόγησή σας είναι ανταγωνιστική.'
+          : 'Excellent profit margin! Your pricing is competitive.'
       });
     } else {
       recommendations.push({
         type: 'info',
         icon: Info,
-        text: 'Καλό περιθώριο κέρδους. Η τιμολόγησή σας είναι ισορροπημένη.'
+        text: language === 'el'
+          ? 'Καλό περιθώριο κέρδους. Η τιμολόγησή σας είναι ισορροπημένη.'
+          : 'Good profit margin. Your pricing is balanced.'
       });
     }
 
@@ -42,7 +51,9 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({ results, formData, isCa
       recommendations.push({
         type: 'warning',
         icon: AlertTriangle,
-        text: 'Τα λειτουργικά κόστη είναι υψηλά σε σχέση με το κόστος αγοράς.'
+        text: language === 'el'
+          ? 'Τα λειτουργικά κόστη είναι υψηλά σε σχέση με το κόστος αγοράς.'
+          : 'Operating costs are high relative to purchase cost.'
       });
     }
 
@@ -52,17 +63,25 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({ results, formData, isCa
   if (!results) {
     return (
       <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-center space-x-2 text-2xl">
+        <Card className="shadow-lg border-0">
+          <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+            <CardTitle className="flex items-center justify-center space-x-2 text-xl">
               <Calculator className="w-6 h-6" />
-              <span>Κοστολόγηση Προϊόντος</span>
+              <span>{language === 'el' ? 'Κοστολόγηση Προϊόντος' : 'Product Costing'}</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="text-center py-12">
-            <p className="text-gray-500 mb-6">Συμπληρώστε τα στοιχεία και πατήστε υπολογισμό για να δείτε τα αποτελέσματα</p>
+            <p className="text-gray-500 mb-6">
+              {language === 'el' 
+                ? 'Συμπληρώστε τα στοιχεία και πατήστε υπολογισμό για να δείτε τα αποτελέσματα'
+                : 'Fill in the details and click calculate to see the results'
+              }
+            </p>
             <Button onClick={onCalculate} disabled={isCalculating} className="w-full max-w-xs">
-              {isCalculating ? 'Υπολογισμός...' : 'Υπολογισμός Κόστους'}
+              {isCalculating 
+                ? (language === 'el' ? 'Υπολογισμός...' : 'Calculating...') 
+                : (language === 'el' ? 'Υπολογισμός Κόστους' : 'Calculate Cost')
+              }
             </Button>
           </CardContent>
         </Card>
@@ -74,60 +93,63 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({ results, formData, isCa
 
   return (
     <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
-      <Card>
-        <CardHeader>
+      <Card className="shadow-lg border-0">
+        <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
           <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center space-x-2 text-2xl">
-              <Calculator className="w-6 h-6" />
-              <span>Αποτελέσματα Κοστολόγησης</span>
+            <div className="flex items-center space-x-2">
+              <Calculator className="w-5 h-5" />
+              <span>{language === 'el' ? 'Αποτελέσματα Κοστολόγησης' : 'Costing Results'}</span>
             </div>
             <div className="flex space-x-2">
-              <Button onClick={onCalculate} disabled={isCalculating} size="sm">
-                {isCalculating ? 'Υπολογισμός...' : 'Επανυπολογισμός'}
+              <Button onClick={onCalculate} disabled={isCalculating} size="sm" variant="outline" className="text-blue-600 border-blue-200 hover:bg-blue-50">
+                {isCalculating 
+                  ? (language === 'el' ? 'Υπολογισμός...' : 'Calculating...') 
+                  : (language === 'el' ? 'Επανυπολογισμός' : 'Recalculate')
+                }
               </Button>
-              <Button onClick={onReset} variant="outline" size="sm">
+              <Button onClick={onReset} variant="outline" size="sm" className="text-blue-600 border-blue-200 hover:bg-blue-50">
                 <RotateCcw className="w-4 h-4 mr-2" />
-                Επαναφορά
+                {language === 'el' ? 'Επαναφορά' : 'Reset'}
               </Button>
             </div>
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center border-l-4 border-l-blue-600">
+        <CardContent className="p-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-6 text-center">
               <div className="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-2">
-                Συνολικό Κόστος
+                {language === 'el' ? 'Συνολικό Κόστος' : 'Total Cost'}
               </div>
-              <div className="text-3xl font-bold text-slate-900 flex items-center justify-center space-x-2">
-                <Calculator className="w-6 h-6" />
+              <div className="text-2xl font-bold text-slate-900 flex items-center justify-center space-x-2">
+                <Calculator className="w-5 h-5" />
                 <span>{results.totalCost.toFixed(2)}€</span>
               </div>
             </div>
 
-            <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center border-l-4 border-l-green-600">
+            <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-xl p-6 text-center">
               <div className="text-xs font-semibold text-green-600 uppercase tracking-wide mb-2">
-                Τιμή Πώλησης
+                {language === 'el' ? 'Τιμή Πώλησης' : 'Selling Price'}
               </div>
-              <div className="text-3xl font-bold text-slate-900 flex items-center justify-center space-x-2">
-                <TrendingUp className="w-6 h-6" />
+              <div className="text-2xl font-bold text-slate-900 flex items-center justify-center space-x-2">
+                <TrendingUp className="w-5 h-5" />
                 <span>{results.sellingPrice.toFixed(2)}€</span>
               </div>
             </div>
 
-            <div className="bg-purple-50 border border-purple-200 rounded-lg p-6 text-center border-l-4 border-l-purple-600">
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-xl p-6 text-center">
               <div className="text-xs font-semibold text-purple-600 uppercase tracking-wide mb-2">
-                Κέρδος/Κιλό
+                {language === 'el' ? 'Κέρδος/Κιλό' : 'Profit/Kg'}
               </div>
-              <div className="text-3xl font-bold text-slate-900">
+              <div className="text-2xl font-bold text-slate-900">
                 {results.profitPerKg.toFixed(2)}€
               </div>
             </div>
 
-            <div className="bg-orange-50 border border-orange-200 rounded-lg p-6 text-center border-l-4 border-l-orange-600">
+            <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-xl p-6 text-center">
               <div className="text-xs font-semibold text-orange-600 uppercase tracking-wide mb-2">
-                Περιθώριο %
+                {language === 'el' ? 'Περιθώριο %' : 'Margin %'}
               </div>
-              <div className="text-3xl font-bold text-slate-900">
+              <div className="text-2xl font-bold text-slate-900">
                 {results.profitMargin.toFixed(1)}%
               </div>
             </div>
@@ -136,61 +158,73 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({ results, formData, isCa
       </Card>
 
       {/* Cost Breakdown */}
-      <Card>
-        <CardHeader>
+      <Card className="shadow-lg border-0">
+        <CardHeader className="bg-gradient-to-r from-slate-600 to-slate-700 text-white">
           <CardTitle className="flex items-center space-x-2">
             <TrendingUp className="w-5 h-5" />
-            <span>Ανάλυση Κόστους</span>
+            <span>{language === 'el' ? 'Ανάλυση Κόστους' : 'Cost Analysis'}</span>
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="flex justify-between items-center p-4 bg-slate-50 border border-slate-200 rounded-lg border-l-4 border-l-blue-600">
-              <span className="font-medium text-slate-600">Κόστος Αγοράς</span>
+            <div className="flex justify-between items-center p-4 bg-slate-50 border border-slate-200 rounded-lg">
+              <span className="font-medium text-slate-600">
+                {language === 'el' ? 'Κόστος Αγοράς' : 'Purchase Cost'}
+              </span>
               <span className="font-bold text-slate-900">{results.purchaseCost.toFixed(2)}€</span>
             </div>
-            <div className="flex justify-between items-center p-4 bg-slate-50 border border-slate-200 rounded-lg border-l-4 border-l-blue-600">
-              <span className="font-medium text-slate-600">Κόστος Εργασίας</span>
+            <div className="flex justify-between items-center p-4 bg-slate-50 border border-slate-200 rounded-lg">
+              <span className="font-medium text-slate-600">
+                {language === 'el' ? 'Κόστος Εργασίας' : 'Labor Cost'}
+              </span>
               <span className="font-bold text-slate-900">{results.laborCost.toFixed(2)}€</span>
             </div>
-            <div className="flex justify-between items-center p-4 bg-slate-50 border border-slate-200 rounded-lg border-l-4 border-l-blue-600">
-              <span className="font-medium text-slate-600">Κόστος Συσκευασίας</span>
+            <div className="flex justify-between items-center p-4 bg-slate-50 border border-slate-200 rounded-lg">
+              <span className="font-medium text-slate-600">
+                {language === 'el' ? 'Κόστος Συσκευασίας' : 'Packaging Cost'}
+              </span>
               <span className="font-bold text-slate-900">{results.packagingCost.toFixed(2)}€</span>
             </div>
-            <div className="flex justify-between items-center p-4 bg-slate-50 border border-slate-200 rounded-lg border-l-4 border-l-blue-600">
-              <span className="font-medium text-slate-600">Κόστος Μεταφοράς</span>
+            <div className="flex justify-between items-center p-4 bg-slate-50 border border-slate-200 rounded-lg">
+              <span className="font-medium text-slate-600">
+                {language === 'el' ? 'Κόστος Μεταφοράς' : 'Transport Cost'}
+              </span>
               <span className="font-bold text-slate-900">{results.transportCost.toFixed(2)}€</span>
             </div>
-            <div className="flex justify-between items-center p-4 bg-slate-50 border border-slate-200 rounded-lg border-l-4 border-l-blue-600">
-              <span className="font-medium text-slate-600">Επιπλέον Κόστη</span>
+            <div className="flex justify-between items-center p-4 bg-slate-50 border border-slate-200 rounded-lg">
+              <span className="font-medium text-slate-600">
+                {language === 'el' ? 'Επιπλέον Κόστη' : 'Additional Costs'}
+              </span>
               <span className="font-bold text-slate-900">{results.additionalCosts.toFixed(2)}€</span>
             </div>
-            <div className="flex justify-between items-center p-4 bg-slate-50 border border-slate-200 rounded-lg border-l-4 border-l-blue-600">
-              <span className="font-medium text-slate-600">Καθαρό Βάρος</span>
-              <span className="font-bold text-slate-900">{results.netWeight.toFixed(2)} κιλά</span>
+            <div className="flex justify-between items-center p-4 bg-slate-50 border border-slate-200 rounded-lg">
+              <span className="font-medium text-slate-600">
+                {language === 'el' ? 'Καθαρό Βάρος' : 'Net Weight'}
+              </span>
+              <span className="font-bold text-slate-900">{results.netWeight.toFixed(2)} {language === 'el' ? 'κιλά' : 'kg'}</span>
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Recommendations */}
-      <Card>
-        <CardHeader>
+      <Card className="shadow-lg border-0">
+        <CardHeader className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white">
           <CardTitle className="flex items-center space-x-2">
             <CheckCircle className="w-5 h-5" />
-            <span>Συστάσεις</span>
+            <span>{language === 'el' ? 'Συστάσεις' : 'Recommendations'}</span>
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           <div className="space-y-3">
             {recommendations.map((rec, index) => {
               const IconComponent = rec.icon;
-              const bgColor = rec.type === 'success' ? 'bg-green-50 border-green-200 text-green-700 border-l-green-600' :
-                             rec.type === 'warning' ? 'bg-yellow-50 border-yellow-200 text-yellow-700 border-l-yellow-600' :
-                             'bg-blue-50 border-blue-200 text-blue-700 border-l-blue-600';
+              const bgColor = rec.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' :
+                             rec.type === 'warning' ? 'bg-yellow-50 border-yellow-200 text-yellow-700' :
+                             'bg-blue-50 border-blue-200 text-blue-700';
               
               return (
-                <div key={index} className={`flex items-center space-x-3 p-4 rounded-lg border border-l-4 ${bgColor}`}>
+                <div key={index} className={`flex items-center space-x-3 p-4 rounded-lg border ${bgColor}`}>
                   <IconComponent className="w-5 h-5 flex-shrink-0" />
                   <span className="font-medium">{rec.text}</span>
                 </div>
@@ -202,23 +236,27 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({ results, formData, isCa
 
       {/* Competitor Comparison */}
       {(formData.competitor1 || formData.competitor2) && (
-        <Card>
-          <CardHeader>
+        <Card className="shadow-lg border-0">
+          <CardHeader className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
             <CardTitle className="flex items-center space-x-2">
               <TrendingUp className="w-5 h-5" />
-              <span>Σύγκριση με Ανταγωνισμό</span>
+              <span>{language === 'el' ? 'Σύγκριση με Ανταγωνισμό' : 'Competitor Comparison'}</span>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-                <h5 className="text-sm font-semibold text-blue-600 mb-2">Η Τιμή Μας</h5>
+                <h5 className="text-sm font-semibold text-blue-600 mb-2">
+                  {language === 'el' ? 'Η Τιμή Μας' : 'Our Price'}
+                </h5>
                 <div className="text-2xl font-bold text-slate-900">{results.sellingPrice.toFixed(2)}€</div>
               </div>
               
               {formData.competitor1 && (
                 <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 text-center">
-                  <h5 className="text-sm font-semibold text-slate-600 mb-2">Ανταγωνιστής 1</h5>
+                  <h5 className="text-sm font-semibold text-slate-600 mb-2">
+                    {language === 'el' ? 'Ανταγωνιστής 1' : 'Competitor 1'}
+                  </h5>
                   <div className="text-2xl font-bold text-slate-900">{formData.competitor1.toFixed(2)}€</div>
                   <div className="text-sm font-semibold mt-1">
                     {formData.competitor1 > results.sellingPrice ? (
@@ -232,7 +270,9 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({ results, formData, isCa
               
               {formData.competitor2 && (
                 <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 text-center">
-                  <h5 className="text-sm font-semibold text-slate-600 mb-2">Ανταγωνιστής 2</h5>
+                  <h5 className="text-sm font-semibold text-slate-600 mb-2">
+                    {language === 'el' ? 'Ανταγωνιστής 2' : 'Competitor 2'}
+                  </h5>
                   <div className="text-2xl font-bold text-slate-900">{formData.competitor2.toFixed(2)}€</div>
                   <div className="text-sm font-semibold mt-1">
                     {formData.competitor2 > results.sellingPrice ? (

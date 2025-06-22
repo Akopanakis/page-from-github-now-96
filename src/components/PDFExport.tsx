@@ -1,7 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { FileText, Download } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { FileText, Download, BarChart3, PieChart, TrendingUp } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
 
@@ -11,7 +13,13 @@ interface PDFExportProps {
 }
 
 const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
+  const [selectedCharts, setSelectedCharts] = useState({
+    costBreakdown: true,
+    profitAnalysis: true,
+    competitorComparison: false,
+    financialForecast: false
+  });
 
   const exportToPDF = async () => {
     try {
@@ -21,8 +29,40 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
       const basicDataLabel = language === 'el' ? 'Βασικά Στοιχεία' : 'Basic Data';
       const resultsLabel = language === 'el' ? 'Αποτελέσματα' : 'Results';
       const costAnalysisLabel = language === 'el' ? 'Ανάλυση Κόστους' : 'Cost Analysis';
-      const explanationLabel = language === 'el' ? 'Επεξήγηση Αποτελεσμάτων' : 'Results Explanation';
+      const summaryLabel = language === 'el' ? 'Περίληψη με Βασικά Σημεία' : 'Summary with Key Points';
+      const keyPointsLabel = language === 'el' ? 'Βασικά Σημεία:' : 'Key Points:';
       
+      // Generate chart sections if selected
+      const chartSections = [];
+      
+      if (selectedCharts.costBreakdown) {
+        chartSections.push(`
+          <div class="section">
+            <h2>${language === 'el' ? 'Ανάλυση Κόστους' : 'Cost Breakdown'}</h2>
+            <div class="chart-explanation">
+              <p>${language === 'el' 
+                ? 'Το γράφημα δείχνει την κατανομή των κοστών ανά κατηγορία. Το μεγαλύτερο κόστος προέρχεται από την αγορά πρώτων υλών.'
+                : 'The chart shows cost distribution by category. The largest cost comes from raw material purchase.'
+              }</p>
+            </div>
+          </div>
+        `);
+      }
+
+      if (selectedCharts.profitAnalysis) {
+        chartSections.push(`
+          <div class="section">
+            <h2>${language === 'el' ? 'Ανάλυση Κερδοφορίας' : 'Profitability Analysis'}</h2>
+            <div class="chart-explanation">
+              <p>${language === 'el' 
+                ? 'Η ανάλυση δείχνει το περιθώριο κέρδους και τη σχέση κόστους-εσόδων. Υψηλότερο περιθώριο σημαίνει καλύτερη κερδοφορία.'
+                : 'The analysis shows profit margin and cost-revenue relationship. Higher margin means better profitability.'
+              }</p>
+            </div>
+          </div>
+        `);
+      }
+
       // Create comprehensive HTML content for PDF
       const htmlContent = `
         <!DOCTYPE html>
@@ -95,23 +135,31 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
               text-align: center;
               margin: 10px 0;
             }
-            .explanation {
+            .summary {
               background: #f0fdf4;
               border: 1px solid #bbf7d0;
               padding: 20px;
               border-radius: 8px;
               margin-top: 20px;
             }
-            .explanation h3 {
+            .summary h3 {
               color: #15803d;
               margin-bottom: 15px;
             }
-            .explanation ul {
+            .summary ul {
               margin: 10px 0;
               padding-left: 20px;
             }
-            .explanation li {
-              margin: 5px 0;
+            .summary li {
+              margin: 8px 0;
+              line-height: 1.5;
+            }
+            .chart-explanation {
+              background: #fef3c7;
+              border: 1px solid #fcd34d;
+              padding: 15px;
+              border-radius: 6px;
+              margin-top: 15px;
             }
             .footer {
               margin-top: 40px;
@@ -121,6 +169,17 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
               border-top: 1px solid #e2e8f0;
               padding-top: 20px;
             }
+            .key-points {
+              background: #eff6ff;
+              border: 1px solid #bfdbfe;
+              padding: 20px;
+              border-radius: 8px;
+              margin: 20px 0;
+            }
+            .key-points h4 {
+              color: #1e40af;
+              margin-bottom: 10px;
+            }
           </style>
         </head>
         <body>
@@ -128,6 +187,35 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
             <h1>${title}</h1>
             <p><strong>${productLabel}</strong> ${formData.productName || (language === 'el' ? 'Μη καθορισμένο' : 'Not specified')}</p>
             <p><strong>${dateLabel}</strong> ${new Date().toLocaleDateString(language === 'el' ? 'el-GR' : 'en-US')}</p>
+          </div>
+          
+          <div class="summary">
+            <h3>${summaryLabel}</h3>
+            <div class="key-points">
+              <h4>${keyPointsLabel}</h4>
+              <ul>
+                <li><strong>${language === 'el' ? 'Υπολογισμός ρυθμού ανάπτυξης:' : 'Growth rate calculation:'}</strong> ${language === 'el' 
+                  ? 'Ο υπολογισμός γίνεται με τον τύπο: (Τελική Αξία / Αρχική Αξία) - 1. Απαιτούνται η τελική και η αρχική τιμή για τον υπολογισμό του ποσοστού ανάπτυξης.'
+                  : 'Calculated using: (Final Value / Initial Value) - 1. Requires final and initial values to calculate growth percentage.'
+                }</li>
+                <li><strong>${language === 'el' ? 'Επενδυτική στρατηγική:' : 'Investment strategy:'}</strong> ${language === 'el' 
+                  ? 'Λήψη επενδυτικών αποφάσεων με βάση τον υπολογισμό του ποσοστού ανάπτυξης και την ανάλυση κινδύνου.'
+                  : 'Making investment decisions based on growth rate calculation and risk analysis.'
+                }</li>
+                <li><strong>${language === 'el' ? 'Παρούσα Αξία (PV):' : 'Present Value (PV):'}</strong> ${language === 'el' 
+                  ? 'Διερευνάται η έννοια της παρούσας αξίας για την αξιολόγηση επενδυτικών επιλογών.'
+                  : 'Exploring the concept of present value to evaluate investment options.'
+                }</li>
+                <li><strong>${language === 'el' ? 'Κόστος Ευκαιρίας:' : 'Opportunity Cost:'}</strong> ${language === 'el' 
+                  ? 'Η απόδοση που χάνετε επιλέγοντας μια επένδυση αντί για την καλύτερη εναλλακτική.'
+                  : 'The return you give up by choosing one investment over the best alternative.'
+                }</li>
+                <li><strong>${language === 'el' ? 'Ανάλυση Νεκρού Σημείου:' : 'Break-even Analysis:'}</strong> ${language === 'el' 
+                  ? 'Δείχνει εύκολα την ποσότητα που απαιτείται για να καλύψει το σταθερό κόστος.'
+                  : 'Easily shows the quantity required to cover fixed costs.'
+                }</li>
+              </ul>
+            </div>
           </div>
           
           <div class="section">
@@ -146,8 +234,8 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
                 <strong>${formData.waste || 0}%</strong>
               </div>
               <div class="cost-item">
-                <span>${language === 'el' ? 'Πάγος:' : 'Ice:'}</span>
-                <strong>${formData.icePercent || 0}%</strong>
+                <span>${language === 'el' ? 'Ποσοστό Γλασσαρίσματος:' : 'Glazing Percentage:'}</span>
+                <strong>${formData.glazingPercent || 0}%</strong>
               </div>
               <div class="cost-item">
                 <span>${language === 'el' ? 'ΦΠΑ:' : 'VAT:'}</span>
@@ -218,44 +306,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
             </div>
           </div>
 
-          <div class="explanation">
-            <h3>${explanationLabel}</h3>
-            <p><strong>${language === 'el' ? 'Ανάλυση Κοστολόγησης:' : 'Costing Analysis:'}</strong></p>
-            <ul>
-              <li>${language === 'el' 
-                ? `Το άμεσο κόστος (${((results?.purchaseCost || 0) + (results?.laborCost || 0)).toFixed(2)}€) περιλαμβάνει πρώτες ύλες και εργασία`
-                : `Direct cost (€${((results?.purchaseCost || 0) + (results?.laborCost || 0)).toFixed(2)}) includes raw materials and labor`
-              }</li>
-              <li>${language === 'el' 
-                ? `Το έμμεσο κόστος (${((results?.transportCost || 0) + (results?.additionalCosts || 0)).toFixed(2)}€) περιλαμβάνει μεταφορά και γενικά έξοδα`
-                : `Indirect cost (€${((results?.transportCost || 0) + (results?.additionalCosts || 0)).toFixed(2)}) includes transport and general expenses`
-              }</li>
-              <li>${language === 'el' 
-                ? `Το περιθώριο κέρδους ${formData.profitMargin || 0}% αντιστοιχεί σε κέρδος ${results?.profitPerKg?.toFixed(2) || 0}€ ανά κιλό`
-                : `Profit margin of ${formData.profitMargin || 0}% equals €${results?.profitPerKg?.toFixed(2) || 0} profit per kg`
-              }</li>
-              <li>${language === 'el' 
-                ? `Η τελική τιμή πώλησης διασφαλίζει κερδοφορία και κάλυψη όλων των κοστών`
-                : `Final selling price ensures profitability and covers all costs`
-              }</li>
-            </ul>
-            
-            <p><strong>${language === 'el' ? 'Συστάσεις:' : 'Recommendations:'}</strong></p>
-            <ul>
-              <li>${language === 'el' 
-                ? 'Παρακολουθήστε τακτικά τις αλλαγές στο κόστος πρώτων υλών'
-                : 'Monitor changes in raw material costs regularly'
-              }</li>
-              <li>${language === 'el' 
-                ? 'Εξετάστε βελτιστοποίηση των μεταφορικών κοστών'
-                : 'Consider optimizing transport costs'
-              }</li>
-              <li>${language === 'el' 
-                ? 'Αναλύστε την ανταγωνιστικότητα της τιμής στην αγορά'
-                : 'Analyze price competitiveness in the market'
-              }</li>
-            </ul>
-          </div>
+          ${chartSections.join('')}
 
           <div class="footer">
             <p>${language === 'el' ? 'Αναφορά παραχθείσα από τον Υπολογιστή Κόστους Pro' : 'Report generated by Cost Calculator Pro'}</p>
@@ -291,10 +342,70 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
   };
 
   return (
-    <Button variant="outline" size="sm" onClick={exportToPDF}>
-      <FileText className="w-4 h-4 mr-2" />
-      {t('export.pdf')}
-    </Button>
+    <Card className="shadow-lg border-0">
+      <CardHeader className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white">
+        <CardTitle className="flex items-center space-x-2">
+          <FileText className="w-5 h-5" />
+          <span>{language === 'el' ? 'Εξαγωγή Αναφοράς' : 'Export Report'}</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="p-6 space-y-4">
+        <div className="space-y-3">
+          <h4 className="font-semibold text-sm">
+            {language === 'el' ? 'Επιλέξτε γραφήματα για εξαγωγή:' : 'Select charts to export:'}
+          </h4>
+          
+          <div className="space-y-2">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="costBreakdown"
+                checked={selectedCharts.costBreakdown}
+                onCheckedChange={(checked) => 
+                  setSelectedCharts(prev => ({ ...prev, costBreakdown: checked as boolean }))
+                }
+              />
+              <label htmlFor="costBreakdown" className="text-sm flex items-center space-x-2">
+                <BarChart3 className="w-4 h-4" />
+                <span>{language === 'el' ? 'Ανάλυση Κόστους' : 'Cost Breakdown'}</span>
+              </label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="profitAnalysis"
+                checked={selectedCharts.profitAnalysis}
+                onCheckedChange={(checked) => 
+                  setSelectedCharts(prev => ({ ...prev, profitAnalysis: checked as boolean }))
+                }
+              />
+              <label htmlFor="profitAnalysis" className="text-sm flex items-center space-x-2">
+                <TrendingUp className="w-4 h-4" />
+                <span>{language === 'el' ? 'Ανάλυση Κερδοφορίας' : 'Profitability Analysis'}</span>
+              </label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="competitorComparison"
+                checked={selectedCharts.competitorComparison}
+                onCheckedChange={(checked) => 
+                  setSelectedCharts(prev => ({ ...prev, competitorComparison: checked as boolean }))
+                }
+              />
+              <label htmlFor="competitorComparison" className="text-sm flex items-center space-x-2">
+                <PieChart className="w-4 h-4" />
+                <span>{language === 'el' ? 'Σύγκριση Ανταγωνισμού' : 'Competitor Comparison'}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <Button onClick={exportToPDF} className="w-full" size="lg">
+          <Download className="w-4 h-4 mr-2" />
+          {language === 'el' ? 'Εξαγωγή Αναφοράς' : 'Export Report'}
+        </Button>
+      </CardContent>
+    </Card>
   );
 };
 
