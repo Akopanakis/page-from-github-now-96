@@ -271,7 +271,9 @@ const Index = () => {
                             
                             <RevenueForecasting formData={formData} results={results} />
 
-                            <AdvancedFinancialModels formData={formData} results={results} />
+                            {results && (
+                              <AdvancedFinancialModels formData={formData} results={results} />
+                            )}
                           </>
                         )}
                       </div>
