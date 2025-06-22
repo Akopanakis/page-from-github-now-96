@@ -187,6 +187,7 @@ const Index = () => {
           <div className="space-y-6">
             <ResultsSection 
               results={results} 
+              formData={formData}
               isCalculating={isCalculating} 
               onCalculate={calculate} 
               onReset={resetForm}
@@ -196,7 +197,6 @@ const Index = () => {
               <PDFExport 
                 formData={formData} 
                 results={results} 
-                language={language}
               />
             )}
           </div>

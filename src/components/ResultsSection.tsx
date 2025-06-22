@@ -1,15 +1,21 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calculator, TrendingUp, AlertTriangle, CheckCircle, Info } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Calculator, TrendingUp, AlertTriangle, CheckCircle, Info, RotateCcw } from 'lucide-react';
 
 interface ResultsSectionProps {
   results: any;
   formData: any;
+  isCalculating: boolean;
+  onCalculate: () => Promise<void>;
+  onReset: () => void;
 }
 
-const ResultsSection: React.FC<ResultsSectionProps> = ({ results, formData }) => {
+const ResultsSection: React.FC<ResultsSectionProps> = ({ results, formData, isCalculating, onCalculate, onReset }) => {
   const getRecommendations = () => {
+    if (!results) return [];
+    
     const recommendations = [];
     
     if (results.profitMargin < 15) {
@@ -43,15 +49,47 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({ results, formData }) =>
     return recommendations;
   };
 
+  if (!results) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-center space-x-2 text-2xl">
+              <Calculator className="w-6 h-6" />
+              <span>Κοστολόγηση Προϊόντος</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-center py-12">
+            <p className="text-gray-500 mb-6">Συμπληρώστε τα στοιχεία και πατήστε υπολογισμό για να δείτε τα αποτελέσματα</p>
+            <Button onClick={onCalculate} disabled={isCalculating} className="w-full max-w-xs">
+              {isCalculating ? 'Υπολογισμός...' : 'Υπολογισμός Κόστους'}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const recommendations = getRecommendations();
 
   return (
     <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center justify-center space-x-2 text-2xl">
-            <Calculator className="w-6 h-6" />
-            <span>Αποτελέσματα Κοστολόγησης</span>
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center space-x-2 text-2xl">
+              <Calculator className="w-6 h-6" />
+              <span>Αποτελέσματα Κοστολόγησης</span>
+            </div>
+            <div className="flex space-x-2">
+              <Button onClick={onCalculate} disabled={isCalculating} size="sm">
+                {isCalculating ? 'Υπολογισμός...' : 'Επανυπολογισμός'}
+              </Button>
+              <Button onClick={onReset} variant="outline" size="sm">
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Επαναφορά
+              </Button>
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
