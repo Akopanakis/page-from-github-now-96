@@ -15,7 +15,7 @@ interface AdvancedFinancialModelsProps {
   results: CalculationResults;
 }
 
-const AdvancedFinancialModels = ({ formData, results }: AdvancedFinancialModelsProps) => {
+const AdvancedFinancialModels: React.FC<AdvancedFinancialModelsProps> = ({ formData, results }) => {
   const { language } = useLanguage();
   const [growthData, setGrowthData] = useState({
     initialValue: 1000,
