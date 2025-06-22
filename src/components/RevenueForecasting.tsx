@@ -1,11 +1,10 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, BarChart, Bar } from 'recharts';
 import { TrendingUp, Calendar, Users, Euro, Calculator } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import TooltipHelper from './TooltipHelper';
@@ -52,36 +51,94 @@ const RevenueForecasting: React.FC = () => {
     'Sep': 1.10, 'Oct': 1.05, 'Nov': 0.95, 'Dec': 1.00
   };
 
+  // Memoized calculation function
+  const calculateForecast = useMemo(() => {
+    return () => {
+      const data: ForecastData[] = months.map((month, index) => {
+        const monthlyGrowth = Math.pow(1 + params.growthRate / 100, index / 12);
+        const seasonal = seasonalFactors[month as keyof typeof seasonalFactors] * params.seasonalityFactor;
+        
+        let trendMultiplier = 1;
+        if (params.marketTrend === 'up') trendMultiplier = 1 + (index * 0.02);
+        else if (params.marketTrend === 'down') trendMultiplier = 1 - (index * 0.01);
+
+        const baseCustomers = params.avgCustomersPerMonth * monthlyGrowth * seasonal * trendMultiplier;
+        const baseRevenue = baseCustomers * params.avgOrderValue;
+
+        return {
+          month,
+          revenue: Math.round(baseRevenue),
+          optimistic: Math.round(baseRevenue * 1.2),
+          pessimistic: Math.round(baseRevenue * 0.8),
+          customers: Math.round(baseCustomers)
+        };
+      });
+
+      setForecastData(data);
+    };
+  }, [params, months, seasonalFactors]);
+
   useEffect(() => {
     calculateForecast();
-  }, [params, language]);
+  }, [calculateForecast]);
 
-  const calculateForecast = () => {
-    const data: ForecastData[] = months.map((month, index) => {
-      const monthlyGrowth = Math.pow(1 + params.growthRate / 100, index / 12);
-      const seasonal = seasonalFactors[month as keyof typeof seasonalFactors] * params.seasonalityFactor;
+  // Memoized summary calculations
+  const summaryData = useMemo(() => {
+    const totalRevenue = forecastData.reduce((sum, month) => sum + month.revenue, 0);
+    const avgMonthlyRevenue = totalRevenue / 12;
+    const totalCustomers = forecastData.reduce((sum, month) => sum + month.customers, 0);
+    
+    return {
+      totalRevenue,
+      avgMonthlyRevenue,
+      totalCustomers
+    };
+  }, [forecastData]);
+
+  // Quarterly data for additional chart
+  const quarterlyData = useMemo(() => {
+    if (forecastData.length === 0) return [];
+    
+    const quarters = [
+      { name: 'Q1', months: [0, 1, 2] },
+      { name: 'Q2', months: [3, 4, 5] },
+      { name: 'Q3', months: [6, 7, 8] },
+      { name: 'Q4', months: [9, 10, 11] }
+    ];
+    
+    return quarters.map(quarter => {
+      const quarterRevenue = quarter.months.reduce((sum, monthIndex) => 
+        sum + (forecastData[monthIndex]?.revenue || 0), 0
+      );
+      const quarterCustomers = quarter.months.reduce((sum, monthIndex) => 
+        sum + (forecastData[monthIndex]?.customers || 0), 0
+      );
       
-      let trendMultiplier = 1;
-      if (params.marketTrend === 'up') trendMultiplier = 1 + (index * 0.02);
-      else if (params.marketTrend === 'down') trendMultiplier = 1 - (index * 0.01);
-
-      const baseCustomers = params.avgCustomersPerMonth * monthlyGrowth * seasonal * trendMultiplier;
-      const baseRevenue = baseCustomers * params.avgOrderValue;
-
       return {
-        month,
-        revenue: Math.round(baseRevenue),
-        optimistic: Math.round(baseRevenue * 1.2),
-        pessimistic: Math.round(baseRevenue * 0.8),
-        customers: Math.round(baseCustomers)
+        quarter: quarter.name,
+        revenue: quarterRevenue,
+        customers: quarterCustomers,
+        avgOrderValue: quarterCustomers > 0 ? quarterRevenue / quarterCustomers : 0
       };
     });
+  }, [forecastData]);
 
-    setForecastData(data);
+  // Custom tooltip component
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+          <p className="font-medium">{label}</p>
+          {payload.map((entry: any, index: number) => (
+            <p key={index} style={{ color: entry.color }}>
+              {entry.name}: {typeof entry.value === 'number' ? entry.value.toLocaleString() : entry.value}€
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
   };
-
-  const totalRevenue = forecastData.reduce((sum, month) => sum + month.revenue, 0);
-  const avgMonthlyRevenue = totalRevenue / 12;
 
   return (
     <div className="space-y-6">
@@ -206,7 +263,7 @@ const RevenueForecasting: React.FC = () => {
                 <p className="text-sm font-medium text-slate-600">
                   {language === 'el' ? 'Ετήσια Έσοδα' : 'Annual Revenue'}
                 </p>
-                <p className="text-3xl font-bold text-blue-600">{totalRevenue.toLocaleString()}€</p>
+                <p className="text-3xl font-bold text-blue-600">{summaryData.totalRevenue.toLocaleString()}€</p>
                 <p className="text-xs text-slate-500 mt-1">
                   {language === 'el' ? 'Συνολικός στόχος' : 'Total target'}
                 </p>
@@ -223,7 +280,7 @@ const RevenueForecasting: React.FC = () => {
                 <p className="text-sm font-medium text-slate-600">
                   {language === 'el' ? 'Μέσα Μηνιαία Έσοδα' : 'Avg Monthly Revenue'}
                 </p>
-                <p className="text-3xl font-bold text-green-600">{Math.round(avgMonthlyRevenue).toLocaleString()}€</p>
+                <p className="text-3xl font-bold text-green-600">{Math.round(summaryData.avgMonthlyRevenue).toLocaleString()}€</p>
                 <p className="text-xs text-slate-500 mt-1">
                   {language === 'el' ? 'Μηνιαίος στόχος' : 'Monthly target'}
                 </p>
@@ -241,7 +298,7 @@ const RevenueForecasting: React.FC = () => {
                   {language === 'el' ? 'Συνολικοί Πελάτες' : 'Total Customers'}
                 </p>
                 <p className="text-3xl font-bold text-purple-600">
-                  {forecastData.reduce((sum, month) => sum + month.customers, 0).toLocaleString()}
+                  {summaryData.totalCustomers.toLocaleString()}
                 </p>
                 <p className="text-xs text-slate-500 mt-1">
                   {language === 'el' ? 'Ετήσιος στόχος' : 'Annual target'}
@@ -286,15 +343,7 @@ const RevenueForecasting: React.FC = () => {
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis dataKey="month" stroke="#64748b" />
               <YAxis stroke="#64748b" />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: 'white', 
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                }}
-                formatter={(value: number) => [`${value.toLocaleString()}€`, '']}
-              />
+              <Tooltip content={<CustomTooltip />} />
               <Legend />
               <Area 
                 type="monotone" 
@@ -322,6 +371,33 @@ const RevenueForecasting: React.FC = () => {
                 name={language === 'el' ? 'Απαισιόδοξο Σενάριο' : 'Pessimistic Scenario'}
               />
             </AreaChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* Quarterly Analysis Chart */}
+      <Card className="border-slate-200 shadow-lg">
+        <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 border-b border-slate-200">
+          <CardTitle className="flex items-center space-x-2 text-slate-800">
+            <BarChart className="w-5 h-5 text-purple-600" />
+            <span>{language === 'el' ? 'Τριμηνιαία Ανάλυση' : 'Quarterly Analysis'}</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={quarterlyData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <XAxis dataKey="quarter" stroke="#64748b" />
+              <YAxis stroke="#64748b" />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend />
+              <Bar 
+                dataKey="revenue" 
+                fill="#8b5cf6" 
+                radius={[4, 4, 0, 0]}
+                name={language === 'el' ? 'Έσοδα' : 'Revenue'}
+              />
+            </BarChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>

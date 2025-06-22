@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell, Area, AreaChart } from 'recharts';
-import { TrendingUp, BarChart3, LineChart as LineChartIcon, Eye } from 'lucide-react';
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell, Area, AreaChart, PieChart, Pie } from 'recharts';
+import { TrendingUp, BarChart3, LineChart as LineChartIcon, Eye, PieChart as PieChartIcon } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import TooltipHelper from './TooltipHelper';
 import ChartExplanation from './ChartExplanation';
@@ -34,33 +34,94 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({ formData, updateFormData }) =
     }
   };
 
-  // Replace pie chart with more readable bar chart
-  const costData = [
-    { name: language === 'el' ? 'Κόστος Αγοράς' : 'Purchase Cost', value: (formData.purchasePrice || 0) * (formData.quantity || 0), color: '#3b82f6' },
-    { name: language === 'el' ? 'Εργασία' : 'Labor', value: (formData.workers || []).reduce((sum: number, w: any) => sum + (w.hourlyRate * w.hours), 0), color: '#10b981' },
-    { name: language === 'el' ? 'Μεταφορά' : 'Transport', value: ((formData.distance || 0) * (formData.fuelCost || 0)) + (formData.tolls || 0) + (formData.parkingCost || 0) + (formData.driverSalary || 0), color: '#f59e0b' },
-    { name: language === 'el' ? 'Λοιπά' : 'Other', value: (formData.electricityCost || 0) + (formData.equipmentCost || 0) + (formData.insuranceCost || 0) + (formData.rentCost || 0) + (formData.communicationCost || 0) + (formData.otherCosts || 0), color: '#ef4444' }
-  ];
+  // Memoized cost data calculation
+  const costData = useMemo(() => {
+    const purchaseCost = (formData.purchasePrice || 0) * (formData.quantity || 0);
+    const laborCost = (formData.workers || []).reduce((sum: number, w: any) => sum + (w.hourlyRate * w.hours), 0);
+    const transportCost = ((formData.distance || 0) * (formData.fuelCost || 0)) + (formData.tolls || 0) + (formData.parkingCost || 0) + (formData.driverSalary || 0);
+    const otherCost = (formData.electricityCost || 0) + (formData.equipmentCost || 0) + (formData.insuranceCost || 0) + (formData.rentCost || 0) + (formData.communicationCost || 0) + (formData.otherCosts || 0);
+    const packagingCost = (formData.boxCost || 0) + (formData.bagCost || 0);
 
-  const marginData = [
-    {
-      category: language === 'el' ? 'Κόστος' : 'Cost',
-      value: costData.reduce((sum, item) => sum + item.value, 0),
-      color: '#ef4444'
-    },
-    {
-      category: language === 'el' ? 'Κέρδος' : 'Profit',
-      value: (costData.reduce((sum, item) => sum + item.value, 0) * (formData.profitMargin || 0)) / 100,
-      color: '#10b981'
-    }
-  ];
+    return [
+      { 
+        name: language === 'el' ? 'Κόστος Αγοράς' : 'Purchase Cost', 
+        value: purchaseCost, 
+        color: '#3b82f6',
+        percentage: 0
+      },
+      { 
+        name: language === 'el' ? 'Εργασία' : 'Labor', 
+        value: laborCost, 
+        color: '#10b981',
+        percentage: 0
+      },
+      { 
+        name: language === 'el' ? 'Συσκευασία' : 'Packaging', 
+        value: packagingCost, 
+        color: '#f59e0b',
+        percentage: 0
+      },
+      { 
+        name: language === 'el' ? 'Μεταφορά' : 'Transport', 
+        value: transportCost, 
+        color: '#ef4444',
+        percentage: 0
+      },
+      { 
+        name: language === 'el' ? 'Λοιπά' : 'Other', 
+        value: otherCost, 
+        color: '#8b5cf6',
+        percentage: 0
+      }
+    ].filter(item => item.value > 0).map(item => {
+      const total = purchaseCost + laborCost + transportCost + otherCost + packagingCost;
+      return {
+        ...item,
+        percentage: total > 0 ? ((item.value / total) * 100).toFixed(1) : '0'
+      };
+    });
+  }, [formData, language]);
 
-  const profitabilityData = Array.from({ length: 12 }, (_, i) => ({
-    month: language === 'el' ? ['Ιαν', 'Φεβ', 'Μαρ', 'Απρ', 'Μαϊ', 'Ιουν', 'Ιουλ', 'Αυγ', 'Σεπ', 'Οκτ', 'Νοε', 'Δεκ'][i] : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i],
-    revenue: (costData.reduce((sum, item) => sum + item.value, 0) * 1.2) * (1 + Math.sin(i / 2) * 0.1),
-    cost: costData.reduce((sum, item) => sum + item.value, 0) * (1 + Math.random() * 0.05),
-    profit: (costData.reduce((sum, item) => sum + item.value, 0) * 0.2) * (1 + Math.sin(i / 2) * 0.15)
-  }));
+  // Memoized margin data calculation
+  const marginData = useMemo(() => {
+    const totalCost = costData.reduce((sum, item) => sum + item.value, 0);
+    const profit = (totalCost * (formData.profitMargin || 0)) / 100;
+    
+    return [
+      {
+        category: language === 'el' ? 'Κόστος' : 'Cost',
+        value: totalCost,
+        color: '#ef4444'
+      },
+      {
+        category: language === 'el' ? 'Κέρδος' : 'Profit',
+        value: profit,
+        color: '#10b981'
+      }
+    ];
+  }, [costData, formData.profitMargin, language]);
+
+  // Memoized profitability data calculation
+  const profitabilityData = useMemo(() => {
+    const totalCost = costData.reduce((sum, item) => sum + item.value, 0);
+    const profitMargin = formData.profitMargin || 0;
+    
+    return Array.from({ length: 12 }, (_, i) => {
+      const seasonalFactor = 1 + Math.sin(i / 2) * 0.15; // Seasonal variation
+      const baseCost = totalCost * (1 + Math.random() * 0.05 - 0.025); // Small cost variation
+      const baseRevenue = totalCost * (1 + profitMargin / 100) * seasonalFactor;
+      const profit = baseRevenue - baseCost;
+
+      return {
+        month: language === 'el' 
+          ? ['Ιαν', 'Φεβ', 'Μαρ', 'Απρ', 'Μαϊ', 'Ιουν', 'Ιουλ', 'Αυγ', 'Σεπ', 'Οκτ', 'Νοε', 'Δεκ'][i]
+          : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i],
+        revenue: Math.round(baseRevenue),
+        cost: Math.round(baseCost),
+        profit: Math.round(profit)
+      };
+    });
+  }, [costData, formData.profitMargin, language]);
 
   const handleChartToggle = (chartKey: string) => {
     setSelectedCharts(prev => ({ ...prev, [chartKey]: !prev[chartKey] }));
@@ -68,6 +129,23 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({ formData, updateFormData }) =
 
   const handleProfitTargetChange = (checked: boolean | 'indeterminate') => {
     setUseProfitTarget(checked === true);
+  };
+
+  // Custom tooltip component
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+          <p className="font-medium">{label}</p>
+          {payload.map((entry: any, index: number) => (
+            <p key={index} style={{ color: entry.color }}>
+              {entry.name}: {typeof entry.value === 'number' ? entry.value.toFixed(2) : entry.value}€
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
@@ -170,12 +248,12 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({ formData, updateFormData }) =
         </CardContent>
       </Card>
 
-      {/* Cost Breakdown Chart - Replaced pie with horizontal bar */}
-      {selectedCharts.costBreakdown && (
+      {/* Cost Breakdown Chart - Pie Chart */}
+      {selectedCharts.costBreakdown && costData.length > 0 && (
         <Card className="border-slate-200 shadow-lg">
           <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-200">
             <CardTitle className="flex items-center space-x-2 text-slate-800">
-              <BarChart3 className="w-5 h-5 text-blue-600" />
+              <PieChartIcon className="w-5 h-5 text-blue-600" />
               <span>{t('cost.analysis')}</span>
             </CardTitle>
           </CardHeader>
@@ -183,30 +261,36 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({ formData, updateFormData }) =
             <ChartExplanation 
               type="cost" 
               data={{ 
-                directCost: costData[0].value + costData[1].value, 
-                indirectCost: costData[2].value + costData[3].value 
+                directCost: costData[0]?.value + (costData[1]?.value || 0), 
+                indirectCost: costData.slice(2).reduce((sum, item) => sum + item.value, 0)
               }} 
             />
             <ResponsiveContainer width="100%" height={400} className="mt-4">
-              <BarChart data={costData} layout="horizontal">
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis type="number" stroke="#64748b" />
-                <YAxis dataKey="name" type="category" stroke="#64748b" width={100} />
-                <Tooltip formatter={(value: number) => [`${value.toFixed(2)}€`, '']} />
-                <Legend />
-                <Bar dataKey="value" radius={[0, 8, 8, 0]}>
+              <PieChart>
+                <Pie
+                  data={costData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percentage }) => `${name}: ${percentage}%`}
+                  outerRadius={120}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
                   {costData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
-                </Bar>
-              </BarChart>
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+                <Legend />
+              </PieChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
       )}
 
       {/* Margin Analysis Chart */}
-      {selectedCharts.marginAnalysis && (
+      {selectedCharts.marginAnalysis && marginData.length > 0 && (
         <Card className="border-slate-200 shadow-lg">
           <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-slate-200">
             <CardTitle className="flex items-center space-x-2 text-slate-800">
@@ -224,7 +308,7 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({ formData, updateFormData }) =
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="category" stroke="#64748b" />
                 <YAxis stroke="#64748b" />
-                <Tooltip formatter={(value: number) => [`${value.toFixed(2)}€`, '']} />
+                <Tooltip content={<CustomTooltip />} />
                 <Legend />
                 <Bar dataKey="value" radius={[8, 8, 0, 0]}>
                   {marginData.map((entry, index) => (
@@ -238,7 +322,7 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({ formData, updateFormData }) =
       )}
 
       {/* Profitability Chart */}
-      {selectedCharts.profitabilityChart && (
+      {selectedCharts.profitabilityChart && profitabilityData.length > 0 && (
         <Card className="border-slate-200 shadow-lg">
           <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 border-b border-slate-200">
             <CardTitle className="flex items-center space-x-2 text-slate-800">
@@ -263,7 +347,7 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({ formData, updateFormData }) =
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="month" stroke="#64748b" />
                 <YAxis stroke="#64748b" />
-                <Tooltip formatter={(value: number) => [`${value.toFixed(2)}€`, '']} />
+                <Tooltip content={<CustomTooltip />} />
                 <Legend />
                 <Area 
                   type="monotone" 

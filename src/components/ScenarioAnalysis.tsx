@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -113,12 +112,48 @@ const ScenarioAnalysis: React.FC<ScenarioAnalysisProps> = ({ baseResults, formDa
     }
   };
 
-  const chartData = scenarios.map(scenario => ({
-    name: scenario.name.length > 15 ? scenario.name.substring(0, 15) + '...' : scenario.name,
-    [language === 'el' ? 'Κέρδος/Κιλό' : 'Profit/Kg']: scenario.profit,
-    [language === 'el' ? 'Έσοδα' : 'Revenue']: scenario.revenue / 100,
-    [language === 'el' ? 'ROI' : 'ROI']: baseResults ? (scenario.profit / (baseResults.totalCostWithVat / baseResults.netWeight)) * 100 : 0
-  }));
+  // Memoized chart data
+  const chartData = useMemo(() => {
+    return scenarios.map(scenario => ({
+      name: scenario.name.length > 15 ? scenario.name.substring(0, 15) + '...' : scenario.name,
+      [language === 'el' ? 'Κέρδος/Κιλό' : 'Profit/Kg']: scenario.profit,
+      [language === 'el' ? 'Έσοδα' : 'Revenue']: scenario.revenue / 100,
+      [language === 'el' ? 'ROI' : 'ROI']: baseResults ? (scenario.profit / (baseResults.totalCostWithVat / baseResults.netWeight)) * 100 : 0
+    }));
+  }, [scenarios, baseResults, language]);
+
+  // Sensitivity analysis data
+  const sensitivityData = useMemo(() => {
+    if (!baseResults) return [];
+    
+    const baseProfit = baseResults.profitPerKg;
+    const variations = [-20, -15, -10, -5, 0, 5, 10, 15, 20];
+    
+    return variations.map(variation => ({
+      variation: `${variation >= 0 ? '+' : ''}${variation}%`,
+      priceChange: baseProfit * (1 + (variation * 1.5) / 100), // Price is more sensitive
+      costChange: baseProfit * (1 - variation / 100), // Cost change (inverse)
+      demandChange: baseProfit * (1 + variation / 200) // Demand is less sensitive
+    }));
+  }, [baseResults]);
+
+  // Custom tooltip component
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+          <p className="font-medium">{label}</p>
+          {payload.map((entry: any, index: number) => (
+            <p key={index} style={{ color: entry.color }}>
+              {entry.name}: {typeof entry.value === 'number' ? entry.value.toFixed(2) : entry.value}
+              {entry.name.includes('ROI') ? '%' : '€'}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="space-y-6">
@@ -266,14 +301,7 @@ const ScenarioAnalysis: React.FC<ScenarioAnalysisProps> = ({ baseResults, formDa
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis dataKey="name" stroke="#64748b" />
               <YAxis stroke="#64748b" />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: 'white', 
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                }}
-              />
+              <Tooltip content={<CustomTooltip />} />
               <Legend />
               <Bar 
                 dataKey={language === 'el' ? 'Κέρδος/Κιλό' : 'Profit/Kg'} 
@@ -286,6 +314,48 @@ const ScenarioAnalysis: React.FC<ScenarioAnalysisProps> = ({ baseResults, formDa
                 radius={[4, 4, 0, 0]} 
               />
             </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* Sensitivity Analysis Chart */}
+      <Card className="border-slate-200 shadow-lg">
+        <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-slate-200">
+          <CardTitle className="flex items-center space-x-2 text-slate-800">
+            <TrendingUp className="w-5 h-5 text-green-600" />
+            <span>{language === 'el' ? 'Ανάλυση Ευαισθησίας' : 'Sensitivity Analysis'}</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart data={sensitivityData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <XAxis dataKey="variation" stroke="#64748b" />
+              <YAxis stroke="#64748b" />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend />
+              <Line 
+                type="monotone" 
+                dataKey="priceChange" 
+                stroke="#3b82f6" 
+                strokeWidth={3}
+                name={language === 'el' ? 'Αλλαγή Τιμής' : 'Price Change'}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="costChange" 
+                stroke="#ef4444" 
+                strokeWidth={3}
+                name={language === 'el' ? 'Αλλαγή Κόστους' : 'Cost Change'}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="demandChange" 
+                stroke="#10b981" 
+                strokeWidth={3}
+                name={language === 'el' ? 'Αλλαγή Ζήτησης' : 'Demand Change'}
+              />
+            </LineChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>

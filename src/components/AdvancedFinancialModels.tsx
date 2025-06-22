@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,7 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calculator, TrendingUp, BarChart3, DollarSign, Target, PieChart, Activity, Zap } from 'lucide-react';
+import { LineChart, Line, BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell } from 'recharts';
+import { Calculator, TrendingUp, BarChart3, DollarSign, Target, PieChart as PieChartIcon, Activity, Zap } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface AdvancedFinancialModelsProps {
@@ -17,21 +18,21 @@ interface AdvancedFinancialModelsProps {
 const AdvancedFinancialModels: React.FC<AdvancedFinancialModelsProps> = ({ formData, results }) => {
   const { language } = useLanguage();
   const [growthData, setGrowthData] = useState({
-    initialValue: 0,
-    finalValue: 0,
+    initialValue: 1000,
+    finalValue: 1200,
     periods: 1
   });
   
   const [presentValueData, setPresentValueData] = useState({
-    futureValue: 0,
+    futureValue: 1000,
     discountRate: 5,
     periods: 1
   });
 
   const [breakEvenData, setBreakEvenData] = useState({
-    fixedCosts: 0,
-    variableCostPerUnit: 0,
-    pricePerUnit: 0
+    fixedCosts: 1000,
+    variableCostPerUnit: 5,
+    pricePerUnit: 10
   });
 
   // Growth Rate Calculation
@@ -53,6 +54,106 @@ const AdvancedFinancialModels: React.FC<AdvancedFinancialModelsProps> = ({ formD
     return breakEvenData.fixedCosts / contributionMargin;
   };
 
+  // Memoized chart data for growth analysis
+  const growthChartData = useMemo(() => {
+    const periods = Math.max(growthData.periods, 1);
+    const growthRate = calculateGrowthRate() / 100;
+    
+    return Array.from({ length: periods + 1 }, (_, i) => ({
+      period: i,
+      value: growthData.initialValue * Math.pow(1 + growthRate, i),
+      target: i === periods ? growthData.finalValue : null
+    }));
+  }, [growthData]);
+
+  // Memoized chart data for present value analysis
+  const presentValueChartData = useMemo(() => {
+    const periods = Math.max(presentValueData.periods, 1);
+    const rate = presentValueData.discountRate / 100;
+    
+    return Array.from({ length: periods + 1 }, (_, i) => ({
+      period: i,
+      futureValue: presentValueData.futureValue,
+      presentValue: presentValueData.futureValue / Math.pow(1 + rate, i),
+      discountFactor: 1 / Math.pow(1 + rate, i)
+    }));
+  }, [presentValueData]);
+
+  // Memoized chart data for break-even analysis
+  const breakEvenChartData = useMemo(() => {
+    const breakEvenPoint = calculateBreakEven();
+    const maxUnits = Math.ceil(breakEvenPoint * 1.5) || 100;
+    
+    return Array.from({ length: 11 }, (_, i) => {
+      const units = (maxUnits / 10) * i;
+      const revenue = units * breakEvenData.pricePerUnit;
+      const totalCosts = breakEvenData.fixedCosts + (units * breakEvenData.variableCostPerUnit);
+      const profit = revenue - totalCosts;
+      
+      return {
+        units: Math.round(units),
+        revenue,
+        totalCosts,
+        profit,
+        fixedCosts: breakEvenData.fixedCosts,
+        variableCosts: units * breakEvenData.variableCostPerUnit
+      };
+    });
+  }, [breakEvenData]);
+
+  // Portfolio allocation data
+  const portfolioData = useMemo(() => {
+    if (!results) return [];
+    
+    const totalInvestment = 10000; // Example portfolio
+    return [
+      { name: language === 'el' ? 'Μετοχές' : 'Stocks', value: totalInvestment * 0.6, color: '#3b82f6' },
+      { name: language === 'el' ? 'Ομόλογα' : 'Bonds', value: totalInvestment * 0.3, color: '#10b981' },
+      { name: language === 'el' ? 'Μετρητά' : 'Cash', value: totalInvestment * 0.1, color: '#f59e0b' }
+    ];
+  }, [results, language]);
+
+  // Risk analysis data
+  const riskAnalysisData = useMemo(() => {
+    return Array.from({ length: 12 }, (_, i) => {
+      const month = i + 1;
+      const volatility = 0.15; // 15% volatility
+      const expectedReturn = 0.08; // 8% expected annual return
+      
+      const monthlyReturn = expectedReturn / 12;
+      const randomFactor = (Math.random() - 0.5) * volatility;
+      const actualReturn = monthlyReturn + randomFactor;
+      
+      return {
+        month: language === 'el' 
+          ? ['Ιαν', 'Φεβ', 'Μαρ', 'Απρ', 'Μαϊ', 'Ιουν', 'Ιουλ', 'Αυγ', 'Σεπ', 'Οκτ', 'Νοε', 'Δεκ'][i]
+          : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i],
+        expectedReturn: monthlyReturn * 100,
+        actualReturn: actualReturn * 100,
+        volatility: volatility * 100,
+        cumulativeReturn: (1 + actualReturn) * 100
+      };
+    });
+  }, [language]);
+
+  // Custom tooltip component
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+          <p className="font-medium">{label}</p>
+          {payload.map((entry: any, index: number) => (
+            <p key={index} style={{ color: entry.color }}>
+              {entry.name}: {typeof entry.value === 'number' ? entry.value.toFixed(2) : entry.value}
+              {entry.name.includes('Return') || entry.name.includes('Απόδοση') ? '%' : '€'}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-center mb-6">
@@ -63,7 +164,7 @@ const AdvancedFinancialModels: React.FC<AdvancedFinancialModelsProps> = ({ formD
       </div>
 
       <Tabs defaultValue="growth" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="growth" className="text-xs">
             {language === 'el' ? 'Ανάπτυξη' : 'Growth'}
           </TabsTrigger>
@@ -73,8 +174,11 @@ const AdvancedFinancialModels: React.FC<AdvancedFinancialModelsProps> = ({ formD
           <TabsTrigger value="breakeven" className="text-xs">
             {language === 'el' ? 'Νεκρό Σημείο' : 'Break-Even'}
           </TabsTrigger>
-          <TabsTrigger value="concepts" className="text-xs">
-            {language === 'el' ? 'Έννοιες' : 'Concepts'}
+          <TabsTrigger value="portfolio" className="text-xs">
+            {language === 'el' ? 'Χαρτοφυλάκιο' : 'Portfolio'}
+          </TabsTrigger>
+          <TabsTrigger value="risk" className="text-xs">
+            {language === 'el' ? 'Κίνδυνος' : 'Risk'}
           </TabsTrigger>
         </TabsList>
 
@@ -83,7 +187,7 @@ const AdvancedFinancialModels: React.FC<AdvancedFinancialModelsProps> = ({ formD
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <TrendingUp className="w-5 h-5 text-green-600" />
-                <span>{language === 'el' ? 'Υπολογισμός Ρυθμού Ανάπτυξης' : 'Growth Rate Calculation'}</span>
+                <span>{language === 'el' ? 'Ανάλυση Ρυθμού Ανάπτυξης' : 'Growth Rate Analysis'}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -124,13 +228,32 @@ const AdvancedFinancialModels: React.FC<AdvancedFinancialModelsProps> = ({ formD
                 <p className="text-2xl font-bold text-green-600">
                   {calculateGrowthRate().toFixed(2)}%
                 </p>
-                <p className="text-sm text-green-700 mt-2">
-                  {language === 'el' 
-                    ? 'Τύπος: (Τελική Αξία / Αρχική Αξία) - 1' 
-                    : 'Formula: (Final Value / Initial Value) - 1'
-                  }
-                </p>
               </div>
+
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={growthChartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="period" />
+                  <YAxis />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend />
+                  <Line 
+                    type="monotone" 
+                    dataKey="value" 
+                    stroke="#10b981" 
+                    strokeWidth={3}
+                    name={language === 'el' ? 'Προβλεπόμενη Αξία' : 'Projected Value'}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="target" 
+                    stroke="#ef4444" 
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    name={language === 'el' ? 'Στόχος' : 'Target'}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
         </TabsContent>
@@ -140,7 +263,7 @@ const AdvancedFinancialModels: React.FC<AdvancedFinancialModelsProps> = ({ formD
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <DollarSign className="w-5 h-5 text-blue-600" />
-                <span>{language === 'el' ? 'Παρούσα Αξία (PV)' : 'Present Value (PV)'}</span>
+                <span>{language === 'el' ? 'Ανάλυση Παρούσας Αξίας' : 'Present Value Analysis'}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -181,13 +304,37 @@ const AdvancedFinancialModels: React.FC<AdvancedFinancialModelsProps> = ({ formD
                 <p className="text-2xl font-bold text-blue-600">
                   €{calculatePresentValue().toFixed(2)}
                 </p>
-                <p className="text-sm text-blue-700 mt-2">
-                  {language === 'el' 
-                    ? 'Τύπος: PV = FV / (1 + r)^n' 
-                    : 'Formula: PV = FV / (1 + r)^n'
-                  }
-                </p>
               </div>
+
+              <ResponsiveContainer width="100%" height={300}>
+                <AreaChart data={presentValueChartData}>
+                  <defs>
+                    <linearGradient id="pvGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="period" />
+                  <YAxis />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend />
+                  <Area 
+                    type="monotone" 
+                    dataKey="presentValue" 
+                    stroke="#3b82f6" 
+                    fill="url(#pvGradient)"
+                    name={language === 'el' ? 'Παρούσα Αξία' : 'Present Value'}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="futureValue" 
+                    stroke="#ef4444" 
+                    strokeDasharray="5 5"
+                    name={language === 'el' ? 'Μελλοντική Αξία' : 'Future Value'}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
         </TabsContent>
@@ -238,83 +385,127 @@ const AdvancedFinancialModels: React.FC<AdvancedFinancialModelsProps> = ({ formD
                 <p className="text-2xl font-bold text-orange-600">
                   {calculateBreakEven().toFixed(0)} {language === 'el' ? 'μονάδες' : 'units'}
                 </p>
-                <p className="text-sm text-orange-700 mt-2">
-                  {language === 'el' 
-                    ? 'Τύπος: Σταθερά Κόστη / (Τιμή - Μεταβλητό Κόστος)' 
-                    : 'Formula: Fixed Costs / (Price - Variable Cost)'
-                  }
-                </p>
               </div>
+
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={breakEvenChartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="units" />
+                  <YAxis />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend />
+                  <Line 
+                    type="monotone" 
+                    dataKey="revenue" 
+                    stroke="#10b981" 
+                    strokeWidth={3}
+                    name={language === 'el' ? 'Έσοδα' : 'Revenue'}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="totalCosts" 
+                    stroke="#ef4444" 
+                    strokeWidth={3}
+                    name={language === 'el' ? 'Συνολικό Κόστος' : 'Total Costs'}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="profit" 
+                    stroke="#3b82f6" 
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    name={language === 'el' ? 'Κέρδος' : 'Profit'}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="concepts" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">
-                  {language === 'el' ? 'Κόστος Ευκαιρίας' : 'Opportunity Cost'}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-600">
-                  {language === 'el' 
-                    ? 'Η απόδοση που χάνετε επιλέγοντας μια επένδυση αντί για την καλύτερη εναλλακτική.'
-                    : 'The return you give up by choosing one investment over the best alternative.'
-                  }
-                </p>
-              </CardContent>
-            </Card>
+        <TabsContent value="portfolio" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <PieChartIcon className="w-5 h-5 text-purple-600" />
+                <span>{language === 'el' ? 'Κατανομή Χαρτοφυλακίου' : 'Portfolio Allocation'}</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <ResponsiveContainer width="100%" height={400}>
+                <PieChart>
+                  <Pie
+                    data={portfolioData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, value }) => `${name}: €${value.toLocaleString()}`}
+                    outerRadius={120}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {portfolioData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">
-                  {language === 'el' ? 'Αντίστροφη Συσχέτιση' : 'Inverse Correlation'}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-600">
-                  {language === 'el' 
-                    ? 'Όταν δύο μεταβλητές κινούνται σε αντίθετες κατευθύνσεις. Χρήσιμο για τη διαφοροποίηση του χαρτοφυλακίου.'
-                    : 'When two variables move in opposite directions. Useful for portfolio diversification.'
-                  }
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">
-                  {language === 'el' ? 'Οικονομικές Προβλέψεις' : 'Financial Forecasting'}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-600">
-                  {language === 'el' 
-                    ? 'Εκτίμηση μελλοντικών οικονομικών αποτελεσμάτων με βάση ιστορικά δεδομένα και τάσεις αγοράς.'
-                    : 'Estimating future financial results based on historical data and market trends.'
-                  }
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">
-                  {language === 'el' ? 'Επενδυτική Στρατηγική' : 'Investment Strategy'}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-600">
-                  {language === 'el' 
-                    ? 'Λήψη επενδυτικών αποφάσεων με βάση τον υπολογισμό του ποσοστού ανάπτυξης και την ανάλυση κινδύνου.'
-                    : 'Making investment decisions based on growth rate calculation and risk analysis.'
-                  }
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+        <TabsContent value="risk" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Activity className="w-5 h-5 text-red-600" />
+                <span>{language === 'el' ? 'Ανάλυση Κινδύνου & Απόδοσης' : 'Risk & Return Analysis'}</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <ResponsiveContainer width="100%" height={400}>
+                <AreaChart data={riskAnalysisData}>
+                  <defs>
+                    <linearGradient id="returnGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0.1}/>
+                    </linearGradient>
+                    <linearGradient id="volatilityGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend />
+                  <Area 
+                    type="monotone" 
+                    dataKey="actualReturn" 
+                    stroke="#10b981" 
+                    fill="url(#returnGradient)"
+                    name={language === 'el' ? 'Πραγματική Απόδοση' : 'Actual Return'}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="volatility" 
+                    stroke="#ef4444" 
+                    fill="url(#volatilityGradient)"
+                    name={language === 'el' ? 'Μεταβλητότητα' : 'Volatility'}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="expectedReturn" 
+                    stroke="#3b82f6" 
+                    strokeDasharray="5 5"
+                    name={language === 'el' ? 'Αναμενόμενη Απόδοση' : 'Expected Return'}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

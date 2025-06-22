@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 interface Worker {
   id: string;
@@ -12,7 +11,7 @@ interface FormData {
   purchasePrice: number;
   quantity: number;
   waste: number;
-  glazingPercent: number; // Updated from icePercent
+  glazingPercent: number;
   vatPercent: number;
   workers: Worker[];
   boxCost: number;
@@ -21,9 +20,9 @@ interface FormData {
   fuelCost: number;
   tolls: number;
   parkingCost: number;
-  driverSalary: number; // New field
+  driverSalary: number;
   profitMargin: number;
-  profitTarget: number; // New field for target profit
+  profitTarget: number;
   competitor1: number;
   competitor2: number;
   electricityCost: number;
@@ -59,7 +58,7 @@ export const useCalculation = () => {
     purchasePrice: 0,
     quantity: 1,
     waste: 0,
-    glazingPercent: 0, // Updated from icePercent
+    glazingPercent: 0,
     vatPercent: 24,
     workers: [{ id: '1', hourlyRate: 4.5, hours: 1 }],
     boxCost: 0,
@@ -68,9 +67,9 @@ export const useCalculation = () => {
     fuelCost: 0,
     tolls: 0,
     parkingCost: 0,
-    driverSalary: 0, // New field
+    driverSalary: 0,
     profitMargin: 20,
-    profitTarget: 0, // New field
+    profitTarget: 0,
     competitor1: 0,
     competitor2: 0,
     electricityCost: 0,
@@ -88,18 +87,19 @@ export const useCalculation = () => {
   const [results, setResults] = useState<CalculationResults | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
 
-  const updateFormData = (updates: Partial<FormData>) => {
+  const updateFormData = useCallback((updates: Partial<FormData>) => {
     setFormData(prev => ({ ...prev, ...updates }));
-  };
+  }, []);
 
-  const calculate = async (): Promise<void> => {
+  const calculate = useCallback(async (): Promise<void> => {
     setIsCalculating(true);
     
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Simulate calculation delay for better UX
+    await new Promise(resolve => setTimeout(resolve, 800));
 
     try {
       const netWeight = (formData.quantity || 0) * (1 - (formData.waste || 0) / 100);
-      const finalWeight = netWeight * (1 + (formData.glazingPercent || 0) / 100); // Updated
+      const finalWeight = netWeight * (1 + (formData.glazingPercent || 0) / 100);
       
       const purchaseCost = (formData.purchasePrice || 0) * (formData.quantity || 0);
       
@@ -113,7 +113,7 @@ export const useCalculation = () => {
         (formData.distance || 0) * (formData.fuelCost || 0) + 
         (formData.tolls || 0) + 
         (formData.parkingCost || 0) +
-        (formData.driverSalary || 0); // Include driver salary
+        (formData.driverSalary || 0);
       
       const additionalCosts = 
         (formData.electricityCost || 0) + 
@@ -130,9 +130,9 @@ export const useCalculation = () => {
       const totalCostWithVat = totalCost + vatAmount;
       
       const sellingPrice = totalCostWithVat * (1 + (formData.profitMargin || 0) / 100);
-      const sellingPricePerKg = sellingPrice / finalWeight;
+      const sellingPricePerKg = sellingPrice / Math.max(finalWeight, 0.001); // Prevent division by zero
       
-      const profitPerKg = sellingPricePerKg - (totalCostWithVat / finalWeight);
+      const profitPerKg = sellingPricePerKg - (totalCostWithVat / Math.max(finalWeight, 0.001));
 
       setResults({
         totalCost,
@@ -150,18 +150,20 @@ export const useCalculation = () => {
       });
     } catch (error) {
       console.error('Calculation error:', error);
+      // Reset results on error
+      setResults(null);
     } finally {
       setIsCalculating(false);
     }
-  };
+  }, [formData]);
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setFormData({
       productName: '',
       purchasePrice: 0,
       quantity: 1,
       waste: 0,
-      glazingPercent: 0, // Updated
+      glazingPercent: 0,
       vatPercent: 24,
       workers: [{ id: '1', hourlyRate: 4.5, hours: 1 }],
       boxCost: 0,
@@ -170,9 +172,9 @@ export const useCalculation = () => {
       fuelCost: 0,
       tolls: 0,
       parkingCost: 0,
-      driverSalary: 0, // New field
+      driverSalary: 0,
       profitMargin: 20,
-      profitTarget: 0, // New field
+      profitTarget: 0,
       competitor1: 0,
       competitor2: 0,
       electricityCost: 0,
@@ -187,7 +189,7 @@ export const useCalculation = () => {
       estimatedDuration: ''
     });
     setResults(null);
-  };
+  }, []);
 
   return {
     formData,
