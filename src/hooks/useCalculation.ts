@@ -1,13 +1,13 @@
 
 import { useState, useCallback } from 'react';
 
-interface Worker {
+export interface Worker {
   id: string;
   hourlyRate: number;
   hours: number;
 }
 
-interface ProcessingPhase {
+export interface ProcessingPhase {
   id: string;
   name: string;
   wastePercentage: number;
@@ -15,7 +15,7 @@ interface ProcessingPhase {
   description: string;
 }
 
-interface FormData {
+export interface FormData {
   productName: string;
   productType: 'fish' | 'squid' | 'octopus' | 'other';
   purchasePrice: number;
@@ -58,7 +58,7 @@ interface FormData {
   seasonalMultiplier: number;
 }
 
-interface CalculationResults {
+export interface CalculationResults {
   totalCost: number;
   totalCostWithVat: number;
   sellingPrice: number;
