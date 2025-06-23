@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,7 +10,7 @@ import { TrendingUp, DollarSign, PieChart as PieChartIcon, Zap } from 'lucide-re
 import { useLanguage } from '@/contexts/LanguageContext';
 import { FormData, CalculationResults } from '@/hooks/useCalculation';
 
-export interface AdvancedFinancialModelsProps {
+interface AdvancedFinancialModelsProps {
   formData: Partial<FormData>;
   results: CalculationResults;
 }

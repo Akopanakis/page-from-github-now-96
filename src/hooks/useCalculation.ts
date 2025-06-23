@@ -1,5 +1,5 @@
-
 import { useState, useCallback } from 'react';
+import { toast } from '@/hooks/use-toast';
 
 export interface Worker {
   id: string;
@@ -147,9 +147,55 @@ export const useCalculation = () => {
     setFormData(prev => ({ ...prev, ...updates }));
   }, []);
 
+  const saveBatch = useCallback((formData: Partial<FormData>, results: CalculationResults) => {
+    try {
+      const batchRecord = {
+        id: Date.now().toString(),
+        date: new Date().toISOString().split('T')[0],
+        productName: formData.productName || 'Άγνωστο προϊόν',
+        quantity: formData.quantity || 0,
+        finalCost: results.totalCostWithVat,
+        sellingPrice: results.sellingPrice,
+        profit: results.profitPerKg,
+        formData,
+        results
+      };
+
+      const existing = JSON.parse(localStorage.getItem('kostopro_batches') || '[]');
+      const updated = [batchRecord, ...existing];
+      localStorage.setItem('kostopro_batches', JSON.stringify(updated));
+      
+      toast({
+        title: "Επιτυχία!",
+        description: "Η παρτίδα αποθηκεύτηκε επιτυχώς",
+      });
+    } catch (error) {
+      console.error('Error saving batch:', error);
+      toast({
+        title: "Σφάλμα",
+        description: "Δεν ήταν δυνατή η αποθήκευση της παρτίδας",
+        variant: "destructive",
+      });
+    }
+  }, []);
+
   const calculate = useCallback(async (): Promise<void> => {
     setIsCalculating(true);
     
+    // Validate required fields
+    const requiredFields = ['productName', 'purchasePrice', 'quantity'];
+    const missingFields = requiredFields.filter(field => !formData[field as keyof FormData]);
+    
+    if (missingFields.length > 0) {
+      toast({
+        title: "Σφάλμα Validation",
+        description: "Παρακαλώ συμπληρώστε όλα τα υποχρεωτικά πεδία",
+        variant: "destructive",
+      });
+      setIsCalculating(false);
+      return;
+    }
+
     // Simulate calculation delay for better UX
     await new Promise(resolve => setTimeout(resolve, 800));
 
@@ -273,13 +319,30 @@ export const useCalculation = () => {
           recommendedMargin
         }
       });
+
+      // Save batch after successful calculation
+      if (results) {
+        saveBatch(formData, results);
+      }
+
+      // Show success toast
+      toast({
+        title: "Υπολογισμός Ολοκληρώθηκε!",
+        description: "Τα αποτελέσματα υπολογίστηκαν επιτυχώς",
+      });
+
     } catch (error) {
       console.error('Calculation error:', error);
       setResults(null);
+      toast({
+        title: "Σφάλμα Υπολογισμού",
+        description: "Παρουσιάστηκε σφάλμα κατά τον υπολογισμό",
+        variant: "destructive",
+      });
     } finally {
       setIsCalculating(false);
     }
-  }, [formData]);
+  }, [formData, saveBatch]);
 
   const resetForm = useCallback(() => {
     setFormData({

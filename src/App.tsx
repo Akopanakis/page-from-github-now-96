@@ -7,6 +7,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import HistoryPage from "./components/HistoryPage";
+import PremiumPage from "./components/PremiumPage";
 import { LanguageProvider } from './contexts/LanguageContext';
 
 const queryClient = new QueryClient({
@@ -28,6 +30,8 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/history" element={<HistoryPage />} />
+              <Route path="/premium" element={<PremiumPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
