@@ -10,7 +10,7 @@ import { TrendingUp, DollarSign, PieChart as PieChartIcon, Zap } from 'lucide-re
 import { useLanguage } from '@/contexts/LanguageContext';
 import { FormData, CalculationResults } from '@/hooks/useCalculation';
 
-interface AdvancedFinancialModelsProps {
+export interface AdvancedFinancialModelsProps {
   formData: Partial<FormData>;
   results: CalculationResults;
 }
