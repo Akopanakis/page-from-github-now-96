@@ -1,433 +1,298 @@
-import React, { useState, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { TrendingUp, TrendingDown, AlertTriangle, Plus, Trash2, BarChart3, Target } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
-import TooltipHelper from './TooltipHelper';
-import ChartExplanation from './ChartExplanation';
+
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { Badge } from './ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { TrendingUp, TrendingDown, DollarSign, Scale, Target, Calculator } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
+import { FormData, CalculationResults } from '../types';
+
+interface ScenarioAnalysisProps {
+  formData: FormData;
+  results: CalculationResults | null;
+}
 
 interface Scenario {
   id: string;
   name: string;
-  priceIncrease: number;
-  costIncrease: number;
-  demandChange: number;
-  profit: number;
-  revenue: number;
+  costPerKg: number;
+  cleaningYield: number;
+  profitMargin: number;
+  results?: CalculationResults;
 }
 
-interface ScenarioAnalysisProps {
-  baseResults: any;
-  formData: any;
-}
-
-const ScenarioAnalysis: React.FC<ScenarioAnalysisProps> = ({ baseResults, formData }) => {
-  const { t, language } = useLanguage();
+const ScenarioAnalysis: React.FC<ScenarioAnalysisProps> = ({ formData, results }) => {
+  const { language } = useLanguage();
   const [scenarios, setScenarios] = useState<Scenario[]>([
     {
       id: '1',
       name: language === 'el' ? 'Βασικό Σενάριο' : 'Base Scenario',
-      priceIncrease: 0,
-      costIncrease: 0,
-      demandChange: 0,
-      profit: baseResults?.profitPerKg || 0,
-      revenue: baseResults?.sellingPrice || 0
+      costPerKg: formData.costPerKg,
+      cleaningYield: formData.cleaningYield,
+      profitMargin: formData.profitMargin
+    },
+    {
+      id: '2',
+      name: language === 'el' ? 'Αισιόδοξο Σενάριο' : 'Optimistic Scenario',
+      costPerKg: formData.costPerKg * 0.9,
+      cleaningYield: Math.min(formData.cleaningYield + 5, 95),
+      profitMargin: formData.profitMargin + 5
+    },
+    {
+      id: '3',
+      name: language === 'el' ? 'Απαισιόδοξο Σενάριο' : 'Pessimistic Scenario',
+      costPerKg: formData.costPerKg * 1.1,
+      cleaningYield: Math.max(formData.cleaningYield - 5, 70),
+      profitMargin: Math.max(formData.profitMargin - 5, 10)
     }
   ]);
 
   const [newScenario, setNewScenario] = useState({
     name: '',
-    priceIncrease: 0,
-    costIncrease: 0,
-    demandChange: 0
+    costPerKg: formData.costPerKg,
+    cleaningYield: formData.cleaningYield,
+    profitMargin: formData.profitMargin
   });
 
-  const scenarioTemplates = [
-    { 
-      name: language === 'el' ? 'Οικονομική Κρίση' : 'Economic Crisis', 
-      priceIncrease: -10, 
-      costIncrease: 15, 
-      demandChange: -25 
-    },
-    { 
-      name: language === 'el' ? 'Ανάπτυξη Αγοράς' : 'Market Growth', 
-      priceIncrease: 8, 
-      costIncrease: 3, 
-      demandChange: 20 
-    },
-    { 
-      name: language === 'el' ? 'Αύξηση Πρώτων Υλών' : 'Raw Material Increase', 
-      priceIncrease: 5, 
-      costIncrease: 12, 
-      demandChange: -5 
-    }
-  ];
-
-  const calculateScenarioResults = (scenario: any) => {
-    if (!baseResults) return { profit: 0, revenue: 0 };
-
-    const adjustedPrice = baseResults.sellingPrice * (1 + scenario.priceIncrease / 100);
-    const adjustedCost = baseResults.totalCostWithVat * (1 + scenario.costIncrease / 100);
-    const adjustedProfit = adjustedPrice - (adjustedCost / baseResults.netWeight);
-    const adjustedRevenue = adjustedPrice * (formData.quantity || 1) * (1 + scenario.demandChange / 100);
-
+  const calculateScenario = (scenario: Scenario): CalculationResults => {
+    const cleanWeight = formData.initialWeight * (scenario.cleaningYield / 100);
+    const finalWeight = cleanWeight * (1 + formData.glazingPercentage / 100);
+    
+    const materialCost = formData.initialWeight * scenario.costPerKg;
+    const totalDirectCosts = materialCost + formData.transportCost + formData.laborCost + formData.packagingCost + formData.additionalCosts;
+    const totalCost = totalDirectCosts * (1 + formData.markupPercentage / 100);
+    const costPerKgFinal = totalCost / finalWeight;
+    const sellingPrice = totalCost * (1 + scenario.profitMargin / 100);
+    const profit = sellingPrice - totalCost;
+    
     return {
-      profit: adjustedProfit,
-      revenue: adjustedRevenue
+      cleanWeight,
+      finalWeight,
+      materialCost,
+      totalCost,
+      costPerKgFinal,
+      costPerKg: costPerKgFinal,
+      sellingPrice,
+      profit
     };
   };
 
   const addScenario = () => {
-    if (!newScenario.name) return;
-
-    const results = calculateScenarioResults(newScenario);
+    if (!newScenario.name.trim()) return;
+    
     const scenario: Scenario = {
       id: Date.now().toString(),
       ...newScenario,
-      ...results
+      results: calculateScenario(newScenario as Scenario)
     };
-
-    setScenarios([...scenarios, scenario]);
-    setNewScenario({ name: '', priceIncrease: 0, costIncrease: 0, demandChange: 0 });
-  };
-
-  const addTemplate = (template: any) => {
-    const results = calculateScenarioResults(template);
-    const scenario: Scenario = {
-      id: Date.now().toString(),
-      ...template,
-      ...results
-    };
-
-    setScenarios([...scenarios, scenario]);
-  };
-
-  const removeScenario = (id: string) => {
-    if (scenarios.length > 1) {
-      setScenarios(scenarios.filter(s => s.id !== id));
-    }
-  };
-
-  // Memoized chart data
-  const chartData = useMemo(() => {
-    return scenarios.map(scenario => ({
-      name: scenario.name.length > 15 ? scenario.name.substring(0, 15) + '...' : scenario.name,
-      [language === 'el' ? 'Κέρδος/Κιλό' : 'Profit/Kg']: scenario.profit,
-      [language === 'el' ? 'Έσοδα' : 'Revenue']: scenario.revenue / 100,
-      [language === 'el' ? 'ROI' : 'ROI']: baseResults ? (scenario.profit / (baseResults.totalCostWithVat / baseResults.netWeight)) * 100 : 0
-    }));
-  }, [scenarios, baseResults, language]);
-
-  // Sensitivity analysis data
-  const sensitivityData = useMemo(() => {
-    if (!baseResults) return [];
     
-    const baseProfit = baseResults.profitPerKg;
-    const variations = [-20, -15, -10, -5, 0, 5, 10, 15, 20];
-    
-    return variations.map(variation => ({
-      variation: `${variation >= 0 ? '+' : ''}${variation}%`,
-      priceChange: baseProfit * (1 + (variation * 1.5) / 100), // Price is more sensitive
-      costChange: baseProfit * (1 - variation / 100), // Cost change (inverse)
-      demandChange: baseProfit * (1 + variation / 200) // Demand is less sensitive
-    }));
-  }, [baseResults]);
-
-  // Custom tooltip component
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-          <p className="font-medium">{label}</p>
-          {payload.map((entry: any, index: number) => (
-            <p key={index} style={{ color: entry.color }}>
-              {entry.name}: {typeof entry.value === 'number' ? entry.value.toFixed(2) : entry.value}
-              {entry.name.includes('ROI') ? '%' : '€'}
-            </p>
-          ))}
-        </div>
-      );
-    }
-    return null;
+    setScenarios(prev => [...prev, scenario]);
+    setNewScenario({
+      name: '',
+      costPerKg: formData.costPerKg,
+      cleaningYield: formData.cleaningYield,
+      profitMargin: formData.profitMargin
+    });
   };
+
+  const scenariosWithResults = scenarios.map(scenario => ({
+    ...scenario,
+    results: calculateScenario(scenario)
+  }));
 
   return (
     <div className="space-y-6">
-      {/* Header with Tooltip */}
-      <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-        <CardContent className="p-4">
-          <div className="flex items-center space-x-2">
-            <Target className="w-5 h-5 text-blue-600" />
-            <h3 className="font-semibold text-blue-800">
-              {language === 'el' ? 'Ανάλυση Σεναρίων' : 'Scenario Analysis'}
-            </h3>
-            <TooltipHelper tooltipKey="tooltip.scenario.analysis" />
-          </div>
-          <p className="text-sm text-blue-700 mt-2">
-            {language === 'el' 
-              ? 'Εξετάστε διαφορετικά σενάρια για να κατανοήσετε την επίδραση αλλαγών στην κερδοφορία'
-              : 'Examine different scenarios to understand the impact of changes on profitability'
-            }
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* Quick Templates */}
-      <Card className="border-slate-200 shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-slate-200">
-          <CardTitle className="flex items-center space-x-2 text-slate-800">
-            <AlertTriangle className="w-5 h-5 text-indigo-600" />
-            <span>{language === 'el' ? 'Έτοιμα Σενάρια' : 'Quick Scenarios'}</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {scenarioTemplates.map((template, index) => (
-              <Button
-                key={index}
-                variant="outline"
-                onClick={() => addTemplate(template)}
-                className="h-auto p-4 text-left flex flex-col items-start space-y-2 hover:bg-indigo-50"
-              >
-                <span className="font-semibold">{template.name}</span>
-                <div className="text-xs text-slate-600 space-y-1">
-                  <div>{language === 'el' ? 'Τιμή' : 'Price'}: {template.priceIncrease >= 0 ? '+' : ''}{template.priceIncrease}%</div>
-                  <div>{language === 'el' ? 'Κόστος' : 'Cost'}: {template.costIncrease >= 0 ? '+' : ''}{template.costIncrease}%</div>
-                  <div>{language === 'el' ? 'Ζήτηση' : 'Demand'}: {template.demandChange >= 0 ? '+' : ''}{template.demandChange}%</div>
-                </div>
-              </Button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Add New Scenario */}
-      <Card className="border-slate-200 shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 border-b border-slate-200">
-          <CardTitle className="flex items-center space-x-2 text-slate-800">
-            <Plus className="w-5 h-5 text-purple-600" />
-            <span>{language === 'el' ? 'Προσαρμοσμένο Σενάριο' : 'Custom Scenario'}</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div>
-              <Label className="text-slate-700 font-medium flex items-center space-x-1">
-                <span>{language === 'el' ? 'Όνομα Σεναρίου' : 'Scenario Name'}</span>
-              </Label>
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Scenario Creation */}
+        <Card className="shadow-lg border-0">
+          <CardHeader className="bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+            <CardTitle className="flex items-center gap-2">
+              <Calculator className="h-5 w-5" />
+              {language === 'el' ? 'Δημιουργία Σεναρίου' : 'Create Scenario'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6 space-y-4">
+            <div className="space-y-2">
+              <Label>{language === 'el' ? 'Όνομα Σεναρίου' : 'Scenario Name'}</Label>
               <Input
                 value={newScenario.name}
-                onChange={(e) => setNewScenario({...newScenario, name: e.target.value})}
-                placeholder={language === 'el' ? 'π.χ. Αύξηση κόστους 10%' : 'e.g. Cost increase 10%'}
-                className="mt-1"
+                onChange={(e) => setNewScenario(prev => ({ ...prev, name: e.target.value }))}
+                placeholder={language === 'el' ? 'π.χ. Νέο Σενάριο' : 'e.g. New Scenario'}
               />
             </div>
-            <div>
-              <Label className="text-slate-700 font-medium flex items-center space-x-1">
-                <span>{language === 'el' ? 'Αύξηση Τιμής (%)' : 'Price Increase (%)'}</span>
-                <TooltipHelper tooltipKey="tooltip.price.increase" />
-              </Label>
+
+            <div className="space-y-2">
+              <Label>{language === 'el' ? 'Κόστος ανά Κιλό (€)' : 'Cost per Kg (€)'}</Label>
               <Input
                 type="number"
-                value={newScenario.priceIncrease}
-                onChange={(e) => setNewScenario({...newScenario, priceIncrease: parseFloat(e.target.value) || 0})}
-                className="mt-1"
+                step="0.01"
+                value={newScenario.costPerKg}
+                onChange={(e) => setNewScenario(prev => ({ ...prev, costPerKg: parseFloat(e.target.value) || 0 }))}
               />
             </div>
-            <div>
-              <Label className="text-slate-700 font-medium flex items-center space-x-1">
-                <span>{language === 'el' ? 'Αύξηση Κόστους (%)' : 'Cost Increase (%)'}</span>
-                <TooltipHelper tooltipKey="tooltip.cost.increase" />
-              </Label>
+
+            <div className="space-y-2">
+              <Label>{language === 'el' ? 'Απόδοση Καθαρισμού (%)' : 'Cleaning Yield (%)'}</Label>
               <Input
                 type="number"
-                value={newScenario.costIncrease}
-                onChange={(e) => setNewScenario({...newScenario, costIncrease: parseFloat(e.target.value) || 0})}
-                className="mt-1"
+                step="0.1"
+                min="0"
+                max="100"
+                value={newScenario.cleaningYield}
+                onChange={(e) => setNewScenario(prev => ({ ...prev, cleaningYield: parseFloat(e.target.value) || 0 }))}
               />
             </div>
-            <div>
-              <Label className="text-slate-700 font-medium flex items-center space-x-1">
-                <span>{language === 'el' ? 'Αλλαγή Ζήτησης (%)' : 'Demand Change (%)'}</span>
-                <TooltipHelper tooltipKey="tooltip.demand.change" />
-              </Label>
+
+            <div className="space-y-2">
+              <Label>{language === 'el' ? 'Περιθώριο Κέρδους (%)' : 'Profit Margin (%)'}</Label>
               <Input
                 type="number"
-                value={newScenario.demandChange}
-                onChange={(e) => setNewScenario({...newScenario, demandChange: parseFloat(e.target.value) || 0})}
-                className="mt-1"
+                step="0.1"
+                min="0"
+                value={newScenario.profitMargin}
+                onChange={(e) => setNewScenario(prev => ({ ...prev, profitMargin: parseFloat(e.target.value) || 0 }))}
               />
             </div>
-          </div>
-          <Button 
-            onClick={addScenario} 
-            className="mt-4 bg-purple-600 hover:bg-purple-700"
-            disabled={!newScenario.name}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            {language === 'el' ? 'Προσθήκη Σεναρίου' : 'Add Scenario'}
-          </Button>
-        </CardContent>
-      </Card>
 
-      {/* Chart Explanation */}
-      <ChartExplanation type="scenario" />
+            <Button onClick={addScenario} className="w-full" disabled={!newScenario.name.trim()}>
+              <Target className="h-4 w-4 mr-2" />
+              {language === 'el' ? 'Προσθήκη Σεναρίου' : 'Add Scenario'}
+            </Button>
+          </CardContent>
+        </Card>
 
-      {/* Scenarios Comparison Chart */}
-      <Card className="border-slate-200 shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-200">
-          <CardTitle className="flex items-center space-x-2 text-slate-800">
-            <BarChart3 className="w-5 h-5 text-blue-600" />
-            <span>{language === 'el' ? 'Σύγκριση Σεναρίων' : 'Scenario Comparison'}</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-          <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={chartData}>
-              <defs>
-                <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                </linearGradient>
-                <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0.3}/>
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis dataKey="name" stroke="#64748b" />
-              <YAxis stroke="#64748b" />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend />
-              <Bar 
-                dataKey={language === 'el' ? 'Κέρδος/Κιλό' : 'Profit/Kg'} 
-                fill="url(#profitGradient)" 
-                radius={[4, 4, 0, 0]} 
-              />
-              <Bar 
-                dataKey={language === 'el' ? 'Έσοδα' : 'Revenue'} 
-                fill="url(#revenueGradient)" 
-                radius={[4, 4, 0, 0]} 
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-
-      {/* Sensitivity Analysis Chart */}
-      <Card className="border-slate-200 shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-slate-200">
-          <CardTitle className="flex items-center space-x-2 text-slate-800">
-            <TrendingUp className="w-5 h-5 text-green-600" />
-            <span>{language === 'el' ? 'Ανάλυση Ευαισθησίας' : 'Sensitivity Analysis'}</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-          <ResponsiveContainer width="100%" height={400}>
-            <LineChart data={sensitivityData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis dataKey="variation" stroke="#64748b" />
-              <YAxis stroke="#64748b" />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend />
-              <Line 
-                type="monotone" 
-                dataKey="priceChange" 
-                stroke="#3b82f6" 
-                strokeWidth={3}
-                name={language === 'el' ? 'Αλλαγή Τιμής' : 'Price Change'}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="costChange" 
-                stroke="#ef4444" 
-                strokeWidth={3}
-                name={language === 'el' ? 'Αλλαγή Κόστους' : 'Cost Change'}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="demandChange" 
-                stroke="#10b981" 
-                strokeWidth={3}
-                name={language === 'el' ? 'Αλλαγή Ζήτησης' : 'Demand Change'}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-
-      {/* Scenarios List */}
-      <Card className="border-slate-200 shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-slate-200">
-          <CardTitle className="flex items-center space-x-2 text-slate-800">
-            <TrendingUp className="w-5 h-5 text-green-600" />
-            <span>{language === 'el' ? 'Αποθηκευμένα Σενάρια' : 'Saved Scenarios'}</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-          <div className="space-y-4">
-            {scenarios.map((scenario) => {
-              const profitChange = scenario.id !== '1' ? ((scenario.profit - scenarios[0].profit) / scenarios[0].profit * 100) : 0;
-              const revenueChange = scenario.id !== '1' ? ((scenario.revenue - scenarios[0].revenue) / scenarios[0].revenue * 100) : 0;
-              
-              return (
-                <div key={scenario.id} className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-slate-100 border border-slate-200 rounded-lg hover:shadow-md transition-shadow">
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-slate-800 flex items-center space-x-2">
-                      <span>{scenario.name}</span>
-                      {scenario.id !== '1' && (
-                        <span className={`text-xs px-2 py-1 rounded-full ${profitChange >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                          {profitChange >= 0 ? '📈' : '📉'} {profitChange.toFixed(1)}%
-                        </span>
-                      )}
-                    </h4>
-                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-2 text-sm">
-                      <div>
-                        <span className="text-slate-600">{language === 'el' ? 'Τιμή:' : 'Price:'} </span>
-                        <span className={scenario.priceIncrease >= 0 ? 'text-green-600' : 'text-red-600'}>
-                          {scenario.priceIncrease >= 0 ? '+' : ''}{scenario.priceIncrease}%
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-slate-600">{language === 'el' ? 'Κόστος:' : 'Cost:'} </span>
-                        <span className={scenario.costIncrease <= 0 ? 'text-green-600' : 'text-red-600'}>
-                          {scenario.costIncrease >= 0 ? '+' : ''}{scenario.costIncrease}%
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-slate-600">{language === 'el' ? 'Ζήτηση:' : 'Demand:'} </span>
-                        <span className={scenario.demandChange >= 0 ? 'text-green-600' : 'text-red-600'}>
-                          {scenario.demandChange >= 0 ? '+' : ''}{scenario.demandChange}%
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-slate-600">{language === 'el' ? 'Κέρδος:' : 'Profit:'} </span>
-                        <span className="font-semibold text-blue-600">{scenario.profit.toFixed(2)}€</span>
-                      </div>
-                      <div>
-                        <span className="text-slate-600">{language === 'el' ? 'Έσοδα:' : 'Revenue:'} </span>
-                        <span className="font-semibold text-green-600">{scenario.revenue.toFixed(2)}€</span>
-                      </div>
+        {/* Scenario Comparison */}
+        <Card className="shadow-lg border-0">
+          <CardHeader className="bg-gradient-to-r from-green-600 to-teal-600 text-white">
+            <CardTitle className="flex items-center gap-2">
+              <Scale className="h-5 w-5" />
+              {language === 'el' ? 'Σύγκριση Σεναρίων' : 'Scenario Comparison'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              {scenariosWithResults.map((scenario) => (
+                <div key={scenario.id} className="p-4 border rounded-lg hover:shadow-md transition-shadow">
+                  <div className="flex justify-between items-start mb-3">
+                    <h4 className="font-semibold text-lg">{scenario.name}</h4>
+                    <Badge variant="secondary">
+                      €{scenario.results.totalCost.toFixed(2)}
+                    </Badge>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">
+                        {language === 'el' ? 'Κόστος/κιλό:' : 'Cost/kg:'}
+                      </span>
+                      <span className="font-medium">€{scenario.results.costPerKgFinal.toFixed(2)}</span>
+                    </div>
+                    
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">
+                        {language === 'el' ? 'Κέρδος:' : 'Profit:'}
+                      </span>
+                      <span className="font-medium text-green-600">€{scenario.results.profit.toFixed(2)}</span>
+                    </div>
+                    
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">
+                        {language === 'el' ? 'Απόδοση:' : 'Yield:'}
+                      </span>
+                      <span className="font-medium">{scenario.cleaningYield}%</span>
+                    </div>
+                    
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">
+                        {language === 'el' ? 'Περιθώριο:' : 'Margin:'}
+                      </span>
+                      <span className="font-medium">{scenario.profitMargin}%</span>
                     </div>
                   </div>
-                  {scenario.id !== '1' && (
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => removeScenario(scenario.id)}
-                      className="ml-4"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  )}
                 </div>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Detailed Analysis */}
+      <Card className="shadow-lg border-0">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <TrendingUp className="h-5 w-5" />
+            {language === 'el' ? 'Λεπτομερής Ανάλυση' : 'Detailed Analysis'}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="profit" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="profit">
+                {language === 'el' ? 'Κερδοφορία' : 'Profitability'}
+              </TabsTrigger>
+              <TabsTrigger value="cost">
+                {language === 'el' ? 'Κόστος' : 'Cost'}
+              </TabsTrigger>
+              <TabsTrigger value="yield">
+                {language === 'el' ? 'Απόδοση' : 'Yield'}
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="profit" className="space-y-4">
+              <div className="grid gap-4">
+                {scenariosWithResults.map((scenario) => (
+                  <div key={scenario.id} className="flex justify-between items-center p-4 bg-muted/50 rounded-lg">
+                    <span className="font-medium">{scenario.name}</span>
+                    <div className="flex items-center gap-2">
+                      <Badge variant={scenario.results.profit > 0 ? "default" : "destructive"}>
+                        €{scenario.results.profit.toFixed(2)}
+                      </Badge>
+                      {scenario.results.profit > 0 ? (
+                        <TrendingUp className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <TrendingDown className="h-4 w-4 text-red-500" />
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="cost" className="space-y-4">
+              <div className="grid gap-4">
+                {scenariosWithResults.map((scenario) => (
+                  <div key={scenario.id} className="flex justify-between items-center p-4 bg-muted/50 rounded-lg">
+                    <span className="font-medium">{scenario.name}</span>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary">
+                        €{scenario.results.costPerKgFinal.toFixed(2)}/kg
+                      </Badge>
+                      <DollarSign className="h-4 w-4 text-blue-500" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="yield" className="space-y-4">
+              <div className="grid gap-4">
+                {scenariosWithResults.map((scenario) => (
+                  <div key={scenario.id} className="flex justify-between items-center p-4 bg-muted/50 rounded-lg">
+                    <span className="font-medium">{scenario.name}</span>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline">
+                        {scenario.cleaningYield}%
+                      </Badge>
+                      <Scale className="h-4 w-4 text-purple-500" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
     </div>

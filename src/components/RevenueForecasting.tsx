@@ -1,454 +1,318 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, BarChart, Bar } from 'recharts';
-import { TrendingUp, Calendar, Users, Euro, Calculator } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
-import TooltipHelper from './TooltipHelper';
-import ChartExplanation from './ChartExplanation';
+
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { Badge } from './ui/badge';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { TrendingUp, Calendar, DollarSign, Package, Target, Zap } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
+import { FormData, CalculationResults } from '../types';
+
+interface RevenueForecastingProps {
+  formData: FormData;
+  results: CalculationResults | null;
+}
 
 interface ForecastData {
   month: string;
   revenue: number;
-  optimistic: number;
-  pessimistic: number;
-  customers: number;
+  cost: number;
+  profit: number;
+  volume: number;
 }
 
-interface RevenueParams {
-  avgCustomersPerMonth: number;
-  avgOrderValue: number;
-  seasonalityFactor: number;
-  growthRate: number;
-  marketTrend: 'up' | 'stable' | 'down';
-}
-
-const RevenueForecasting: React.FC = () => {
-  const { t, language } = useLanguage();
-  const [params, setParams] = useState<RevenueParams>({
-    avgCustomersPerMonth: 100,
-    avgOrderValue: 50,
-    seasonalityFactor: 1,
-    growthRate: 5,
-    marketTrend: 'stable'
+const RevenueForecasting: React.FC<RevenueForecastingProps> = ({ formData, results }) => {
+  const { language } = useLanguage();
+  const [forecastParams, setForecastParams] = useState({
+    monthlyVolume: 1000, // kg per month
+    growthRate: 5, // % per month
+    seasonalityFactor: 1.0,
+    marketTrend: 'stable' as 'growing' | 'stable' | 'declining'
   });
 
-  const [forecastData, setForecastData] = useState<ForecastData[]>([]);
+  const generateForecast = (): ForecastData[] => {
+    if (!results) return [];
 
-  const months = language === 'el' 
-    ? ['Ιαν', 'Φεβ', 'Μαρ', 'Απρ', 'Μαϊ', 'Ιουν', 'Ιουλ', 'Αυγ', 'Σεπ', 'Οκτ', 'Νοε', 'Δεκ']
-    : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-  const seasonalFactors = {
-    'Ιαν': 0.85, 'Φεβ': 0.90, 'Μαρ': 1.05, 'Απρ': 1.10,
-    'Μαϊ': 1.15, 'Ιουν': 1.20, 'Ιουλ': 1.25, 'Αυγ': 1.15,
-    'Σεπ': 1.10, 'Οκτ': 1.05, 'Νοε': 0.95, 'Δεκ': 1.00,
-    'Jan': 0.85, 'Feb': 0.90, 'Mar': 1.05, 'Apr': 1.10,
-    'May': 1.15, 'Jun': 1.20, 'Jul': 1.25, 'Aug': 1.15,
-    'Sep': 1.10, 'Oct': 1.05, 'Nov': 0.95, 'Dec': 1.00
-  };
-
-  // Memoized calculation function
-  const calculateForecast = useMemo(() => {
-    return () => {
-      const data: ForecastData[] = months.map((month, index) => {
-        const monthlyGrowth = Math.pow(1 + params.growthRate / 100, index / 12);
-        const seasonal = seasonalFactors[month as keyof typeof seasonalFactors] * params.seasonalityFactor;
-        
-        let trendMultiplier = 1;
-        if (params.marketTrend === 'up') trendMultiplier = 1 + (index * 0.02);
-        else if (params.marketTrend === 'down') trendMultiplier = 1 - (index * 0.01);
-
-        const baseCustomers = params.avgCustomersPerMonth * monthlyGrowth * seasonal * trendMultiplier;
-        const baseRevenue = baseCustomers * params.avgOrderValue;
-
-        return {
-          month,
-          revenue: Math.round(baseRevenue),
-          optimistic: Math.round(baseRevenue * 1.2),
-          pessimistic: Math.round(baseRevenue * 0.8),
-          customers: Math.round(baseCustomers)
-        };
-      });
-
-      setForecastData(data);
-    };
-  }, [params, months, seasonalFactors]);
-
-  useEffect(() => {
-    calculateForecast();
-  }, [calculateForecast]);
-
-  // Memoized summary calculations
-  const summaryData = useMemo(() => {
-    const totalRevenue = forecastData.reduce((sum, month) => sum + month.revenue, 0);
-    const avgMonthlyRevenue = totalRevenue / 12;
-    const totalCustomers = forecastData.reduce((sum, month) => sum + month.customers, 0);
-    
-    return {
-      totalRevenue,
-      avgMonthlyRevenue,
-      totalCustomers
-    };
-  }, [forecastData]);
-
-  // Quarterly data for additional chart
-  const quarterlyData = useMemo(() => {
-    if (forecastData.length === 0) return [];
-    
-    const quarters = [
-      { name: 'Q1', months: [0, 1, 2] },
-      { name: 'Q2', months: [3, 4, 5] },
-      { name: 'Q3', months: [6, 7, 8] },
-      { name: 'Q4', months: [9, 10, 11] }
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ];
-    
-    return quarters.map(quarter => {
-      const quarterRevenue = quarter.months.reduce((sum, monthIndex) => 
-        sum + (forecastData[monthIndex]?.revenue || 0), 0
-      );
-      const quarterCustomers = quarter.months.reduce((sum, monthIndex) => 
-        sum + (forecastData[monthIndex]?.customers || 0), 0
-      );
+
+    return months.map((month, index) => {
+      let volumeMultiplier = 1;
       
+      // Apply growth rate
+      if (forecastParams.marketTrend === 'growing') {
+        volumeMultiplier = Math.pow(1 + forecastParams.growthRate / 100, index);
+      } else if (forecastParams.marketTrend === 'declining') {
+        volumeMultiplier = Math.pow(1 - forecastParams.growthRate / 100, index);
+      }
+
+      // Apply seasonality (higher in winter months for food products)
+      const seasonalMultiplier = [1.2, 1.1, 1.0, 0.9, 0.8, 0.7, 0.7, 0.8, 0.9, 1.0, 1.1, 1.3][index];
+      
+      const monthlyVolume = forecastParams.monthlyVolume * volumeMultiplier * seasonalMultiplier;
+      const monthlyRevenue = (results.sellingPrice / results.finalWeight) * monthlyVolume;
+      const monthlyCost = (results.totalCost / results.finalWeight) * monthlyVolume;
+      const monthlyProfit = monthlyRevenue - monthlyCost;
+
       return {
-        quarter: quarter.name,
-        revenue: quarterRevenue,
-        customers: quarterCustomers,
-        avgOrderValue: quarterCustomers > 0 ? quarterRevenue / quarterCustomers : 0
+        month,
+        revenue: monthlyRevenue,
+        cost: monthlyCost,
+        profit: monthlyProfit,
+        volume: monthlyVolume
       };
     });
-  }, [forecastData]);
-
-  // Custom tooltip component
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-          <p className="font-medium">{label}</p>
-          {payload.map((entry: any, index: number) => (
-            <p key={index} style={{ color: entry.color }}>
-              {entry.name}: {typeof entry.value === 'number' ? entry.value.toLocaleString() : entry.value}€
-            </p>
-          ))}
-        </div>
-      );
-    }
-    return null;
   };
+
+  const forecastData = generateForecast();
+  const totalYearlyRevenue = forecastData.reduce((sum, month) => sum + month.revenue, 0);
+  const totalYearlyProfit = forecastData.reduce((sum, month) => sum + month.profit, 0);
+  const totalYearlyVolume = forecastData.reduce((sum, month) => sum + month.volume, 0);
 
   return (
     <div className="space-y-6">
-      {/* Header with Tooltip */}
-      <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-        <CardContent className="p-4">
-          <div className="flex items-center space-x-2">
-            <TrendingUp className="w-5 h-5 text-blue-600" />
-            <h3 className="font-semibold text-blue-800">
-              {language === 'el' ? 'Πρόβλεψη Εσόδων' : 'Revenue Forecasting'}
-            </h3>
-            <TooltipHelper tooltipKey="tooltip.revenue.forecasting" />
-          </div>
-          <p className="text-sm text-blue-700 mt-2">
-            {language === 'el' 
-              ? 'Προβλέψτε μελλοντικά έσοδα βασισμένα σε ιστορικά δεδομένα και τάσεις αγοράς'
-              : 'Forecast future revenue based on historical data and market trends'
-            }
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* Parameters Input */}
-      <Card className="border-slate-200 shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-200">
-          <CardTitle className="flex items-center space-x-2 text-slate-800">
-            <Calculator className="w-5 h-5 text-blue-600" />
-            <span>{language === 'el' ? 'Παράμετροι Πρόβλεψης' : 'Forecast Parameters'}</span>
+      {/* Forecast Parameters */}
+      <Card className="shadow-lg border-0">
+        <CardHeader className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+          <CardTitle className="flex items-center gap-2">
+            <Target className="h-5 w-5" />
+            {language === 'el' ? 'Παράμετροι Πρόβλεψης' : 'Forecast Parameters'}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div>
-              <Label className="flex items-center space-x-2 text-slate-700 font-medium">
-                <Users className="w-4 h-4 text-blue-600" />
-                <span>{language === 'el' ? 'Μέσος Αριθμός Πελατών/Μήνα' : 'Avg Customers per Month'}</span>
-              </Label>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="space-y-2">
+              <Label>{language === 'el' ? 'Μηνιαίος Όγκος (kg)' : 'Monthly Volume (kg)'}</Label>
               <Input
                 type="number"
-                value={params.avgCustomersPerMonth}
-                onChange={(e) => setParams({...params, avgCustomersPerMonth: parseInt(e.target.value) || 0})}
-                className="mt-2"
+                value={forecastParams.monthlyVolume}
+                onChange={(e) => setForecastParams(prev => ({ 
+                  ...prev, 
+                  monthlyVolume: parseInt(e.target.value) || 0 
+                }))}
               />
             </div>
 
-            <div>
-              <Label className="flex items-center space-x-2 text-slate-700 font-medium">
-                <Euro className="w-4 h-4 text-green-600" />
-                <span>{language === 'el' ? 'Μέση Αξία Παραγγελίας (€)' : 'Avg Order Value (€)'}</span>
-              </Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={params.avgOrderValue}
-                onChange={(e) => setParams({...params, avgOrderValue: parseFloat(e.target.value) || 0})}
-                className="mt-2"
-              />
-            </div>
-
-            <div>
-              <Label className="text-slate-700 font-medium">
-                {language === 'el' ? 'Ρυθμός Ανάπτυξης (%)' : 'Growth Rate (%)'}
-              </Label>
+            <div className="space-y-2">
+              <Label>{language === 'el' ? 'Ρυθμός Ανάπτυξης (%)' : 'Growth Rate (%)'}</Label>
               <Input
                 type="number"
                 step="0.1"
-                value={params.growthRate}
-                onChange={(e) => setParams({...params, growthRate: parseFloat(e.target.value) || 0})}
-                className="mt-2"
+                value={forecastParams.growthRate}
+                onChange={(e) => setForecastParams(prev => ({ 
+                  ...prev, 
+                  growthRate: parseFloat(e.target.value) || 0 
+                }))}
               />
             </div>
 
-            <div>
-              <Label className="text-slate-700 font-medium">
-                {language === 'el' ? 'Εποχικότητα' : 'Seasonality'}
-              </Label>
-              <Input
-                type="number"
-                step="0.1"
-                min="0.5"
-                max="2"
-                value={params.seasonalityFactor}
-                onChange={(e) => setParams({...params, seasonalityFactor: parseFloat(e.target.value) || 1})}
-                className="mt-2"
-              />
-            </div>
-
-            <div>
-              <Label className="text-slate-700 font-medium">
-                {language === 'el' ? 'Τάση Αγοράς' : 'Market Trend'}
-              </Label>
-              <Select 
-                value={params.marketTrend} 
-                onValueChange={(value: 'up' | 'stable' | 'down') => setParams({...params, marketTrend: value})}
+            <div className="space-y-2">
+              <Label>{language === 'el' ? 'Τάση Αγοράς' : 'Market Trend'}</Label>
+              <select 
+                className="w-full p-2 border rounded-md bg-background"
+                value={forecastParams.marketTrend}
+                onChange={(e) => setForecastParams(prev => ({ 
+                  ...prev, 
+                  marketTrend: e.target.value as 'growing' | 'stable' | 'declining'
+                }))}
               >
-                <SelectTrigger className="mt-2">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="up">
-                    📈 {language === 'el' ? 'Ανοδική' : 'Upward'}
-                  </SelectItem>
-                  <SelectItem value="stable">
-                    ➡️ {language === 'el' ? 'Σταθερή' : 'Stable'}
-                  </SelectItem>
-                  <SelectItem value="down">
-                    📉 {language === 'el' ? 'Καθοδική' : 'Downward'}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+                <option value="growing">{language === 'el' ? 'Ανοδική' : 'Growing'}</option>
+                <option value="stable">{language === 'el' ? 'Σταθερή' : 'Stable'}</option>
+                <option value="declining">{language === 'el' ? 'Καθοδική' : 'Declining'}</option>
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>{language === 'el' ? 'Εποχικότητα' : 'Seasonality'}</Label>
+              <Input
+                type="number"
+                step="0.1"
+                min="0.1"
+                max="2.0"
+                value={forecastParams.seasonalityFactor}
+                onChange={(e) => setForecastParams(prev => ({ 
+                  ...prev, 
+                  seasonalityFactor: parseFloat(e.target.value) || 1.0 
+                }))}
+              />
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Revenue Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="border-l-4 border-l-blue-600 shadow-lg hover:shadow-xl transition-shadow">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">
-                  {language === 'el' ? 'Ετήσια Έσοδα' : 'Annual Revenue'}
-                </p>
-                <p className="text-3xl font-bold text-blue-600">{summaryData.totalRevenue.toLocaleString()}€</p>
-                <p className="text-xs text-slate-500 mt-1">
-                  {language === 'el' ? 'Συνολικός στόχος' : 'Total target'}
-                </p>
-              </div>
-              <TrendingUp className="w-8 h-8 text-blue-600" />
+      {/* Key Metrics */}
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200">
+          <CardContent className="p-6 text-center">
+            <DollarSign className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+            <div className="text-2xl font-bold text-blue-700">
+              €{(totalYearlyRevenue / 1000).toFixed(0)}K
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {language === 'el' ? 'Ετήσια Έσοδα' : 'Annual Revenue'}
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-green-600 shadow-lg hover:shadow-xl transition-shadow">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">
-                  {language === 'el' ? 'Μέσα Μηνιαία Έσοδα' : 'Avg Monthly Revenue'}
-                </p>
-                <p className="text-3xl font-bold text-green-600">{Math.round(summaryData.avgMonthlyRevenue).toLocaleString()}€</p>
-                <p className="text-xs text-slate-500 mt-1">
-                  {language === 'el' ? 'Μηνιαίος στόχος' : 'Monthly target'}
-                </p>
-              </div>
-              <Calendar className="w-8 h-8 text-green-600" />
+        <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200">
+          <CardContent className="p-6 text-center">
+            <TrendingUp className="h-8 w-8 text-green-600 mx-auto mb-2" />
+            <div className="text-2xl font-bold text-green-700">
+              €{(totalYearlyProfit / 1000).toFixed(0)}K
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {language === 'el' ? 'Ετήσιο Κέρδος' : 'Annual Profit'}
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-purple-600 shadow-lg hover:shadow-xl transition-shadow">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">
-                  {language === 'el' ? 'Συνολικοί Πελάτες' : 'Total Customers'}
-                </p>
-                <p className="text-3xl font-bold text-purple-600">
-                  {summaryData.totalCustomers.toLocaleString()}
-                </p>
-                <p className="text-xs text-slate-500 mt-1">
-                  {language === 'el' ? 'Ετήσιος στόχος' : 'Annual target'}
-                </p>
-              </div>
-              <Users className="w-8 h-8 text-purple-600" />
+        <Card className="bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 border-purple-200">
+          <CardContent className="p-6 text-center">
+            <Package className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+            <div className="text-2xl font-bold text-purple-700">
+              {(totalYearlyVolume / 1000).toFixed(1)}T
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {language === 'el' ? 'Ετήσιος Όγκος' : 'Annual Volume'}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 border-orange-200">
+          <CardContent className="p-6 text-center">
+            <Zap className="h-8 w-8 text-orange-600 mx-auto mb-2" />
+            <div className="text-2xl font-bold text-orange-700">
+              {((totalYearlyProfit / totalYearlyRevenue) * 100).toFixed(1)}%
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {language === 'el' ? 'Περιθώριο Κέρδους' : 'Profit Margin'}
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Chart Explanation */}
-      <ChartExplanation type="forecast" />
-
-      {/* Forecast Chart */}
-      <Card className="border-slate-200 shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-slate-200">
-          <CardTitle className="flex items-center space-x-2 text-slate-800">
-            <TrendingUp className="w-5 h-5 text-green-600" />
-            <span>
-              {language === 'el' ? 'Πρόβλεψη Εσόδων - 12 Μήνες' : 'Revenue Forecast - 12 Months'}
-            </span>
+      {/* Revenue Forecast Chart */}
+      <Card className="shadow-lg border-0">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5" />
+            {language === 'el' ? 'Πρόβλεψη Εσόδων 12 Μηνών' : '12-Month Revenue Forecast'}
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent>
           <ResponsiveContainer width="100%" height={400}>
-            <AreaChart data={forecastData}>
-              <defs>
-                <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
-                </linearGradient>
-                <linearGradient id="optimisticGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.2}/>
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0.05}/>
-                </linearGradient>
-                <linearGradient id="pessimisticGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#ef4444" stopOpacity={0.2}/>
-                  <stop offset="95%" stopColor="#ef4444" stopOpacity={0.05}/>
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis dataKey="month" stroke="#64748b" />
-              <YAxis stroke="#64748b" />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend />
-              <Area 
-                type="monotone" 
-                dataKey="optimistic" 
-                stroke="#10b981" 
-                fill="url(#optimisticGradient)"
-                strokeWidth={2}
-                name={language === 'el' ? 'Αισιόδοξο Σενάριο' : 'Optimistic Scenario'}
+            <LineChart data={forecastData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip 
+                formatter={(value: number, name: string) => [
+                  `€${value.toFixed(0)}`,
+                  name === 'revenue' ? (language === 'el' ? 'Έσοδα' : 'Revenue') :
+                  name === 'cost' ? (language === 'el' ? 'Κόστος' : 'Cost') :
+                  (language === 'el' ? 'Κέρδος' : 'Profit')
+                ]}
               />
-              <Area 
+              <Line 
                 type="monotone" 
                 dataKey="revenue" 
                 stroke="#3b82f6" 
-                fill="url(#revenueGradient)"
                 strokeWidth={3}
-                name={language === 'el' ? 'Βασική Πρόβλεψη' : 'Base Forecast'}
+                dot={{ fill: '#3b82f6', strokeWidth: 2, r: 6 }}
               />
-              <Area 
+              <Line 
                 type="monotone" 
-                dataKey="pessimistic" 
+                dataKey="cost" 
                 stroke="#ef4444" 
-                fill="url(#pessimisticGradient)"
                 strokeWidth={2}
                 strokeDasharray="5 5"
-                name={language === 'el' ? 'Απαισιόδοξο Σενάριο' : 'Pessimistic Scenario'}
+                dot={{ fill: '#ef4444', strokeWidth: 2, r: 4 }}
               />
-            </AreaChart>
+              <Line 
+                type="monotone" 
+                dataKey="profit" 
+                stroke="#22c55e" 
+                strokeWidth={3}
+                dot={{ fill: '#22c55e', strokeWidth: 2, r: 6 }}
+              />
+            </LineChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
 
-      {/* Quarterly Analysis Chart */}
-      <Card className="border-slate-200 shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 border-b border-slate-200">
-          <CardTitle className="flex items-center space-x-2 text-slate-800">
-            <BarChart className="w-5 h-5 text-purple-600" />
-            <span>{language === 'el' ? 'Τριμηνιαία Ανάλυση' : 'Quarterly Analysis'}</span>
+      {/* Volume Forecast */}
+      <Card className="shadow-lg border-0">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Package className="h-5 w-5" />
+            {language === 'el' ? 'Πρόβλεψη Όγκου Παραγωγής' : 'Production Volume Forecast'}
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={quarterlyData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis dataKey="quarter" stroke="#64748b" />
-              <YAxis stroke="#64748b" />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend />
-              <Bar 
-                dataKey="revenue" 
-                fill="#8b5cf6" 
-                radius={[4, 4, 0, 0]}
-                name={language === 'el' ? 'Έσοδα' : 'Revenue'}
+            <BarChart data={forecastData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip 
+                formatter={(value: number) => [
+                  `${value.toFixed(0)} kg`,
+                  language === 'el' ? 'Όγκος' : 'Volume'
+                ]}
               />
+              <Bar 
+                dataKey="volume" 
+                fill="url(#volumeGradient)" 
+                radius={[4, 4, 0, 0]}
+              />
+              <defs>
+                <linearGradient id="volumeGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.2}/>
+                </linearGradient>
+              </defs>
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
 
-      {/* Detailed Monthly Breakdown */}
-      <Card className="border-slate-200 shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-slate-200">
-          <CardTitle className="flex items-center space-x-2 text-slate-800">
-            <Calendar className="w-5 h-5 text-indigo-600" />
-            <span>{language === 'el' ? 'Μηνιαία Ανάλυση' : 'Monthly Breakdown'}</span>
+      {/* Monthly Breakdown */}
+      <Card className="shadow-lg border-0">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5" />
+            {language === 'el' ? 'Μηνιαία Ανάλυση' : 'Monthly Breakdown'}
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-6">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-slate-200">
-                  <th className="text-left py-3 font-semibold text-slate-700">
-                    {language === 'el' ? 'Μήνας' : 'Month'}
-                  </th>
-                  <th className="text-right py-3 font-semibold text-slate-700">
-                    {language === 'el' ? 'Έσοδα' : 'Revenue'}
-                  </th>
-                  <th className="text-right py-3 font-semibold text-slate-700">
-                    {language === 'el' ? 'Πελάτες' : 'Customers'}
-                  </th>
-                  <th className="text-right py-3 font-semibold text-slate-700">
-                    {language === 'el' ? 'Αύξηση' : 'Growth'}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {forecastData.map((month, index) => {
-                  const growth = index > 0 ? ((month.revenue - forecastData[index - 1].revenue) / forecastData[index - 1].revenue * 100) : 0;
-                  return (
-                    <tr key={month.month} className="border-b border-slate-100 hover:bg-slate-50">
-                      <td className="py-3 font-medium">{month.month}</td>
-                      <td className="py-3 text-right font-semibold text-blue-600">
-                        {month.revenue.toLocaleString()}€
-                      </td>
-                      <td className="py-3 text-right text-slate-600">
-                        {month.customers.toLocaleString()}
-                      </td>
-                      <td className={`py-3 text-right text-sm ${growth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {index > 0 ? `${growth >= 0 ? '+' : ''}${growth.toFixed(1)}%` : '-'}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+        <CardContent>
+          <div className="grid gap-4">
+            {forecastData.map((month) => (
+              <div key={month.month} className="flex justify-between items-center p-4 bg-muted/50 rounded-lg hover:shadow-md transition-shadow">
+                <div className="font-medium">{month.month}</div>
+                <div className="flex gap-4 text-sm">
+                  <div className="text-center">
+                    <div className="font-semibold text-blue-600">€{month.revenue.toFixed(0)}</div>
+                    <div className="text-muted-foreground">{language === 'el' ? 'Έσοδα' : 'Revenue'}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-semibold text-red-600">€{month.cost.toFixed(0)}</div>
+                    <div className="text-muted-foreground">{language === 'el' ? 'Κόστος' : 'Cost'}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-semibold text-green-600">€{month.profit.toFixed(0)}</div>
+                    <div className="text-muted-foreground">{language === 'el' ? 'Κέρδος' : 'Profit'}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-semibold text-purple-600">{month.volume.toFixed(0)} kg</div>
+                    <div className="text-muted-foreground">{language === 'el' ? 'Όγκος' : 'Volume'}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
