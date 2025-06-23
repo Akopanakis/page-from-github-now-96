@@ -9,16 +9,9 @@ interface TransportTabProps {
 }
 
 const TransportTab: React.FC<TransportTabProps> = ({ formData, updateFormData }) => {
-  // Convert the single field update to the format expected by GoogleMapsTransport
-  const handleUpdateFormData = (updates: Partial<FormData>) => {
-    Object.entries(updates).forEach(([key, value]) => {
-      if (typeof value === 'number') {
-        updateFormData(key as keyof FormData, value);
-      }
-    });
-  };
-
-  return <GoogleMapsTransport formData={formData} updateFormData={handleUpdateFormData} />;
+  // GoogleMapsTransport is currently a standalone component that doesn't accept props
+  // In the future, it could be enhanced to integrate with the form data
+  return <GoogleMapsTransport />;
 };
 
 export default TransportTab;
