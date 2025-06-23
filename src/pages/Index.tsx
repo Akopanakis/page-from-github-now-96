@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Calculator, BarChart3, TrendingUp, FileText, Globe2, Crown, Sparkles, Fish, Zap, Target, Database } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCalculation } from '@/hooks/useCalculation';
-import ProductBasics from '@/components/ProductBasics';
+import ModernInputForm from '@/components/ModernInputForm';
 import ProcessingPhases from '@/components/ProcessingPhases';
 import CostsTab from '@/components/CostsTab';
 import TransportTab from '@/components/TransportTab';
@@ -34,7 +33,11 @@ const Index = () => {
   const [isPremium, setIsPremium] = useState(false);
 
   const handleFileUpload = (data: any) => {
-    updateFormData(data);
+    Object.keys(data).forEach(key => {
+      if (key in formData) {
+        updateFormData(key as keyof typeof formData, data[key]);
+      }
+    });
     setShowFileUpload(false);
   };
 
@@ -215,10 +218,12 @@ const Index = () => {
 
                   <div className="p-6">
                     <TabsContent value="basics" className="mt-0">
-                      <ProductBasics 
+                      <ModernInputForm 
                         formData={formData} 
-                        updateFormData={updateFormData} 
-                        isPremium={isPremium}
+                        updateFormData={updateFormData}
+                        onCalculate={calculate}
+                        onReset={resetForm}
+                        isCalculating={isCalculating}
                       />
                     </TabsContent>
 
