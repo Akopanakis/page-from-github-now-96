@@ -1,6 +1,7 @@
+
 import React, { createContext, useContext, useState } from 'react';
 
-type Language = 'gr' | 'en';
+type Language = 'el' | 'en';
 
 interface LanguageContextType {
   language: Language;
@@ -9,7 +10,7 @@ interface LanguageContextType {
 }
 
 const translations = {
-  gr: {
+  el: {
     // Navigation
     'nav.calculation': 'Υπολογισμός',
     'nav.batches': 'Παρτίδες',
@@ -98,10 +99,10 @@ const translations = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState<Language>('gr');
+  const [language, setLanguage] = useState<Language>('el');
 
   const t = (key: string): string => {
-    return translations[language][key as keyof typeof translations['gr']] || key;
+    return translations[language][key as keyof typeof translations['el']] || key;
   };
 
   return (
