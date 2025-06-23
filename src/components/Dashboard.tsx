@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Button } from './ui/button';
@@ -12,14 +13,14 @@ import { useCalculation } from '../hooks/useCalculation';
 export default function Dashboard() {
   const { theme, setTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
-  const { formData, results, updateFormData, calculate, reset } = useCalculation();
+  const { formData, results, updateFormData, calculate, resetForm } = useCalculation();
 
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
   const toggleLanguage = () => {
-    setLanguage(language === 'gr' ? 'en' : 'gr');
+    setLanguage(language === 'el' ? 'en' : 'el');
   };
 
   return (
@@ -27,7 +28,7 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-primary">
-          {language === 'gr' ? 'Κοστολόγηση Πρώτων Υλών' : 'Raw Material Costing'}
+          {language === 'el' ? 'Κοστολόγηση Πρώτων Υλών' : 'Raw Material Costing'}
         </h1>
         <div className="flex gap-2">
           <Button variant="outline" size="icon" onClick={toggleLanguage}>
@@ -53,7 +54,7 @@ export default function Dashboard() {
               formData={formData}
               onUpdate={updateFormData}
               onCalculate={calculate}
-              onReset={reset}
+              onReset={resetForm}
             />
             {results && <ResultsSection results={results} />}
           </div>
@@ -62,7 +63,7 @@ export default function Dashboard() {
         <TabsContent value="batches">
           <div className="text-center py-8">
             <p className="text-muted-foreground">
-              {language === 'gr' ? 'Λίστα παρτίδων - Σε ανάπτυξη' : 'Batch list - Under development'}
+              {language === 'el' ? 'Λίστα παρτίδων - Σε ανάπτυξη' : 'Batch list - Under development'}
             </p>
           </div>
         </TabsContent>

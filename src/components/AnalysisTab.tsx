@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
@@ -21,12 +22,12 @@ export default function AnalysisTab() {
 
   const pieData = batches.length > 0 ? [
     {
-      name: language === 'gr' ? 'Κόστος' : 'Cost',
+      name: language === 'el' ? 'Κόστος' : 'Cost',
       value: batches.reduce((sum: number, batch: any) => sum + batch.results.totalCost, 0),
       color: '#ef4444'
     },
     {
-      name: language === 'gr' ? 'Κέρδος' : 'Profit',
+      name: language === 'el' ? 'Κέρδος' : 'Profit',
       value: batches.reduce((sum: number, batch: any) => sum + batch.results.profit, 0),
       color: '#22c55e'
     }
@@ -36,7 +37,7 @@ export default function AnalysisTab() {
     return (
       <div className="text-center py-8">
         <p className="text-muted-foreground">
-          {language === 'gr' 
+          {language === 'el' 
             ? 'Δεν υπάρχουν δεδομένα για ανάλυση. Κάντε κάποιους υπολογισμούς πρώτα.' 
             : 'No data available for analysis. Make some calculations first.'}
         </p>
@@ -49,7 +50,7 @@ export default function AnalysisTab() {
       <Card>
         <CardHeader>
           <CardTitle>
-            {language === 'gr' ? 'Εξέλιξη Κόστους ανά Παρτίδα' : 'Cost Evolution per Batch'}
+            {language === 'el' ? 'Εξέλιξη Κόστους ανά Παρτίδα' : 'Cost Evolution per Batch'}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -69,7 +70,7 @@ export default function AnalysisTab() {
       <Card>
         <CardHeader>
           <CardTitle>
-            {language === 'gr' ? 'Αναλογία Κόστους/Κέρδους' : 'Cost/Profit Ratio'}
+            {language === 'el' ? 'Αναλογία Κόστους/Κέρδους' : 'Cost/Profit Ratio'}
           </CardTitle>
         </CardHeader>
         <CardContent>

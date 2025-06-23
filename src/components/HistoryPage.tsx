@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
@@ -28,23 +29,23 @@ export default function HistoryPage() {
       <div className="flex items-center gap-4">
         <Button variant="outline" onClick={() => navigate('/')}>
           <ArrowLeft className="h-4 w-4 mr-2" />
-          {language === 'gr' ? 'Πίσω' : 'Back'}
+          {language === 'el' ? 'Πίσω' : 'Back'}
         </Button>
         <h1 className="text-3xl font-bold">
-          {language === 'gr' ? 'Ιστορικό Παρτίδων' : 'Batch History'}
+          {language === 'el' ? 'Ιστορικό Παρτίδων' : 'Batch History'}
         </h1>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle>
-            {language === 'gr' ? 'Αποθηκευμένες Παρτίδες' : 'Saved Batches'}
+            {language === 'el' ? 'Αποθηκευμένες Παρτίδες' : 'Saved Batches'}
           </CardTitle>
         </CardHeader>
         <CardContent>
           {batches.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">
-              {language === 'gr' 
+              {language === 'el' 
                 ? 'Δεν υπάρχουν αποθηκευμένες παρτίδες' 
                 : 'No saved batches'}
             </p>
@@ -52,11 +53,11 @@ export default function HistoryPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{language === 'gr' ? 'Ημερομηνία' : 'Date'}</TableHead>
-                  <TableHead>{language === 'gr' ? 'Τελικό Βάρος' : 'Final Weight'}</TableHead>
-                  <TableHead>{language === 'gr' ? 'Συνολικό Κόστος' : 'Total Cost'}</TableHead>
-                  <TableHead>{language === 'gr' ? 'Κέρδος' : 'Profit'}</TableHead>
-                  <TableHead>{language === 'gr' ? 'Ενέργειες' : 'Actions'}</TableHead>
+                  <TableHead>{language === 'el' ? 'Ημερομηνία' : 'Date'}</TableHead>
+                  <TableHead>{language === 'el' ? 'Τελικό Βάρος' : 'Final Weight'}</TableHead>
+                  <TableHead>{language === 'el' ? 'Συνολικό Κόστος' : 'Total Cost'}</TableHead>
+                  <TableHead>{language === 'el' ? 'Κέρδος' : 'Profit'}</TableHead>
+                  <TableHead>{language === 'el' ? 'Ενέργειες' : 'Actions'}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

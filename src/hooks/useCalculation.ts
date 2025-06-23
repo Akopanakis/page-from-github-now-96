@@ -3,6 +3,9 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { FormData, CalculationResults, BatchData } from '@/types';
 
+export type { FormData, CalculationResults };
+export type Results = CalculationResults;
+
 export function useCalculation() {
   const [formData, setFormData] = useState<FormData>({
     initialWeight: 0,

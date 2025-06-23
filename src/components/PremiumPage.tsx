@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
@@ -13,22 +14,22 @@ export default function PremiumPage() {
   const features = [
     {
       icon: <Zap className="h-6 w-6" />,
-      title: language === 'gr' ? 'What-if Προσομοίωση' : 'What-if Simulation',
-      description: language === 'gr' 
+      title: language === 'el' ? 'What-if Προσομοίωση' : 'What-if Simulation',
+      description: language === 'el' 
         ? 'Δοκιμάστε διαφορετικά σενάρια με sliders για τιμή, απώλεια και γλάσο'
         : 'Test different scenarios with sliders for price, loss, and glazing',
     },
     {
       icon: <Brain className="h-6 w-6" />,
-      title: language === 'gr' ? 'ML Πρόβλεψη Κόστους' : 'ML Cost Prediction',
-      description: language === 'gr'
+      title: language === 'el' ? 'ML Πρόβλεψη Κόστους' : 'ML Cost Prediction',
+      description: language === 'el'
         ? 'Χρήση τεχνητής νοημοσύνης για πρόβλεψη μελλοντικών κοστών'
         : 'Use artificial intelligence to predict future costs',
     },
     {
       icon: <TrendingUp className="h-6 w-6" />,
-      title: language === 'gr' ? 'Προχωρημένη Ανάλυση' : 'Advanced Analytics',
-      description: language === 'gr'
+      title: language === 'el' ? 'Προχωρημένη Ανάλυση' : 'Advanced Analytics',
+      description: language === 'el'
         ? 'Λεπτομερής ανάλυση κόστους και τάσεων αγοράς'
         : 'Detailed cost analysis and market trends',
     },
@@ -39,20 +40,20 @@ export default function PremiumPage() {
       <div className="flex items-center gap-4">
         <Button variant="outline" onClick={() => navigate('/')}>
           <ArrowLeft className="h-4 w-4 mr-2" />
-          {language === 'gr' ? 'Πίσω' : 'Back'}
+          {language === 'el' ? 'Πίσω' : 'Back'}
         </Button>
         <h1 className="text-3xl font-bold flex items-center gap-2">
           <Crown className="h-8 w-8 text-yellow-500" />
-          Premium {language === 'gr' ? 'Χαρακτηριστικά' : 'Features'}
+          Premium {language === 'el' ? 'Χαρακτηριστικά' : 'Features'}
         </h1>
       </div>
 
       <div className="text-center py-8">
         <Badge variant="secondary" className="mb-4 text-lg px-4 py-2">
-          {language === 'gr' ? 'Σύντομα Διαθέσιμο' : 'Coming Soon'}
+          {language === 'el' ? 'Σύντομα Διαθέσιμο' : 'Coming Soon'}
         </Badge>
         <p className="text-muted-foreground text-lg">
-          {language === 'gr'
+          {language === 'el'
             ? 'Ξεκλειδώστε προχωρημένες δυνατότητες για επαγγελματική χρήση'
             : 'Unlock advanced features for professional use'}
         </p>
@@ -77,15 +78,15 @@ export default function PremiumPage() {
       <Card className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
         <CardContent className="text-center py-8">
           <h3 className="text-2xl font-bold mb-4">
-            {language === 'gr' ? 'Ενδιαφέρεστε;' : 'Interested?'}
+            {language === 'el' ? 'Ενδιαφέρεστε;' : 'Interested?'}
           </h3>
           <p className="text-muted-foreground mb-6">
-            {language === 'gr'
+            {language === 'el'
               ? 'Εγγραφείτε για να ενημερωθείτε όταν τα premium χαρακτηριστικά γίνουν διαθέσιμα'
               : 'Sign up to be notified when premium features become available'}
           </p>
           <Button size="lg" disabled>
-            {language === 'gr' ? 'Ενημερώστε με' : 'Notify Me'}
+            {language === 'el' ? 'Ενημερώστε με' : 'Notify Me'}
           </Button>
         </CardContent>
       </Card>
