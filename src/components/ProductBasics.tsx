@@ -1,343 +1,157 @@
-
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Package, Tag, Percent, Weight, Droplets, Fish, Crown, Building2, Calendar, Thermometer } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
-import TooltipHelper from './TooltipHelper';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { Calculator, RotateCcw } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
+import { FormData } from '../hooks/useCalculation';
 
 interface ProductBasicsProps {
-  formData: any;
-  updateFormData: (data: any) => void;
-  isPremium?: boolean;
+  formData: FormData;
+  onUpdate: (field: keyof FormData, value: number) => void;
+  onCalculate: () => void;
+  onReset: () => void;
 }
 
-const ProductBasics: React.FC<ProductBasicsProps> = ({ formData, updateFormData, isPremium = false }) => {
-  const { language } = useLanguage();
+export default function ProductBasics({ formData, onUpdate, onCalculate, onReset }: ProductBasicsProps) {
+  const { t } = useLanguage();
 
-  const productTypes = [
-    { value: 'fish', label: language === 'el' ? 'Ψάρι (Θράψαλο, Τσιπούρα κλπ)' : 'Fish (Tuna, Sea Bream etc)' },
-    { value: 'squid', label: language === 'el' ? 'Καλαμάρι' : 'Squid' },
-    { value: 'octopus', label: language === 'el' ? 'Χταπόδι' : 'Octopus' },
-    { value: 'other', label: language === 'el' ? 'Άλλο' : 'Other' }
-  ];
+  const handleInputChange = (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseFloat(e.target.value) || 0;
+    onUpdate(field, value);
+  };
+
+  const validateAndCalculate = () => {
+    // Basic validation
+    if (formData.initialWeight <= 0) {
+      alert(t('message.invalidInput'));
+      return;
+    }
+    if (formData.cleaningLoss < 0 || formData.cleaningLoss > 100) {
+      alert(t('message.invalidInput'));
+      return;
+    }
+    if (formData.processingLoss < 0 || formData.processingLoss > 100) {
+      alert(t('message.invalidInput'));
+      return;
+    }
+    if (formData.costPerKg <= 0) {
+      alert(t('message.invalidInput'));
+      return;
+    }
+    
+    onCalculate();
+  };
 
   return (
-    <div className="space-y-6">
-      <Card className="border-slate-200 shadow-sm">
-        <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-200">
-          <CardTitle className="flex items-center justify-between text-slate-800">
-            <div className="flex items-center space-x-2">
-              <Fish className="w-5 h-5 text-blue-600" />
-              <span>{language === 'el' ? 'Στοιχεία Προϊόντος' : 'Product Information'}</span>
-            </div>
-            {isPremium && (
-              <Badge variant="secondary" className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-                <Crown className="w-3 h-3 mr-1" />
-                Premium
-              </Badge>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-6 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="productName" className="flex items-center space-x-2">
-                <Tag className="w-4 h-4" />
-                <span>{language === 'el' ? 'Όνομα Προϊόντος' : 'Product Name'}</span>
-                <TooltipHelper tooltipKey="tooltip.product.name" />
-              </Label>
-              <Input
-                id="productName"
-                value={formData.productName || ''}
-                onChange={(e) => updateFormData({ productName: e.target.value })}
-                placeholder={language === 'el' ? 'π.χ. Θράψαλο Block Premium' : 'e.g. Tuna Block Premium'}
-                className="border-slate-300 focus:border-blue-500"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="productType" className="flex items-center space-x-2">
-                <Package className="w-4 h-4" />
-                <span>{language === 'el' ? 'Τύπος Προϊόντος' : 'Product Type'}</span>
-                <TooltipHelper tooltipKey="tooltip.product.type" />
-              </Label>
-              <Select
-                value={formData.productType || 'fish'}
-                onValueChange={(value) => updateFormData({ productType: value })}
-              >
-                <SelectTrigger className="border-slate-300 focus:border-blue-500">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {productTypes.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
-                      {type.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Calculator className="h-5 w-5" />
+          {t('nav.calculation')}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="initialWeight">{t('form.initialWeight')}</Label>
+            <Input
+              id="initialWeight"
+              type="number"
+              min="0"
+              step="0.1"
+              placeholder={t('placeholder.weight')}
+              value={formData.initialWeight || ''}
+              onChange={handleInputChange('initialWeight')}
+              className="w-full"
+            />
           </div>
 
-          {isPremium && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
-              <div className="space-y-2">
-                <Label htmlFor="batchNumber" className="flex items-center space-x-2">
-                  <Package className="w-4 h-4" />
-                  <span>{language === 'el' ? 'Αριθμός Παρτίδας' : 'Batch Number'}</span>
-                </Label>
-                <Input
-                  id="batchNumber"
-                  value={formData.batchNumber || ''}
-                  onChange={(e) => updateFormData({ batchNumber: e.target.value })}
-                  placeholder={language === 'el' ? 'π.χ. BTH-2024-001' : 'e.g. BTH-2024-001'}
-                  className="border-purple-300 focus:border-purple-500"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="supplierName" className="flex items-center space-x-2">
-                  <Building2 className="w-4 h-4" />
-                  <span>{language === 'el' ? 'Προμηθευτής' : 'Supplier'}</span>
-                </Label>
-                <Input
-                  id="supplierName"
-                  value={formData.supplierName || ''}
-                  onChange={(e) => updateFormData({ supplierName: e.target.value })}
-                  placeholder={language === 'el' ? 'π.χ. Θαλάσσια Τρόφιμα ΑΕ' : 'e.g. Ocean Foods Ltd'}
-                  className="border-purple-300 focus:border-purple-500"
-                />
-              </div>
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="purchasePrice" className="flex items-center space-x-2">
-                <span>{language === 'el' ? 'Τιμή Αγοράς (€/κιλό)' : 'Purchase Price (€/kg)'}</span>
-                <TooltipHelper tooltipKey="tooltip.purchase.price" />
-              </Label>
-              <Input
-                id="purchasePrice"
-                type="number"
-                step="0.01"
-                min="0"
-                value={formData.purchasePrice || ''}
-                onChange={(e) => updateFormData({ purchasePrice: parseFloat(e.target.value) || 0 })}
-                placeholder="4.50"
-                className="border-slate-300 focus:border-blue-500"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="quantity" className="flex items-center space-x-2">
-                <Weight className="w-4 h-4" />
-                <span>{language === 'el' ? 'Ποσότητα (κιλά)' : 'Quantity (kg)'}</span>
-                <TooltipHelper tooltipKey="tooltip.quantity" />
-              </Label>
-              <Input
-                id="quantity"
-                type="number"
-                step="0.1"
-                min="0.1"
-                value={formData.quantity || ''}
-                onChange={(e) => updateFormData({ quantity: parseFloat(e.target.value) || 0 })}
-                placeholder="500.0"
-                className="border-slate-300 focus:border-blue-500"
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="cleaningLoss">{t('form.cleaningLoss')}</Label>
+            <Input
+              id="cleaningLoss"
+              type="number"
+              min="0"
+              max="100"
+              step="0.1"
+              placeholder={t('placeholder.percentage')}
+              value={formData.cleaningLoss || ''}
+              onChange={handleInputChange('cleaningLoss')}
+              className="w-full"
+            />
           </div>
 
-          {!isPremium && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="waste" className="flex items-center space-x-2">
-                  <Percent className="w-4 h-4" />
-                  <span>{language === 'el' ? 'Απώλεια Καθαρίσματος (%)' : 'Cleaning Waste (%)'}</span>
-                  <TooltipHelper tooltipKey="tooltip.waste" />
-                </Label>
-                <Input
-                  id="waste"
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  max="100"
-                  value={formData.waste || ''}
-                  onChange={(e) => updateFormData({ waste: parseFloat(e.target.value) || 0 })}
-                  placeholder="20.0"
-                  className="border-slate-300 focus:border-blue-500"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="glazingPercent" className="flex items-center space-x-2">
-                  <Droplets className="w-4 h-4" />
-                  <span>{language === 'el' ? 'Ποσοστό Γλασσαρίσματος (%)' : 'Glazing Percentage (%)'}</span>
-                  <TooltipHelper tooltipKey="tooltip.glazing" />
-                </Label>
-                <Input
-                  id="glazingPercent"
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  max="100"
-                  value={formData.glazingPercent || ''}
-                  onChange={(e) => updateFormData({ glazingPercent: parseFloat(e.target.value) || 0 })}
-                  placeholder="15.0"
-                  className="border-slate-300 focus:border-blue-500"
-                />
-              </div>
-            </div>
-          )}
-
-          {isPremium && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200">
-              <div className="space-y-2">
-                <Label htmlFor="storageTemperature" className="flex items-center space-x-2">
-                  <Thermometer className="w-4 h-4" />
-                  <span>{language === 'el' ? 'Θερμοκρασία Αποθήκευσης (°C)' : 'Storage Temperature (°C)'}</span>
-                </Label>
-                <Input
-                  id="storageTemperature"
-                  type="number"
-                  step="1"
-                  value={formData.storageTemperature || ''}
-                  onChange={(e) => updateFormData({ storageTemperature: parseFloat(e.target.value) || -18 })}
-                  placeholder="-18"
-                  className="border-blue-300 focus:border-blue-500"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="shelfLife" className="flex items-center space-x-2">
-                  <Calendar className="w-4 h-4" />
-                  <span>{language === 'el' ? 'Διάρκεια Ζωής (ημέρες)' : 'Shelf Life (days)'}</span>
-                </Label>
-                <Input
-                  id="shelfLife"
-                  type="number"
-                  step="1"
-                  min="1"
-                  value={formData.shelfLife || ''}
-                  onChange={(e) => updateFormData({ shelfLife: parseFloat(e.target.value) || 365 })}
-                  placeholder="365"
-                  className="border-blue-300 focus:border-blue-500"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="seasonalMultiplier" className="flex items-center space-x-2">
-                  <Percent className="w-4 h-4" />
-                  <span>{language === 'el' ? 'Εποχιακός Συντελεστής' : 'Seasonal Multiplier'}</span>
-                </Label>
-                <Input
-                  id="seasonalMultiplier"
-                  type="number"
-                  step="0.1"
-                  min="0.1"
-                  max="3"
-                  value={formData.seasonalMultiplier || ''}
-                  onChange={(e) => updateFormData({ seasonalMultiplier: parseFloat(e.target.value) || 1 })}
-                  placeholder="1.0"
-                  className="border-blue-300 focus:border-blue-500"
-                />
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card className="border-slate-200 shadow-sm">
-        <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-slate-200">
-          <CardTitle className="flex items-center space-x-2 text-slate-800">
-            <Percent className="w-5 h-5 text-green-600" />
-            <span>{language === 'el' ? 'Φορολογία & Στόχοι' : 'Tax & Targets'}</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-6 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="vatPercent" className="flex items-center space-x-2">
-                <span>{language === 'el' ? 'ΦΠΑ (%)' : 'VAT (%)'}</span>
-                <TooltipHelper tooltipKey="tooltip.vat" />
-              </Label>
-              <Select
-                value={formData.vatPercent?.toString() || '24'}
-                onValueChange={(value) => updateFormData({ vatPercent: parseFloat(value) })}
-              >
-                <SelectTrigger className="border-slate-300 focus:border-green-500">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="0">0% - {language === 'el' ? 'Απαλλαγή' : 'Exempt'}</SelectItem>
-                  <SelectItem value="6">6% - {language === 'el' ? 'Μειωμένος' : 'Reduced'}</SelectItem>
-                  <SelectItem value="13">13% - {language === 'el' ? 'Μειωμένος' : 'Reduced'}</SelectItem>
-                  <SelectItem value="24">24% - {language === 'el' ? 'Κανονικός' : 'Standard'}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="profitMargin" className="flex items-center space-x-2">
-                <span>{language === 'el' ? 'Περιθώριο Κέρδους (%)' : 'Profit Margin (%)'}</span>
-                <TooltipHelper tooltipKey="tooltip.profit.margin" />
-              </Label>
-              <Input
-                id="profitMargin"
-                type="number"
-                step="0.1"
-                min="0"
-                value={formData.profitMargin || ''}
-                onChange={(e) => updateFormData({ profitMargin: parseFloat(e.target.value) || 0 })}
-                placeholder="20.0"
-                className="border-slate-300 focus:border-green-500"
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="processingLoss">{t('form.processingLoss')}</Label>
+            <Input
+              id="processingLoss"
+              type="number"
+              min="0"
+              max="100"
+              step="0.1"
+              placeholder={t('placeholder.percentage')}
+              value={formData.processingLoss || ''}
+              onChange={handleInputChange('processingLoss')}
+              className="w-full"
+            />
           </div>
 
-          {isPremium && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
-              <div className="space-y-2">
-                <Label htmlFor="minimumMargin" className="flex items-center space-x-2">
-                  <span>{language === 'el' ? 'Ελάχιστο Περιθώριο (%)' : 'Minimum Margin (%)'}</span>
-                </Label>
-                <Input
-                  id="minimumMargin"
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  value={formData.minimumMargin || ''}
-                  onChange={(e) => updateFormData({ minimumMargin: parseFloat(e.target.value) || 15 })}
-                  placeholder="15.0"
-                  className="border-green-300 focus:border-green-500"
-                />
-              </div>
+          <div className="space-y-2">
+            <Label htmlFor="glazingWeight">{t('form.glazingWeight')}</Label>
+            <Input
+              id="glazingWeight"
+              type="number"
+              min="0"
+              step="0.1"
+              placeholder={t('placeholder.percentage')}
+              value={formData.glazingWeight || ''}
+              onChange={handleInputChange('glazingWeight')}
+              className="w-full"
+            />
+          </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="targetSellingPrice" className="flex items-center space-x-2">
-                  <span>{language === 'el' ? 'Στόχος Τιμής Πώλησης (€/κιλό)' : 'Target Selling Price (€/kg)'}</span>
-                </Label>
-                <Input
-                  id="targetSellingPrice"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={formData.targetSellingPrice || ''}
-                  onChange={(e) => updateFormData({ targetSellingPrice: parseFloat(e.target.value) || 0 })}
-                  placeholder="6.50"
-                  className="border-green-300 focus:border-green-500"
-                />
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+          <div className="space-y-2">
+            <Label htmlFor="costPerKg">{t('form.costPerKg')}</Label>
+            <Input
+              id="costPerKg"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder={t('placeholder.cost')}
+              value={formData.costPerKg || ''}
+              onChange={handleInputChange('costPerKg')}
+              className="w-full"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="profitMargin">{t('form.profitMargin')}</Label>
+            <Input
+              id="profitMargin"
+              type="number"
+              min="0"
+              step="0.1"
+              placeholder={t('placeholder.percentage')}
+              value={formData.profitMargin || ''}
+              onChange={handleInputChange('profitMargin')}
+              className="w-full"
+            />
+          </div>
+        </div>
+
+        <div className="flex gap-2 pt-4">
+          <Button onClick={validateAndCalculate} className="flex-1">
+            <Calculator className="h-4 w-4 mr-2" />
+            {t('form.calculate')}
+          </Button>
+          <Button variant="outline" onClick={onReset}>
+            <RotateCcw className="h-4 w-4 mr-2" />
+            {t('form.reset')}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
-};
-
-export default ProductBasics;
+}
