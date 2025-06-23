@@ -1,10 +1,11 @@
 
 import React from 'react';
 import GoogleMapsTransport from './GoogleMapsTransport';
+import { FormData } from '../types';
 
 interface TransportTabProps {
-  formData: any;
-  updateFormData: (updates: any) => void;
+  formData: FormData;
+  updateFormData: (updates: Partial<FormData>) => void;
 }
 
 const TransportTab: React.FC<TransportTabProps> = ({ formData, updateFormData }) => {
