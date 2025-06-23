@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
@@ -5,7 +6,7 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Calculator, RotateCcw } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { FormData } from '../hooks/useCalculation';
+import { FormData } from '../types';
 
 interface ProductBasicsProps {
   formData: FormData;

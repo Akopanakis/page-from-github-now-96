@@ -88,13 +88,7 @@ export default function Index() {
               </Card>
 
               {results && (
-                <ResultsSection
-                  results={results}
-                  isCalculating={isCalculating}
-                  isPremium={isPremium}
-                  onCalculate={calculate}
-                  onReset={resetForm}
-                />
+                <ResultsSection results={results} />
               )}
             </div>
           </TabsContent>
@@ -108,7 +102,7 @@ export default function Index() {
           </TabsContent>
 
           <TabsContent value="advanced">
-            <AdvancedFinancialModels />
+            <AdvancedFinancialModels formData={formData} results={results} />
           </TabsContent>
         </Tabs>
       </div>

@@ -6,6 +6,13 @@ export interface FormData {
   glazingWeight: number;
   costPerKg: number;
   profitMargin: number;
+  cleaningYield: number;
+  glazingPercentage: number;
+  markupPercentage: number;
+  transportCost: number;
+  laborCost: number;
+  packagingCost: number;
+  additionalCosts: number;
 }
 
 export interface CalculationResults {
@@ -14,6 +21,9 @@ export interface CalculationResults {
   costPerKg: number;
   sellingPrice: number;
   profit: number;
+  cleanWeight: number;
+  materialCost: number;
+  costPerKgFinal: number;
 }
 
 export interface BatchData {
