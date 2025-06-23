@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
@@ -82,7 +81,6 @@ export default function Index() {
                     onCalculate={calculate}
                     onReset={resetForm}
                     isCalculating={isCalculating}
-                    language={language}
                   />
                 </CardContent>
               </Card>
