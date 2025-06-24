@@ -6,9 +6,6 @@ export interface FormData {
   glazingWeight: number;
   costPerKg: number;
   profitMargin: number;
-  cleaningYield: number;
-  glazingPercentage: number;
-  markupPercentage: number;
   transportCost: number;
   laborCost: number;
   packagingCost: number;
