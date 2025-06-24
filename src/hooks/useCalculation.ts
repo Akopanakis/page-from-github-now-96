@@ -9,9 +9,6 @@ const initialFormData: FormData = {
   glazingWeight: 0,
   costPerKg: 0,
   profitMargin: 20,
-  cleaningYield: 85,
-  glazingPercentage: 15,
-  markupPercentage: 20,
   transportCost: 0,
   laborCost: 0,
   packagingCost: 0,
@@ -34,16 +31,18 @@ export const useCalculation = () => {
       // Simulate async calculation
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      const cleanWeight = formData.initialWeight * (formData.cleaningYield / 100);
-      const finalWeight = cleanWeight * (1 + formData.glazingPercentage / 100);
+      const cleanWeight =
+        formData.initialWeight *
+        (1 - (formData.cleaningLoss + formData.processingLoss) / 100);
+      const finalWeight = cleanWeight * (1 + formData.glazingWeight / 100);
       
       const materialCost = formData.initialWeight * formData.costPerKg;
       const totalDirectCosts = materialCost + formData.transportCost + formData.laborCost + formData.packagingCost + formData.additionalCosts;
-      const totalCost = totalDirectCosts * (1 + formData.markupPercentage / 100);
+      const totalCost = totalDirectCosts;
       const costPerKgFinal = totalCost / finalWeight;
       const costPerKg = costPerKgFinal;
-      const sellingPrice = totalCost;
-      const profit = totalCost - totalDirectCosts;
+      const sellingPrice = totalCost * (1 + formData.profitMargin / 100);
+      const profit = sellingPrice - totalCost;
       
       const calculationResults: CalculationResults = {
         cleanWeight,

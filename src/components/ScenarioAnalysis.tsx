@@ -26,26 +26,27 @@ interface Scenario {
 
 const ScenarioAnalysis: React.FC<ScenarioAnalysisProps> = ({ formData, results }) => {
   const { language } = useLanguage();
+  const baseYield = 100 - formData.cleaningLoss - formData.processingLoss;
   const [scenarios, setScenarios] = useState<Scenario[]>([
     {
       id: '1',
       name: language === 'el' ? 'Βασικό Σενάριο' : 'Base Scenario',
       costPerKg: formData.costPerKg,
-      cleaningYield: formData.cleaningYield,
+      cleaningYield: baseYield,
       profitMargin: formData.profitMargin
     },
     {
       id: '2',
       name: language === 'el' ? 'Αισιόδοξο Σενάριο' : 'Optimistic Scenario',
       costPerKg: formData.costPerKg * 0.9,
-      cleaningYield: Math.min(formData.cleaningYield + 5, 95),
+      cleaningYield: Math.min(baseYield + 5, 95),
       profitMargin: formData.profitMargin + 5
     },
     {
       id: '3',
       name: language === 'el' ? 'Απαισιόδοξο Σενάριο' : 'Pessimistic Scenario',
       costPerKg: formData.costPerKg * 1.1,
-      cleaningYield: Math.max(formData.cleaningYield - 5, 70),
+      cleaningYield: Math.max(baseYield - 5, 70),
       profitMargin: Math.max(formData.profitMargin - 5, 10)
     }
   ]);
@@ -53,17 +54,22 @@ const ScenarioAnalysis: React.FC<ScenarioAnalysisProps> = ({ formData, results }
   const [newScenario, setNewScenario] = useState({
     name: '',
     costPerKg: formData.costPerKg,
-    cleaningYield: formData.cleaningYield,
+    cleaningYield: baseYield,
     profitMargin: formData.profitMargin
   });
 
   const calculateScenario = (scenario: Scenario): CalculationResults => {
     const cleanWeight = formData.initialWeight * (scenario.cleaningYield / 100);
-    const finalWeight = cleanWeight * (1 + formData.glazingPercentage / 100);
+    const finalWeight = cleanWeight * (1 + formData.glazingWeight / 100);
     
     const materialCost = formData.initialWeight * scenario.costPerKg;
-    const totalDirectCosts = materialCost + formData.transportCost + formData.laborCost + formData.packagingCost + formData.additionalCosts;
-    const totalCost = totalDirectCosts * (1 + formData.markupPercentage / 100);
+    const totalDirectCosts =
+      materialCost +
+      formData.transportCost +
+      formData.laborCost +
+      formData.packagingCost +
+      formData.additionalCosts;
+    const totalCost = totalDirectCosts;
     const costPerKgFinal = totalCost / finalWeight;
     const sellingPrice = totalCost * (1 + scenario.profitMargin / 100);
     const profit = sellingPrice - totalCost;
@@ -93,7 +99,7 @@ const ScenarioAnalysis: React.FC<ScenarioAnalysisProps> = ({ formData, results }
     setNewScenario({
       name: '',
       costPerKg: formData.costPerKg,
-      cleaningYield: formData.cleaningYield,
+      cleaningYield: baseYield,
       profitMargin: formData.profitMargin
     });
   };
