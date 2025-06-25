@@ -1,108 +1,134 @@
 
 import React, { createContext, useContext, useState } from 'react';
 
-type Language = 'el' | 'en';
-
 interface LanguageContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
+  language: 'el' | 'en';
+  setLanguage: (lang: 'el' | 'en') => void;
   t: (key: string) => string;
 }
 
-const translations = {
-  el: {
-    // Navigation
-    'nav.calculation': 'Υπολογισμός',
-    'nav.batches': 'Παρτίδες',
-    'nav.premium': 'Premium',
-    'nav.analytics': 'Αναλύσεις',
-    
-    // Form labels
-    'form.initialWeight': 'Αρχικό Βάρος (kg)',
-    'form.cleaningLoss': 'Απώλεια Καθαρισμού (%)',
-    'form.processingLoss': 'Απώλεια Επεξεργασίας (%)',
-    'form.glazingWeight': 'Βάρος Γλασαρίσματος (%)',
-    'form.costPerKg': 'Κόστος ανά kg (€)',
-    'form.profitMargin': 'Περιθώριο Κέρδους (%)',
-    'form.calculate': 'Υπολόγισε',
-    'form.reset': 'Επαναφορά',
-    
-    // Placeholders
-    'placeholder.weight': 'Εισάγετε βάρος σε kg',
-    'placeholder.percentage': 'Εισάγετε ποσοστό',
-    'placeholder.cost': 'Εισάγετε κόστος σε €',
-    
-    // Results
-    'results.title': 'Αποτελέσματα',
-    'results.finalWeight': 'Τελικό Βάρος',
-    'results.totalCost': 'Συνολικό Κόστος',
-    'results.costPerKg': 'Κόστος ανά kg',
-    'results.sellingPrice': 'Τιμή Πώλησης',
-    'results.profit': 'Κέρδος',
-    
-    // Common
-    'common.save': 'Αποθήκευση',
-    'common.export': 'Εξαγωγή',
-    'common.delete': 'Διαγραφή',
-    'common.edit': 'Επεξεργασία',
-    'common.close': 'Κλείσιμο',
-    
-    // Messages
-    'message.calculationSaved': 'Ο υπολογισμός αποθηκεύτηκε επιτυχώς!',
-    'message.calculationComplete': 'Ο υπολογισμός ολοκληρώθηκε!',
-    'message.invalidInput': 'Παρακαλώ εισάγετε έγκυρες τιμές',
-  },
-  en: {
-    // Navigation
-    'nav.calculation': 'Calculation',
-    'nav.batches': 'Batches',
-    'nav.premium': 'Premium',
-    'nav.analytics': 'Analytics',
-    
-    // Form labels
-    'form.initialWeight': 'Initial Weight (kg)',
-    'form.cleaningLoss': 'Cleaning Loss (%)',
-    'form.processingLoss': 'Processing Loss (%)',
-    'form.glazingWeight': 'Glazing Weight (%)',
-    'form.costPerKg': 'Cost per kg (€)',
-    'form.profitMargin': 'Profit Margin (%)',
-    'form.calculate': 'Calculate',
-    'form.reset': 'Reset',
-    
-    // Placeholders
-    'placeholder.weight': 'Enter weight in kg',
-    'placeholder.percentage': 'Enter percentage',
-    'placeholder.cost': 'Enter cost in €',
-    
-    // Results
-    'results.title': 'Results',
-    'results.finalWeight': 'Final Weight',
-    'results.totalCost': 'Total Cost',
-    'results.costPerKg': 'Cost per kg',
-    'results.sellingPrice': 'Selling Price',
-    'results.profit': 'Profit',
-    
-    // Common
-    'common.save': 'Save',
-    'common.export': 'Export',
-    'common.delete': 'Delete',
-    'common.edit': 'Edit',
-    'common.close': 'Close',
-    
-    // Messages
-    'message.calculationSaved': 'Calculation saved successfully!',
-    'message.calculationComplete': 'Calculation completed!',
-    'message.invalidInput': 'Please enter valid values',
-  },
-};
-
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState<Language>('el');
+export const useLanguage = () => {
+  const context = useContext(LanguageContext);
+  if (!context) {
+    throw new Error('useLanguage must be used within a LanguageProvider');
+  }
+  return context;
+};
+
+const translations = {
+  el: {
+    // Basic fields
+    'product.name': 'Όνομα Προϊόντος',
+    'purchase.price': 'Τιμή Αγοράς (€/κιλό)',
+    'quantity': 'Ποσότητα (κιλά)',
+    'waste': 'Φύρα (%)',
+    'glazing.percent': 'Ποσοστό Γλασαρίσματος (%)', // Updated from ice
+    'vat.percent': 'ΦΠΑ (%)',
+    'profit.margin': 'Περιθώριο Κέρδους (%)',
+    'profit.target': 'Στόχος Κέρδους (€)',
+    
+    // Transport
+    'origin.address': 'Διεύθυνση Αναχώρησης',
+    'destination.address': 'Διεύθυνση Προορισμού',
+    'distance': 'Απόσταση (χλμ)',
+    'fuel.cost': 'Κόστος Καυσίμου (€)',
+    'parking.cost': 'Κόστος Στάθμευσης (€)',
+    'calculate.route': 'Υπολογισμός Διαδρομής',
+    
+    // Workers
+    'workers': 'Εργαζόμενοι',
+    'hourly.rate': 'Ωριαία Αμοιβή (€)',
+    'hours': 'Ώρες Εργασίας',
+    
+    // Costs
+    'packaging.cost': 'Κόστος Συσκευασίας (€)',
+    'electricity.cost': 'Κόστος Ηλεκτρικού (€)',
+    'equipment.cost': 'Κόστος Εξοπλισμού (€)',
+    'insurance.cost': 'Κόστος Ασφάλισης (€)',
+    'rent.cost': 'Κόστος Ενοικίου (€)',
+    'communication.cost': 'Κόστος Επικοινωνίας (€)',
+    'other.costs': 'Άλλα Κόστη (€)',
+    
+    // Analysis
+    'cost.analysis': 'Ανάλυση Κόστους',
+    'margin.analysis': 'Ανάλυση Περιθωρίων',
+    'profitability.analysis': 'Ανάλυση Κερδοφορίας',
+    'chart.explanation': 'Εξήγηση Γραφήματος',
+    
+    // Results
+    'total.cost': 'Συνολικό Κόστος',
+    'selling.price': 'Τιμή Πώλησης',
+    'profit.per.kg': 'Κέρδος ανά Κιλό',
+    'net.weight': 'Καθαρό Βάρος',
+    
+    // Actions
+    'calculate': 'Υπολογισμός',
+    'reset': 'Επαναφορά',
+    'export.pdf': 'Εξαγωγή PDF',
+    'add.worker': 'Προσθήκη Εργαζομένου',
+    'remove.worker': 'Αφαίρεση Εργαζομένου'
+  },
+  en: {
+    // Basic fields
+    'product.name': 'Product Name',
+    'purchase.price': 'Purchase Price (€/kg)',
+    'quantity': 'Quantity (kg)',
+    'waste': 'Waste (%)',
+    'glazing.percent': 'Glazing Percentage (%)', // Updated from ice
+    'vat.percent': 'VAT (%)',
+    'profit.margin': 'Profit Margin (%)',
+    'profit.target': 'Profit Target (€)',
+    
+    // Transport
+    'origin.address': 'Origin Address',
+    'destination.address': 'Destination Address',
+    'distance': 'Distance (km)',
+    'fuel.cost': 'Fuel Cost (€)',
+    'parking.cost': 'Parking Cost (€)',
+    'calculate.route': 'Calculate Route',
+    
+    // Workers
+    'workers': 'Workers',
+    'hourly.rate': 'Hourly Rate (€)',
+    'hours': 'Working Hours',
+    
+    // Costs
+    'packaging.cost': 'Packaging Cost (€)',
+    'electricity.cost': 'Electricity Cost (€)',
+    'equipment.cost': 'Equipment Cost (€)',
+    'insurance.cost': 'Insurance Cost (€)',
+    'rent.cost': 'Rent Cost (€)',
+    'communication.cost': 'Communication Cost (€)',
+    'other.costs': 'Other Costs (€)',
+    
+    // Analysis
+    'cost.analysis': 'Cost Analysis',
+    'margin.analysis': 'Margin Analysis',
+    'profitability.analysis': 'Profitability Analysis',
+    'chart.explanation': 'Chart Explanation',
+    
+    // Results
+    'total.cost': 'Total Cost',
+    'selling.price': 'Selling Price',
+    'profit.per.kg': 'Profit per Kg',
+    'net.weight': 'Net Weight',
+    
+    // Actions
+    'calculate': 'Calculate',
+    'reset': 'Reset',
+    'export.pdf': 'Export PDF',
+    'add.worker': 'Add Worker',
+    'remove.worker': 'Remove Worker'
+  }
+};
+
+export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [language, setLanguage] = useState<'el' | 'en'>('el');
 
   const t = (key: string): string => {
-    return translations[language][key as keyof typeof translations['el']] || key;
+    return translations[language][key as keyof typeof translations[typeof language]] || key;
   };
 
   return (
@@ -110,12 +136,4 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       {children}
     </LanguageContext.Provider>
   );
-}
-
-export function useLanguage() {
-  const context = useContext(LanguageContext);
-  if (context === undefined) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
-  }
-  return context;
-}
+};

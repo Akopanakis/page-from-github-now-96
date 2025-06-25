@@ -8,9 +8,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell } from 'recharts';
 import { TrendingUp, DollarSign, PieChart as PieChartIcon, Zap } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { FormData, CalculationResults } from '@/types';
+import { FormData, CalculationResults } from '@/hooks/useCalculation';
 
-interface AdvancedFinancialModelsProps {
+export interface AdvancedFinancialModelsProps {
   formData: Partial<FormData>;
   results: CalculationResults;
 }

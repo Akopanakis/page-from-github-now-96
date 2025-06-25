@@ -1,31 +1,39 @@
 
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
 import { LanguageProvider } from './contexts/LanguageContext';
-import { ThemeProvider } from './contexts/ThemeContext';
-import { Toaster } from 'sonner';
-import Dashboard from './components/Dashboard';
-import HistoryPage from './components/HistoryPage';
-import PremiumPage from './components/PremiumPage';
-import NotFound from './pages/NotFound';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function App() {
   return (
-    <ThemeProvider>
+    <QueryClientProvider client={queryClient}>
       <LanguageProvider>
-        <Router>
-          <div className="min-h-screen bg-background text-foreground">
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/history" element={<HistoryPage />} />
-              <Route path="/premium" element={<PremiumPage />} />
+              <Route path="/" element={<Index />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-            <Toaster position="top-right" />
-          </div>
-        </Router>
+          </BrowserRouter>
+        </TooltipProvider>
       </LanguageProvider>
-    </ThemeProvider>
+    </QueryClientProvider>
   );
 }
 
