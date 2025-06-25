@@ -184,9 +184,7 @@ const Index = () => {
                         </TabsTrigger>
                         <TabsTrigger value="batches" className="text-xs sm:text-sm flex items-center space-x-1">
                           <Database className="w-3 h-3" />
-                          <span>{language === 'el' ? 'Παρτίδες' :
-
-  'Batches'}</span>
+                          <span>{language === 'el' ? 'Παρτίδες' : 'Batches'}</span>
                         </TabsTrigger>
                         <TabsTrigger value="dashboard" className="text-xs sm:text-sm flex items-center space-x-1">
                           <BarChart3 className="w-3 h-3" />
@@ -295,7 +293,7 @@ const Index = () => {
                             <RevenueForecasting formData={formData} results={results} />
 
                             {results && (
-                              <AdvancedFinancialModels formData={formData} results={results} />
+                              <AdvancedFinancialModels />
                             )}
                           </>
                         )}
