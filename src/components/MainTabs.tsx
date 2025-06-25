@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -171,7 +170,7 @@ const MainTabs: React.FC<MainTabsProps> = ({
                 <RevenueForecasting formData={formData} results={results} />
 
                 {results && (
-                  <AdvancedFinancialModels formData={formData} results={results} />
+                  <AdvancedFinancialModels />
                 )}
               </>
             )}

@@ -4,8 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Fish, Crown, Globe2, FileText, Zap } from 'lucide-react';
+import { Fish, Crown, Globe2, FileText, Zap, User } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   isPremium: boolean;
@@ -21,6 +23,8 @@ const Header: React.FC<HeaderProps> = ({
   setShowFileUpload
 }) => {
   const { language, setLanguage } = useLanguage();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const premiumFeatures = [
     language === 'el' ? 'Φάσεις Επεξεργασίας' : 'Processing Phases',
@@ -72,6 +76,36 @@ const Header: React.FC<HeaderProps> = ({
               <FileText className="w-4 h-4" />
               <span>{language === 'el' ? 'Αρχεία' : 'Files'}</span>
             </Button>
+
+            {/* User Authentication */}
+            {user ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/profile')}
+                className="flex items-center space-x-2"
+              >
+                <User className="w-4 h-4" />
+                <span>Profile</span>
+              </Button>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate('/login')}
+                >
+                  Sign In
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => navigate('/signup')}
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                >
+                  Sign Up
+                </Button>
+              </div>
+            )}
 
             {/* Language Toggle */}
             <div className="flex items-center space-x-2 bg-gray-100 rounded-lg p-1">
