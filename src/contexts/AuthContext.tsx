@@ -13,7 +13,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   signup: (email: string, password: string) => Promise<void>;
-  upgradeToPremi um: () => Promise<void>;
+  upgradeToPremium: () => Promise<void>;
   isLoading: boolean;
 }
 
