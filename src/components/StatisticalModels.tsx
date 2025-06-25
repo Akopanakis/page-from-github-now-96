@@ -195,16 +195,15 @@ const StatisticalModels: React.FC<StatisticalModelsProps> = ({ formData, results
         );
 
       case 'risk':
-        const riskColors = {
-          low: 'green',
-          medium: 'yellow',
-          high: 'red'
+        const riskBgClass: Record<string, string> = {
+          low: 'bg-green-50',
+          medium: 'bg-yellow-50',
+          high: 'bg-red-50'
         };
-        const riskColor = riskColors[model.data.riskLevel as keyof typeof riskColors];
-        
+
         return (
           <div className="space-y-4">
-            <div className={`p-4 bg-${riskColor}-50 rounded-lg`}>
+            <div className={`p-4 ${riskBgClass[model.data.riskLevel]} rounded-lg`}>
               <div className="flex items-center space-x-2 mb-2">
                 <Badge variant={model.data.riskLevel === 'low' ? 'default' : 'destructive'}>
                   {language === 'el' 
