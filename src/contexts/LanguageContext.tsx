@@ -41,6 +41,8 @@ const translations = {
     'workers': 'Εργαζόμενοι',
     'hourly.rate': 'Ωριαία Αμοιβή (€)',
     'hours': 'Ώρες Εργασίας',
+    'worker.hourly.rate': 'Ωριαία Αμοιβή (€)',
+    'worker.hours': 'Ώρες Εργασίας',
     
     // Costs
     'packaging.cost': 'Κόστος Συσκευασίας (€)',
@@ -93,6 +95,8 @@ const translations = {
     'workers': 'Workers',
     'hourly.rate': 'Hourly Rate (€)',
     'hours': 'Working Hours',
+    'worker.hourly.rate': 'Hourly Rate (€)',
+    'worker.hours': 'Working Hours',
     
     // Costs
     'packaging.cost': 'Packaging Cost (€)',
