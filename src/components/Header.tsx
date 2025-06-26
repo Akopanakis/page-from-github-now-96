@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Fish, Crown, Globe2, FileText, Zap, User } from 'lucide-react';
+import { useTheme } from 'next-themes';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +26,15 @@ const Header: React.FC<HeaderProps> = ({
   const { language, setLanguage } = useLanguage();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
+
+  React.useEffect(() => {
+    if (theme === 'dark') {
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+    }
+  }, [theme]);
 
   const premiumFeatures = [
     language === 'el' ? 'Φάσεις Επεξεργασίας' : 'Processing Phases',
@@ -126,7 +136,19 @@ const Header: React.FC<HeaderProps> = ({
                 EN
               </Button>
             </div>
-            
+
+            {/* Dark Mode Toggle */}
+            <div className="flex items-center space-x-2">
+              <Label htmlFor="theme-toggle" className="text-sm">
+                {language === 'el' ? 'Σκοτεινό' : 'Dark'}
+              </Label>
+              <Switch
+                id="theme-toggle"
+                checked={theme === 'dark'}
+                onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+              />
+            </div>
+
             <Globe2 className="w-5 h-5 text-gray-400" />
           </div>
         </div>
