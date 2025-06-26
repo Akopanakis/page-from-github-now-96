@@ -148,6 +148,30 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({ formData, updateFormData }) =
     return null;
   };
 
+  // Custom label for pie chart
+  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: any) => {
+    if (percent < 0.05) return null; // Don't show labels for slices smaller than 5%
+    
+    const RADIAN = Math.PI / 180;
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    return (
+      <text 
+        x={x} 
+        y={y} 
+        fill="white" 
+        textAnchor={x > cx ? 'start' : 'end'} 
+        dominantBaseline="central"
+        fontSize="12"
+        fontWeight="bold"
+      >
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
+  };
+
   return (
     <div className="space-y-6">
       {/* Profit Configuration */}
@@ -265,26 +289,41 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({ formData, updateFormData }) =
                 indirectCost: costData.slice(2).reduce((sum, item) => sum + item.value, 0)
               }} 
             />
-            <ResponsiveContainer width="100%" height={400} className="mt-4">
-              <PieChart>
-                <Pie
-                  data={costData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percentage }) => `${name}: ${percentage}%`}
-                  outerRadius={120}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {costData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip content={<CustomTooltip />} />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
+            <div className="w-full h-96 mt-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={costData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={renderCustomizedLabel}
+                    outerRadius={120}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {costData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            
+            {/* Chart Explanation */}
+            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <h4 className="font-semibold text-blue-800 mb-2">
+                {language === 'el' ? 'Τι δείχνει αυτό το γράφημα:' : 'What this chart shows:'}
+              </h4>
+              <ul className="text-sm text-blue-700 space-y-1">
+                <li>• {language === 'el' ? 'Την κατανομή του συνολικού κόστους ανά κατηγορία' : 'The distribution of total cost by category'}</li>
+                <li>• {language === 'el' ? 'Ποιες κατηγορίες κόστους επηρεάζουν περισσότερο το τελικό κόστος' : 'Which cost categories most affect the final cost'}</li>
+                <li>• {language === 'el' ? 'Περιοχές όπου μπορείτε να εστιάσετε για εξοικονόμηση κόστους' : 'Areas where you can focus for cost savings'}</li>
+                <li>• {language === 'el' ? 'Το ποσοστό συμμετοχής κάθε κατηγορίας στο συνολικό κόστος' : 'The percentage contribution of each category to total cost'}</li>
+              </ul>
+            </div>
           </CardContent>
         </Card>
       )}
@@ -303,20 +342,35 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({ formData, updateFormData }) =
               type="margin" 
               data={{ margin: formData.profitMargin || 0 }} 
             />
-            <ResponsiveContainer width="100%" height={400} className="mt-4">
-              <BarChart data={marginData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis dataKey="category" stroke="#64748b" />
-                <YAxis stroke="#64748b" />
-                <Tooltip content={<CustomTooltip />} />
-                <Legend />
-                <Bar dataKey="value" radius={[8, 8, 0, 0]}>
-                  {marginData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            <div className="w-full h-96 mt-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={marginData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <XAxis dataKey="category" stroke="#64748b" />
+                  <YAxis stroke="#64748b" />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend />
+                  <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                    {marginData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            
+            {/* Chart Explanation */}
+            <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <h4 className="font-semibold text-green-800 mb-2">
+                {language === 'el' ? 'Τι δείχνει αυτό το γράφημα:' : 'What this chart shows:'}
+              </h4>
+              <ul className="text-sm text-green-700 space-y-1">
+                <li>• {language === 'el' ? 'Τη σχέση μεταξύ κόστους και κέρδους' : 'The relationship between cost and profit'}</li>
+                <li>• {language === 'el' ? 'Το μέγεθος του περιθωρίου κέρδους σε σχέση με το κόστος' : 'The size of profit margin relative to cost'}</li>
+                <li>• {language === 'el' ? 'Αν το περιθώριό σας είναι ανταγωνιστικό (15-25% θεωρείται υγιές)' : 'Whether your margin is competitive (15-25% is considered healthy)'}</li>
+                <li>• {language === 'el' ? 'Πόσα χρήματα κερδίζετε για κάθε ευρώ που ξοδεύετε' : 'How much money you earn for every euro you spend'}</li>
+              </ul>
+            </div>
           </CardContent>
         </Card>
       )}
@@ -332,50 +386,65 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({ formData, updateFormData }) =
           </CardHeader>
           <CardContent className="p-6">
             <ChartExplanation type="profitability" />
-            <ResponsiveContainer width="100%" height={400} className="mt-4">
-              <AreaChart data={profitabilityData}>
-                <defs>
-                  <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
-                  </linearGradient>
-                  <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0.1}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis dataKey="month" stroke="#64748b" />
-                <YAxis stroke="#64748b" />
-                <Tooltip content={<CustomTooltip />} />
-                <Legend />
-                <Area 
-                  type="monotone" 
-                  dataKey="revenue" 
-                  stroke="#3b82f6" 
-                  fill="url(#revenueGradient)"
-                  strokeWidth={3}
-                  name={language === 'el' ? 'Έσοδα' : 'Revenue'}
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="cost" 
-                  stroke="#ef4444" 
-                  fill="transparent"
-                  strokeWidth={2}
-                  strokeDasharray="5 5"
-                  name={language === 'el' ? 'Κόστος' : 'Cost'}
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="profit" 
-                  stroke="#10b981" 
-                  fill="url(#profitGradient)"
-                  strokeWidth={3}
-                  name={language === 'el' ? 'Κέρδος' : 'Profit'}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+            <div className="w-full h-96 mt-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={profitabilityData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <defs>
+                    <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
+                    </linearGradient>
+                    <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0.1}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <XAxis dataKey="month" stroke="#64748b" />
+                  <YAxis stroke="#64748b" />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend />
+                  <Area 
+                    type="monotone" 
+                    dataKey="revenue" 
+                    stroke="#3b82f6" 
+                    fill="url(#revenueGradient)"
+                    strokeWidth={3}
+                    name={language === 'el' ? 'Έσοδα' : 'Revenue'}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="cost" 
+                    stroke="#ef4444" 
+                    fill="transparent"
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    name={language === 'el' ? 'Κόστος' : 'Cost'}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="profit" 
+                    stroke="#10b981" 
+                    fill="url(#profitGradient)"
+                    strokeWidth={3}
+                    name={language === 'el' ? 'Κέρδος' : 'Profit'}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+            
+            {/* Chart Explanation */}
+            <div className="mt-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+              <h4 className="font-semibold text-purple-800 mb-2">
+                {language === 'el' ? 'Τι δείχνει αυτό το γράφημα:' : 'What this chart shows:'}
+              </h4>
+              <ul className="text-sm text-purple-700 space-y-1">
+                <li>• {language === 'el' ? 'Την εποχιακή διακύμανση των εσόδων και κερδών' : 'Seasonal variation in revenue and profits'}</li>
+                <li>• {language === 'el' ? 'Πότε αναμένετε τα υψηλότερα και χαμηλότερα κέρδη' : 'When to expect highest and lowest profits'}</li>
+                <li>• {language === 'el' ? 'Τη σταθερότητα του κόστους σε σχέση με τα έσοδα' : 'Cost stability relative to revenue'}</li>
+                <li>• {language === 'el' ? 'Περιόδους όπου χρειάζεται καλύτερος προγραμματισμός ταμειακής ροής' : 'Periods requiring better cash flow planning'}</li>
+              </ul>
+            </div>
           </CardContent>
         </Card>
       )}
