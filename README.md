@@ -1,33 +1,33 @@
 # kostopro
 
-A fast, Vite-powered React site deployed on Vercel.
+Το **kostopro** είναι ένα project βασισμένο στο **Vite** και το **React**. Αναπτύσσεται και φιλοξενείται εύκολα στο **Vercel**.
 
-## Getting Started
+## Οδηγίες
 
-1. Install dependencies
+1. Εγκατάσταση εξαρτήσεων
    ```bash
    npm install
    ```
-2. Run in dev mode
+2. Εκτέλεση σε περιβάλλον ανάπτυξης
    ```bash
    npm run dev
    ```
-3. Build for production
+3. Δημιουργία παραγωγικού build
    ```bash
    npm run build
    ```
-4. Deploy
-   Push to GitHub—Vercel will automatically pick up the project.
+4. Deploy στο Vercel
+   Κάντε push το repository στο GitHub και το Vercel θα αναλάβει αυτόματα το deployment.
 
-## Environment Variables
+## Μεταβλητές Περιβάλλοντος
 
-`.env` (local only) and `.env.production` (Vercel)
+Χρησιμοποιήστε `.env` τοπικά και `.env.production` στο Vercel για να ορίσετε μεταβλητές όπως:
 
 ```ini
 VITE_API_URL=https://api.example.com
 ```
 
-## Directory Structure
+## Δομή Φακέλων
 
 ```
 src/
