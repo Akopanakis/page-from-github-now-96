@@ -15,5 +15,5 @@ jobs:
         with:
           node-version: '20'
       - run: npm ci
-      - run: npx eslint . --fix || true
+      - run: npm run lint --if-present
       - run: npm run build
