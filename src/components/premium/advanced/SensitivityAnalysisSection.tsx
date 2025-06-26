@@ -1,12 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+} from 'recharts';
 import { Info } from 'lucide-react';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import { colors } from '@/styles/design-tokens';
 
 const SensitivityAnalysisSection: React.FC = () => {
   const [loading, setLoading] = useState(true);
+  const sensitivityData = [
+    { change: -20, revenue: 80, cost: 60 },
+    { change: -10, revenue: 90, cost: 65 },
+    { change: 0, revenue: 100, cost: 70 },
+    { change: 10, revenue: 115, cost: 78 },
+    { change: 20, revenue: 130, cost: 85 },
+  ];
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 800);
@@ -41,7 +57,34 @@ const SensitivityAnalysisSection: React.FC = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="text-sm text-slate-600">[Sensitivity analysis chart here]</div>
+        <div className="h-72">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={sensitivityData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="change"
+                tickFormatter={(v) => `${v}%`}
+                stroke="#64748b"
+              />
+              <YAxis stroke="#64748b" />
+              <RechartsTooltip formatter={(v: number) => v.toFixed(0)} />
+              <Line
+                type="monotone"
+                dataKey="revenue"
+                stroke={colors.secondary}
+                strokeWidth={3}
+                name="Έσοδα"
+              />
+              <Line
+                type="monotone"
+                dataKey="cost"
+                stroke="#ef4444"
+                strokeWidth={3}
+                name="Κόστος"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </CardContent>
     </Card>
   );
