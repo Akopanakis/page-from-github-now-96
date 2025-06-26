@@ -8,15 +8,19 @@
    ```bash
    npm install
    ```
-2. Εκτέλεση σε περιβάλλον ανάπτυξης
+2. Έλεγχος κώδικα (lint)
+   ```bash
+   npm run lint
+   ```
+3. Εκτέλεση σε περιβάλλον ανάπτυξης
    ```bash
    npm run dev
    ```
-3. Δημιουργία παραγωγικού build
+4. Δημιουργία παραγωγικού build
    ```bash
    npm run build
    ```
-4. Deploy στο Vercel
+5. Deploy στο Vercel
    Κάντε push το repository στο GitHub και το Vercel θα αναλάβει αυτόματα το deployment.
 
 ## Μεταβλητές Περιβάλλοντος
