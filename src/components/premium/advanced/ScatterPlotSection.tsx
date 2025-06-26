@@ -4,6 +4,24 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Info } from 'lucide-react';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import { colors } from '@/styles/design-tokens';
+import {
+  ResponsiveContainer,
+  ScatterChart,
+  Scatter,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend
+} from 'recharts';
+
+const sampleData = [
+  { price: 2.5, demand: 1000 },
+  { price: 3, demand: 920 },
+  { price: 3.5, demand: 860 },
+  { price: 4, demand: 750 },
+  { price: 4.5, demand: 620 }
+];
 
 const ScatterPlotSection: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -41,7 +59,18 @@ const ScatterPlotSection: React.FC = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="text-sm text-slate-600">[Scatter chart will render here]</div>
+        <div className="h-72">
+          <ResponsiveContainer width="100%" height="100%">
+            <ScatterChart>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <XAxis type="number" dataKey="price" stroke="#64748b" name="Price" unit="€" />
+              <YAxis type="number" dataKey="demand" stroke="#64748b" name="Demand" />
+              <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+              <Legend />
+              <Scatter name="Scenarios" data={sampleData} fill={colors.secondary} />
+            </ScatterChart>
+          </ResponsiveContainer>
+        </div>
       </CardContent>
     </Card>
   );
