@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 
 export interface Worker {
@@ -147,6 +146,14 @@ export const useCalculation = () => {
     setFormData(prev => ({ ...prev, ...updates }));
   }, []);
 
+  const calculatePhaseResult = (inputWeight: number, lossPct: number, addPct: number): number => {
+    // Apply loss first
+    const afterLoss = inputWeight * (1 - lossPct / 100);
+    // Then apply addition based on the weight after loss
+    const outputWeight = afterLoss + afterLoss * (addPct / 100);
+    return outputWeight;
+  };
+
   const calculate = useCallback(async (): Promise<void> => {
     setIsCalculating(true);
     
@@ -154,20 +161,29 @@ export const useCalculation = () => {
     await new Promise(resolve => setTimeout(resolve, 800));
 
     try {
-      // Advanced processing calculation with multiple phases
+      // Advanced processing calculation with multiple phases - Serial calculations
       let currentWeight = formData.quantity || 0;
       let totalWastePercentage = 0;
       
-      // Apply processing phases
+      // Apply processing phases sequentially
       if (formData.processingPhases && formData.processingPhases.length > 0) {
-        formData.processingPhases.forEach(phase => {
-          if (phase.wastePercentage > 0) {
-            const waste = currentWeight * (phase.wastePercentage / 100);
-            currentWeight -= waste;
-            totalWastePercentage += phase.wastePercentage;
-          }
-          if (phase.addedWeight !== 0) {
-            currentWeight += currentWeight * (phase.addedWeight / 100);
+        formData.processingPhases.forEach((phase, index) => {
+          console.log(`Phase ${index + 1}: ${phase.name}`);
+          console.log(`Input weight: ${currentWeight.toFixed(2)} kg`);
+          
+          if (phase.wastePercentage > 0 || phase.addedWeight !== 0) {
+            // Use the updated calculatePhaseResult function
+            const newWeight = calculatePhaseResult(currentWeight, phase.wastePercentage, phase.addedWeight);
+            
+            console.log(`After ${phase.name}: ${newWeight.toFixed(2)} kg`);
+            console.log(`Loss: ${phase.wastePercentage}%, Added: ${phase.addedWeight}%`);
+            
+            // Track total waste percentage (cumulative effect)
+            if (phase.wastePercentage > 0) {
+              totalWastePercentage += phase.wastePercentage;
+            }
+            
+            currentWeight = newWeight;
           }
         });
       } else {
@@ -178,6 +194,9 @@ export const useCalculation = () => {
       }
 
       const finalProcessedWeight = currentWeight;
+      
+      console.log(`Final processed weight: ${finalProcessedWeight.toFixed(2)} kg`);
+      console.log(`Total waste percentage: ${totalWastePercentage.toFixed(1)}%`);
       
       const purchaseCost = (formData.purchasePrice || 0) * (formData.quantity || 0);
       
