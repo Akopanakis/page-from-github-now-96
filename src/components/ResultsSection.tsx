@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,6 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calculator, TrendingUp, AlertTriangle, CheckCircle, Info, RotateCcw, Crown, Target, Zap, Award, ChevronDown, ChevronUp } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
+import { costThresholds } from '@/config/costThresholds';
+import { toast } from '@/components/ui/sonner';
 
 interface ResultsSectionProps {
   results: any;
@@ -31,6 +33,18 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
   const { language } = useLanguage();
   const [isAnalysisOpen, setIsAnalysisOpen] = useState(true);
   const [isInsightsOpen, setIsInsightsOpen] = useState(true);
+
+  useEffect(() => {
+    if (!results) return;
+    Object.entries(costThresholds).forEach(([key, threshold]) => {
+      const value = (results as any)[key];
+      if (typeof value === 'number' && value > threshold.maxAllowed) {
+        toast.warning(
+          `${threshold.label} ${language === 'el' ? 'υπερβαίνει το όριο' : 'exceeds limit'} (${threshold.maxAllowed}€)`
+        );
+      }
+    });
+  }, [results, language]);
 
   const getRecommendations = () => {
     if (!results) return [];

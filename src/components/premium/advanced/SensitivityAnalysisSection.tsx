@@ -13,6 +13,24 @@ import {
 import { Info } from 'lucide-react';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import { colors } from '@/styles/design-tokens';
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend
+} from 'recharts';
+
+const sampleData = [
+  { variation: -20, profit: 4 },
+  { variation: -10, profit: 6 },
+  { variation: 0, profit: 8 },
+  { variation: 10, profit: 9 },
+  { variation: 20, profit: 7 }
+];
 
 const SensitivityAnalysisSection: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -59,6 +77,7 @@ const SensitivityAnalysisSection: React.FC = () => {
       <CardContent>
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
+<<<<<<< codex/replace-placeholders-with-charts-in-sections
             <LineChart data={sensitivityData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
@@ -82,6 +101,15 @@ const SensitivityAnalysisSection: React.FC = () => {
                 strokeWidth={3}
                 name="Κόστος"
               />
+=======
+            <LineChart data={sampleData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <XAxis dataKey="variation" stroke="#64748b" tickFormatter={(v) => `${v}%`} />
+              <YAxis stroke="#64748b" />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="profit" stroke={colors.secondary} strokeWidth={3} name="Profit" />
+>>>>>>> main
             </LineChart>
           </ResponsiveContainer>
         </div>

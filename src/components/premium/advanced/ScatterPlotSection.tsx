@@ -13,6 +13,24 @@ import {
 import { Info } from 'lucide-react';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import { colors } from '@/styles/design-tokens';
+import {
+  ResponsiveContainer,
+  ScatterChart,
+  Scatter,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend
+} from 'recharts';
+
+const sampleData = [
+  { price: 2.5, demand: 1000 },
+  { price: 3, demand: 920 },
+  { price: 3.5, demand: 860 },
+  { price: 4, demand: 750 },
+  { price: 4.5, demand: 620 }
+];
 
 const ScatterPlotSection: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -60,6 +78,7 @@ const ScatterPlotSection: React.FC = () => {
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
             <ScatterChart>
+<<<<<<< codex/replace-placeholders-with-charts-in-sections
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 type="number"
@@ -75,6 +94,14 @@ const ScatterPlotSection: React.FC = () => {
               />
               <RechartsTooltip cursor={{ strokeDasharray: '3 3' }} />
               <Scatter data={scatterData} fill={colors.secondary} />
+=======
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <XAxis type="number" dataKey="price" stroke="#64748b" name="Price" unit="€" />
+              <YAxis type="number" dataKey="demand" stroke="#64748b" name="Demand" />
+              <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+              <Legend />
+              <Scatter name="Scenarios" data={sampleData} fill={colors.secondary} />
+>>>>>>> main
             </ScatterChart>
           </ResponsiveContainer>
         </div>

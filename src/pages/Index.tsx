@@ -10,6 +10,7 @@ import PremiumInfoCard from '@/components/PremiumInfoCard';
 import FileUpload from '@/components/FileUpload';
 import ResultsSection from '@/components/ResultsSection';
 import PDFExport from '@/components/PDFExport';
+import ExcelExport from '@/components/ExcelExport';
 
 const Index = () => {
   const { formData, updateFormData, calculate, resetForm, results, isCalculating } = useCalculation();
@@ -79,9 +80,16 @@ const Index = () => {
             />
             
             {results && (
-              <PDFExport 
-                formData={formData} 
-                results={results} 
+              <PDFExport
+                formData={formData}
+                results={results}
+              />
+            )}
+
+            {results && (
+              <ExcelExport
+                formData={formData}
+                results={results}
               />
             )}
 
