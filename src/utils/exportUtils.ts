@@ -108,6 +108,22 @@ export const exportToPDF = async (
   document.body.removeChild(container);
 };
 
+export const exportElementToPNG = async (
+  elementId: string,
+  filename: string = 'snapshot'
+) => {
+  const html2canvas = (await import('html2canvas')).default;
+  const element = document.getElementById(elementId);
+  if (!element) {
+    console.error('Element not found:', elementId);
+    return;
+  }
+  const canvas = await html2canvas(element as HTMLElement);
+  canvas.toBlob((blob) => {
+    if (blob) saveAs(blob, `${filename}.png`);
+  });
+};
+
 /**
  * Returns a formatter that uses the active locale and currency from LanguageContext.
  */
