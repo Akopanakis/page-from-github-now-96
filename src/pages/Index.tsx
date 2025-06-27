@@ -10,7 +10,7 @@ import PremiumInfoCard from '@/components/PremiumInfoCard';
 import FileUpload from '@/components/FileUpload';
 import ResultsSection from '@/components/ResultsSection';
 import PDFExport from '@/components/PDFExport';
-import ExcelExport from '@/components/ExcelExport';
+import DataExport from '@/components/DataExport';
 
 const Index = () => {
   const { formData, updateFormData, calculate, resetForm, results, isCalculating } = useCalculation();
@@ -87,7 +87,7 @@ const Index = () => {
             )}
 
             {results && (
-              <ExcelExport
+              <DataExport
                 formData={formData}
                 results={results}
               />
