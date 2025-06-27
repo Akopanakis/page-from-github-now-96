@@ -69,7 +69,7 @@ const WorkersList: React.FC<WorkersListProps> = ({
       <CardContent className="space-y-4 p-6">
         {workers.length === 0 && (
           <EmptyState
-            message="Ξεκινήστε προσθέτοντας εργαζόμενους"
+            messageKey="workers.empty"
             icon={<Users className="w-8 h-8 mb-2 text-gray-400" />}
           />
         )}

@@ -75,7 +75,14 @@ const translations = {
     'reset': 'Επαναφορά',
     'export.pdf': 'Εξαγωγή PDF',
     'add.worker': 'Προσθήκη Εργαζομένου',
-    'remove.worker': 'Αφαίρεση Εργαζομένου'
+    'remove.worker': 'Αφαίρεση Εργαζομένου',
+
+    // Empty states
+    'empty.no.data': 'Δεν υπάρχουν δεδομένα',
+    'workers.empty': 'Ξεκινήστε προσθέτοντας εργαζόμενους',
+    'processing.phases.empty': 'Δεν έχετε προσθέσει φάσεις επεξεργασίας',
+    'batches.empty': 'Δεν υπάρχουν παρτίδες',
+    'costs.empty': 'Δεν υπάρχουν δεδομένα κόστους'
   },
   en: {
     // Basic fields
@@ -129,7 +136,14 @@ const translations = {
     'reset': 'Reset',
     'export.pdf': 'Export PDF',
     'add.worker': 'Add Worker',
-    'remove.worker': 'Remove Worker'
+    'remove.worker': 'Remove Worker',
+
+    // Empty states
+    'empty.no.data': 'No data available',
+    'workers.empty': 'Start by adding workers',
+    'processing.phases.empty': 'No processing phases added',
+    'batches.empty': 'No batches available',
+    'costs.empty': 'No cost data available'
   }
 };
 

@@ -48,7 +48,7 @@ const CostAnalysisPanel: React.FC<CostAnalysisPanelProps> = ({ data }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {mapped.length === 0 && (
           <EmptyState
-            message="Δεν υπάρχουν δεδομένα κόστους"
+            messageKey="costs.empty"
             icon={<AlertTriangle className="w-8 h-8 mb-2 text-gray-400" />}
           />
         )}
