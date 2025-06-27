@@ -65,7 +65,14 @@ export const useCalculation = () => {
 
   useEffect(() => {
     if (typeof window !== 'undefined' && typeof Worker !== 'undefined') {
-      workerRef.current = new Worker(new URL('../workers/calculateWorker.ts', import.meta.url), { type: 'module' });
+      try {
+        workerRef.current = new Worker(
+          new URL('../workers/calculateWorker.ts', import.meta.url),
+          { type: 'module' }
+        );
+      } catch (err) {
+        console.error('Worker initialization failed:', err);
+      }
     }
     return () => {
       workerRef.current?.terminate();
@@ -73,46 +80,60 @@ export const useCalculation = () => {
   }, []);
 
   const calculate = useCallback(async (): Promise<void> => {
-    const validation = validateFormData(formData as FormData)
-    if (!validation.valid) {
+    try {
+      const validation = validateFormData(formData as FormData)
+      if (!validation.valid) {
+        const materialError = validation.errors.some((e) =>
+          e.includes('worker') || e === 'processingPhases'
+        )
+        toast.error(
+          language === 'el'
+            ? materialError
+              ? 'Έλεγξε τα υλικά ή τα εργατικά'
+              : 'Συμπλήρωσε όλα τα πεδία'
+            : materialError
+              ? 'Check materials or labor fields'
+              : 'Fill out all fields'
+        )
+        console.debug('Validation errors:', validation.errors)
+        return
+      }
+
+      setIsCalculating(true)
+
+      const run = () => {
+        return new Promise<CalculationResults>((resolve) => {
+          if (workerRef.current) {
+            workerRef.current.onmessage = (
+              e: MessageEvent<CalculationResults>
+            ) => {
+              resolve(e.data)
+            }
+            workerRef.current.onerror = (e) => {
+              console.error('Worker error:', e)
+              resolve(calculateResults(formData as FormData))
+            }
+            workerRef.current.postMessage(formData as FormData)
+          } else {
+            resolve(calculateResults(formData as FormData))
+          }
+        })
+      }
+
+      const result = await run()
+      setResults(result)
+    } catch (error) {
+      console.error('Calculation error:', error)
       toast.error(
         language === 'el'
-          ? 'Ελέγξτε τα στοιχεία εισαγωγής'
-          : 'Please check your input data'
+          ? 'Παρουσιάστηκε σφάλμα στον υπολογισμό'
+          : 'An error occurred during calculation'
       )
-      console.debug('Validation errors:', validation.errors)
-      return
-    }
-
-    setIsCalculating(true);
-
-    const run = () => {
-      return new Promise<CalculationResults>((resolve) => {
-        if (workerRef.current) {
-          workerRef.current.onmessage = (e: MessageEvent<CalculationResults>) => {
-            resolve(e.data);
-          };
-          workerRef.current.onerror = (e) => {
-            console.error('Worker error:', e);
-            resolve(calculateResults(formData as FormData));
-          };
-          workerRef.current.postMessage(formData as FormData);
-        } else {
-          resolve(calculateResults(formData as FormData));
-        }
-      });
-    };
-
-    try {
-      const result = await run();
-      setResults(result);
-    } catch (error) {
-      console.error('Calculation error:', error);
-      setResults(null);
+      setResults(null)
     } finally {
-      setIsCalculating(false);
+      setIsCalculating(false)
     }
-  }, [formData, language]);
+  }, [formData, language])
 
   const resetForm = useCallback(() => {
     setFormData({
