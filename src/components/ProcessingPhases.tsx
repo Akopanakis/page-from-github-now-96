@@ -115,11 +115,7 @@ const ProcessingPhases: React.FC<ProcessingPhasesProps> = ({
         <div className="space-y-4">
           {(formData.processingPhases || []).length === 0 && (
             <EmptyState
-              message={
-                language === "el"
-                  ? "Δεν έχετε προσθέσει φάσεις επεξεργασίας"
-                  : "No processing phases added"
-              }
+              messageKey="processing.phases.empty"
               icon={<Settings className="w-8 h-8 mb-2 text-gray-400" />}
             />
           )}

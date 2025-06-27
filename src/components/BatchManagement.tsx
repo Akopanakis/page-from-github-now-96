@@ -512,11 +512,7 @@ const BatchManagement = () => {
                   <tr>
                     <td colSpan={8}>
                       <EmptyState
-                        message={
-                          language === "el"
-                            ? "Δεν υπάρχουν παρτίδες"
-                            : "No batches available"
-                        }
+                        messageKey="batches.empty"
                         icon={
                           <Package className="w-8 h-8 mb-2 text-gray-400" />
                         }
