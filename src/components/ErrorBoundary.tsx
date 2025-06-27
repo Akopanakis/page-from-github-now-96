@@ -43,6 +43,11 @@ class ErrorBoundary extends Component<Props, State> {
               <p className="text-gray-600">
                 Παρουσιάστηκε ένα απροσδόκητο σφάλμα. Παρακαλώ δοκιμάστε να επαναφορτώσετε τη σελίδα.
               </p>
+              {this.state.error && (
+                <pre className="text-left whitespace-pre-wrap text-xs bg-red-50 p-2 rounded-md overflow-x-auto">
+                  {this.state.error.message}
+                </pre>
+              )}
               <Button 
                 onClick={() => window.location.reload()}
                 className="w-full"
