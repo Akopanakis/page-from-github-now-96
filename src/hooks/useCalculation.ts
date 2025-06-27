@@ -60,7 +60,7 @@ export const useCalculation = () => {
   const workerRef = useRef<Worker>();
 
   useEffect(() => {
-    if (typeof Worker !== 'undefined') {
+    if (typeof window !== 'undefined' && typeof Worker !== 'undefined') {
       workerRef.current = new Worker(new URL('../workers/calculateWorker.ts', import.meta.url), { type: 'module' });
     }
     return () => {
