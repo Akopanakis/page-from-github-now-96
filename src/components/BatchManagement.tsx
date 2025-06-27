@@ -19,6 +19,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
   Calendar,
   Plus,
   Search,
@@ -30,6 +37,7 @@ import {
 } from "lucide-react";
 import EmptyState from "@/components/ui/empty-state";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface BatchData {
   id: string;
@@ -47,9 +55,11 @@ interface BatchData {
 
 const BatchManagement = () => {
   const { language } = useLanguage();
+  const isMobile = useIsMobile();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterSupplier, setFilterSupplier] = useState("all");
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [newBatch, setNewBatch] = useState({
     date: "",
     product: "",
@@ -371,10 +381,19 @@ const BatchManagement = () => {
       </div>
 
       {/* Filters */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
+      {isMobile ? (
+        <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
+          <SheetTrigger asChild>
+            <Button variant="outline" className="mb-4 flex items-center space-x-2 md:hidden">
+              <Filter className="w-4 h-4" />
+              <span>{language === "el" ? "Φίλτρα" : "Filters"}</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left">
+            <SheetHeader>
+              <SheetTitle>{language === "el" ? "Φίλτρα" : "Filters"}</SheetTitle>
+            </SheetHeader>
+            <div className="mt-4 flex flex-col gap-4">
               <div className="relative">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -388,20 +407,14 @@ const BatchManagement = () => {
                   className="pl-8"
                 />
               </div>
-            </div>
-            <div className="w-full md:w-48">
               <Select value={filterSupplier} onValueChange={setFilterSupplier}>
                 <SelectTrigger>
                   <Filter className="w-4 h-4 mr-2" />
-                  <SelectValue
-                    placeholder={language === "el" ? "Προμηθευτής" : "Supplier"}
-                  />
+                  <SelectValue placeholder={language === "el" ? "Προμηθευτής" : "Supplier"} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">
-                    {language === "el"
-                      ? "Όλοι οι προμηθευτές"
-                      : "All suppliers"}
+                    {language === "el" ? "Όλοι οι προμηθευτές" : "All suppliers"}
                   </SelectItem>
                   {suppliers.map((supplier) => (
                     <SelectItem key={supplier} value={supplier}>
@@ -411,9 +424,49 @@ const BatchManagement = () => {
                 </SelectContent>
               </Select>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </SheetContent>
+        </Sheet>
+      ) : (
+        <Card className="hidden md:block">
+          <CardContent className="pt-6">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder={
+                      language === "el"
+                        ? "Αναζήτηση προϊόντων ή προμηθευτών..."
+                        : "Search products or suppliers..."
+                    }
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-8"
+                  />
+                </div>
+              </div>
+              <div className="w-full md:w-48">
+                <Select value={filterSupplier} onValueChange={setFilterSupplier}>
+                  <SelectTrigger>
+                    <Filter className="w-4 h-4 mr-2" />
+                    <SelectValue placeholder={language === "el" ? "Προμηθευτής" : "Supplier"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">
+                      {language === "el" ? "Όλοι οι προμηθευτές" : "All suppliers"}
+                    </SelectItem>
+                    {suppliers.map((supplier) => (
+                      <SelectItem key={supplier} value={supplier}>
+                        {supplier}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Batches Table */}
       <Card>
