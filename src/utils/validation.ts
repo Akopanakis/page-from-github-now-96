@@ -36,14 +36,29 @@ const numericFields: (keyof FormData)[] = [
   'seasonalMultiplier'
 ]
 
+const textFields: (keyof FormData)[] = [
+  'productName',
+  'productType',
+  'originAddress',
+  'destinationAddress',
+  'estimatedDuration',
+  'batchNumber',
+  'supplierName'
+]
+
 export const validateFormData = (data: Partial<FormData>): ValidationResult => {
   const errors: string[] = []
 
-  if (!data.productName) errors.push('productName')
+  textFields.forEach(field => {
+    const value = (data as any)[field]
+    if (typeof value !== 'string' || value.trim() === '') {
+      errors.push(String(field))
+    }
+  })
 
   numericFields.forEach((field) => {
     const value = (data as any)[field]
-    if (value === undefined || value === null || Number.isNaN(Number(value))) {
+    if (typeof value !== 'number' || Number.isNaN(value)) {
       errors.push(String(field))
     }
   })
@@ -54,8 +69,10 @@ export const validateFormData = (data: Partial<FormData>): ValidationResult => {
     data.workers.forEach((w, idx) => {
       if (
         w == null ||
-        Number.isNaN(Number(w.hourlyRate)) ||
-        Number.isNaN(Number(w.hours))
+        typeof w.hourlyRate !== 'number' ||
+        Number.isNaN(w.hourlyRate) ||
+        typeof w.hours !== 'number' ||
+        Number.isNaN(w.hours)
       ) {
         errors.push(`worker_${idx}`)
       }
@@ -68,8 +85,10 @@ export const validateFormData = (data: Partial<FormData>): ValidationResult => {
       data.processingPhases.some(
         (p) =>
           p == null ||
-          Number.isNaN(Number(p.wastePercentage)) ||
-          Number.isNaN(Number(p.addedWeight))
+          typeof p.wastePercentage !== 'number' ||
+          Number.isNaN(p.wastePercentage) ||
+          typeof p.addedWeight !== 'number' ||
+          Number.isNaN(p.addedWeight)
       ))
   ) {
     errors.push('processingPhases')
