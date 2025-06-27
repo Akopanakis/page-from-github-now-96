@@ -5,9 +5,10 @@ interface ExportPreviewProps {
   theme: 'classic' | 'modern' | 'minimal';
   onThemeChange: (theme: 'classic' | 'modern' | 'minimal') => void;
   children: React.ReactNode;
+  pdfSrc?: string;
 }
 
-const ExportPreview: React.FC<ExportPreviewProps> = ({ preview, theme, onThemeChange, children }) => {
+const ExportPreview: React.FC<ExportPreviewProps> = ({ preview, pdfSrc, theme, onThemeChange, children }) => {
   return (
     <div className="flex flex-col lg:flex-row gap-4">
       <div className="lg:w-1/2 space-y-4">
@@ -27,7 +28,11 @@ const ExportPreview: React.FC<ExportPreviewProps> = ({ preview, theme, onThemeCh
         </div>
       </div>
       <div className="lg:w-1/2 border rounded bg-white h-96 overflow-hidden">
-        <iframe title="preview" className="w-full h-full" srcDoc={preview} />
+        {pdfSrc ? (
+          <iframe title="preview" className="w-full h-full" src={pdfSrc} />
+        ) : (
+          <iframe title="preview" className="w-full h-full" srcDoc={preview} />
+        )}
       </div>
     </div>
   );

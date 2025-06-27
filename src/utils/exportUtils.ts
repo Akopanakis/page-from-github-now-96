@@ -44,15 +44,10 @@ export interface PDFExportOptions {
   qrUrl?: string;
 }
 
-/**
- * Generate a PDF from an HTML string using jsPDF. The HTML may contain anchor
- * links which become clickable in the resulting PDF.
- */
-export const exportToPDF = async (
+export const generatePDFBlob = async (
   html: string,
-  filename: string = 'export',
   options: PDFExportOptions
-) => {
+): Promise<Blob> => {
   const container = document.createElement('div');
   container.style.width = '800px';
   container.innerHTML = html;
@@ -61,7 +56,6 @@ export const exportToPDF = async (
     container.classList.add('dark');
   }
 
-  // Remove sections according to the provided options
   if (!options.sections.charts) {
     container.querySelectorAll('.chart-section').forEach((el) => el.remove());
   }
@@ -83,13 +77,11 @@ export const exportToPDF = async (
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
 
-  // Signature field
   doc.setPage(doc.getNumberOfPages());
   doc.setFontSize(12);
   doc.text('Signature:', 40, pageHeight - 60);
   doc.line(110, pageHeight - 60, pageWidth - 40, pageHeight - 60);
 
-  // Optional QR code with link to analytics
   if (options.qrUrl) {
     const qrData = await QRCode.toDataURL(options.qrUrl);
     const size = 80;
@@ -103,9 +95,24 @@ export const exportToPDF = async (
     );
   }
 
-  doc.save(`${filename}.pdf`);
+  const blob = doc.output('blob');
 
   document.body.removeChild(container);
+
+  return blob;
+};
+
+/**
+ * Generate a PDF from an HTML string using jsPDF. The HTML may contain anchor
+ * links which become clickable in the resulting PDF.
+ */
+export const exportToPDF = async (
+  html: string,
+  filename: string = 'export',
+  options: PDFExportOptions
+) => {
+  const blob = await generatePDFBlob(html, options);
+  saveAs(blob, `${filename}.pdf`);
 };
 
 export const exportElementToPNG = async (
