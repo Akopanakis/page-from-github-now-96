@@ -174,7 +174,7 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
   ].filter(item => item.value > 0);
 
   return (
-    <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
+    <div id="report-preview" className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
       {exceededCosts.map((item) => (
         <Alert key={item.key} variant="destructive">
           <AlertTriangle className="h-4 w-4" />
