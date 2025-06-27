@@ -3,6 +3,8 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { useLanguage } from '@/contexts/LanguageContext';
 import React from 'react';
+import { jsPDF } from 'jspdf';
+import QRCode from 'qrcode';
 
 export interface ExportData {
   [key: string]: any;
@@ -30,11 +32,80 @@ export const exportToXLSX = (
   XLSX.writeFile(wb, `${filename}.xlsx`);
 };
 
-export const exportToPDF = async (elementId: string, filename: string = 'export') => {
-  // This would use a library like jsPDF or html2canvas
-  // For now, we'll just show a placeholder
-  console.log('PDF export functionality would be implemented here');
-  alert('PDF export functionality coming soon!');
+export interface PDFSectionOptions {
+  charts?: boolean;
+  tables?: boolean;
+  comments?: boolean;
+}
+
+export interface PDFExportOptions {
+  sections: PDFSectionOptions;
+  theme?: 'light' | 'dark';
+  qrUrl?: string;
+}
+
+/**
+ * Generate a PDF from an HTML string using jsPDF. The HTML may contain anchor
+ * links which become clickable in the resulting PDF.
+ */
+export const exportToPDF = async (
+  html: string,
+  filename: string = 'export',
+  options: PDFExportOptions
+) => {
+  const container = document.createElement('div');
+  container.style.width = '800px';
+  container.innerHTML = html;
+
+  if (options.theme === 'dark') {
+    container.classList.add('dark');
+  }
+
+  // Remove sections according to the provided options
+  if (!options.sections.charts) {
+    container.querySelectorAll('.chart-section').forEach((el) => el.remove());
+  }
+  if (!options.sections.tables) {
+    container.querySelectorAll('.table-section').forEach((el) => el.remove());
+  }
+  if (!options.sections.comments) {
+    container.querySelectorAll('.comments-section').forEach((el) => el.remove());
+  }
+
+  document.body.appendChild(container);
+
+  const doc = new jsPDF('p', 'pt', 'a4');
+
+  await doc.html(container, {
+    html2canvas: { scale: 0.7 },
+  });
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+
+  // Signature field
+  doc.setPage(doc.getNumberOfPages());
+  doc.setFontSize(12);
+  doc.text('Signature:', 40, pageHeight - 60);
+  doc.line(110, pageHeight - 60, pageWidth - 40, pageHeight - 60);
+
+  // Optional QR code with link to analytics
+  if (options.qrUrl) {
+    const qrData = await QRCode.toDataURL(options.qrUrl);
+    const size = 80;
+    doc.addImage(
+      qrData,
+      'PNG',
+      pageWidth - size - 40,
+      pageHeight - size - 40,
+      size,
+      size
+    );
+  }
+
+  doc.save(`${filename}.pdf`);
+
+  document.body.removeChild(container);
 };
 
 /**

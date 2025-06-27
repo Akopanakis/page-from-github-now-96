@@ -6,6 +6,7 @@ import { FileText, Download, BarChart3, PieChart, TrendingUp } from 'lucide-reac
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
 import ExportPreview from './ExportPreview';
+import { exportToPDF } from '@/utils/exportUtils';
 
 interface PDFExportProps {
   results: any;
@@ -49,7 +50,12 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
     competitorComparison: false
   });
   const [template, setTemplate] = useState<Template>('classic');
+  const [includeTables, setIncludeTables] = useState(true);
+  const [includeComments, setIncludeComments] = useState(true);
+  const [includeQr, setIncludeQr] = useState(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
+  // HTML content builder (themes + options)
   const buildHtmlContent = () => {
     const t = templates[template];
     const title = language === 'el' ? 'Αναφορά Κοστολόγησης' : 'Costing Report';
@@ -57,6 +63,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
     const dateLabel = language === 'el' ? 'Ημερομηνία:' : 'Date:';
     const resultsLabel = language === 'el' ? 'Αποτελέσματα' : 'Results';
     const costAnalysisLabel = language === 'el' ? 'Ανάλυση Κόστους' : 'Cost Analysis';
+    const summaryLabel = language === 'el' ? 'Περίληψη' : 'Summary';
 
     const chartSections: string[] = [];
     if (selectedCharts.costBreakdown) {
@@ -73,44 +80,47 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
         </div>
       `);
     }
+    if (selectedCharts.competitorComparison) {
+      chartSections.push(`
+        <div class="section">
+          <h2>${language === 'el' ? 'Σύγκριση Ανταγωνισμού' : 'Competitor Comparison'}</h2>
+        </div>
+      `);
+    }
 
     const themeCSS = `
-      body { font-family: ${t.font}; background: ${t.background}; color: ${t.text}; margin:20px; }
+      body { font-family: ${t.font}; background: ${theme === 'dark' ? '#1f2937' : t.background}; color: ${theme === 'dark' ? '#fff' : t.text}; margin:20px; }
       .header { background: ${t.headerBg}; color:${t.headerColor}; text-align:center; padding:20px; }
+      .section{margin-bottom:20px}
     `;
 
-    return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title><style>${themeCSS}
-      .section{margin-bottom:20px}
-    </style></head><body>
+    return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title><style>${themeCSS}</style></head><body>
       <div class="header"><div>${t.logo}</div><h1>${title}</h1>
         <p><strong>${productLabel}</strong> ${formData.productName || ''}</p>
         <p><strong>${dateLabel}</strong> ${new Date().toLocaleDateString()}</p>
       </div>
-      <div class="section"><h2>${resultsLabel}</h2>
+      ${includeTables ? `<div class="section"><h2>${resultsLabel}</h2>
         <p>${language === 'el' ? 'Συνολικό Κόστος' : 'Total Cost'}: ${results?.totalCost?.toFixed(2) || 0}€</p>
         <p>${language === 'el' ? 'Τιμή Πώλησης' : 'Selling Price'}: ${results?.sellingPrice?.toFixed(2) || 0}€</p>
-      </div>
+      </div>` : ''}
       <div class="section"><h2>${costAnalysisLabel}</h2></div>
       ${chartSections.join('')}
+      ${includeComments ? `<div class="section"><h2>${summaryLabel}</h2><p>${language === 'el' ? 'Ευχαριστούμε που χρησιμοποιήσατε την εφαρμογή.' : 'Thank you for using the app.'}</p></div>` : ''}
+      ${includeQr ? `<div class="section"><img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(window.location.href)}" alt="QR Code" /></div>` : ''}
     </body></html>`;
   };
 
-  const previewHtml = useMemo(buildHtmlContent, [results, formData, template, selectedCharts, language]);
+  const previewHtml = useMemo(buildHtmlContent, [results, formData, template, selectedCharts, language, includeTables, includeComments, includeQr, theme]);
 
-  const exportToPDF = async () => {
+  const exportToPDFHandler = async () => {
     try {
       const htmlContent = buildHtmlContent();
-      const blob = new Blob([htmlContent], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${language === 'el' ? 'κοστολογηση' : 'costing'}_${formData.productName || 'product'}_${new Date().toISOString().split('T')[0]}.html`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      await exportToPDF(
+        htmlContent,
+        `${language === 'el' ? 'κοστολογηση' : 'costing'}_${formData.productName || 'product'}_${new Date().toISOString().split('T')[0]}.pdf`
+      );
       toast.success(language === 'el' ? 'Η αναφορά εξήχθη επιτυχώς!' : 'Report exported successfully!');
-    } catch (err) {
+    } catch {
       toast.error(language === 'el' ? 'Σφάλμα κατά την εξαγωγή του PDF' : 'Error exporting PDF');
     }
   };
@@ -164,11 +174,40 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
                 </label>
               </div>
             </div>
-            <Button onClick={exportToPDF} className="w-full" size="lg">
-              <Download className="w-4 h-4 mr-2" />
-              {language === 'el' ? 'Εξαγωγή Αναφοράς' : 'Export Report'}
-            </Button>
           </div>
+
+          <div className="space-y-2 pt-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox id="includeTables" checked={includeTables} onCheckedChange={(c) => setIncludeTables(c as boolean)} />
+              <label htmlFor="includeTables" className="text-sm">{language === 'el' ? 'Πίνακες' : 'Tables'}</label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox id="includeComments" checked={includeComments} onCheckedChange={(c) => setIncludeComments(c as boolean)} />
+              <label htmlFor="includeComments" className="text-sm">{language === 'el' ? 'Σχόλια' : 'Comments'}</label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox id="includeQr" checked={includeQr} onCheckedChange={(c) => setIncludeQr(c as boolean)} />
+              <label htmlFor="includeQr" className="text-sm">QR Code</label>
+            </div>
+            <div>
+              <label className="text-sm mr-2" htmlFor="themeSelect">{language === 'el' ? 'Θέμα' : 'Theme'}</label>
+              <select id="themeSelect" value={theme} onChange={(e) => setTheme(e.target.value as 'light' | 'dark')} className="border rounded p-1 text-sm">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+              <span className="ml-2">{language === 'el' ? 'Template:' : 'Template:'}</span>
+              <select value={template} onChange={(e) => setTemplate(e.target.value as Template)} className="border rounded p-1 text-sm ml-2">
+                <option value="classic">Classic</option>
+                <option value="modern">Modern</option>
+                <option value="minimal">Minimal</option>
+              </select>
+            </div>
+          </div>
+
+          <Button onClick={exportToPDFHandler} className="w-full mt-4" size="lg">
+            <Download className="w-4 h-4 mr-2" />
+            {language === 'el' ? 'Εξαγωγή Αναφοράς' : 'Export Report'}
+          </Button>
         </ExportPreview>
       </CardContent>
     </Card>
