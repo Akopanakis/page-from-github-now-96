@@ -4,6 +4,11 @@ import React, { createContext, useContext, useState } from 'react';
 interface LanguageContextType {
   language: 'el' | 'en';
   setLanguage: (lang: 'el' | 'en') => void;
+  /** Currently active currency */
+  currency: 'EUR' | 'USD';
+  setCurrency: (cur: 'EUR' | 'USD') => void;
+  /** Locale derived from the selected language */
+  locale: string;
   t: (key: string) => string;
 }
 
@@ -130,13 +135,16 @@ const translations = {
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState<'el' | 'en'>('el');
+  const [currency, setCurrency] = useState<'EUR' | 'USD'>('EUR');
+
+  const locale = language === 'el' ? 'el-GR' : 'en-US';
 
   const t = (key: string): string => {
     return translations[language][key as keyof typeof translations[typeof language]] || key;
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage, currency, setCurrency, locale, t }}>
       {children}
     </LanguageContext.Provider>
   );
