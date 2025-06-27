@@ -55,4 +55,4 @@ const PremiumInfoCard: React.FC<PremiumInfoCardProps> = ({ onUpgrade }) => {
   );
 };
 
-export default PremiumInfoCard;
+export default React.memo(PremiumInfoCard);
