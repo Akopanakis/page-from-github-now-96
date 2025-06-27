@@ -26,15 +26,15 @@ const Index = () => {
     return stored ? JSON.parse(stored) : { logoUrl: '', name: '', address: '' };
   });
 
-  const handleCompanyChange = (info: CompanyInfo) => {
+  const handleCompanyChange = React.useCallback((info: CompanyInfo) => {
     setCompanyInfo(info);
     localStorage.setItem('companyInfo', JSON.stringify(info));
-  };
+  }, []);
 
-  const handleFileUpload = (data: any) => {
+  const handleFileUpload = React.useCallback((data: any) => {
     updateFormData(data);
     setShowFileUpload(false);
-  };
+  }, [updateFormData]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">

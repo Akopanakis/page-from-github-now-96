@@ -43,4 +43,4 @@ const CostCard: React.FC<CostCardProps> = ({ label, value, minAllowed, maxAllowe
   );
 };
 
-export default CostCard;
+export default React.memo(CostCard);

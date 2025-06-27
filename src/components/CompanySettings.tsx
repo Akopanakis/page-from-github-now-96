@@ -77,4 +77,4 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ onChange }) => {
   );
 };
 
-export default CompanySettings;
+export default React.memo(CompanySettings);
