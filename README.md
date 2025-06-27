@@ -12,15 +12,19 @@
    ```bash
    npm run lint
    ```
-3. Εκτέλεση σε περιβάλλον ανάπτυξης
+3. Εκτέλεση unit tests
+   ```bash
+   npm test
+   ```
+4. Εκτέλεση σε περιβάλλον ανάπτυξης
    ```bash
    npm run dev
    ```
-4. Δημιουργία παραγωγικού build
+5. Δημιουργία παραγωγικού build
    ```bash
    npm run build
    ```
-5. Deploy στο Vercel
+6. Deploy στο Vercel
    Κάντε push το repository στο GitHub και το Vercel θα αναλάβει αυτόματα το deployment.
 
 ## Μεταβλητές Περιβάλλοντος
