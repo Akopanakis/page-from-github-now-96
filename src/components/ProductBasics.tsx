@@ -3,6 +3,17 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage
+} from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Package, Tag, Percent, Weight, Droplets, Fish, Crown, Building2, Calendar, Thermometer } from 'lucide-react';
@@ -18,6 +29,30 @@ interface ProductBasicsProps {
 const ProductBasics: React.FC<ProductBasicsProps> = ({ formData, updateFormData, isPremium = false }) => {
   const { language } = useLanguage();
 
+  const schema = z.object({
+    productName: z
+      .string()
+      .nonempty(language === 'el' ? 'Απαιτείται όνομα προϊόντος' : 'Product name is required'),
+    purchasePrice: z
+      .number({ invalid_type_error: language === 'el' ? 'Απαιτείται τιμή αγοράς' : 'Purchase price is required' })
+      .positive(language === 'el' ? 'Απαιτείται τιμή αγοράς' : 'Purchase price is required'),
+    quantity: z
+      .number({ invalid_type_error: language === 'el' ? 'Απαιτείται ποσότητα' : 'Quantity is required' })
+      .positive(language === 'el' ? 'Απαιτείται ποσότητα' : 'Quantity is required')
+  });
+
+  type FormValues = z.infer<typeof schema>;
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    mode: 'onChange',
+    defaultValues: {
+      productName: formData.productName || '',
+      purchasePrice: formData.purchasePrice || 0,
+      quantity: formData.quantity || 0
+    }
+  });
+
   const productTypes = [
     { value: 'fish', label: language === 'el' ? 'Ψάρι (Θράψαλο, Τσιπούρα κλπ)' : 'Fish (Tuna, Sea Bream etc)' },
     { value: 'squid', label: language === 'el' ? 'Καλαμάρι' : 'Squid' },
@@ -26,7 +61,8 @@ const ProductBasics: React.FC<ProductBasicsProps> = ({ formData, updateFormData,
   ];
 
   return (
-    <div className="space-y-6">
+    <Form {...form}>
+      <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
       <Card className="border-slate-200 shadow-sm">
         <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-200">
           <CardTitle className="flex items-center justify-between text-slate-800">
@@ -44,20 +80,32 @@ const ProductBasics: React.FC<ProductBasicsProps> = ({ formData, updateFormData,
         </CardHeader>
         <CardContent className="p-6 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="productName" className="flex items-center space-x-2">
-                <Tag className="w-4 h-4" />
-                <span>{language === 'el' ? 'Όνομα Προϊόντος' : 'Product Name'}</span>
-                <TooltipHelper tooltipKey="tooltip.product.name" />
-              </Label>
-              <Input
-                id="productName"
-                value={formData.productName || ''}
-                onChange={(e) => updateFormData({ productName: e.target.value })}
-                placeholder={language === 'el' ? 'π.χ. Θράψαλο Block Premium' : 'e.g. Tuna Block Premium'}
-                className="border-slate-300 focus:border-blue-500"
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="productName"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel className="flex items-center space-x-2">
+                    <Tag className="w-4 h-4" />
+                    <span>{language === 'el' ? 'Όνομα Προϊόντος' : 'Product Name'}</span>
+                    <TooltipHelper tooltipKey="tooltip.product.name" />
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      id="productName"
+                      value={field.value}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        updateFormData({ productName: e.target.value });
+                      }}
+                      placeholder={language === 'el' ? 'π.χ. Θράψαλο Block Premium' : 'e.g. Tuna Block Premium'}
+                      className="border-slate-300 focus:border-blue-500"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <div className="space-y-2">
               <Label htmlFor="productType" className="flex items-center space-x-2">
@@ -116,40 +164,64 @@ const ProductBasics: React.FC<ProductBasicsProps> = ({ formData, updateFormData,
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="purchasePrice" className="flex items-center space-x-2">
-                <span>{language === 'el' ? 'Τιμή Αγοράς (€/κιλό)' : 'Purchase Price (€/kg)'}</span>
-                <TooltipHelper tooltipKey="tooltip.purchase.price" />
-              </Label>
-              <Input
-                id="purchasePrice"
-                type="number"
-                step="0.01"
-                min="0"
-                value={formData.purchasePrice || ''}
-                onChange={(e) => updateFormData({ purchasePrice: parseFloat(e.target.value) || 0 })}
-                placeholder="4.50"
-                className="border-slate-300 focus:border-blue-500"
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="purchasePrice"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel className="flex items-center space-x-2">
+                    <span>{language === 'el' ? 'Τιμή Αγοράς (€/κιλό)' : 'Purchase Price (€/kg)'}</span>
+                    <TooltipHelper tooltipKey="tooltip.purchase.price" />
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      id="purchasePrice"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={field.value}
+                      onChange={(e) => {
+                        field.onChange(+e.target.value);
+                        updateFormData({ purchasePrice: parseFloat(e.target.value) || 0 });
+                      }}
+                      placeholder="4.50"
+                      className="border-slate-300 focus:border-blue-500"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-            <div className="space-y-2">
-              <Label htmlFor="quantity" className="flex items-center space-x-2">
-                <Weight className="w-4 h-4" />
-                <span>{language === 'el' ? 'Ποσότητα (κιλά)' : 'Quantity (kg)'}</span>
-                <TooltipHelper tooltipKey="tooltip.quantity" />
-              </Label>
-              <Input
-                id="quantity"
-                type="number"
-                step="0.1"
-                min="0.1"
-                value={formData.quantity || ''}
-                onChange={(e) => updateFormData({ quantity: parseFloat(e.target.value) || 0 })}
-                placeholder="500.0"
-                className="border-slate-300 focus:border-blue-500"
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="quantity"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel className="flex items-center space-x-2">
+                    <Weight className="w-4 h-4" />
+                    <span>{language === 'el' ? 'Ποσότητα (κιλά)' : 'Quantity (kg)'}</span>
+                    <TooltipHelper tooltipKey="tooltip.quantity" />
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      id="quantity"
+                      type="number"
+                      step="0.1"
+                      min="0.1"
+                      value={field.value}
+                      onChange={(e) => {
+                        field.onChange(+e.target.value);
+                        updateFormData({ quantity: parseFloat(e.target.value) || 0 });
+                      }}
+                      placeholder="500.0"
+                      className="border-slate-300 focus:border-blue-500"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
           {!isPremium && (
@@ -336,7 +408,8 @@ const ProductBasics: React.FC<ProductBasicsProps> = ({ formData, updateFormData,
           )}
         </CardContent>
       </Card>
-    </div>
+      </form>
+    </Form>
   );
 };
 
