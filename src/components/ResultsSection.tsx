@@ -188,36 +188,36 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
       {/* Main Results Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         {/* Total Cost Card */}
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 shadow-lg" style={{ borderRadius: '8px', padding: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-300 shadow-lg" style={{ borderRadius: '8px', padding: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-blue-800 mb-1" style={{ fontWeight: 700 }}>
+            <div className="text-3xl font-bold text-blue-800 mb-1">
               €{results.totalCost.toFixed(2)}
             </div>
-            <div className="text-sm text-blue-600" style={{ fontWeight: 400 }}>
+            <div className="text-xs text-blue-600">
               {language === 'el' ? 'Συνολικό Κόστος' : 'Total Cost'}
             </div>
           </CardContent>
         </Card>
 
         {/* Selling Price Card */}
-        <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 shadow-lg" style={{ borderRadius: '8px', padding: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+        <Card className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-300 shadow-lg" style={{ borderRadius: '8px', padding: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-green-800 mb-1" style={{ fontWeight: 700 }}>
+            <div className="text-3xl font-bold text-green-800 mb-1">
               €{results.sellingPrice.toFixed(2)}
             </div>
-            <div className="text-sm text-green-600" style={{ fontWeight: 400 }}>
+            <div className="text-xs text-green-600">
               {language === 'el' ? 'Τιμή Πώλησης' : 'Selling Price'}
             </div>
           </CardContent>
         </Card>
 
         {/* Profit Card */}
-        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 shadow-lg" style={{ borderRadius: '8px', padding: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-300 shadow-lg" style={{ borderRadius: '8px', padding: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-purple-800 mb-1" style={{ fontWeight: 700 }}>
+            <div className="text-3xl font-bold text-purple-800 mb-1">
               {results.profitMargin.toFixed(1)}%
             </div>
-            <div className="text-sm text-purple-600" style={{ fontWeight: 400 }}>
+            <div className="text-xs text-purple-600">
               {language === 'el' ? 'Περιθώριο Κέρδους' : 'Profit Margin'}
             </div>
           </CardContent>
