@@ -8,9 +8,12 @@ import { toast } from 'sonner';
 import ExportPreview from './ExportPreview';
 import { exportToPDF, generatePDFBlob } from '@/utils/exportUtils';
 
+import { CompanyInfo } from '@/types/company';
+
 interface PDFExportProps {
   results: any;
   formData: any;
+  companyInfo?: CompanyInfo;
 }
 
 type Template = 'classic' | 'modern' | 'minimal';
@@ -42,7 +45,7 @@ const templates = {
   }
 } as const;
 
-const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
+const PDFExport: React.FC<PDFExportProps> = ({ results, formData, companyInfo }) => {
   const { language } = useLanguage();
   const [selectedCharts, setSelectedCharts] = useState({
     costBreakdown: true,
@@ -92,11 +95,16 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
     const themeCSS = `
       body { font-family: ${t.font}; background: ${theme === 'dark' ? '#1f2937' : t.background}; color: ${theme === 'dark' ? '#fff' : t.text}; margin:20px; }
       .header { background: ${t.headerBg}; color:${t.headerColor}; text-align:center; padding:20px; }
+      .logo { max-height:60px; margin-bottom:10px; }
       .section{margin-bottom:20px}
     `;
 
+    const logo = companyInfo?.logoUrl ? `<img src="${companyInfo.logoUrl}" class="logo" />` : `<div>${t.logo}</div>`;
+    const name = companyInfo?.name ? `<h2>${companyInfo.name}</h2>` : '';
+    const address = companyInfo?.address ? `<p>${companyInfo.address}</p>` : '';
+
     return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title><style>${themeCSS}</style></head><body>
-      <div class="header"><div>${t.logo}</div><h1>${title}</h1>
+      <div class="header">${logo}${name}<h1>${title}</h1>${address}
         <p><strong>${productLabel}</strong> ${formData.productName || ''}</p>
         <p><strong>${dateLabel}</strong> ${new Date().toLocaleDateString()}</p>
       </div>
@@ -111,7 +119,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
     </body></html>`;
   };
 
-  const previewHtml = useMemo(buildHtmlContent, [results, formData, template, selectedCharts, language, includeTables, includeComments, includeQr, theme]);
+  const previewHtml = useMemo(buildHtmlContent, [results, formData, template, selectedCharts, language, includeTables, includeComments, includeQr, theme, companyInfo]);
 
   useEffect(() => {
     const generate = async () => {
