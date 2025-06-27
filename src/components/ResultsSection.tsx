@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,7 +9,7 @@ import { Calculator, TrendingUp, AlertTriangle, CheckCircle, Info, RotateCcw, Cr
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 import { costThresholds } from '@/config/costThresholds';
-import { toast } from '@/components/ui/sonner';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface ResultsSectionProps {
   results: any;
@@ -34,17 +34,23 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
   const [isAnalysisOpen, setIsAnalysisOpen] = useState(true);
   const [isInsightsOpen, setIsInsightsOpen] = useState(true);
 
-  useEffect(() => {
-    if (!results) return;
-    Object.entries(costThresholds).forEach(([key, threshold]) => {
-      const value = (results as any)[key];
-      if (typeof value === 'number' && value > threshold.maxAllowed) {
-        toast.warning(
-          `${threshold.label} ${language === 'el' ? 'υπερβαίνει το όριο' : 'exceeds limit'} (${threshold.maxAllowed}€)`
-        );
-      }
-    });
-  }, [results, language]);
+  const exceededCosts = React.useMemo(() => {
+    if (!results) return [] as Array<{ key: string; label: string; max: number; tooltip: string }>;
+    return Object.entries(costThresholds)
+      .map(([key, threshold]) => {
+        const value = (results as any)[key];
+        if (typeof value === 'number' && value > threshold.maxAllowed) {
+          return {
+            key,
+            label: threshold.label,
+            max: threshold.maxAllowed,
+            tooltip: threshold.tooltip,
+          };
+        }
+        return null;
+      })
+      .filter(Boolean) as Array<{ key: string; label: string; max: number; tooltip: string }>;
+  }, [results]);
 
   const getRecommendations = () => {
     if (!results) return [];
@@ -169,6 +175,16 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
 
   return (
     <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
+      {exceededCosts.map((item) => (
+        <Alert key={item.key} variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>
+            {item.label}{' '}
+            {language === 'el' ? 'υπερβαίνει το όριο' : 'exceeds limit'} ({item.max}€)
+          </AlertTitle>
+          {item.tooltip && <AlertDescription>{item.tooltip}</AlertDescription>}
+        </Alert>
+      ))}
       {/* Main Results Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         {/* Total Cost Card */}
