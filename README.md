@@ -23,14 +23,6 @@
 5. Deploy στο Vercel
    Κάντε push το repository στο GitHub και το Vercel θα αναλάβει αυτόματα το deployment.
 
-## Μεταβλητές Περιβάλλοντος
-
-Χρησιμοποιήστε `.env` τοπικά και `.env.production` στο Vercel για να ορίσετε μεταβλητές όπως:
-
-```ini
-VITE_API_URL=https://api.example.com
-```
-
 ## Δομή Φακέλων
 
 ```
