@@ -8,15 +8,23 @@ export interface ExportData {
   [key: string]: any;
 }
 
-export const exportToCSV = (data: ExportData[], filename: string = 'export') => {
-  const ws = XLSX.utils.json_to_sheet(data);
+export const exportToCSV = (
+  data: ExportData | ExportData[],
+  filename: string = 'export'
+) => {
+  const rows = Array.isArray(data) ? data : [data];
+  const ws = XLSX.utils.json_to_sheet(rows);
   const csv = XLSX.utils.sheet_to_csv(ws);
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   saveAs(blob, `${filename}.csv`);
 };
 
-export const exportToXLSX = (data: ExportData[], filename: string = 'export') => {
-  const ws = XLSX.utils.json_to_sheet(data);
+export const exportToXLSX = (
+  data: ExportData | ExportData[],
+  filename: string = 'export'
+) => {
+  const rows = Array.isArray(data) ? data : [data];
+  const ws = XLSX.utils.json_to_sheet(rows);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
   XLSX.writeFile(wb, `${filename}.xlsx`);
