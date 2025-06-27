@@ -23,7 +23,7 @@ const Header: React.FC<HeaderProps> = ({
   showFileUpload,
   setShowFileUpload
 }) => {
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, currency, setCurrency } = useLanguage();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
@@ -134,6 +134,26 @@ const Header: React.FC<HeaderProps> = ({
                 className="h-8 px-3"
               >
                 EN
+              </Button>
+            </div>
+
+            {/* Currency Switcher */}
+            <div className="flex items-center space-x-2 bg-gray-100 rounded-lg p-1">
+              <Button
+                variant={currency === 'EUR' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setCurrency('EUR')}
+                className="h-8 px-3"
+              >
+                EUR
+              </Button>
+              <Button
+                variant={currency === 'USD' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setCurrency('USD')}
+                className="h-8 px-3"
+              >
+                USD
               </Button>
             </div>
 

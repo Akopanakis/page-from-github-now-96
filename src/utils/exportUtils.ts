@@ -1,6 +1,8 @@
 
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { useLanguage } from '@/contexts/LanguageContext';
+import React from 'react';
 
 export interface ExportData {
   [key: string]: any;
@@ -27,12 +29,18 @@ export const exportToPDF = async (elementId: string, filename: string = 'export'
   alert('PDF export functionality coming soon!');
 };
 
-export const formatCurrency = (amount: number, currency: string = 'EUR'): string => {
-  return new Intl.NumberFormat('el-GR', {
-    style: 'currency',
-    currency: currency
-  }).format(amount);
-};
+/**
+ * Returns a formatter that uses the active locale and currency from LanguageContext.
+ */
+export function useFormatCurrency() {
+  const { locale, currency } = useLanguage();
+
+  return React.useCallback(
+    (amount: number): string =>
+      new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount),
+    [locale, currency]
+  );
+}
 
 export const formatPercentage = (value: number): string => {
   return `${(value * 100).toFixed(2)}%`;
