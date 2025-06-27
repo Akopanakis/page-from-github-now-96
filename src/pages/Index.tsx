@@ -13,12 +13,23 @@ import ResultsSection from '@/components/ResultsSection';
 import PDFExport from '@/components/PDFExport';
 import DataExport from '@/components/DataExport';
 import SmartInsightsPanel from '@/components/SmartInsightsPanel';
+import CompanySettings from '@/components/CompanySettings';
+import { CompanyInfo } from '@/types/company';
 
 const Index = () => {
   const { formData, updateFormData, calculate, resetForm, results, isCalculating } = useCalculation();
   const [activeTab, setActiveTab] = useState('basics');
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
+  const [companyInfo, setCompanyInfo] = useState<CompanyInfo>(() => {
+    const stored = localStorage.getItem('companyInfo');
+    return stored ? JSON.parse(stored) : { logoUrl: '', name: '', address: '' };
+  });
+
+  const handleCompanyChange = (info: CompanyInfo) => {
+    setCompanyInfo(info);
+    localStorage.setItem('companyInfo', JSON.stringify(info));
+  };
 
   const handleFileUpload = (data: any) => {
     updateFormData(data);
@@ -86,12 +97,15 @@ const Index = () => {
               <SmartInsightsPanel results={results} formData={formData} />
             )}
 
-            {results && (
-              <div data-tour="export" className="space-y-4">
-                <PDFExport formData={formData} results={results} />
-                <DataExport formData={formData} results={results} />
-              </div>
-            )}
+            <div data-tour="export" className="space-y-4">
+              <CompanySettings onChange={handleCompanyChange} />
+              {results && (
+                <>
+                  <PDFExport formData={formData} results={results} companyInfo={companyInfo} />
+                  <DataExport formData={formData} results={results} />
+                </>
+              )}
+            </div>
 
             {/* Premium Info Card */}
             {!isPremium && (
