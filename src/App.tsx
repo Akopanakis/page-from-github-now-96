@@ -14,6 +14,7 @@ const NotFound = React.lazy(() => import("./pages/NotFound"));
 import { LanguageProvider } from './contexts/LanguageContext';
 import { AuthProvider } from './contexts/AuthContext';
 import ErrorBoundary from './components/ErrorBoundary';
+import OnboardingTour from './components/OnboardingTour';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,6 +35,7 @@ function App() {
               <Toaster />
               <Sonner />
               <BrowserRouter>
+                <OnboardingTour />
                 <Suspense fallback={<LoadingSkeleton />}>
                   <Routes>
                     <Route path="/" element={<Index />} />

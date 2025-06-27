@@ -13,6 +13,10 @@ const steps = [
   {
     target: '[data-tour="export"]',
     content: 'Χρησιμοποιήστε αυτές τις επιλογές για να κάνετε εξαγωγή.'
+  },
+  {
+    target: '[data-tour="batch"]',
+    content: 'Διαχειριστείτε τις παρτίδες σας εδώ.'
   }
 ];
 
