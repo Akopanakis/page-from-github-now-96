@@ -1,9 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Download, Image } from 'lucide-react';
 import { exportToXLSX, exportToCSV, exportElementToPNG } from '@/utils/exportUtils';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import ExportPreview from './ExportPreview';
 
 interface DataExportProps {
@@ -12,7 +14,7 @@ interface DataExportProps {
 }
 
 const DataExport: React.FC<DataExportProps> = ({ results, formData }) => {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const [template, setTemplate] = useState<'classic' | 'modern' | 'minimal'>('classic');
 
   const templates = {
@@ -21,19 +23,57 @@ const DataExport: React.FC<DataExportProps> = ({ results, formData }) => {
     minimal: { font: 'Helvetica, sans-serif', bg: '#fff', color: '#374151' }
   } as const;
 
-  const buildDataset = () => [{ ...formData, ...results }];
+  // Συλλογή όλων των διαθέσιμων πεδίων (μόνο primitive, όχι αντικείμενα)
+  const availableFields = useMemo(() => {
+    const merged = { ...formData, ...results } as Record<string, any>;
+    return Object.entries(merged)
+      .filter(([, value]) => typeof value !== 'object')
+      .map(([key]) => key);
+  }, [formData, results]);
 
+  // Κατάσταση επιλεγμένων πεδίων
+  const [selectedFields, setSelectedFields] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    const defaults: Record<string, boolean> = {};
+    availableFields.forEach((f) => { defaults[f] = true; });
+    setSelectedFields(defaults);
+  }, [availableFields]);
+
+  // Dataset μόνο με τα επιλεγμένα πεδία
+  const buildDataset = () => {
+    const merged = { ...formData, ...results } as Record<string, any>;
+    const row: Record<string, any> = {};
+    Object.entries(merged).forEach(([key, value]) => {
+      if (selectedFields[key]) {
+        row[t?.(key) || key] = typeof value === 'number' ? value.toFixed(2) : value;
+      }
+    });
+    return [row];
+  };
+
+  // HTML για preview/export
   const buildHtml = () => {
-    const t = templates[template];
+    const tT = templates[template];
     const data = buildDataset();
     const headers = Object.keys(data[0] || {});
     const rows = data
       .map(row => `<tr>${headers.map(h => `<td>${row[h] ?? ''}</td>`).join('')}</tr>`)
       .join('');
-    return `<!DOCTYPE html><html><head><style>body{font-family:${t.font};background:${t.bg};color:${t.color};margin:20px;}table{width:100%;border-collapse:collapse;}td,th{border:1px solid #ccc;padding:4px;text-align:left;}</style></head><body><table><thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></body></html>`;
+    return `<!DOCTYPE html><html><head><style>
+      body{font-family:${tT.font};background:${tT.bg};color:${tT.color};margin:20px;}
+      table{width:100%;border-collapse:collapse;}
+      td,th{border:1px solid #ccc;padding:4px;text-align:left;}
+      </style></head>
+      <body>
+        <table>
+          <thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </body></html>`;
   };
 
-  const previewHtml = useMemo(buildHtml, [results, formData, template]);
+  const previewHtml = useMemo(buildHtml, [results, formData, template, selectedFields, t]);
 
   const handleExportXLSX = () => {
     exportToXLSX(buildDataset(), 'kostopro_results');
@@ -55,7 +95,25 @@ const DataExport: React.FC<DataExportProps> = ({ results, formData }) => {
           <span>{language === 'el' ? 'Εξαγωγή Δεδομένων' : 'Data Export'}</span>
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6 space-y-4">
+        {/* Επιλογή πεδίων για εξαγωγή */}
+        <div className="space-y-2 pb-2">
+          {availableFields.map((field) => (
+            <div key={field} className="flex items-center space-x-2">
+              <Checkbox
+                id={field}
+                checked={selectedFields[field]}
+                onCheckedChange={(checked) =>
+                  setSelectedFields((prev) => ({ ...prev, [field]: checked as boolean }))
+                }
+              />
+              <Label htmlFor={field} className="text-sm cursor-pointer">
+                {t?.(field) || field}
+              </Label>
+            </div>
+          ))}
+        </div>
+
         <ExportPreview preview={previewHtml} theme={template} onThemeChange={setTemplate}>
           <div className="flex space-x-2">
             <Button onClick={handleExportXLSX} className="w-full" size="lg">
