@@ -1,6 +1,9 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import type { FormData, CalculationResults } from '@/utils/calc';
 import { calculateResults } from '@/utils/calc';
+import { validateFormData } from '@/utils/validation';
+import { toast } from '@/components/ui/sonner';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 
 export const useCalculation = () => {
@@ -52,6 +55,7 @@ export const useCalculation = () => {
 
   const [results, setResults] = useState<CalculationResults | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+  const { language } = useLanguage();
 
   const updateFormData = useCallback((updates: Partial<FormData>) => {
     setFormData(prev => ({ ...prev, ...updates }));
@@ -69,6 +73,17 @@ export const useCalculation = () => {
   }, []);
 
   const calculate = useCallback(async (): Promise<void> => {
+    const validation = validateFormData(formData as FormData)
+    if (!validation.valid) {
+      toast.error(
+        language === 'el'
+          ? 'Ελέγξτε τα στοιχεία εισαγωγής'
+          : 'Please check your input data'
+      )
+      console.debug('Validation errors:', validation.errors)
+      return
+    }
+
     setIsCalculating(true);
 
     const run = () => {
@@ -76,6 +91,10 @@ export const useCalculation = () => {
         if (workerRef.current) {
           workerRef.current.onmessage = (e: MessageEvent<CalculationResults>) => {
             resolve(e.data);
+          };
+          workerRef.current.onerror = (e) => {
+            console.error('Worker error:', e);
+            resolve(calculateResults(formData as FormData));
           };
           workerRef.current.postMessage(formData as FormData);
         } else {
@@ -93,7 +112,7 @@ export const useCalculation = () => {
     } finally {
       setIsCalculating(false);
     }
-  }, [formData]);
+  }, [formData, language]);
 
   const resetForm = useCallback(() => {
     setFormData({
