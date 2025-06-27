@@ -8,6 +8,7 @@ import Footer from '@/components/Footer';
 import MainTabs from '@/components/MainTabs';
 import PremiumInfoCard from '@/components/PremiumInfoCard';
 import FileUpload from '@/components/FileUpload';
+import OnboardingTour from '@/components/OnboardingTour';
 import ResultsSection from '@/components/ResultsSection';
 import PDFExport from '@/components/PDFExport';
 import DataExport from '@/components/DataExport';
@@ -26,12 +27,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <Header 
+      <Header
         isPremium={isPremium}
         setIsPremium={setIsPremium}
         showFileUpload={showFileUpload}
         setShowFileUpload={setShowFileUpload}
       />
+      <OnboardingTour />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* File Upload Section */}
@@ -43,7 +45,7 @@ const Index = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Form */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2" data-tour="form">
             <Card className="shadow-xl border-0 overflow-hidden">
               <CardHeader className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white">
                 <CardTitle className="flex items-center justify-between">
@@ -70,7 +72,7 @@ const Index = () => {
           </div>
 
           {/* Right Column - Results */}
-          <div className="space-y-6">
+          <div className="space-y-6" data-tour="results">
             <ResultsSection
               results={results}
               formData={formData}
@@ -85,17 +87,10 @@ const Index = () => {
             )}
 
             {results && (
-              <PDFExport
-                formData={formData}
-                results={results}
-              />
-            )}
-
-            {results && (
-              <DataExport
-                formData={formData}
-                results={results}
-              />
+              <div data-tour="export" className="space-y-4">
+                <PDFExport formData={formData} results={results} />
+                <DataExport formData={formData} results={results} />
+              </div>
             )}
 
             {/* Premium Info Card */}
