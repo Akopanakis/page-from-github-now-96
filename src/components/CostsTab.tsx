@@ -18,7 +18,7 @@ const CostsTab: React.FC<CostsTabProps> = ({ formData, updateFormData }) => {
   const { t } = useLanguage();
   const [showAdditionalCosts, setShowAdditionalCosts] = useState(false);
 
-  const workers = formData.workers || [{ id: '1', hourlyRate: 4.5, hours: 1 }];
+  const workers = formData.workers || [];
 
   const updateWorkers = (newWorkers: any[]) => {
     updateFormData({ workers: newWorkers });

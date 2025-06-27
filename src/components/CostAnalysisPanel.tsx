@@ -1,8 +1,9 @@
-import React from 'react';
-import CostCard from './CostCard';
-import { costThresholds } from '@/config/costThresholds';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertTriangle } from 'lucide-react';
+import React from "react";
+import CostCard from "./CostCard";
+import { costThresholds } from "@/config/costThresholds";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertTriangle } from "lucide-react";
+import EmptyState from "@/components/ui/empty-state";
 
 export interface CostItem {
   key: string;
@@ -19,38 +20,38 @@ const CostAnalysisPanel: React.FC<CostAnalysisPanelProps> = ({ data }) => {
     return {
       ...item,
       label: threshold?.label || item.key,
-      tooltip: threshold?.tooltip || '',
+      tooltip: threshold?.tooltip || "",
       minAllowed: threshold?.minAllowed ?? 0,
       maxAllowed: threshold?.maxAllowed ?? Infinity,
     };
   });
 
   const exceeded = mapped.filter(
-    (i) => i.value > i.maxAllowed || i.value < i.minAllowed
+    (i) => i.value > i.maxAllowed || i.value < i.minAllowed,
   );
 
   const withinCount = mapped.filter(
-    (i) => i.value >= i.minAllowed && i.value <= i.maxAllowed
+    (i) => i.value >= i.minAllowed && i.value <= i.maxAllowed,
   ).length;
 
   return (
     <div>
       {exceeded.map((item) => (
-        <Alert
-          key={item.key}
-          variant="destructive"
-          className="mb-4"
-        >
+        <Alert key={item.key} variant="destructive" className="mb-4">
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>
             {item.label} exceeds allowed range (max {item.maxAllowed}€)
           </AlertTitle>
-          {item.tooltip && (
-            <AlertDescription>{item.tooltip}</AlertDescription>
-          )}
+          {item.tooltip && <AlertDescription>{item.tooltip}</AlertDescription>}
         </Alert>
       ))}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {mapped.length === 0 && (
+          <EmptyState
+            message="Δεν υπάρχουν δεδομένα κόστους"
+            icon={<AlertTriangle className="w-8 h-8 mb-2 text-gray-400" />}
+          />
+        )}
         {mapped.map((item) => (
           <CostCard
             key={item.key}
