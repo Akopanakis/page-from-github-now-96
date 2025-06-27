@@ -106,7 +106,7 @@ const MainTabs: React.FC<MainTabsProps> = ({
               />
             </TabsContent>
 
-            <TabsContent value="batches" className="mt-0">
+            <TabsContent value="batches" className="mt-0" data-tour="batch">
               <BatchManagement />
             </TabsContent>
 
