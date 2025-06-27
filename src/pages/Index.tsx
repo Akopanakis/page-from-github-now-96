@@ -11,6 +11,7 @@ import FileUpload from '@/components/FileUpload';
 import ResultsSection from '@/components/ResultsSection';
 import PDFExport from '@/components/PDFExport';
 import DataExport from '@/components/DataExport';
+import SmartInsightsPanel from '@/components/SmartInsightsPanel';
 
 const Index = () => {
   const { formData, updateFormData, calculate, resetForm, results, isCalculating } = useCalculation();
@@ -70,15 +71,19 @@ const Index = () => {
 
           {/* Right Column - Results */}
           <div className="space-y-6">
-            <ResultsSection 
-              results={results} 
+            <ResultsSection
+              results={results}
               formData={formData}
               isCalculating={isCalculating}
               isPremium={isPremium}
-              onCalculate={calculate} 
+              onCalculate={calculate}
               onReset={resetForm}
             />
-            
+
+            {results && (
+              <SmartInsightsPanel results={results} formData={formData} />
+            )}
+
             {results && (
               <PDFExport
                 formData={formData}
