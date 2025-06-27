@@ -6,13 +6,34 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { FileText, Download, BarChart3, PieChart, TrendingUp } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog';
+
+interface CompanyInfo {
+  logoUrl: string;
+  companyName: string;
+  contact: string;
+}
 
 interface PDFExportProps {
   results: any;
   formData: any;
+  theme: 'classic' | 'modern' | 'minimal';
+  companyInfo: CompanyInfo;
+  previewEnabled?: boolean;
 }
 
-const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
+const PDFExport: React.FC<PDFExportProps> = ({
+  results,
+  formData,
+  theme,
+  companyInfo,
+  previewEnabled = false
+}) => {
   const { language } = useLanguage();
   const [selectedCharts, setSelectedCharts] = useState({
     costBreakdown: true,
@@ -20,66 +41,88 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
     competitorComparison: false,
     financialForecast: false
   });
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewHtml, setPreviewHtml] = useState('');
 
-  const exportToPDF = async () => {
-    try {
-      const title = language === 'el' ? 'Αναφορά Κοστολόγησης' : 'Costing Report';
-      const productLabel = language === 'el' ? 'Προϊόν:' : 'Product:';
-      const dateLabel = language === 'el' ? 'Ημερομηνία:' : 'Date:';
-      const basicDataLabel = language === 'el' ? 'Βασικά Στοιχεία' : 'Basic Data';
-      const resultsLabel = language === 'el' ? 'Αποτελέσματα' : 'Results';
-      const costAnalysisLabel = language === 'el' ? 'Ανάλυση Κόστους' : 'Cost Analysis';
-      const summaryLabel = language === 'el' ? 'Περίληψη με Βασικά Σημεία' : 'Summary with Key Points';
-      const keyPointsLabel = language === 'el' ? 'Βασικά Σημεία:' : 'Key Points:';
-      
-      // Generate chart sections if selected
-      const chartSections = [];
-      
-      if (selectedCharts.costBreakdown) {
-        chartSections.push(`
+  const getThemeStyle = (current: 'classic' | 'modern' | 'minimal') => {
+    switch (current) {
+      case 'modern':
+        return `
+          body { background: #f8fafc; color: #0f172a; }
+          .header h1 { color: #0e7490; }
+          .section { background: #ffffff; border-left-color: #0ea5e9; }
+          .highlight { background: linear-gradient(135deg, #06b6d4, #3b82f6); }
+        `;
+      case 'minimal':
+        return `
+          body { background: #ffffff; color: #000000; }
+          .header { border-bottom: none; }
+          .section { background: none; border-left-color: #9ca3af; }
+          .highlight { background: #f3f4f6; color: #000; }
+        `;
+      default:
+        return '';
+    }
+  };
+
+  const buildHtml = () => {
+    const title = language === 'el' ? 'Αναφορά Κοστολόγησης' : 'Costing Report';
+    const productLabel = language === 'el' ? 'Προϊόν:' : 'Product:';
+    const dateLabel = language === 'el' ? 'Ημερομηνία:' : 'Date:';
+    const basicDataLabel = language === 'el' ? 'Βασικά Στοιχεία' : 'Basic Data';
+    const resultsLabel = language === 'el' ? 'Αποτελέσματα' : 'Results';
+    const costAnalysisLabel = language === 'el' ? 'Ανάλυση Κόστους' : 'Cost Analysis';
+    const summaryLabel = language === 'el' ? 'Περίληψη με Βασικά Σημεία' : 'Summary with Key Points';
+    const keyPointsLabel = language === 'el' ? 'Βασικά Σημεία:' : 'Key Points:';
+
+    const chartSections = [] as string[];
+
+    if (selectedCharts.costBreakdown) {
+      chartSections.push(`
           <div class="section">
             <h2>${language === 'el' ? 'Ανάλυση Κόστους' : 'Cost Breakdown'}</h2>
             <div class="chart-explanation">
-              <p>${language === 'el' 
+              <p>${language === 'el'
                 ? 'Το γράφημα δείχνει την κατανομή των κοστών ανά κατηγορία. Το μεγαλύτερο κόστος προέρχεται από την αγορά πρώτων υλών.'
                 : 'The chart shows cost distribution by category. The largest cost comes from raw material purchase.'
               }</p>
             </div>
           </div>
         `);
-      }
+    }
 
-      if (selectedCharts.profitAnalysis) {
-        chartSections.push(`
+    if (selectedCharts.profitAnalysis) {
+      chartSections.push(`
           <div class="section">
             <h2>${language === 'el' ? 'Ανάλυση Κερδοφορίας' : 'Profitability Analysis'}</h2>
             <div class="chart-explanation">
-              <p>${language === 'el' 
+              <p>${language === 'el'
                 ? 'Η ανάλυση δείχνει το περιθώριο κέρδους και τη σχέση κόστους-εσόδων. Υψηλότερο περιθώριο σημαίνει καλύτερη κερδοφορία.'
                 : 'The analysis shows profit margin and cost-revenue relationship. Higher margin means better profitability.'
               }</p>
             </div>
           </div>
         `);
-      }
+    }
 
-      // Create comprehensive HTML content for PDF
-      const htmlContent = `
+    const themeStyle = getThemeStyle(theme);
+
+    const htmlContent = `
         <!DOCTYPE html>
         <html>
         <head>
           <meta charset="UTF-8">
           <title>${title}</title>
           <style>
-            body { 
-              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-              margin: 20px; 
+            body {
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              margin: 20px;
               line-height: 1.6;
               color: #333;
             }
-            .header { 
-              text-align: center; 
-              margin-bottom: 40px; 
+            .header {
+              text-align: center;
+              margin-bottom: 40px;
               border-bottom: 2px solid #3b82f6;
               padding-bottom: 20px;
             }
@@ -87,8 +130,12 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
               color: #1e40af;
               margin-bottom: 10px;
             }
-            .section { 
-              margin-bottom: 30px; 
+            .company-info { text-align:center; margin-bottom:10px; }
+            .company-info img { max-height:60px; margin:0 auto 10px; }
+            .company-info h2 { margin:0; font-size:1.1em; }
+            .company-info p { margin:0; font-size:0.9em; }
+            .section {
+              margin-bottom: 30px;
               background: #f8fafc;
               padding: 20px;
               border-radius: 8px;
@@ -99,16 +146,16 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
               margin-bottom: 15px;
               font-size: 1.2em;
             }
-            .grid { 
-              display: grid; 
-              grid-template-columns: 1fr 1fr; 
-              gap: 20px; 
+            .grid {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 20px;
               margin-bottom: 20px;
             }
-            .cost-item { 
-              display: flex; 
-              justify-content: space-between; 
-              margin: 8px 0; 
+            .cost-item {
+              display: flex;
+              justify-content: space-between;
+              margin: 8px 0;
               padding: 8px;
               background: white;
               border-radius: 4px;
@@ -116,11 +163,11 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
             .cost-item strong {
               color: #1e40af;
             }
-            .result-box { 
-              background: #f0f9ff; 
-              padding: 20px; 
-              margin: 15px 0; 
-              border-radius: 8px; 
+            .result-box {
+              background: #f0f9ff;
+              padding: 20px;
+              margin: 15px 0;
+              border-radius: 8px;
               border: 1px solid #bae6fd;
             }
             .result-box h3 {
@@ -180,44 +227,50 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
               color: #1e40af;
               margin-bottom: 10px;
             }
+            ${themeStyle}
           </style>
         </head>
         <body>
           <div class="header">
+            <div class="company-info">
+              <img src="${companyInfo.logoUrl}" alt="${companyInfo.companyName} logo" />
+              <h2>${companyInfo.companyName}</h2>
+              <p>${companyInfo.contact}</p>
+            </div>
             <h1>${title}</h1>
             <p><strong>${productLabel}</strong> ${formData.productName || (language === 'el' ? 'Μη καθορισμένο' : 'Not specified')}</p>
             <p><strong>${dateLabel}</strong> ${new Date().toLocaleDateString(language === 'el' ? 'el-GR' : 'en-US')}</p>
           </div>
-          
+
           <div class="summary">
             <h3>${summaryLabel}</h3>
             <div class="key-points">
               <h4>${keyPointsLabel}</h4>
               <ul>
-                <li><strong>${language === 'el' ? 'Υπολογισμός ρυθμού ανάπτυξης:' : 'Growth rate calculation:'}</strong> ${language === 'el' 
+                <li><strong>${language === 'el' ? 'Υπολογισμός ρυθμού ανάπτυξης:' : 'Growth rate calculation:'}</strong> ${language === 'el'
                   ? 'Ο υπολογισμός γίνεται με τον τύπο: (Τελική Αξία / Αρχική Αξία) - 1. Απαιτούνται η τελική και η αρχική τιμή για τον υπολογισμό του ποσοστού ανάπτυξης.'
                   : 'Calculated using: (Final Value / Initial Value) - 1. Requires final and initial values to calculate growth percentage.'
                 }</li>
-                <li><strong>${language === 'el' ? 'Επενδυτική στρατηγική:' : 'Investment strategy:'}</strong> ${language === 'el' 
+                <li><strong>${language === 'el' ? 'Επενδυτική στρατηγική:' : 'Investment strategy:'}</strong> ${language === 'el'
                   ? 'Λήψη επενδυτικών αποφάσεων με βάση τον υπολογισμό του ποσοστού ανάπτυξης και την ανάλυση κινδύνου.'
                   : 'Making investment decisions based on growth rate calculation and risk analysis.'
                 }</li>
-                <li><strong>${language === 'el' ? 'Παρούσα Αξία (PV):' : 'Present Value (PV):'}</strong> ${language === 'el' 
+                <li><strong>${language === 'el' ? 'Παρούσα Αξία (PV):' : 'Present Value (PV):'}</strong> ${language === 'el'
                   ? 'Διερευνάται η έννοια της παρούσας αξίας για την αξιολόγηση επενδυτικών επιλογών.'
                   : 'Exploring the concept of present value to evaluate investment options.'
                 }</li>
-                <li><strong>${language === 'el' ? 'Κόστος Ευκαιρίας:' : 'Opportunity Cost:'}</strong> ${language === 'el' 
+                <li><strong>${language === 'el' ? 'Κόστος Ευκαιρίας:' : 'Opportunity Cost:'}</strong> ${language === 'el'
                   ? 'Η απόδοση που χάνετε επιλέγοντας μια επένδυση αντί για την καλύτερη εναλλακτική.'
                   : 'The return you give up by choosing one investment over the best alternative.'
                 }</li>
-                <li><strong>${language === 'el' ? 'Ανάλυση Νεκρού Σημείου:' : 'Break-even Analysis:'}</strong> ${language === 'el' 
+                <li><strong>${language === 'el' ? 'Ανάλυση Νεκρού Σημείου:' : 'Break-even Analysis:'}</strong> ${language === 'el'
                   ? 'Δείχνει εύκολα την ποσότητα που απαιτείται για να καλύψει το σταθερό κόστος.'
                   : 'Easily shows the quantity required to cover fixed costs.'
                 }</li>
               </ul>
             </div>
           </div>
-          
+
           <div class="section">
             <h2>${basicDataLabel}</h2>
             <div class="grid">
@@ -316,7 +369,12 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
         </html>
       `;
 
-      // Create blob and download
+    return htmlContent;
+  };
+
+  const exportToPDF = async () => {
+    try {
+      const htmlContent = buildHtml();
       const blob = new Blob([htmlContent], { type: 'text/html' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -328,18 +386,24 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
       URL.revokeObjectURL(url);
 
       toast.success(
-        language === 'el' 
-          ? 'Η αναφορά εξήχθη επιτυχώς!' 
+        language === 'el'
+          ? 'Η αναφορά εξήχθη επιτυχώς!'
           : 'Report exported successfully!'
       );
     } catch (error) {
       toast.error(
-        language === 'el' 
-          ? 'Σφάλμα κατά την εξαγωγή του PDF' 
+        language === 'el'
+          ? 'Σφάλμα κατά την εξαγωγή του PDF'
           : 'Error exporting PDF'
       );
     }
   };
+
+  const handlePreview = () => {
+    setPreviewHtml(buildHtml());
+    setIsPreviewOpen(true);
+  };
+
 
   return (
     <Card className="shadow-lg border-0">
@@ -400,12 +464,38 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
           </div>
         </div>
 
+        {previewEnabled && (
+          <Button onClick={handlePreview} variant="secondary" className="w-full" size="lg">
+            <FileText className="w-4 h-4 mr-2" />
+            {language === 'el' ? 'Προεπισκόπηση' : 'Preview'}
+          </Button>
+        )}
+
         <Button onClick={exportToPDF} className="w-full" size="lg">
           <Download className="w-4 h-4 mr-2" />
           {language === 'el' ? 'Εξαγωγή Αναφοράς' : 'Export Report'}
         </Button>
       </CardContent>
     </Card>
+
+    {previewEnabled && (
+      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>
+              {language === 'el' ? 'Προεπισκόπηση Αναφοράς' : 'Report Preview'}
+            </DialogTitle>
+          </DialogHeader>
+          <iframe className="w-full h-[70vh]" srcDoc={previewHtml} title="preview" />
+          <div className="flex justify-end pt-4">
+            <Button onClick={exportToPDF}>
+              <Download className="w-4 h-4 mr-2" />
+              {language === 'el' ? 'Λήψη' : 'Download'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    )}
   );
 };
 

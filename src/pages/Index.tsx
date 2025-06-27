@@ -11,12 +11,22 @@ import FileUpload from '@/components/FileUpload';
 import ResultsSection from '@/components/ResultsSection';
 import PDFExport from '@/components/PDFExport';
 import ExcelExport from '@/components/ExcelExport';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
 const Index = () => {
   const { formData, updateFormData, calculate, resetForm, results, isCalculating } = useCalculation();
   const [activeTab, setActiveTab] = useState('basics');
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
+  const [reportTheme, setReportTheme] = useState<'classic' | 'modern' | 'minimal'>('classic');
+  const [previewEnabled, setPreviewEnabled] = useState(false);
+  const companyInfo = {
+    logoUrl: '/placeholder.svg',
+    companyName: 'CostPro Inc.',
+    contact: 'info@costpro.local'
+  };
 
   const handleFileUpload = (data: any) => {
     updateFormData(data);
@@ -70,19 +80,47 @@ const Index = () => {
 
           {/* Right Column - Results */}
           <div className="space-y-6">
-            <ResultsSection 
-              results={results} 
-              formData={formData}
-              isCalculating={isCalculating}
-              isPremium={isPremium}
-              onCalculate={calculate} 
-              onReset={resetForm}
-            />
+          <ResultsSection
+            results={results}
+            formData={formData}
+            isCalculating={isCalculating}
+            isPremium={isPremium}
+            onCalculate={calculate}
+            onReset={resetForm}
+          />
+
+          <Card className="border-0 shadow-md">
+            <CardHeader>
+              <CardTitle className="text-base">Report Options</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label>Theme</Label>
+                <Select value={reportTheme} onValueChange={(v) => setReportTheme(v as 'classic' | 'modern' | 'minimal')}>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="classic">Classic</SelectItem>
+                    <SelectItem value="modern">Modern</SelectItem>
+                    <SelectItem value="minimal">Minimal</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch id="previewToggle" checked={previewEnabled} onCheckedChange={setPreviewEnabled} />
+                <Label htmlFor="previewToggle">Preview before download</Label>
+              </div>
+            </CardContent>
+          </Card>
             
             {results && (
               <PDFExport
                 formData={formData}
                 results={results}
+                theme={reportTheme}
+                companyInfo={companyInfo}
+                previewEnabled={previewEnabled}
               />
             )}
 
