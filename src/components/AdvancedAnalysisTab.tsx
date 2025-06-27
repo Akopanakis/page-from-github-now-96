@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import IntelligentPricing from './IntelligentPricing';
 import LaborOptimization from './LaborOptimization';
 import PackagingCalculator from './PackagingCalculator';
+import CostForecast from './CostForecast';
 
 interface AdvancedAnalysisTabProps {
   formData: any;
@@ -380,6 +381,7 @@ const AdvancedAnalysisTab: React.FC<AdvancedAnalysisTabProps> = ({ formData, upd
                   </div>
                 </CardContent>
               </Card>
+              <CostForecast />
             </div>
           )}
         </CardContent>
