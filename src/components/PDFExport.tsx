@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -6,7 +6,7 @@ import { FileText, Download, BarChart3, PieChart, TrendingUp } from 'lucide-reac
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
 import ExportPreview from './ExportPreview';
-import { exportToPDF } from '@/utils/exportUtils';
+import { exportToPDF, generatePDFBlob } from '@/utils/exportUtils';
 
 interface PDFExportProps {
   results: any;
@@ -54,6 +54,7 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
   const [includeComments, setIncludeComments] = useState(true);
   const [includeQr, setIncludeQr] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [pdfUrl, setPdfUrl] = useState<string>();
 
   // HTML content builder (themes + options)
   const buildHtmlContent = () => {
@@ -112,12 +113,47 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
 
   const previewHtml = useMemo(buildHtmlContent, [results, formData, template, selectedCharts, language, includeTables, includeComments, includeQr, theme]);
 
+  useEffect(() => {
+    const generate = async () => {
+      const blob = await generatePDFBlob(previewHtml, {
+        sections: {
+          charts: true,
+          tables: includeTables,
+          comments: includeComments,
+        },
+        theme,
+        qrUrl: includeQr ? window.location.href : undefined,
+      });
+      const url = URL.createObjectURL(blob);
+      setPdfUrl((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return url;
+      });
+    };
+    generate();
+    return () => {
+      setPdfUrl((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return undefined;
+      });
+    };
+  }, [previewHtml, includeTables, includeComments, includeQr, theme]);
+
   const exportToPDFHandler = async () => {
     try {
       const htmlContent = buildHtmlContent();
       await exportToPDF(
         htmlContent,
-        `${language === 'el' ? 'κοστολογηση' : 'costing'}_${formData.productName || 'product'}_${new Date().toISOString().split('T')[0]}.pdf`
+        `${language === 'el' ? 'κοστολογηση' : 'costing'}_${formData.productName || 'product'}_${new Date().toISOString().split('T')[0]}.pdf`,
+        {
+          sections: {
+            charts: true,
+            tables: includeTables,
+            comments: includeComments,
+          },
+          theme,
+          qrUrl: includeQr ? window.location.href : undefined,
+        }
       );
       toast.success(language === 'el' ? 'Η αναφορά εξήχθη επιτυχώς!' : 'Report exported successfully!');
     } catch {
@@ -134,7 +170,12 @@ const PDFExport: React.FC<PDFExportProps> = ({ results, formData }) => {
         </CardTitle>
       </CardHeader>
       <CardContent className="p-6 space-y-4">
-        <ExportPreview preview={previewHtml} theme={template} onThemeChange={setTemplate}>
+        <ExportPreview
+          preview={previewHtml}
+          pdfSrc={pdfUrl}
+          theme={template}
+          onThemeChange={setTemplate}
+        >
           <div className="space-y-3">
             <h4 className="font-semibold text-sm">
               {language === 'el' ? 'Επιλέξτε γραφήματα για εξαγωγή:' : 'Select charts to export:'}
