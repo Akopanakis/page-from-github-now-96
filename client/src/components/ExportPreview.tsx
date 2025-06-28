@@ -1,8 +1,4 @@
 import React from 'react';
-import { Worker, Viewer } from '@react-pdf-viewer/core';
-import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
-import '@react-pdf-viewer/core/lib/styles/index.css';
-import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
 interface ExportPreviewProps {
   /** HTML preview to render inside the iframe */
@@ -18,26 +14,16 @@ interface ExportPreviewProps {
 }
 
 const ExportPreview: React.FC<ExportPreviewProps> = ({
-  preview,
+  preview = '',
   pdfSrc,
   theme = 'classic',
   onThemeChange,
   children,
 }) => {
-  const defaultLayoutPluginInstance = React.useMemo(() => defaultLayoutPlugin(), [])
-
-  const safePreview = typeof preview === 'string' ? preview : ''
-  const safeChildren =
-    React.isValidElement(children) || Array.isArray(children) || typeof children === 'string'
-      ? children
-      : null
-
-  const canDisplayPdf = typeof navigator !== 'undefined' && !!navigator.mimeTypes?.['application/pdf'];
-
   return (
     <div className="flex flex-col lg:flex-row gap-4">
       <div className="lg:w-1/2 space-y-4">
-        {safeChildren}
+        {children}
         <div>
           <label htmlFor="template" className="block text-sm font-medium mb-1">Template</label>
           <select
@@ -54,15 +40,9 @@ const ExportPreview: React.FC<ExportPreviewProps> = ({
       </div>
       <div className="lg:w-1/2 border rounded bg-white h-96 overflow-hidden">
         {pdfSrc ? (
-          canDisplayPdf ? (
-            <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
-              <Viewer fileUrl={pdfSrc} plugins={[defaultLayoutPluginInstance]} />
-            </Worker>
-          ) : (
-            <iframe title="preview" className="w-full h-full" src={pdfSrc} />
-          )
+          <iframe title="PDF Preview" className="w-full h-full" src={pdfSrc} />
         ) : (
-          <iframe title="preview" className="w-full h-full" srcDoc={safePreview} />
+          <iframe title="HTML Preview" className="w-full h-full" srcDoc={preview} />
         )}
       </div>
     </div>

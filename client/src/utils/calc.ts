@@ -156,25 +156,27 @@ const sanitizeFormData = (data: Partial<FormData>): FormData => {
 export const calculateResults = (inputData: Partial<FormData>): CalculationResults => {
   // Sanitize input data to ensure all values are valid
   const formData = sanitizeFormData(inputData);
-  let currentWeight = formData.quantity;
+  let currentWeight = Math.max(formData.quantity, 0.1); // Ensure minimum weight
   let totalWastePercentage = 0;
 
   if (formData.processingPhases && formData.processingPhases.length > 0) {
     formData.processingPhases.forEach((phase) => {
       if (phase.wastePercentage > 0 || phase.addedWeight !== 0) {
         currentWeight = calculatePhaseResult(currentWeight, phase.wastePercentage, phase.addedWeight);
+        currentWeight = Math.max(currentWeight, 0.1); // Ensure minimum weight after each phase
         if (phase.wastePercentage > 0) {
           totalWastePercentage += phase.wastePercentage;
         }
       }
     });
   } else {
-    const netWeight = currentWeight * (1 - (formData.waste || 0) / 100);
+    const netWeight = currentWeight * (1 - Math.min(formData.waste || 0, 99) / 100);
     currentWeight = netWeight * (1 + (formData.glazingPercent || 0) / 100);
+    currentWeight = Math.max(currentWeight, 0.1); // Ensure minimum weight
     totalWastePercentage = formData.waste || 0;
   }
 
-  const finalProcessedWeight = currentWeight;
+  const finalProcessedWeight = Math.max(currentWeight, 0.1);
 
   const purchaseCost = (formData.purchasePrice || 0) * (formData.quantity || 0);
 
@@ -206,10 +208,10 @@ export const calculateResults = (inputData: Partial<FormData>): CalculationResul
   const seasonalAdjustment = formData.seasonalMultiplier || 1;
   const adjustedCost = totalCostWithVat * seasonalAdjustment;
 
-  const sellingPrice = adjustedCost * (1 + (formData.profitMargin || 0) / 100);
-  const sellingPricePerKg = sellingPrice / Math.max(finalProcessedWeight, 0.001);
+  const sellingPrice = adjustedCost * (1 + Math.max(formData.profitMargin || 0, 0) / 100);
+  const sellingPricePerKg = sellingPrice / finalProcessedWeight;
 
-  const profitPerKg = sellingPricePerKg - adjustedCost / Math.max(finalProcessedWeight, 0.001);
+  const profitPerKg = sellingPricePerKg - (adjustedCost / finalProcessedWeight);
 
   const costBreakdown = [
     { category: 'Αγορά', amount: purchaseCost, percentage: (purchaseCost / totalCost) * 100 },
@@ -229,8 +231,8 @@ export const calculateResults = (inputData: Partial<FormData>): CalculationResul
     marketPosition = 'expensive';
   }
 
-  const breakEvenPrice = adjustedCost / Math.max(finalProcessedWeight, 0.001);
-  const marginAtCurrentPrice = ((sellingPricePerKg - breakEvenPrice) / sellingPricePerKg) * 100;
+  const breakEvenPrice = adjustedCost / finalProcessedWeight;
+  const marginAtCurrentPrice = sellingPricePerKg > 0 ? ((sellingPricePerKg - breakEvenPrice) / sellingPricePerKg) * 100 : 0;
   const recommendedMargin = Math.max(formData.minimumMargin || 15, 20);
 
   const recommendedSellingPrice = breakEvenPrice * (1 + recommendedMargin / 100);
