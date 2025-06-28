@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Test Calculation</title>
+  </head>
+  <body>
+    <h1>Direct Calculation Test</h1>
+    <div id="result"></div>
+
+    <script>
+      // Direct calculation test without React
+      function calculateDirect(data) {
+        const purchaseCost = data.purchasePrice * data.quantity;
+        const laborCost = data.workers.reduce(
+          (sum, w) => sum + w.hourlyRate * w.hours,
+          0,
+        );
+        const totalCost = purchaseCost + laborCost;
+        const vatAmount = totalCost * (data.vatPercent / 100);
+        const totalWithVat = totalCost + vatAmount;
+
+        const netWeight = data.quantity * (1 - data.waste / 100);
+        const finalWeight = netWeight * (1 + data.glazingPercent / 100);
+
+        const sellingPrice = totalWithVat * (1 + data.profitMargin / 100);
+        const pricePerKg = sellingPrice / finalWeight;
+
+        return {
+          purchaseCost,
+          laborCost,
+          totalCost,
+          vatAmount,
+          totalWithVat,
+          finalWeight,
+          sellingPrice,
+          pricePerKg,
+        };
+      }
+
+      const testData = {
+        purchasePrice: 5,
+        quantity: 10,
+        waste: 20,
+        glazingPercent: 15,
+        vatPercent: 24,
+        workers: [{ hourlyRate: 4.5, hours: 1 }],
+        profitMargin: 20,
+      };
+
+      const result = calculateDirect(testData);
+      document.getElementById("result").innerHTML = `
+            <p>Purchase Cost: €${result.purchaseCost}</p>
+            <p>Labor Cost: €${result.laborCost}</p>
+            <p>Total Cost: €${result.totalCost}</p>
+            <p>VAT: €${result.vatAmount}</p>
+            <p>Total with VAT: €${result.totalWithVat}</p>
+            <p>Final Weight: ${result.finalWeight} kg</p>
+            <p>Selling Price: €${result.sellingPrice}</p>
+            <p>Price per KG: €${result.pricePerKg.toFixed(2)}</p>
+        `;
+    </script>
+  </body>
+</html>
