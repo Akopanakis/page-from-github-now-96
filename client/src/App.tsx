@@ -33,8 +33,7 @@ function App() {
               <Toaster />
               <Sonner />
               <Router>
-                <Route path="/" component={IndexEnhanced} />
-                <Route path="/original" component={Index} />
+                <Route path="/" component={Index} />
                 <Route path="/login" component={Login} />
                 <Route path="/signup" component={Signup} />
                 <Route path="/profile" component={Profile} />
