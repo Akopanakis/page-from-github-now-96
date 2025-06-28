@@ -4,13 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import { Fish, Crown, Mail, Calendar, LogOut, CreditCard } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const Profile = () => {
   const { user, logout, upgradeToPremium, isLoading } = useAuth();
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
 
   const handleLogout = () => {
@@ -19,7 +19,7 @@ const Profile = () => {
       title: "Logged out successfully",
       description: "See you next time!",
     });
-    navigate('/login');
+    setLocation('/login');
   };
 
   const handleUpgrade = async () => {
@@ -39,7 +39,7 @@ const Profile = () => {
   };
 
   if (!user) {
-    navigate('/login');
+    setLocation('/login');
     return null;
   }
 
@@ -67,7 +67,7 @@ const Profile = () => {
                 <p className="text-sm text-gray-600 font-medium">User Profile</p>
               </div>
             </div>
-            <Button variant="outline" onClick={() => navigate('/')}>
+            <Button variant="secondary" onClick={() => setLocation('/')}>
               Back to App
             </Button>
           </div>

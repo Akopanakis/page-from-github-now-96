@@ -8,7 +8,7 @@ import { Fish, Crown, Globe2, FileText, Zap, User } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 
 interface HeaderProps {
   isPremium: boolean;
@@ -25,7 +25,7 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const { language, setLanguage, currency, setCurrency } = useLanguage();
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
   const { theme, setTheme } = useTheme();
 
   React.useEffect(() => {
@@ -92,7 +92,7 @@ const Header: React.FC<HeaderProps> = ({
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => navigate('/profile')}
+                onClick={() => setLocation('/profile')}
                 className="flex items-center space-x-2"
               >
                 <User className="w-4 h-4" />
@@ -103,13 +103,13 @@ const Header: React.FC<HeaderProps> = ({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => navigate('/login')}
+                  onClick={() => setLocation('/login')}
                 >
                   Sign In
                 </Button>
                 <Button
                   size="sm"
-                  onClick={() => navigate('/signup')}
+                  onClick={() => setLocation('/signup')}
                   className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
                 >
                   Sign Up

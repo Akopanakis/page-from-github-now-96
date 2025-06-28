@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useLocation, Link } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,7 +15,7 @@ const Login = () => {
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const { login, isLoading } = useAuth();
   const { toast } = useToast();
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
 
   const validateForm = () => {
     const newErrors: { email?: string; password?: string } = {};
@@ -47,7 +47,7 @@ const Login = () => {
         title: "Login successful",
         description: "Welcome back to KostoPro!",
       });
-      navigate('/');
+      setLocation('/');
     } catch (error) {
       toast({
         title: "Login failed",
