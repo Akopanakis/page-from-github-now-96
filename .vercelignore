@@ -1,0 +1,11 @@
+/dev-tools/
+/client/
+/shared/
+**/*.test.tsx
+**/*.test.ts
+*.md
+replit*
+drizzle.config.ts
+test-*.js
+test-*.html
+.replit
