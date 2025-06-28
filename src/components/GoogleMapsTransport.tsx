@@ -58,10 +58,17 @@ const GoogleMapsTransport: React.FC<GoogleMapsTransportProps> = ({ formData, upd
   };
 
   const calculateRoute = async () => {
-    if (!formData.originAddress || !formData.destinationAddress) {
+    if (
+      formData.originAddress === undefined ||
+      formData.originAddress === null ||
+      formData.originAddress === '' ||
+      formData.destinationAddress === undefined ||
+      formData.destinationAddress === null ||
+      formData.destinationAddress === ''
+    ) {
       toast.error(
-        language === 'el' 
-          ? 'Παρακαλώ εισάγετε και τις δύο διευθύνσεις' 
+        language === 'el'
+          ? 'Παρακαλώ εισάγετε και τις δύο διευθύνσεις'
           : 'Please enter both addresses'
       );
       return;
@@ -226,9 +233,17 @@ const GoogleMapsTransport: React.FC<GoogleMapsTransportProps> = ({ formData, upd
         </div>
 
         <div className="flex justify-center">
-          <Button 
+          <Button
             onClick={calculateRoute}
-            disabled={isCalculating || !formData.originAddress || !formData.destinationAddress}
+            disabled={
+              isCalculating ||
+              formData.originAddress === undefined ||
+              formData.originAddress === null ||
+              formData.originAddress === '' ||
+              formData.destinationAddress === undefined ||
+              formData.destinationAddress === null ||
+              formData.destinationAddress === ''
+            }
             className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700"
           >
             <Route className="w-4 h-4" />
