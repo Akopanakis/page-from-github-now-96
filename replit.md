@@ -109,9 +109,20 @@ KostoPro is a comprehensive cost calculation and pricing application designed sp
 - Backup and restore capabilities
 - Performance monitoring and optimization
 
+## Recent Changes
+
+✓ PostgreSQL database implemented with comprehensive schema
+✓ Database connection and storage layer configured with Drizzle ORM
+✓ All tables created: users, cost_calculations, batches, workers, processing_phases, company_settings
+✓ Database storage replaces in-memory storage for data persistence
+✓ Schema migrations successfully applied
+
+→ Next: Testing database integration with the application
+
 ## Changelog
 
 - June 28, 2025. Initial setup
+- June 28, 2025. Added PostgreSQL database with Drizzle ORM integration
 
 ## User Preferences
 
