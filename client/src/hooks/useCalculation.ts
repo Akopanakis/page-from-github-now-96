@@ -81,22 +81,20 @@ export const useCalculation = () => {
 
   const calculate = useCallback(async (): Promise<void> => {
     try {
+      // Always proceed with calculation, validation is now permissive
       const validation = validateFormData(formData as FormData)
       if (!validation.valid) {
-        const materialError = validation.errors.some((e) =>
-          e.includes('worker') || e === 'processingPhases'
-        )
-        toast.error(
-          language === 'el'
-            ? materialError
-              ? 'Έλεγξε τα υλικά ή τα εργατικά'
-              : 'Συμπλήρωσε όλα τα πεδία'
-            : materialError
-              ? 'Check materials or labor fields'
-              : 'Fill out all fields'
-        )
+        // Only show warnings for critical errors, don't block calculation
+        const criticalErrors = validation.errors.filter(e => e === 'productName')
+        if (criticalErrors.length > 0) {
+          toast.warning(
+            language === 'el'
+              ? 'Συνίσταται να συμπληρώσετε το όνομα προϊόντος'
+              : 'Product name is recommended'
+          )
+        }
         console.debug('Validation errors:', validation.errors)
-        return
+        // Continue with calculation despite validation warnings
       }
 
       setIsCalculating(true)
@@ -113,7 +111,7 @@ export const useCalculation = () => {
               console.error('Worker error:', e)
               resolve(calculateResults(formData as FormData))
             }
-            workerRef.current.postMessage(formData as FormData)
+            workerRef.current.postMessage(formData)
           } else {
             resolve(calculateResults(formData as FormData))
           }

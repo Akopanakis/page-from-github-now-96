@@ -93,8 +93,70 @@ const calculatePhaseResult = (inputWeight: number, lossPct: number, addPct: numb
   return afterLoss + afterLoss * (addPct / 100);
 };
 
-export const calculateResults = (formData: FormData): CalculationResults => {
-  let currentWeight = formData.quantity || 0;
+// Helper function to sanitize form data and ensure all values are valid numbers
+const sanitizeFormData = (data: Partial<FormData>): FormData => {
+  const defaultWorker = { id: '1', hourlyRate: 0, hours: 0 };
+  const defaultPhase = { id: '1', name: 'Default', wastePercentage: 0, addedWeight: 0, description: '' };
+  
+  return {
+    productName: data.productName || '',
+    productType: data.productType || 'fish',
+    purchasePrice: Number(data.purchasePrice) || 0,
+    quantity: Number(data.quantity) || 0,
+    waste: Number(data.waste) || 0,
+    glazingPercent: Number(data.glazingPercent) || 0,
+    vatPercent: Number(data.vatPercent) || 0,
+    workers: Array.isArray(data.workers) && data.workers.length > 0 ? 
+      data.workers.map(w => ({
+        id: w?.id || '1',
+        hourlyRate: Number(w?.hourlyRate) || 0,
+        hours: Number(w?.hours) || 0
+      })) : [defaultWorker],
+    boxCost: Number(data.boxCost) || 0,
+    bagCost: Number(data.bagCost) || 0,
+    distance: Number(data.distance) || 0,
+    fuelCost: Number(data.fuelCost) || 0,
+    tolls: Number(data.tolls) || 0,
+    parkingCost: Number(data.parkingCost) || 0,
+    driverSalary: Number(data.driverSalary) || 0,
+    profitMargin: Number(data.profitMargin) || 0,
+    profitTarget: Number(data.profitTarget) || 0,
+    competitor1: Number(data.competitor1) || 0,
+    competitor2: Number(data.competitor2) || 0,
+    electricityCost: Number(data.electricityCost) || 0,
+    equipmentCost: Number(data.equipmentCost) || 0,
+    insuranceCost: Number(data.insuranceCost) || 0,
+    rentCost: Number(data.rentCost) || 0,
+    communicationCost: Number(data.communicationCost) || 0,
+    otherCosts: Number(data.otherCosts) || 0,
+    originAddress: data.originAddress || '',
+    destinationAddress: data.destinationAddress || '',
+    routeCalculated: Boolean(data.routeCalculated),
+    estimatedDuration: data.estimatedDuration || '',
+    batchNumber: data.batchNumber || '',
+    supplierName: data.supplierName || '',
+    processingPhases: Array.isArray(data.processingPhases) && data.processingPhases.length > 0 ?
+      data.processingPhases.map(p => ({
+        id: p?.id || '1',
+        name: p?.name || 'Default',
+        wastePercentage: Number(p?.wastePercentage) || 0,
+        addedWeight: Number(p?.addedWeight) || 0,
+        description: p?.description || ''
+      })) : [defaultPhase],
+    targetSellingPrice: Number(data.targetSellingPrice) || 0,
+    minimumMargin: Number(data.minimumMargin) || 15,
+    storageTemperature: Number(data.storageTemperature) || -18,
+    shelfLife: Number(data.shelfLife) || 365,
+    certifications: Array.isArray(data.certifications) ? data.certifications : [],
+    customerPrice: Number(data.customerPrice) || 0,
+    seasonalMultiplier: Number(data.seasonalMultiplier) || 1
+  };
+};
+
+export const calculateResults = (inputData: Partial<FormData>): CalculationResults => {
+  // Sanitize input data to ensure all values are valid
+  const formData = sanitizeFormData(inputData);
+  let currentWeight = formData.quantity;
   let totalWastePercentage = 0;
 
   if (formData.processingPhases && formData.processingPhases.length > 0) {
