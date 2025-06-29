@@ -66,18 +66,6 @@ const CDN_LIBRARIES: LibraryConfig[] = [
     url: "https://cdn.jsdelivr.net/npm/intro.js@7.2.0/minified/introjs.min.css",
     type: "css",
   },
-  {
-    name: "tippy-js",
-    url: "https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy-bundle.umd.min.js",
-    type: "script",
-    global: "tippy",
-    check: () => typeof window.tippy !== "undefined",
-  },
-  {
-    name: "tippy-css",
-    url: "https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.css",
-    type: "css",
-  },
 ];
 
 class LibraryLoader {
