@@ -82,6 +82,8 @@ const Index = () => {
   // UI state
   const [hasScrolled, setHasScrolled] = useState(false);
   const [showTooltips, setShowTooltips] = useState(true);
+  const [showExampleData, setShowExampleData] = useState(false);
+  const [hasLoadedExample, setHasLoadedExample] = useState(false);
 
   // Refs
   const backToTopRef = useRef<HTMLButtonElement>(null);
@@ -478,7 +480,7 @@ const Index = () => {
           const isDark = document.body.classList.contains("dark");
           localStorage.setItem("theme", isDark ? "dark" : "light");
         }}
-        aria-label="Εναλλαγή θέματος"
+        aria-label="Εναλλαγή θέμα��ος"
       >
         🌙
       </button>
