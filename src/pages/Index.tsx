@@ -4,16 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import {
-  Calculator,
-  ChevronDown,
-  ChevronUp,
-  Settings,
-  Zap,
-  Target,
-  Eye,
-  EyeOff,
-} from "lucide-react";
+import { Calculator, ChevronUp } from "lucide-react";
 import { useCalculation } from "@/hooks/useCalculation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -26,10 +17,6 @@ import PDFExport from "@/components/PDFExport";
 import DataExport from "@/components/DataExport";
 import SmartInsightsPanel from "@/components/SmartInsightsPanel";
 import CompanySettings from "@/components/CompanySettings";
-import AdvancedDashboard from "@/components/AdvancedDashboard";
-import ScenarioAnalysis from "@/components/ScenarioAnalysis";
-import RevenueForecast from "@/components/RevenueForecast";
-import FinancialModels from "@/components/FinancialModels";
 import { CompanyInfo } from "@/types/company";
 import { libraryLoader } from "@/utils/libraryLoader";
 
@@ -393,7 +380,7 @@ const Index = () => {
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <Calculator className="w-6 h-6" />
-                    <span className="text-xl">Στοιχεία Κοστολόγησης</span>
+                    <span className="text-xl">Στοιχεία Κοστολόγη��ης</span>
                   </div>
                 </CardTitle>
               </CardHeader>
