@@ -364,33 +364,6 @@ const Index = () => {
     [updateFormData],
   );
 
-  const toggleAdvanced = () => {
-    setShowAdvanced(!showAdvanced);
-    localStorage.setItem("showAdvanced", (!showAdvanced).toString());
-  };
-
-  const advancedTabs = [
-    { id: "dashboard", label: "Dashboard", icon: Target },
-    { id: "scenarios", label: "Σενάρια", icon: Calculator },
-    { id: "forecast", label: "Πρόβλεψη", icon: Zap },
-    { id: "financial", label: "Χρηματοοικονομικά", icon: Settings },
-  ];
-
-  const renderAdvancedContent = () => {
-    switch (activeAdvancedTab) {
-      case "dashboard":
-        return <AdvancedDashboard data={results} />;
-      case "scenarios":
-        return <ScenarioAnalysis />;
-      case "forecast":
-        return <RevenueForecast />;
-      case "financial":
-        return <FinancialModels />;
-      default:
-        return <AdvancedDashboard data={results} />;
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Header
