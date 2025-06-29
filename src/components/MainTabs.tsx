@@ -113,8 +113,8 @@ const MainTabs: React.FC<MainTabsProps> = ({
   return (
     <div className="w-full">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5 gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
-          {tabs.map((tab) => {
+        <TabsList className="grid w-full grid-cols-5 gap-0 bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 p-2 rounded-xl shadow-inner border border-gray-200 dark:border-gray-600">
+          {tabs.map((tab, index) => {
             const Icon = tab.icon;
             const isDisabled = tab.premium && !isPremium;
 
@@ -124,17 +124,18 @@ const MainTabs: React.FC<MainTabsProps> = ({
                 value={tab.id}
                 disabled={isDisabled}
                 className={`
-                  relative flex flex-col items-center gap-1 px-2 py-3 text-xs font-medium
-                  transition-all duration-200 rounded-md
+                  relative flex flex-col items-center gap-1.5 px-3 py-3 text-xs font-medium
+                  transition-all duration-300 ease-in-out
+                  ${index === 0 ? "rounded-l-lg" : index === tabs.length - 1 ? "rounded-r-lg" : ""}
                   ${
                     isDisabled
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-white dark:hover:bg-gray-700"
+                      ? "opacity-40 cursor-not-allowed bg-gray-200/50 dark:bg-gray-700/50"
+                      : "hover:bg-white/80 dark:hover:bg-gray-600/80 hover:shadow-md hover:scale-105"
                   }
                   ${
                     activeTab === tab.id
-                      ? "bg-white dark:bg-gray-700 shadow-sm"
-                      : ""
+                      ? "bg-white dark:bg-gray-600 shadow-lg border border-gray-300 dark:border-gray-500 scale-105 text-blue-600 dark:text-blue-400"
+                      : "text-gray-600 dark:text-gray-300"
                   }
                 `}
                 title={tab.description}
