@@ -284,15 +284,45 @@
   /* Input Enhancements */
   .cost-input,
   .transport-input {
-    @apply w-full px-4 py-3 rounded-lg border border-gray-300;
-    @apply focus:ring-2 focus:ring-blue-500 focus:border-transparent;
-    @apply transition-all duration-200 bg-white dark:bg-gray-800;
+    @apply w-full px-4 py-3 rounded-xl border border-gray-300;
+    @apply focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+    @apply transition-all duration-300 bg-white/90 dark:bg-gray-800/90;
     @apply dark:border-gray-600 dark:text-white;
+    @apply shadow-sm hover:shadow-md focus:shadow-lg;
+    backdrop-filter: blur(10px);
   }
 
   .cost-input:invalid,
   .transport-input:invalid {
-    @apply border-red-500 ring-2 ring-red-200;
+    @apply border-red-500 ring-2 ring-red-200 bg-red-50/50;
+  }
+
+  /* Enhanced Button Styles */
+  .btn-professional {
+    @apply relative px-6 py-3 font-medium text-white;
+    @apply bg-gradient-to-r from-blue-600 to-indigo-600;
+    @apply hover:from-blue-700 hover:to-indigo-700;
+    @apply rounded-xl shadow-lg hover:shadow-xl;
+    @apply transition-all duration-300 ease-out;
+    @apply transform hover:scale-105 active:scale-95;
+    @apply border-0 outline-none focus:ring-4 focus:ring-blue-200;
+  }
+
+  .btn-professional::before {
+    content: "";
+    @apply absolute inset-0 rounded-xl;
+    background: linear-gradient(
+      45deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.2) 50%,
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .btn-professional:hover::before {
+    opacity: 1;
   }
 
   /* Back to Top Button */
