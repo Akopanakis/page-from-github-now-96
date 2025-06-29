@@ -465,6 +465,72 @@ const Index = () => {
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Example Data Banner */}
+        {!hasLoadedExample && (
+          <Card className="mb-8 bg-gradient-to-r from-green-50 to-blue-50 border-green-200">
+            <div className="p-6">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-green-100 rounded-full">
+                    <PlayCircle className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-green-800">
+                      Δοκιμάστε με Παράδειγμα
+                    </h3>
+                    <p className="text-green-600 text-sm">
+                      Φορτώστε δεδομένα θράψαλου Αργεντίνης για να δείτε πως
+                      λειτουργεί η εφαρμογή
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => setShowExampleData(true)}
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                >
+                  <PlayCircle className="w-4 h-4 mr-2" />
+                  Προβολή Παραδείγματος
+                </Button>
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {/* Example Loaded Banner */}
+        {hasLoadedExample && (
+          <Card className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+            <div className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-100 rounded-full">
+                    <Calculator className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-blue-800">
+                      Παράδειγμα Φορτωμένο
+                    </h4>
+                    <p className="text-blue-600 text-sm">
+                      Δεδομένα θράψαλου Αργεντίνης - 2 τόνοι
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => {
+                    setHasLoadedExample(false);
+                    resetForm();
+                  }}
+                  variant="outline"
+                  size="sm"
+                  className="border-blue-300 text-blue-600 hover:bg-blue-50"
+                >
+                  <X className="w-4 h-4 mr-2" />
+                  Εκκαθάριση
+                </Button>
+              </div>
+            </div>
+          </Card>
+        )}
+
         {/* File Upload Section */}
         {showFileUpload && (
           <div className="mb-8">
@@ -570,7 +636,7 @@ const Index = () => {
           const isDark = document.body.classList.contains("dark");
           localStorage.setItem("theme", isDark ? "dark" : "light");
         }}
-        aria-label="Εναλλαγή θέματος"
+        aria-label="Εναλ��αγή θέματος"
       >
         🌙
       </button>
