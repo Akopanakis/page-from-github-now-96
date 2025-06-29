@@ -375,12 +375,17 @@ const Index = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Form */}
           <div className="lg:col-span-2" data-tour="form">
-            <Card className="shadow-xl border-0 overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white">
-                <CardTitle className="flex items-center justify-between">
+            <Card className="shadow-2xl border-0 overflow-hidden bg-white/95 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 via-indigo-600/90 to-purple-600/90"></div>
+                <CardTitle className="relative flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <Calculator className="w-6 h-6" />
-                    <span className="text-xl">Στοιχεία Κοστολόγη��ης</span>
+                    <div className="p-2 bg-white/20 rounded-lg">
+                      <Calculator className="w-6 h-6" />
+                    </div>
+                    <span className="text-xl font-semibold">
+                      Στοιχεία Κοστολόγησης
+                    </span>
                   </div>
                 </CardTitle>
               </CardHeader>
@@ -451,7 +456,7 @@ const Index = () => {
         ref={backToTopRef}
         id="back-to-top"
         className="fixed bottom-6 right-6 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 flex items-center justify-center opacity-0 translate-y-4 pointer-events-none"
-        aria-label="Επιστροφή στην κορυφή"
+        aria-label="Επιστροφή στ��ν κορυφή"
       >
         <ChevronUp className="w-6 h-6" />
       </button>
