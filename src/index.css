@@ -309,10 +309,48 @@
     @apply hover:bg-blue-700 transition-colors duration-200;
   }
 
-  /* Tooltip Styling */
-  .tooltip {
-    @apply bg-gray-900 text-white text-sm px-3 py-2 rounded-lg shadow-lg;
-    @apply dark:bg-gray-100 dark:text-gray-900;
+  /* Native Tooltip Styling */
+  .has-tooltip {
+    position: relative;
+    cursor: help;
+  }
+
+  .has-tooltip:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0;
+    animation: tooltipFadeIn 0.2s ease-out 0.5s forwards;
+  }
+
+  .has-tooltip:hover::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(2px);
+    border: 4px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.9);
+    z-index: 1001;
+    pointer-events: none;
+    opacity: 0;
+    animation: tooltipFadeIn 0.2s ease-out 0.5s forwards;
+  }
+
+  @keyframes tooltipFadeIn {
+    to {
+      opacity: 1;
+    }
   }
 
   /* Export Controls */
