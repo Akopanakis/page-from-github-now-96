@@ -107,7 +107,7 @@ const Index = () => {
   useEffect(() => {
     initializeApp();
     setupScrollHandler();
-    setupTooltips();
+    setTimeout(setupTooltips, 500); // Delay to ensure DOM is ready
     setupGuidedTour();
     checkPWASupport();
   }, []);
