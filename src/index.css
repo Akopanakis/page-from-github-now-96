@@ -155,24 +155,45 @@
 @layer components {
   /* Professional Card System */
   .card {
-    @apply bg-card text-card-foreground rounded-lg border shadow-sm;
+    @apply bg-card text-card-foreground rounded-xl border shadow-lg;
     animation: fadeIn 0.3s ease-out;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06),
+      0 0 0 1px rgba(255, 255, 255, 0.1) inset;
   }
 
   .card-enhanced {
-    @apply card shadow-lg hover:shadow-xl transition-all duration-300;
+    @apply card shadow-xl hover:shadow-2xl transition-all duration-500;
     background: linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.9) 0%,
-      rgba(248, 250, 252, 0.9) 100%
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(248, 250, 252, 0.95) 100%
     );
+    transform: translateY(0);
+  }
+
+  .card-enhanced:hover {
+    transform: translateY(-2px);
+  }
+
+  .dark .card {
+    background: rgba(30, 41, 59, 0.95);
+    border: 1px solid rgba(100, 116, 139, 0.3);
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.2),
+      0 2px 4px -1px rgba(0, 0, 0, 0.12),
+      0 0 0 1px rgba(100, 116, 139, 0.1) inset;
   }
 
   .dark .card-enhanced {
     background: linear-gradient(
       135deg,
-      rgba(30, 41, 59, 0.9) 0%,
-      rgba(15, 23, 42, 0.9) 100%
+      rgba(30, 41, 59, 0.95) 0%,
+      rgba(15, 23, 42, 0.95) 100%
     );
   }
 
