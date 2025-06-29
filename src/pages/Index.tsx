@@ -160,14 +160,29 @@ const Index = () => {
   };
 
   const setupTooltips = async () => {
-    await libraryLoader.waitForLibrary("tippy-js");
-    if (window.tippy && showTooltips) {
-      // Initialize tooltips for elements with data-tooltip
-      window.tippy("[data-tooltip]", {
-        theme: "light-border",
-        animation: "fade",
-        arrow: true,
-      });
+    try {
+      await libraryLoader.waitForLibrary("tippy-js");
+      if (window.tippy && showTooltips) {
+        // Wait a bit to ensure DOM is ready and library is fully loaded
+        setTimeout(() => {
+          try {
+            const elements = document.querySelectorAll("[data-tooltip]");
+            if (elements.length > 0) {
+              window.tippy(elements, {
+                theme: "light-border",
+                animation: "fade",
+                arrow: true,
+                allowHTML: true,
+                maxWidth: 300,
+              });
+            }
+          } catch (error) {
+            console.warn("Failed to initialize tooltips:", error);
+          }
+        }, 100);
+      }
+    } catch (error) {
+      console.warn("Failed to load tippy.js:", error);
     }
   };
 
@@ -535,7 +550,7 @@ const Index = () => {
                     {indirectCosts.map((cost) => (
                       <div key={cost.id} className="flex items-center gap-3">
                         <Input
-                          placeholder="Όνομα κόστους"
+                          placeholder="Ό��ομα κόστους"
                           value={cost.name}
                           onChange={(e) =>
                             updateCostItem(cost.id, "name", e.target.value)
@@ -572,7 +587,7 @@ const Index = () => {
                       size="sm"
                       className="w-full"
                     >
-                      + Προσθήκη Έμμεσου Κόστους
+                      + Προσθήκη Έμμεσο�� Κόστους
                     </Button>
                   </div>
                 </div>
@@ -832,7 +847,7 @@ const Index = () => {
                 const duration = 1000;
                 const step = target / (duration / 16);
                 let current = 0;
-                
+
                 const timer = setInterval(() => {
                   current += step;
                   if (current >= target) {
@@ -843,7 +858,7 @@ const Index = () => {
                   }
                 }, 16);
               };
-              
+
               // Intersection Observer for lazy loading
               const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -860,12 +875,12 @@ const Index = () => {
                   }
                 });
               });
-              
+
               // Observe elements
               document.querySelectorAll('.counter, .builder-chart').forEach(el => {
                 observer.observe(el);
               });
-              
+
               // Initialize skeleton loaders
               document.querySelectorAll('.skeleton').forEach(el => {
                 setTimeout(() => {
