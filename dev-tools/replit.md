@@ -7,6 +7,7 @@ KostoPro is a comprehensive cost calculation and pricing application designed sp
 ## System Architecture
 
 ### Frontend Architecture
+
 - **Framework**: React 18 with TypeScript
 - **Styling**: Tailwind CSS with custom design system
 - **UI Components**: shadcn/ui component library (Radix UI primitives)
@@ -17,6 +18,7 @@ KostoPro is a comprehensive cost calculation and pricing application designed sp
 - **Build Tool**: Vite for fast development and optimized builds
 
 ### Backend Architecture
+
 - **Runtime**: Node.js with Express.js framework
 - **Language**: TypeScript with ES modules
 - **Database**: PostgreSQL with Drizzle ORM
@@ -24,6 +26,7 @@ KostoPro is a comprehensive cost calculation and pricing application designed sp
 - **Development**: Hot module replacement with Vite integration
 
 ### Database Layer
+
 - **ORM**: Drizzle ORM for type-safe database operations
 - **Database**: PostgreSQL (configured for Neon serverless)
 - **Migrations**: Drizzle Kit for schema management
@@ -32,12 +35,14 @@ KostoPro is a comprehensive cost calculation and pricing application designed sp
 ## Key Components
 
 ### Core Calculation Engine
+
 - Multi-phase cost calculation including purchase, labor, transport, and processing costs
 - Advanced profitability analysis with margin optimization
 - Batch tracking and cost allocation across production phases
 - Dynamic pricing recommendations based on market data
 
 ### User Interface Modules
+
 - **Product Basics**: Core product information and pricing inputs
 - **Processing Phases**: Multi-stage processing with waste and weight tracking
 - **Cost Management**: Labor, packaging, and additional cost tracking
@@ -46,6 +51,7 @@ KostoPro is a comprehensive cost calculation and pricing application designed sp
 - **Batch Management**: Production batch tracking and management
 
 ### Premium Features
+
 - Advanced statistical models and AI-powered recommendations
 - Scenario analysis and revenue forecasting
 - Comprehensive export capabilities (PDF, Excel, CSV)
@@ -53,6 +59,7 @@ KostoPro is a comprehensive cost calculation and pricing application designed sp
 - Financial glossary and intelligent insights
 
 ### Authentication & User Management
+
 - Context-based authentication system
 - Premium subscription management
 - Local storage for user preferences and company settings
@@ -70,6 +77,7 @@ KostoPro is a comprehensive cost calculation and pricing application designed sp
 ## External Dependencies
 
 ### Core Libraries
+
 - **React Ecosystem**: React, React DOM, React Router
 - **UI Framework**: Radix UI primitives with shadcn/ui
 - **Styling**: Tailwind CSS with PostCSS
@@ -78,12 +86,14 @@ KostoPro is a comprehensive cost calculation and pricing application designed sp
 - **State**: TanStack React Query for server state
 
 ### Database & Backend
+
 - **Database**: Neon PostgreSQL serverless
 - **ORM**: Drizzle ORM with PostgreSQL dialect
 - **Authentication**: Custom implementation with session storage
 - **File Processing**: Built-in support for CSV/Excel import
 
 ### Development Tools
+
 - **Build**: Vite with React plugin
 - **TypeScript**: Full type safety across stack
 - **Hot Reload**: Vite HMR with runtime error overlay
@@ -92,18 +102,21 @@ KostoPro is a comprehensive cost calculation and pricing application designed sp
 ## Deployment Strategy
 
 ### Development Environment
+
 - Vite development server with HMR
 - Express server with middleware integration
 - PostgreSQL database (local or cloud)
 - Environment variables for configuration
 
 ### Production Build
+
 - Vite production build with optimization
 - Express server with static file serving
 - Bundled with esbuild for server code
 - Environment-specific configuration
 
 ### Database Management
+
 - Drizzle migrations for schema updates
 - Connection pooling with Neon serverless
 - Backup and restore capabilities
