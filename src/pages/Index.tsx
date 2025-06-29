@@ -440,6 +440,15 @@ const Index = () => {
                   formData={formData}
                   updateFormData={updateFormData}
                   results={results}
+                  directCosts={directCosts}
+                  indirectCosts={indirectCosts}
+                  transportLegs={transportLegs}
+                  onUpdateCost={updateCostItem}
+                  onAddCost={addCostItem}
+                  onRemoveCost={removeCostItem}
+                  onUpdateTransport={updateTransportLeg}
+                  onAddTransport={addTransportLeg}
+                  onRemoveTransport={removeTransportLeg}
                 />
               </CardContent>
             </Card>
@@ -701,7 +710,7 @@ const Index = () => {
                     variant="outline"
                     className="w-full"
                   >
-                    + Προσθήκη Διαδρομής
+                    + Προσθή��η Διαδρομής
                   </Button>
 
                   <div
