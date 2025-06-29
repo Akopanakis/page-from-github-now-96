@@ -192,7 +192,7 @@ const MainTabs: React.FC<MainTabsProps> = ({
         )}
 
         {/* Tab Contents */}
-        <div className="mt-6">
+        <div className="mt-8 bg-gray-50/50 dark:bg-gray-800/50 rounded-2xl p-6 min-h-[600px]">
           {/* Basics Tab */}
           <TabsContent value="basics" className="space-y-6">
             <ProductBasics
@@ -411,7 +411,7 @@ const CostsSection: React.FC<{
               className="grid grid-cols-1 md:grid-cols-5 gap-3 p-4 border rounded-lg"
             >
               <Input
-                placeholder="Από"
+                placeholder="Α��ό"
                 value={leg.from || ""}
                 onChange={(e) =>
                   onUpdateTransport?.(
