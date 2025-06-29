@@ -343,6 +343,96 @@ const Index = () => {
     }
   };
 
+  const loadExampleData = () => {
+    const exampleFormData = {
+      // Basic Product Info
+      productName: "Θράψαλο Block Αργεντίνης",
+      productType: "fish",
+      weight: 10, // kg per piece
+      quantity: 200, // pieces (2 tons total)
+      purchasePrice: 4.5, // €/kg
+      targetSellingPrice: 12.0, // €/kg
+      origin: "Αργεντίνη",
+      quality: "A",
+      notes: "Premium θράψαλο block, κατάψυξη στη θάλασσα",
+
+      // Pricing
+      profitMargin: 25,
+      vatRate: 0, // 0% VAT
+
+      // Processing phases with loss and glazing
+      processingPhases: [
+        {
+          id: "1",
+          name: "Καθάρισμα",
+          lossPercentage: 20, // από 10kg -> 8kg
+          costPerKg: 0.3,
+          duration: 0.5,
+          temperature: 4,
+          description: "Αφαίρεση κεφαλιού, εντόσθιων και πτερυγίων",
+        },
+      ],
+      totalLossPercentage: 0, // General losses (already included in phases)
+      glazingPercentage: 15, // από 8kg -> 9.2kg (15% επιπλέον)
+      glazingType: "ice",
+
+      // Costs
+      directCosts: [
+        { id: "1", name: "Πρώτες Ύλες", value: 9000, category: "direct" }, // 2000kg * 4.5€
+        {
+          id: "2",
+          name: "Εργατικά Καθαρίσματος",
+          value: 600,
+          category: "direct",
+        }, // 2000kg * 0.30€
+        { id: "3", name: "Ενέργεια Κατάψυξης", value: 200, category: "direct" },
+      ],
+      indirectCosts: [
+        { id: "4", name: "Γενικά Έξοδα", value: 300, category: "indirect" },
+        { id: "5", name: "Αποθήκευση", value: 150, category: "indirect" },
+        { id: "6", name: "Ασφάλιστρα", value: 100, category: "indirect" },
+      ],
+      transportLegs: [
+        {
+          id: "1",
+          from: "Αργεντίνη",
+          to: "Πειραιάς",
+          distance: 12000,
+          cost: 800,
+          type: "Ναυτιλιακό",
+        },
+        {
+          id: "2",
+          from: "Πειραιάς",
+          to: "Κέντρο Διανομής",
+          distance: 25,
+          cost: 120,
+          type: "Οδικό",
+        },
+      ],
+
+      // Additional info
+      supplierName: "Κοπανάκης",
+      batchNumber: "TH-ARG-2024-001",
+    };
+
+    // Update form data
+    updateFormData(exampleFormData);
+
+    // Update direct state
+    setDirectCosts(exampleFormData.directCosts);
+    setIndirectCosts(exampleFormData.indirectCosts);
+    setTransportLegs(exampleFormData.transportLegs);
+
+    setShowExampleData(false);
+    setHasLoadedExample(true);
+
+    // Auto-calculate after loading
+    setTimeout(() => {
+      calculate();
+    }, 500);
+  };
+
   const handleCompanyChange = React.useCallback((info: CompanyInfo) => {
     setCompanyInfo(info);
     localStorage.setItem("companyInfo", JSON.stringify(info));
@@ -480,7 +570,7 @@ const Index = () => {
           const isDark = document.body.classList.contains("dark");
           localStorage.setItem("theme", isDark ? "dark" : "light");
         }}
-        aria-label="Εναλλαγή θέμα��ος"
+        aria-label="Εναλλαγή θέματος"
       >
         🌙
       </button>
