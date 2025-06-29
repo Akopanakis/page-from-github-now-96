@@ -208,6 +208,5 @@ declare global {
     XLSX: any;
     introJs: any;
     tippy: any;
-    Popper: any;
   }
 }
