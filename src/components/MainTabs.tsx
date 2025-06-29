@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Fish,
   Calculator,
@@ -136,7 +137,7 @@ const MainTabs: React.FC<MainTabsProps> = ({
                       : ""
                   }
                 `}
-                data-tooltip={tab.description}
+                title={tab.description}
               >
                 <div className="flex items-center gap-1">
                   <Icon className="w-4 h-4" />
@@ -279,90 +280,193 @@ const CostsSection: React.FC<{
   return (
     <div className="space-y-6">
       {/* Direct Costs */}
-      <div className="card-enhanced">
-        <div className="p-6">
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <Calculator className="w-5 h-5" />
-            {language === "el" ? "Άμεσα Κόστη" : "Direct Costs"}
-          </h3>
-          <div className="space-y-3">
-            {directCosts.map((cost) => (
-              <CostItem
-                key={cost.id}
-                cost={cost}
-                onUpdate={onUpdateCost}
-                onRemove={onRemoveCost}
+      <div className="card bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <Calculator className="w-5 h-5" />
+          {language === "el" ? "Άμεσα Κόστη" : "Direct Costs"}
+        </h3>
+        <div className="space-y-3">
+          {directCosts.map((cost, index) => (
+            <div key={cost.id || index} className="flex items-center gap-3">
+              <Input
+                placeholder="Όνομα κόστους"
+                value={cost.name || ""}
+                onChange={(e) =>
+                  onUpdateCost?.(
+                    cost.id || index.toString(),
+                    "name",
+                    e.target.value,
+                  )
+                }
+                className="flex-1"
               />
-            ))}
-            <Button
-              onClick={() => onAddCost?.("direct")}
-              variant="outline"
-              className="w-full"
-            >
-              +{" "}
-              {language === "el"
-                ? "Προσθήκη Άμεσου Κόστους"
-                : "Add Direct Cost"}
-            </Button>
-          </div>
+              <Input
+                type="number"
+                placeholder="0.00"
+                value={cost.value || ""}
+                onChange={(e) =>
+                  onUpdateCost?.(
+                    cost.id || index.toString(),
+                    "value",
+                    Number(e.target.value),
+                  )
+                }
+                className="w-32"
+                step="0.01"
+                min="0"
+              />
+              <Button
+                onClick={() => onRemoveCost?.(cost.id || index.toString())}
+                variant="outline"
+                size="sm"
+                className="text-red-600"
+              >
+                ×
+              </Button>
+            </div>
+          ))}
+          <Button
+            onClick={() => onAddCost?.("direct")}
+            variant="outline"
+            className="w-full"
+          >
+            +{" "}
+            {language === "el" ? "Προσθήκη Άμεσου Κόστους" : "Add Direct Cost"}
+          </Button>
         </div>
       </div>
 
       {/* Indirect Costs */}
-      <div className="card-enhanced">
-        <div className="p-6">
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <Target className="w-5 h-5" />
-            {language === "el" ? "Έμμεσα Κόστη" : "Indirect Costs"}
-          </h3>
-          <div className="space-y-3">
-            {indirectCosts.map((cost) => (
-              <CostItem
-                key={cost.id}
-                cost={cost}
-                onUpdate={onUpdateCost}
-                onRemove={onRemoveCost}
+      <div className="card bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <Target className="w-5 h-5" />
+          {language === "el" ? "Έμμεσα Κόστη" : "Indirect Costs"}
+        </h3>
+        <div className="space-y-3">
+          {indirectCosts.map((cost, index) => (
+            <div key={cost.id || index} className="flex items-center gap-3">
+              <Input
+                placeholder="Όνομα κόστους"
+                value={cost.name || ""}
+                onChange={(e) =>
+                  onUpdateCost?.(
+                    cost.id || index.toString(),
+                    "name",
+                    e.target.value,
+                  )
+                }
+                className="flex-1"
               />
-            ))}
-            <Button
-              onClick={() => onAddCost?.("indirect")}
-              variant="outline"
-              className="w-full"
-            >
-              +{" "}
-              {language === "el"
-                ? "Προσθήκη Έμμεσου Κόστους"
-                : "Add Indirect Cost"}
-            </Button>
-          </div>
+              <Input
+                type="number"
+                placeholder="0.00"
+                value={cost.value || ""}
+                onChange={(e) =>
+                  onUpdateCost?.(
+                    cost.id || index.toString(),
+                    "value",
+                    Number(e.target.value),
+                  )
+                }
+                className="w-32"
+                step="0.01"
+                min="0"
+              />
+              <Button
+                onClick={() => onRemoveCost?.(cost.id || index.toString())}
+                variant="outline"
+                size="sm"
+                className="text-red-600"
+              >
+                ×
+              </Button>
+            </div>
+          ))}
+          <Button
+            onClick={() => onAddCost?.("indirect")}
+            variant="outline"
+            className="w-full"
+          >
+            +{" "}
+            {language === "el"
+              ? "Προσθήκη Έμμεσου Κόστους"
+              : "Add Indirect Cost"}
+          </Button>
         </div>
       </div>
 
       {/* Transport Section */}
-      <div className="card-enhanced">
-        <div className="p-6">
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <TrendingUp className="w-5 h-5" />
-            {language === "el" ? "Μεταφορικά Κόστη" : "Transport Costs"}
-          </h3>
-          <div className="space-y-4">
-            {transportLegs.map((leg) => (
-              <TransportLeg
-                key={leg.id}
-                leg={leg}
-                onUpdate={onUpdateTransport}
-                onRemove={onRemoveTransport}
-                canRemove={transportLegs.length > 1}
-              />
-            ))}
-            <Button
-              onClick={onAddTransport}
-              variant="outline"
-              className="w-full"
+      <div className="card bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <TrendingUp className="w-5 h-5" />
+          {language === "el" ? "Μεταφορικά Κόστη" : "Transport Costs"}
+        </h3>
+        <div className="space-y-4">
+          {transportLegs.map((leg, index) => (
+            <div
+              key={leg.id || index}
+              className="grid grid-cols-1 md:grid-cols-5 gap-3 p-4 border rounded-lg"
             >
-              + {language === "el" ? "Προσθήκη Διαδρομής" : "Add Transport Leg"}
-            </Button>
-          </div>
+              <Input
+                placeholder="Από"
+                value={leg.from || ""}
+                onChange={(e) =>
+                  onUpdateTransport?.(
+                    leg.id || index.toString(),
+                    "from",
+                    e.target.value,
+                  )
+                }
+              />
+              <Input
+                placeholder="Προς"
+                value={leg.to || ""}
+                onChange={(e) =>
+                  onUpdateTransport?.(
+                    leg.id || index.toString(),
+                    "to",
+                    e.target.value,
+                  )
+                }
+              />
+              <Input
+                type="number"
+                placeholder="Απόσταση (km)"
+                value={leg.distance || ""}
+                onChange={(e) =>
+                  onUpdateTransport?.(
+                    leg.id || index.toString(),
+                    "distance",
+                    Number(e.target.value),
+                  )
+                }
+              />
+              <Input
+                type="number"
+                placeholder="Κόστος (€)"
+                value={leg.cost || ""}
+                onChange={(e) =>
+                  onUpdateTransport?.(
+                    leg.id || index.toString(),
+                    "cost",
+                    Number(e.target.value),
+                  )
+                }
+              />
+              <Button
+                onClick={() => onRemoveTransport?.(leg.id || index.toString())}
+                variant="outline"
+                size="sm"
+                className="text-red-600"
+                disabled={transportLegs.length === 1}
+              >
+                Αφαίρεση
+              </Button>
+            </div>
+          ))}
+          <Button onClick={onAddTransport} variant="outline" className="w-full">
+            + {language === "el" ? "Προσθήκη Διαδρομής" : "Add Transport Leg"}
+          </Button>
         </div>
       </div>
 
@@ -377,7 +481,10 @@ const CostsSection: React.FC<{
               {language === "el" ? "Άμεσα" : "Direct"}
             </div>
             <div id="direct-total" className="text-xl font-bold">
-              €0
+              €
+              {directCosts
+                .reduce((sum, cost) => sum + (cost.value || 0), 0)
+                .toFixed(2)}
             </div>
           </div>
           <div className="text-center">
@@ -385,7 +492,10 @@ const CostsSection: React.FC<{
               {language === "el" ? "Έμμεσα" : "Indirect"}
             </div>
             <div id="indirect-total" className="text-xl font-bold">
-              €0
+              €
+              {indirectCosts
+                .reduce((sum, cost) => sum + (cost.value || 0), 0)
+                .toFixed(2)}
             </div>
           </div>
           <div className="text-center">
@@ -393,7 +503,10 @@ const CostsSection: React.FC<{
               {language === "el" ? "Μεταφορικά" : "Transport"}
             </div>
             <div id="transport-total" className="text-xl font-bold">
-              €0
+              €
+              {transportLegs
+                .reduce((sum, leg) => sum + (leg.cost || 0), 0)
+                .toFixed(2)}
             </div>
           </div>
           <div className="text-center">
@@ -401,7 +514,15 @@ const CostsSection: React.FC<{
               {language === "el" ? "Σύνολο" : "Total"}
             </div>
             <div id="total-cost" className="text-xl font-bold text-blue-600">
-              €0
+              €
+              {(
+                directCosts.reduce((sum, cost) => sum + (cost.value || 0), 0) +
+                indirectCosts.reduce(
+                  (sum, cost) => sum + (cost.value || 0),
+                  0,
+                ) +
+                transportLegs.reduce((sum, leg) => sum + (leg.cost || 0), 0)
+              ).toFixed(2)}
             </div>
           </div>
         </div>
@@ -444,7 +565,11 @@ const AdvancedFeaturesSection: React.FC<{
           <button
             key={tab.id}
             onClick={() => setActiveAdvanced(tab.id)}
-            className={`adv-pill ${activeAdvanced === tab.id ? "active" : ""}`}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border-2 border-transparent cursor-pointer ${
+              activeAdvanced === tab.id
+                ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg transform scale-105"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+            }`}
           >
             {tab.label}
           </button>
@@ -452,7 +577,7 @@ const AdvancedFeaturesSection: React.FC<{
       </div>
 
       {/* Advanced Content */}
-      <div className="adv-content">
+      <div>
         {advancedTabs.map((tab) => {
           const Component = tab.component;
           return (
@@ -468,87 +593,6 @@ const AdvancedFeaturesSection: React.FC<{
     </div>
   );
 };
-
-// Helper Components
-const CostItem: React.FC<{
-  cost: any;
-  onUpdate?: (id: string, field: string, value: any) => void;
-  onRemove?: (id: string) => void;
-}> = ({ cost, onUpdate, onRemove }) => (
-  <div className="flex items-center gap-3">
-    <input
-      type="text"
-      placeholder="Όνομα κόστους"
-      value={cost.name}
-      onChange={(e) => onUpdate?.(cost.id, "name", e.target.value)}
-      className="flex-1 px-3 py-2 border rounded-md"
-    />
-    <input
-      type="number"
-      placeholder="0.00"
-      value={cost.value}
-      onChange={(e) => onUpdate?.(cost.id, "value", Number(e.target.value))}
-      className="cost-input w-32 px-3 py-2 border rounded-md"
-      step="0.01"
-      min="0"
-    />
-    <Button
-      onClick={() => onRemove?.(cost.id)}
-      variant="outline"
-      size="sm"
-      className="text-red-600"
-    >
-      ×
-    </Button>
-  </div>
-);
-
-const TransportLeg: React.FC<{
-  leg: any;
-  onUpdate?: (id: string, field: string, value: any) => void;
-  onRemove?: (id: string) => void;
-  canRemove: boolean;
-}> = ({ leg, onUpdate, onRemove, canRemove }) => (
-  <div className="grid grid-cols-1 md:grid-cols-5 gap-3 p-4 border rounded-lg">
-    <input
-      type="text"
-      placeholder="Από"
-      value={leg.from}
-      onChange={(e) => onUpdate?.(leg.id, "from", e.target.value)}
-      className="transport-input"
-    />
-    <input
-      type="text"
-      placeholder="Προς"
-      value={leg.to}
-      onChange={(e) => onUpdate?.(leg.id, "to", e.target.value)}
-      className="transport-input"
-    />
-    <input
-      type="number"
-      placeholder="Απόσταση (km)"
-      value={leg.distance}
-      onChange={(e) => onUpdate?.(leg.id, "distance", Number(e.target.value))}
-      className="transport-input"
-    />
-    <input
-      type="number"
-      placeholder="Κόστος (€)"
-      value={leg.cost}
-      onChange={(e) => onUpdate?.(leg.id, "cost", Number(e.target.value))}
-      className="transport-input"
-    />
-    <Button
-      onClick={() => onRemove?.(leg.id)}
-      variant="outline"
-      size="sm"
-      className="text-red-600"
-      disabled={!canRemove}
-    >
-      Αφαίρεση
-    </Button>
-  </div>
-);
 
 const PremiumFeatureMessage: React.FC<{ feature: string }> = ({ feature }) => {
   const { language } = useLanguage();
@@ -574,9 +618,7 @@ const PremiumFeatureMessage: React.FC<{ feature: string }> = ({ feature }) => {
             : "Professional Dashboard"}
         </p>
         <p>✓ {language === "el" ? "Ανάλυση Σεναρίων" : "Scenario Analysis"}</p>
-        <p>
-          ✓ {language === "el" ? "Πρ��βλεψη Εσόδων" : "Revenue Forecasting"}
-        </p>
+        <p>✓ {language === "el" ? "Πρόβλεψη Εσόδων" : "Revenue Forecasting"}</p>
         <p>
           ✓{" "}
           {language === "el" ? "Χρηματοοικονομικά Μοντέλα" : "Financial Models"}
