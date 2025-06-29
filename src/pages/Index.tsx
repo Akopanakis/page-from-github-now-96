@@ -237,7 +237,7 @@ const Index = () => {
             <span class="font-bold">€${totalTransportCost.toLocaleString("el-GR")}</span>
           </div>
           <div>
-            <span class="text-sm text-gray-600">Συνολική Απόσταση:</span>
+            <span class="text-sm text-gray-600">Συ��ολική Απόσταση:</span>
             <span class="font-bold">${totalDistance.toLocaleString("el-GR")} km</span>
           </div>
         </div>
@@ -352,7 +352,12 @@ const Index = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-indigo-400/20 to-pink-400/20 rounded-full blur-3xl"></div>
+      </div>
       <Header
         isPremium={isPremium}
         setIsPremium={setIsPremium}
@@ -456,7 +461,7 @@ const Index = () => {
         ref={backToTopRef}
         id="back-to-top"
         className="fixed bottom-6 right-6 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 flex items-center justify-center opacity-0 translate-y-4 pointer-events-none"
-        aria-label="Επιστροφή στ��ν κορυφή"
+        aria-label="Επιστροφή στην κορυφή"
       >
         <ChevronUp className="w-6 h-6" />
       </button>
