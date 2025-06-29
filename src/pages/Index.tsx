@@ -20,8 +20,6 @@ import CompanySettings from "@/components/CompanySettings";
 import ExampleData from "@/components/ExampleData";
 import { CompanyInfo } from "@/types/company";
 import { libraryLoader } from "@/utils/libraryLoader";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 
 interface CostItem {
   id: string;
