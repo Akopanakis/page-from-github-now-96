@@ -8,7 +8,6 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
-import BuilderExamples from "./pages/BuilderExamples";
 import NotFound from "./pages/NotFound";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -37,7 +36,6 @@ function App() {
                 <Route path="/login" component={Login} />
                 <Route path="/signup" component={Signup} />
                 <Route path="/profile" component={Profile} />
-                <Route path="/builder-examples" component={BuilderExamples} />
                 <Route path="/:rest*" component={NotFound} />
               </Router>
             </ErrorBoundary>

@@ -80,17 +80,6 @@ const Header: React.FC<HeaderProps> = ({
               {isPremium && <Crown className="w-4 h-4 text-purple-600" />}
             </div>
 
-            {/* Builder Examples Link */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setLocation("/builder-examples")}
-              className="flex items-center space-x-2 border-purple-200 text-purple-600 hover:bg-purple-50"
-            >
-              <Zap className="w-4 h-4" />
-              <span>{language === "el" ? "Δοκιμές" : "Demos"}</span>
-            </Button>
-
             {/* File Upload Toggle */}
             <Button
               variant="outline"
