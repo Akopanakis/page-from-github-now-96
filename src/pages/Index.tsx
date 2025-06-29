@@ -381,7 +381,7 @@ const Index = () => {
         { id: "1", name: "Πρώτες Ύλες", value: 9000, category: "direct" }, // 2000kg * 4.5€
         {
           id: "2",
-          name: "Εργατικά Καθαρίσματος",
+          name: "Εργα��ικά Καθαρίσματος",
           value: 600,
           category: "direct",
         }, // 2000kg * 0.30€
@@ -507,7 +507,7 @@ const Index = () => {
                   </div>
                   <div>
                     <h4 className="font-medium text-blue-800">
-                      Παράδειγμα Φορτωμένο
+                      Πα��άδειγμα Φορτωμένο
                     </h4>
                     <p className="text-blue-600 text-sm">
                       Δεδομένα θράψαλου Αργεντίνης - 2 τόνοι
@@ -617,6 +617,13 @@ const Index = () => {
 
       <Footer />
 
+      {/* Example Data Modal */}
+      <ExampleData
+        isVisible={showExampleData}
+        onLoadExample={loadExampleData}
+        onClose={() => setShowExampleData(false)}
+      />
+
       {/* Back to Top Button */}
       <button
         ref={backToTopRef}
@@ -636,7 +643,7 @@ const Index = () => {
           const isDark = document.body.classList.contains("dark");
           localStorage.setItem("theme", isDark ? "dark" : "light");
         }}
-        aria-label="Εναλ��αγή θέματος"
+        aria-label="Εναλλαγή θέματος"
       >
         🌙
       </button>
