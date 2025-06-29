@@ -4,26 +4,22 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Fish,
-  Target,
-  Database,
+  Calculator,
   BarChart3,
   Crown,
-  Sparkles,
+  Zap,
+  Target,
+  TrendingUp,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import ProductBasics from "@/components/ProductBasics";
 import ProcessingPhases from "@/components/ProcessingPhases";
-import CostsTab from "@/components/CostsTab";
-import TransportTab from "@/components/TransportTab";
+import AdvancedDashboard from "@/components/AdvancedDashboard";
+import ScenarioAnalysis from "@/components/ScenarioAnalysis";
+import RevenueForecast from "@/components/RevenueForecast";
+import FinancialModels from "@/components/FinancialModels";
 import AnalysisTab from "@/components/AnalysisTab";
 import AdvancedAnalysisTab from "@/components/AdvancedAnalysisTab";
-import ScenarioAnalysis from "@/components/ScenarioAnalysis";
-import RevenueForecasting from "@/components/RevenueForecasting";
-import FinancialGlossary from "@/components/FinancialGlossary";
-import StatisticalModels from "@/components/StatisticalModels";
-import AdvancedFinancialModels from "@/components/AdvancedFinancialModels";
-import Dashboard from "@/components/Dashboard";
-import BatchManagement from "@/components/BatchManagement";
 
 interface MainTabsProps {
   activeTab: string;
@@ -33,6 +29,15 @@ interface MainTabsProps {
   formData: any;
   updateFormData: (updates: any) => void;
   results: any;
+  directCosts?: any[];
+  indirectCosts?: any[];
+  transportLegs?: any[];
+  onUpdateCost?: (id: string, field: string, value: any) => void;
+  onAddCost?: (category: string) => void;
+  onRemoveCost?: (id: string) => void;
+  onUpdateTransport?: (id: string, field: string, value: any) => void;
+  onAddTransport?: () => void;
+  onRemoveTransport?: (id: string) => void;
 }
 
 const MainTabs: React.FC<MainTabsProps> = ({
@@ -43,172 +48,538 @@ const MainTabs: React.FC<MainTabsProps> = ({
   formData,
   updateFormData,
   results,
+  directCosts = [],
+  indirectCosts = [],
+  transportLegs = [],
+  onUpdateCost,
+  onAddCost,
+  onRemoveCost,
+  onUpdateTransport,
+  onAddTransport,
+  onRemoveTransport,
 }) => {
   const { language } = useLanguage();
 
+  const tabs = [
+    {
+      id: "basics",
+      label: language === "el" ? "Βασικά" : "Basics",
+      icon: Fish,
+      description: language === "el" ? "Στοιχεία προϊόντος" : "Product details",
+      premium: false,
+    },
+    {
+      id: "costs",
+      label: language === "el" ? "Κόστη" : "Costs",
+      icon: Calculator,
+      description:
+        language === "el"
+          ? "Ανάλυση κόστους & μεταφορικά"
+          : "Cost analysis & transport",
+      premium: false,
+    },
+    {
+      id: "analysis",
+      label: language === "el" ? "Ανάλυση" : "Analysis",
+      icon: BarChart3,
+      description:
+        language === "el" ? "Γραφήματα & insights" : "Charts & insights",
+      premium: false,
+    },
+    {
+      id: "dashboard",
+      label: "Dashboard",
+      icon: Target,
+      description:
+        language === "el"
+          ? "Επαγγελματικό dashboard"
+          : "Professional dashboard",
+      premium: true,
+    },
+    {
+      id: "advanced",
+      label: language === "el" ? "Προχωρημένα" : "Advanced",
+      icon: Zap,
+      description:
+        language === "el"
+          ? "Σενάρια, πρόβλεψη, χρηματοοικονομικά"
+          : "Scenarios, forecast, financial",
+      premium: true,
+    },
+  ];
+
   return (
-    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-8 bg-gray-50 border-b">
-        <TabsTrigger
-          value="basics"
-          className="text-xs sm:text-sm flex items-center space-x-1"
-        >
-          <Fish className="w-3 h-3" />
-          <span>{language === "el" ? "Προϊόν" : "Product"}</span>
-        </TabsTrigger>
-        {isPremium && (
-          <>
-            <TabsTrigger
-              value="processing"
-              className="text-xs sm:text-sm flex items-center space-x-1"
-            >
-              <Target className="w-3 h-3" />
-              <span>{language === "el" ? "Επεξεργασία" : "Processing"}</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="batches"
-              className="text-xs sm:text-sm flex items-center space-x-1"
-            >
-              <Database className="w-3 h-3" />
-              <span>{language === "el" ? "Παρτίδες" : "Batches"}</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="dashboard"
-              className="text-xs sm:text-sm flex items-center space-x-1"
-            >
-              <BarChart3 className="w-3 h-3" />
-              <span>{language === "el" ? "Dashboard" : "Dashboard"}</span>
-            </TabsTrigger>
-          </>
+    <div className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-5 gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isDisabled = tab.premium && !isPremium;
+
+            return (
+              <TabsTrigger
+                key={tab.id}
+                value={tab.id}
+                disabled={isDisabled}
+                className={`
+                  relative flex flex-col items-center gap-1 px-2 py-3 text-xs font-medium
+                  transition-all duration-200 rounded-md
+                  ${
+                    isDisabled
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:bg-white dark:hover:bg-gray-700"
+                  }
+                  ${
+                    activeTab === tab.id
+                      ? "bg-white dark:bg-gray-700 shadow-sm"
+                      : ""
+                  }
+                `}
+                data-tooltip={tab.description}
+              >
+                <div className="flex items-center gap-1">
+                  <Icon className="w-4 h-4" />
+                  {tab.premium && <Crown className="w-3 h-3 text-purple-500" />}
+                </div>
+                <span className="hidden sm:block">{tab.label}</span>
+
+                {isDisabled && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-10 rounded-md">
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Crown className="w-4 h-4 text-purple-500" />
+                    </div>
+                  </div>
+                )}
+              </TabsTrigger>
+            );
+          })}
+        </TabsList>
+
+        {/* Premium Upgrade Banner */}
+        {!isPremium && (
+          <div className="mt-4 p-4 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Crown className="w-5 h-5 text-purple-600" />
+                <div>
+                  <h4 className="font-medium text-purple-700 dark:text-purple-300">
+                    {language === "el"
+                      ? "Αναβάθμιση σε Premium"
+                      : "Upgrade to Premium"}
+                  </h4>
+                  <p className="text-sm text-purple-600 dark:text-purple-400">
+                    {language === "el"
+                      ? "Ξεκλειδώστε το Dashboard και τις Προχωρημένες Δυνατότητες"
+                      : "Unlock Dashboard and Advanced Features"}
+                  </p>
+                </div>
+              </div>
+              <Button
+                onClick={() => setIsPremium(true)}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                size="sm"
+              >
+                <Crown className="w-4 h-4 mr-2" />
+                {language === "el" ? "Αναβάθμιση" : "Upgrade"}
+              </Button>
+            </div>
+          </div>
         )}
-        <TabsTrigger value="costs" className="text-xs sm:text-sm">
-          {language === "el" ? "Κόστη" : "Costs"}
-        </TabsTrigger>
-        <TabsTrigger value="transport" className="text-xs sm:text-sm">
-          {language === "el" ? "Μεταφορά" : "Transport"}
-        </TabsTrigger>
-        <TabsTrigger value="analysis" className="text-xs sm:text-sm">
-          {language === "el" ? "Ανάλυση" : "Analysis"}
-        </TabsTrigger>
-        <TabsTrigger
-          value="advanced"
-          className="text-xs sm:text-sm flex items-center space-x-1"
-        >
-          <Crown className="w-3 h-3" />
-          <span>{language === "el" ? "Προχωρημένα" : "Advanced"}</span>
-        </TabsTrigger>
-        <TabsTrigger
-          value="tools"
-          className="text-xs sm:text-sm flex items-center space-x-1"
-        >
-          <Sparkles className="w-3 h-3" />
-          <span>{language === "el" ? "Εργαλεία" : "Tools"}</span>
-        </TabsTrigger>
-      </TabsList>
 
-      <div className="p-6">
-        <TabsContent value="basics" className="mt-0">
-          <ProductBasics
-            formData={formData}
-            updateFormData={updateFormData}
-            isPremium={isPremium}
-          />
-        </TabsContent>
-
-        {isPremium && (
-          <>
-            <TabsContent value="processing" className="mt-0">
+        {/* Tab Contents */}
+        <div className="mt-6">
+          {/* Basics Tab */}
+          <TabsContent value="basics" className="space-y-6">
+            <ProductBasics
+              formData={formData}
+              updateFormData={updateFormData}
+            />
+            {isPremium && (
               <ProcessingPhases
                 formData={formData}
                 updateFormData={updateFormData}
               />
-            </TabsContent>
-
-            <TabsContent value="batches" className="mt-0" data-tour="batch">
-              <BatchManagement />
-            </TabsContent>
-
-            <TabsContent value="dashboard" className="mt-0">
-              <Dashboard />
-            </TabsContent>
-          </>
-        )}
-
-        <TabsContent value="costs" className="mt-0">
-          <CostsTab formData={formData} updateFormData={updateFormData} />
-        </TabsContent>
-
-        <TabsContent value="transport" className="mt-0">
-          <TransportTab formData={formData} updateFormData={updateFormData} />
-        </TabsContent>
-
-        <TabsContent value="analysis" className="mt-0">
-          <AnalysisTab formData={formData} updateFormData={updateFormData} />
-        </TabsContent>
-
-        <TabsContent value="advanced" className="mt-0">
-          <div className="space-y-6">
-            {!isPremium ? (
-              <div className="text-center p-8 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
-                <Crown className="w-16 h-16 mx-auto text-purple-400 mb-4" />
-                <h3 className="text-xl font-bold text-purple-800 mb-2">
-                  {language === "el"
-                    ? "Αναβάθμιση σε Premium"
-                    : "Upgrade to Premium"}
-                </h3>
-                <p className="text-purple-600 mb-4">
-                  {language === "el"
-                    ? "Ξεκλειδώστε προχωρημένες λειτουργίες κοστολόγησης"
-                    : "Unlock advanced costing features"}
-                </p>
-                <Button
-                  onClick={() => setIsPremium(true)}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                >
-                  <Crown className="w-4 h-4 mr-2" />
-                  {language === "el"
-                    ? "Ενεργοποίηση Premium"
-                    : "Enable Premium"}
-                </Button>
-              </div>
-            ) : (
-              <>
-                <div className="flex items-center justify-center mb-6">
-                  <Badge
-                    variant="secondary"
-                    className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 text-lg"
-                  >
-                    <Crown className="w-5 h-5 mr-2" />
-                    {language === "el"
-                      ? "Προχωρημένες Δυνατότητες"
-                      : "Advanced Features"}
-                  </Badge>
-                </div>
-
-                <AdvancedAnalysisTab
-                  formData={formData}
-                  updateFormData={updateFormData}
-                  results={results}
-                />
-
-                <ScenarioAnalysis baseResults={results} formData={formData} />
-
-                <RevenueForecasting formData={formData} results={results} />
-
-                {results && <AdvancedFinancialModels />}
-              </>
             )}
-          </div>
-        </TabsContent>
+          </TabsContent>
 
-        <TabsContent value="tools" className="mt-0">
-          <div className="space-y-6">
-            <StatisticalModels formData={formData} results={results} />
-            <FinancialGlossary />
+          {/* Costs Tab */}
+          <TabsContent value="costs" className="space-y-6">
+            <CostsSection
+              directCosts={directCosts}
+              indirectCosts={indirectCosts}
+              transportLegs={transportLegs}
+              onUpdateCost={onUpdateCost}
+              onAddCost={onAddCost}
+              onRemoveCost={onRemoveCost}
+              onUpdateTransport={onUpdateTransport}
+              onAddTransport={onAddTransport}
+              onRemoveTransport={onRemoveTransport}
+              isPremium={isPremium}
+            />
+          </TabsContent>
+
+          {/* Analysis Tab */}
+          <TabsContent value="analysis" className="space-y-6">
+            <AnalysisTab results={results} formData={formData} />
+            {isPremium && (
+              <AdvancedAnalysisTab results={results} formData={formData} />
+            )}
+          </TabsContent>
+
+          {/* Dashboard Tab - Premium Only */}
+          <TabsContent value="dashboard" className="space-y-6">
+            {isPremium ? (
+              <AdvancedDashboard data={results} formData={formData} />
+            ) : (
+              <PremiumFeatureMessage feature="Dashboard" />
+            )}
+          </TabsContent>
+
+          {/* Advanced Tab - Premium Only */}
+          <TabsContent value="advanced" className="space-y-6">
+            {isPremium ? (
+              <AdvancedFeaturesSection results={results} formData={formData} />
+            ) : (
+              <PremiumFeatureMessage feature="Advanced Features" />
+            )}
+          </TabsContent>
+        </div>
+      </Tabs>
+    </div>
+  );
+};
+
+// Enhanced Costs Section Component
+const CostsSection: React.FC<{
+  directCosts: any[];
+  indirectCosts: any[];
+  transportLegs: any[];
+  onUpdateCost?: (id: string, field: string, value: any) => void;
+  onAddCost?: (category: string) => void;
+  onRemoveCost?: (id: string) => void;
+  onUpdateTransport?: (id: string, field: string, value: any) => void;
+  onAddTransport?: () => void;
+  onRemoveTransport?: (id: string) => void;
+  isPremium: boolean;
+}> = ({
+  directCosts,
+  indirectCosts,
+  transportLegs,
+  onUpdateCost,
+  onAddCost,
+  onRemoveCost,
+  onUpdateTransport,
+  onAddTransport,
+  onRemoveTransport,
+  isPremium,
+}) => {
+  const { language } = useLanguage();
+
+  return (
+    <div className="space-y-6">
+      {/* Direct Costs */}
+      <div className="card-enhanced">
+        <div className="p-6">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <Calculator className="w-5 h-5" />
+            {language === "el" ? "Άμεσα Κόστη" : "Direct Costs"}
+          </h3>
+          <div className="space-y-3">
+            {directCosts.map((cost) => (
+              <CostItem
+                key={cost.id}
+                cost={cost}
+                onUpdate={onUpdateCost}
+                onRemove={onRemoveCost}
+              />
+            ))}
+            <Button
+              onClick={() => onAddCost?.("direct")}
+              variant="outline"
+              className="w-full"
+            >
+              +{" "}
+              {language === "el"
+                ? "Προσθήκη Άμεσου Κόστους"
+                : "Add Direct Cost"}
+            </Button>
           </div>
-        </TabsContent>
+        </div>
       </div>
-    </Tabs>
+
+      {/* Indirect Costs */}
+      <div className="card-enhanced">
+        <div className="p-6">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <Target className="w-5 h-5" />
+            {language === "el" ? "Έμμεσα Κόστη" : "Indirect Costs"}
+          </h3>
+          <div className="space-y-3">
+            {indirectCosts.map((cost) => (
+              <CostItem
+                key={cost.id}
+                cost={cost}
+                onUpdate={onUpdateCost}
+                onRemove={onRemoveCost}
+              />
+            ))}
+            <Button
+              onClick={() => onAddCost?.("indirect")}
+              variant="outline"
+              className="w-full"
+            >
+              +{" "}
+              {language === "el"
+                ? "Προσθήκη Έμμεσου Κόστους"
+                : "Add Indirect Cost"}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Transport Section */}
+      <div className="card-enhanced">
+        <div className="p-6">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <TrendingUp className="w-5 h-5" />
+            {language === "el" ? "Μεταφορικά Κόστη" : "Transport Costs"}
+          </h3>
+          <div className="space-y-4">
+            {transportLegs.map((leg) => (
+              <TransportLeg
+                key={leg.id}
+                leg={leg}
+                onUpdate={onUpdateTransport}
+                onRemove={onRemoveTransport}
+                canRemove={transportLegs.length > 1}
+              />
+            ))}
+            <Button
+              onClick={onAddTransport}
+              variant="outline"
+              className="w-full"
+            >
+              + {language === "el" ? "Προσθήκη Διαδρομής" : "Add Transport Leg"}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Cost Summary */}
+      <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+        <h4 className="font-medium mb-4">
+          {language === "el" ? "Σύνοψη Κόστους" : "Cost Summary"}
+        </h4>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="text-center">
+            <div className="text-sm text-gray-600 dark:text-gray-300">
+              {language === "el" ? "Άμεσα" : "Direct"}
+            </div>
+            <div id="direct-total" className="text-xl font-bold">
+              €0
+            </div>
+          </div>
+          <div className="text-center">
+            <div className="text-sm text-gray-600 dark:text-gray-300">
+              {language === "el" ? "Έμμεσα" : "Indirect"}
+            </div>
+            <div id="indirect-total" className="text-xl font-bold">
+              €0
+            </div>
+          </div>
+          <div className="text-center">
+            <div className="text-sm text-gray-600 dark:text-gray-300">
+              {language === "el" ? "Μεταφορικά" : "Transport"}
+            </div>
+            <div id="transport-total" className="text-xl font-bold">
+              €0
+            </div>
+          </div>
+          <div className="text-center">
+            <div className="text-sm text-gray-600 dark:text-gray-300">
+              {language === "el" ? "Σύνολο" : "Total"}
+            </div>
+            <div id="total-cost" className="text-xl font-bold text-blue-600">
+              €0
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Advanced Features Section
+const AdvancedFeaturesSection: React.FC<{
+  results: any;
+  formData: any;
+}> = ({ results, formData }) => {
+  const [activeAdvanced, setActiveAdvanced] = React.useState("scenarios");
+  const { language } = useLanguage();
+
+  const advancedTabs = [
+    {
+      id: "scenarios",
+      label: language === "el" ? "Σενάρια" : "Scenarios",
+      component: ScenarioAnalysis,
+    },
+    {
+      id: "forecast",
+      label: language === "el" ? "Πρόβλεψη" : "Forecast",
+      component: RevenueForecast,
+    },
+    {
+      id: "financial",
+      label: language === "el" ? "Χρηματοοικονομικά" : "Financial",
+      component: FinancialModels,
+    },
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Advanced Sub-Navigation */}
+      <div className="flex flex-wrap gap-2">
+        {advancedTabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveAdvanced(tab.id)}
+            className={`adv-pill ${activeAdvanced === tab.id ? "active" : ""}`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Advanced Content */}
+      <div className="adv-content">
+        {advancedTabs.map((tab) => {
+          const Component = tab.component;
+          return (
+            <div
+              key={tab.id}
+              className={activeAdvanced === tab.id ? "block" : "hidden"}
+            >
+              <Component data={results} formData={formData} />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+// Helper Components
+const CostItem: React.FC<{
+  cost: any;
+  onUpdate?: (id: string, field: string, value: any) => void;
+  onRemove?: (id: string) => void;
+}> = ({ cost, onUpdate, onRemove }) => (
+  <div className="flex items-center gap-3">
+    <input
+      type="text"
+      placeholder="Όνομα κόστους"
+      value={cost.name}
+      onChange={(e) => onUpdate?.(cost.id, "name", e.target.value)}
+      className="flex-1 px-3 py-2 border rounded-md"
+    />
+    <input
+      type="number"
+      placeholder="0.00"
+      value={cost.value}
+      onChange={(e) => onUpdate?.(cost.id, "value", Number(e.target.value))}
+      className="cost-input w-32 px-3 py-2 border rounded-md"
+      step="0.01"
+      min="0"
+    />
+    <Button
+      onClick={() => onRemove?.(cost.id)}
+      variant="outline"
+      size="sm"
+      className="text-red-600"
+    >
+      ×
+    </Button>
+  </div>
+);
+
+const TransportLeg: React.FC<{
+  leg: any;
+  onUpdate?: (id: string, field: string, value: any) => void;
+  onRemove?: (id: string) => void;
+  canRemove: boolean;
+}> = ({ leg, onUpdate, onRemove, canRemove }) => (
+  <div className="grid grid-cols-1 md:grid-cols-5 gap-3 p-4 border rounded-lg">
+    <input
+      type="text"
+      placeholder="Από"
+      value={leg.from}
+      onChange={(e) => onUpdate?.(leg.id, "from", e.target.value)}
+      className="transport-input"
+    />
+    <input
+      type="text"
+      placeholder="Προς"
+      value={leg.to}
+      onChange={(e) => onUpdate?.(leg.id, "to", e.target.value)}
+      className="transport-input"
+    />
+    <input
+      type="number"
+      placeholder="Απόσταση (km)"
+      value={leg.distance}
+      onChange={(e) => onUpdate?.(leg.id, "distance", Number(e.target.value))}
+      className="transport-input"
+    />
+    <input
+      type="number"
+      placeholder="Κόστος (€)"
+      value={leg.cost}
+      onChange={(e) => onUpdate?.(leg.id, "cost", Number(e.target.value))}
+      className="transport-input"
+    />
+    <Button
+      onClick={() => onRemove?.(leg.id)}
+      variant="outline"
+      size="sm"
+      className="text-red-600"
+      disabled={!canRemove}
+    >
+      Αφαίρεση
+    </Button>
+  </div>
+);
+
+const PremiumFeatureMessage: React.FC<{ feature: string }> = ({ feature }) => {
+  const { language } = useLanguage();
+
+  return (
+    <div className="text-center py-12">
+      <Crown className="w-16 h-16 text-purple-300 mx-auto mb-4" />
+      <h3 className="text-xl font-semibold mb-2">
+        {language === "el"
+          ? `${feature} - Premium Δυνατότητα`
+          : `${feature} - Premium Feature`}
+      </h3>
+      <p className="text-gray-600 dark:text-gray-300 mb-6">
+        {language === "el"
+          ? "Αναβαθμίστε σε Premium για να ξεκλειδώσετε αυτή την προχωρημένη δυνατότητα"
+          : "Upgrade to Premium to unlock this advanced feature"}
+      </p>
+      <div className="space-y-2 text-sm text-gray-500">
+        <p>
+          ✓{" "}
+          {language === "el"
+            ? "Επαγγελματικό Dashboard"
+            : "Professional Dashboard"}
+        </p>
+        <p>✓ {language === "el" ? "Ανάλυση Σεναρίων" : "Scenario Analysis"}</p>
+        <p>✓ {language === "el" ? "Πρόβλεψη Εσόδων" : "Revenue Forecasting"}</p>
+        <p>
+          ✓{" "}
+          {language === "el" ? "Χρηματοοικονομικά Μοντέλα" : "Financial Models"}
+        </p>
+      </div>
+    </div>
   );
 };
 
