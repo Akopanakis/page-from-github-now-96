@@ -299,7 +299,7 @@ const Index = () => {
   const addCostItem = (category: "direct" | "indirect") => {
     const newItem: CostItem = {
       id: Date.now().toString(),
-      name: "Νέο Κ��στος",
+      name: "Νέο Κόστος",
       value: 0,
       category,
     };
@@ -489,52 +489,6 @@ const Index = () => {
             )}
           </div>
         </div>
-
-        {/* Advanced Features Toggle */}
-        {isPremium && (
-          <div className="mt-12">
-            <Button
-              id="adv-toggle"
-              onClick={toggleAdvanced}
-              className="btn-primary w-full lg:w-auto flex items-center justify-center gap-2"
-              size="lg"
-            >
-              <Zap className="w-5 h-5" />
-              Προχωρημένες Δυνατότητες
-              {showAdvanced ? (
-                <ChevronUp className="w-5 h-5" />
-              ) : (
-                <ChevronDown className="w-5 h-5" />
-              )}
-            </Button>
-
-            {/* Advanced Content */}
-            {showAdvanced && (
-              <div id="adv-content" className="mt-8 space-y-8">
-                {/* Advanced Navigation Pills */}
-                <div className="flex flex-wrap items-center gap-4 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-                  {advancedTabs.map((tab) => {
-                    const Icon = tab.icon;
-                    return (
-                      <button
-                        key={tab.id}
-                        onClick={() => setActiveAdvancedTab(tab.id)}
-                        className={`adv-pill ${activeAdvancedTab === tab.id ? "active" : ""}`}
-                        data-target={tab.id}
-                      >
-                        <Icon className="w-4 h-4 mr-2" />
-                        {tab.label}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Advanced Content Sections */}
-                <div className="adv-content">{renderAdvancedContent()}</div>
-              </div>
-            )}
-          </div>
-        )}
       </div>
 
       <Footer />
