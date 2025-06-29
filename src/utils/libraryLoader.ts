@@ -219,6 +219,5 @@ declare global {
     jsPDF: any;
     XLSX: any;
     introJs: any;
-    tippy: any;
   }
 }
