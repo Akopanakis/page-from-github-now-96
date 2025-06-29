@@ -22,7 +22,6 @@ const CDN_ASSETS = [
   "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js",
   "https://cdn.jsdelivr.net/npm/intro.js@7.2.0/minified/intro.min.js",
   "https://cdn.jsdelivr.net/npm/intro.js@7.2.0/minified/introjs.min.css",
-  "https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js",
   "https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy-bundle.umd.min.js",
   "https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.css",
 ];
