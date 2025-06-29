@@ -159,31 +159,19 @@ const Index = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   };
 
-  const setupTooltips = async () => {
-    try {
-      await libraryLoader.waitForLibrary("tippy-js");
-      if (window.tippy && showTooltips) {
-        // Wait a bit to ensure DOM is ready and library is fully loaded
-        setTimeout(() => {
-          try {
-            const elements = document.querySelectorAll("[data-tooltip]");
-            if (elements.length > 0) {
-              window.tippy(elements, {
-                theme: "light-border",
-                animation: "fade",
-                arrow: true,
-                allowHTML: true,
-                maxWidth: 300,
-              });
-            }
-          } catch (error) {
-            console.warn("Failed to initialize tooltips:", error);
-          }
-        }, 100);
+  const setupTooltips = () => {
+    if (!showTooltips) return;
+
+    // Use native CSS tooltips instead of tippy.js
+    const elements = document.querySelectorAll("[data-tooltip]");
+    elements.forEach((element) => {
+      const tooltip = element.getAttribute("data-tooltip");
+      if (tooltip) {
+        element.setAttribute("title", tooltip);
+        // Add CSS class for enhanced styling
+        element.classList.add("has-tooltip");
       }
-    } catch (error) {
-      console.warn("Failed to load tippy.js:", error);
-    }
+    });
   };
 
   const setupGuidedTour = async () => {
@@ -550,7 +538,7 @@ const Index = () => {
                     {indirectCosts.map((cost) => (
                       <div key={cost.id} className="flex items-center gap-3">
                         <Input
-                          placeholder="Ό��ομα κόστους"
+                          placeholder="Όνομα κόστους"
                           value={cost.name}
                           onChange={(e) =>
                             updateCostItem(cost.id, "name", e.target.value)
@@ -587,7 +575,7 @@ const Index = () => {
                       size="sm"
                       className="w-full"
                     >
-                      + Προσθήκη Έμμεσο�� Κόστους
+                      + Προσθήκη Έμμεσου Κόστους
                     </Button>
                   </div>
                 </div>
