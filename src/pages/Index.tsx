@@ -68,11 +68,6 @@ const Index = () => {
     return stored ? JSON.parse(stored) : { logoUrl: "", name: "", address: "" };
   });
 
-  // Enhanced features state
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [activeAdvancedTab, setActiveAdvancedTab] = useState("dashboard");
-  const [showCosts, setShowCosts] = useState(true);
-  const [showTransport, setShowTransport] = useState(true);
   const [directCosts, setDirectCosts] = useState<CostItem[]>([
     { id: "1", name: "Πρώτες Ύλες", value: 0, category: "direct" },
     { id: "2", name: "Εργατικά", value: 0, category: "direct" },
