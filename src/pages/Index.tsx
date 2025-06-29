@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Calculator, ChevronUp } from "lucide-react";
+import { Calculator, ChevronUp, PlayCircle, X } from "lucide-react";
 import { useCalculation } from "@/hooks/useCalculation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -17,8 +17,11 @@ import PDFExport from "@/components/PDFExport";
 import DataExport from "@/components/DataExport";
 import SmartInsightsPanel from "@/components/SmartInsightsPanel";
 import CompanySettings from "@/components/CompanySettings";
+import ExampleData from "@/components/ExampleData";
 import { CompanyInfo } from "@/types/company";
 import { libraryLoader } from "@/utils/libraryLoader";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 interface CostItem {
   id: string;
