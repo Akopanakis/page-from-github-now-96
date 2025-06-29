@@ -237,7 +237,7 @@ const Index = () => {
             <span class="font-bold">€${totalTransportCost.toLocaleString("el-GR")}</span>
           </div>
           <div>
-            <span class="text-sm text-gray-600">Συ��ολική Απόσταση:</span>
+            <span class="text-sm text-gray-600">Συνολική Απόσταση:</span>
             <span class="font-bold">${totalDistance.toLocaleString("el-GR")} km</span>
           </div>
         </div>
@@ -369,7 +369,7 @@ const Index = () => {
         <OnboardingTour />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* File Upload Section */}
         {showFileUpload && (
           <div className="mb-8">
