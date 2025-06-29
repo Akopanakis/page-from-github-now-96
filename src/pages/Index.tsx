@@ -95,8 +95,6 @@ const Index = () => {
 
   // Refs
   const backToTopRef = useRef<HTMLButtonElement>(null);
-  const costsRef = useRef<HTMLDivElement>(null);
-  const transportRef = useRef<HTMLDivElement>(null);
 
   // Initialize libraries and setup
   useEffect(() => {
