@@ -160,30 +160,32 @@ const MainTabs: React.FC<MainTabsProps> = ({
 
         {/* Premium Upgrade Banner */}
         {!isPremium && (
-          <div className="mt-4 p-4 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Crown className="w-5 h-5 text-purple-600" />
+          <div className="mt-6 p-6 bg-gradient-to-br from-purple-50 via-pink-50 to-purple-50 dark:from-purple-900/30 dark:via-pink-900/30 dark:to-purple-900/30 rounded-2xl border-2 border-purple-200 dark:border-purple-700 shadow-lg">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl shadow-lg">
+                  <Crown className="w-6 h-6 text-white" />
+                </div>
                 <div>
-                  <h4 className="font-medium text-purple-700 dark:text-purple-300">
+                  <h4 className="font-semibold text-lg text-purple-800 dark:text-purple-200">
                     {language === "el"
                       ? "Αναβάθμιση σε Premium"
                       : "Upgrade to Premium"}
                   </h4>
-                  <p className="text-sm text-purple-600 dark:text-purple-400">
+                  <p className="text-purple-600 dark:text-purple-300">
                     {language === "el"
-                      ? "Ξεκλειδώστε το Dashboard και τις Προχωρημένες Δυνατότητες"
-                      : "Unlock Dashboard and Advanced Features"}
+                      ? "Ξεκλειδώστε προχωρημένες αναλύσεις και εργαλεία επαγγελματικής κοστολόγησης"
+                      : "Unlock advanced analytics and professional costing tools"}
                   </p>
                 </div>
               </div>
               <Button
                 onClick={() => setIsPremium(true)}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                size="sm"
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg hover:shadow-xl transition-all duration-300 text-white px-6 py-3"
+                size="lg"
               >
-                <Crown className="w-4 h-4 mr-2" />
-                {language === "el" ? "Αναβάθμιση" : "Upgrade"}
+                <Crown className="w-5 h-5 mr-2" />
+                {language === "el" ? "Αναβάθμιση Τώρα" : "Upgrade Now"}
               </Button>
             </div>
           </div>
