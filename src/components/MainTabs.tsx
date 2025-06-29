@@ -2,6 +2,7 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Fish,
   Calculator,
@@ -573,7 +574,9 @@ const PremiumFeatureMessage: React.FC<{ feature: string }> = ({ feature }) => {
             : "Professional Dashboard"}
         </p>
         <p>✓ {language === "el" ? "Ανάλυση Σεναρίων" : "Scenario Analysis"}</p>
-        <p>✓ {language === "el" ? "Πρόβλεψη Εσόδων" : "Revenue Forecasting"}</p>
+        <p>
+          ✓ {language === "el" ? "Πρ��βλεψη Εσόδων" : "Revenue Forecasting"}
+        </p>
         <p>
           ✓{" "}
           {language === "el" ? "Χρηματοοικονομικά Μοντέλα" : "Financial Models"}
