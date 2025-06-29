@@ -67,13 +67,6 @@ const CDN_LIBRARIES: LibraryConfig[] = [
     type: "css",
   },
   {
-    name: "tippy",
-    url: "https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js",
-    type: "script",
-    global: "Popper",
-    check: () => typeof window.Popper !== "undefined",
-  },
-  {
     name: "tippy-js",
     url: "https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy-bundle.umd.min.js",
     type: "script",
