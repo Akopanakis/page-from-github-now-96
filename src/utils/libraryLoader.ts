@@ -121,12 +121,36 @@ class LibraryLoader {
           : document.createElement("link");
 
       element.onload = () => {
-        // Additional check for script elements
-        if (config.type === "script" && config.check && !config.check()) {
-          reject(new Error(`Library ${config.name} loaded but not available`));
-          return;
+        // Additional check for script elements with delay for tippy.js
+        if (config.type === "script" && config.check) {
+          const checkLibrary = () => {
+            if (config.check && config.check()) {
+              resolve();
+            } else if (config.name === "tippy-js") {
+              // Give tippy.js extra time to initialize
+              setTimeout(() => {
+                if (config.check && config.check()) {
+                  resolve();
+                } else {
+                  reject(
+                    new Error(
+                      `Library ${config.name} loaded but not available`,
+                    ),
+                  );
+                }
+              }, 200);
+            } else {
+              reject(
+                new Error(`Library ${config.name} loaded but not available`),
+              );
+            }
+          };
+
+          // Small delay to allow library initialization
+          setTimeout(checkLibrary, 50);
+        } else {
+          resolve();
         }
-        resolve();
       };
 
       element.onerror = () => {
