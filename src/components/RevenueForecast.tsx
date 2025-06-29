@@ -21,6 +21,7 @@ import {
   Zap,
   AlertTriangle,
   Info,
+  Settings,
 } from "lucide-react";
 import { libraryLoader } from "@/utils/libraryLoader";
 
