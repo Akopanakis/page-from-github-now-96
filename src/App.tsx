@@ -38,8 +38,6 @@ function App() {
                 <Route path="/signup" component={Signup} />
                 <Route path="/profile" component={Profile} />
                 <Route path="/builder-examples" component={BuilderExamples} />
-                <Route path="/demo" component={BuilderExamples} />
-                <Route path="/ui-test" component={BuilderExamples} />
                 <Route path="/:rest*" component={NotFound} />
               </Router>
             </ErrorBoundary>
