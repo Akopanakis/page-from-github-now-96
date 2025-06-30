@@ -405,7 +405,7 @@ const PDFExport: React.FC<PDFExportProps> = ({
       const executiveSummary =
         language === "el"
           ? `Η παρούσα αναφορά παρέχει ολοκληρωμένη ανάλυση κοστολόγησης για το προϊόν "${formData.productName || "N/A"}".
-Βάσει των υπολογισμών, το συνολικό κόστος παραγωγής ανέρχεται σε ${formatCurrency(results.totalCosts || 0)}, 
+Βάσει των υπολογισμών, το συνολικό κόστος παραγωγής ανέρχεται σε ${formatCurrency(results.totalCosts || 0)},
 με περιθώριο κέρδους ${formatPercentage(results.profitMargin || 0)} και ανταγωνιστική θέση "${results.competitivePosition || "Μέτρια"}".
 
 Κύρια Ευρήματα:
@@ -414,7 +414,7 @@ const PDFExport: React.FC<PDFExportProps> = ({
 • Περιθώριο ασφαλείας: ${formatPercentage(metrics.marginOfSafety)}
 • Βαθμολογία κινδύνου: ${risks.length > 2 ? "Υψηλός" : risks.length > 0 ? "Μέτριος" : "Χαμηλός"}`
           : `This report provides comprehensive costing analysis for "${formData.productName || "N/A"}".
-Based on calculations, total production cost amounts to ${formatCurrency(results.totalCosts || 0)}, 
+Based on calculations, total production cost amounts to ${formatCurrency(results.totalCosts || 0)},
 with profit margin ${formatPercentage(results.profitMargin || 0)} and competitive position "${results.competitivePosition || "Average"}".
 
 Key Findings:
@@ -1253,7 +1253,7 @@ Key Findings:
           category: language === "el" ? "Ποιότητα" : "Quality",
           title:
             language === "el"
-              ? "Αναβάθμιση Πο��ότητας Προϊόντος"
+              ? "Αναβάθμιση Ποιότητας Προϊόντος"
               : "Product Quality Upgrade",
           description:
             language === "el"
@@ -1349,7 +1349,7 @@ Key Findings:
         // Check if we need to add more space or new page
         if (yPosition > pageHeight - 60 && index < recommendations.length - 1) {
           // Add space for footer if near end
-          break;
+          return;
         }
       });
 
@@ -1506,7 +1506,7 @@ Key Findings:
       <CardContent className="space-y-4 p-6">
         <div className="text-sm text-gray-600">
           {language === "el"
-            ? "Δημιουργήστε μια πλήρη επαγγελματική αναφορά 4 σελίδων με λεπτομερή ανάλυση κοστολόγηση��"
+            ? "Δημιουργήστε μια πλήρη επαγγελματική αναφορά 4 σελίδων με λεπτομερή ανάλυση κοστολόγησης"
             : "Generate a complete 4-page professional report with detailed costing analysis"}
         </div>
 
@@ -1615,7 +1615,7 @@ Key Findings:
             <FileCheck className="w-12 h-12 mx-auto mb-4 opacity-50" />
             <p className="text-sm">
               {language === "el"
-                ? "Εκτελέστε υπολογισμό για να ενεργοποιήσετε την εξαγωγή PDF"
+                ? "Εκτελέστε υπολογισμό γι�� να ενεργοποιήσετε την εξαγωγή PDF"
                 : "Run calculation to enable PDF export"}
             </p>
           </div>
