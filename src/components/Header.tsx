@@ -12,7 +12,6 @@ import {
   User,
   HelpCircle,
 } from "lucide-react";
-import { useTheme } from "next-themes";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocation } from "wouter";
@@ -35,20 +34,32 @@ const Header: React.FC<HeaderProps> = ({
   const { language, setLanguage, currency, setCurrency } = useLanguage();
   const { user } = useAuth();
   const [, setLocation] = useLocation();
-  const { theme, setTheme } = useTheme();
+  const [isDarkMode, setIsDarkMode] = React.useState(false);
 
   React.useEffect(() => {
-    if (theme === "dark") {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      setIsDarkMode(true);
       document.body.classList.add("dark");
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = !isDarkMode;
+    setIsDarkMode(newTheme);
+    if (newTheme) {
+      document.body.classList.add("dark");
+      localStorage.setItem("theme", "dark");
     } else {
       document.body.classList.remove("dark");
+      localStorage.setItem("theme", "light");
     }
-  }, [theme]);
+  };
 
   const premiumFeatures = [
     language === "el" ? "Φάσεις Επεξεργασίας" : "Processing Phases",
     language === "el" ? "Διαχείριση Παρτίδων" : "Batch Management",
-    language === "el" ? "Προχωρημένη Ανάλυση" : "Advanced Analysis",
+    language === "el" ? "Προχωρημένη Ανά��υση" : "Advanced Analysis",
     language === "el" ? "Εποχιακοί Συντελεστές" : "Seasonal Factors",
     language === "el" ? "AI Προβλέψεις" : "AI Predictions",
   ];
@@ -191,10 +202,8 @@ const Header: React.FC<HeaderProps> = ({
               </Label>
               <Switch
                 id="theme-toggle"
-                checked={theme === "dark"}
-                onCheckedChange={(checked) =>
-                  setTheme(checked ? "dark" : "light")
-                }
+                checked={isDarkMode}
+                onCheckedChange={toggleTheme}
               />
             </div>
 

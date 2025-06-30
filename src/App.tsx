@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Route, Router } from "wouter";
 import Index from "./pages/Index";
+import EnhancedIndex from "./pages/EnhancedIndex";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
@@ -32,7 +33,8 @@ function App() {
               <Toaster />
               <Sonner />
               <Router>
-                <Route path="/" component={Index} />
+                <Route path="/" component={EnhancedIndex} />
+                <Route path="/classic" component={Index} />
                 <Route path="/login" component={Login} />
                 <Route path="/signup" component={Signup} />
                 <Route path="/profile" component={Profile} />
