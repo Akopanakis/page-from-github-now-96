@@ -251,7 +251,7 @@ const AdvancedDashboard: React.FC<DashboardProps> = ({
           const [moved] = newLayout.splice(evt.oldIndex, 1);
           newLayout.splice(evt.newIndex, 0, moved);
           setDashboardLayout(newLayout);
-          localStorage.setItem("dashboardLayout", JSON.stringify(newLayout));
+          safeSetJSON("dashboardLayout", newLayout);
         },
       });
     }
@@ -491,7 +491,7 @@ const AdvancedDashboard: React.FC<DashboardProps> = ({
             className="flex items-center gap-2"
           >
             <Share2 className="w-4 h-4" />
-            Κοινοποίηση
+            Κοινοποίη��η
           </Button>
         </div>
 
@@ -523,7 +523,7 @@ const AdvancedDashboard: React.FC<DashboardProps> = ({
       >
         <div className="flex items-center gap-2">
           <Calendar className="w-5 h-5 text-gray-500" />
-          <span className="text-sm font-medium">Φίλτρα Ημερομηνιών:</span>
+          <span className="text-sm font-medium">Φίλτρα Ημερομηνιώ��:</span>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -776,7 +776,7 @@ const AdvancedDashboard: React.FC<DashboardProps> = ({
                 Πρόβλεψη
               </h4>
               <p className="text-sm text-green-600 dark:text-green-400 mt-1">
-                Αναμένεται μείωση κόστους 12% τον επόμενο μήνα
+                Αναμέ��εται μείωση κόστους 12% τον επόμενο μήνα
               </p>
             </div>
           </div>
