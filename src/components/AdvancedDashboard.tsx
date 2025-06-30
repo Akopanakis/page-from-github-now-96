@@ -411,10 +411,7 @@ const AdvancedDashboard: React.FC<DashboardProps> = ({
       const updatedComments = [comment, ...comments];
       setComments(updatedComments);
       setNewComment("");
-      localStorage.setItem(
-        "dashboardComments",
-        JSON.stringify(updatedComments),
-      );
+      safeSetJSON("dashboardComments", updatedComments);
     }
   };
 
