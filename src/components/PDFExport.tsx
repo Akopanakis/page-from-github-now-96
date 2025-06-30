@@ -61,8 +61,17 @@ const PDFExport: React.FC<PDFExportProps> = ({
       }
       // pdf instance already created above
 
-      // Add Greek font support
-      pdf.setFont("Helvetica");
+      // Add proper font support for Greek characters
+      pdf.setFont("helvetica");
+
+      // Set document properties with proper encoding
+      pdf.setProperties({
+        title: `KostoPro - ${formData.productName || "Costing Report"}`,
+        subject: "Seafood Costing Analysis",
+        author: "KostoPro by Alexandros Kopanakis",
+        creator: "KostoPro Enhanced",
+        producer: "jsPDF",
+      });
 
       let yPosition = 20;
       const leftMargin = 20;
@@ -321,7 +330,7 @@ const PDFExport: React.FC<PDFExportProps> = ({
       pdf.setFontSize(12);
       pdf.setTextColor(59, 130, 246);
       pdf.text(
-        language === "el" ? "Ανάλυση Κ��ρδοφορίας" : "Profitability Analysis",
+        language === "el" ? "Ανάλυση Κερδοφορίας" : "Profitability Analysis",
         leftMargin,
         yPosition,
       );
@@ -627,8 +636,16 @@ const PDFExport: React.FC<PDFExportProps> = ({
       pdf.text("🇬🇷 Made in Greece", leftMargin, footerY + 16);
       pdf.text("www.kostopro.gr", rightMargin - 50, footerY + 16);
 
-      // Save PDF
-      const fileName = `kostopro-${formData.productName?.replace(/[^a-z0-9]/gi, "_").toLowerCase() || "report"}-${new Date().toISOString().split("T")[0]}.pdf`;
+      // Save PDF with proper filename
+      const productNameSafe = formData.productName
+        ? formData.productName
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-zA-Z0-9]/g, "_")
+            .toLowerCase() || "product"
+        : "report";
+
+      const fileName = `kostopro-${productNameSafe}-${new Date().toISOString().split("T")[0]}.pdf`;
       pdf.save(fileName);
 
       toast.success(
