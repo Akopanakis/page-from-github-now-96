@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Building2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { CompanyInfo } from "@/types/company";
+import { safeGetJSON } from "@/utils/safeStorage";
 
 interface CompanySettingsProps {
   onChange: (info: CompanyInfo) => void;
