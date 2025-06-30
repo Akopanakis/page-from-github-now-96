@@ -19,16 +19,19 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ onChange }) => {
   });
 
   useEffect(() => {
-    const stored = localStorage.getItem("companyInfo");
-    if (stored) {
-      const parsed: CompanyInfo = JSON.parse(stored);
+    const parsed = safeGetJSON<CompanyInfo>("companyInfo", {
+      logoUrl: "",
+      name: "",
+      address: "",
+    });
+    if (parsed.name || parsed.logoUrl || parsed.address) {
       setInfo(parsed);
       onChange?.(parsed);
     }
   }, [onChange]);
 
   const handleSave = () => {
-    localStorage.setItem("companyInfo", JSON.stringify(info));
+    safeSetJSON("companyInfo", info);
     onChange?.(info);
   };
 
