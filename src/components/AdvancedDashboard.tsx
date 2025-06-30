@@ -416,9 +416,9 @@ const AdvancedDashboard: React.FC<DashboardProps> = ({
   };
 
   const loadSavedComments = () => {
-    const saved = localStorage.getItem("dashboardComments");
+    const saved = safeGetJSON("dashboardComments", null);
     if (saved) {
-      setComments(JSON.parse(saved));
+      setComments(saved);
     }
   };
 
