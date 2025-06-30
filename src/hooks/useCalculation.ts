@@ -234,8 +234,8 @@ export const useCalculation = () => {
 
   const loadSavedData = useCallback(() => {
     try {
-      const savedFormData = localStorage.getItem("kostoProFormData");
-      const savedResults = localStorage.getItem("kostoProResults");
+      const savedFormData = safeGetJSON("kostoProFormData", null);
+      const savedResults = safeGetJSON("kostoProResults", null);
 
       if (savedFormData) {
         const parsedFormData = JSON.parse(savedFormData);
