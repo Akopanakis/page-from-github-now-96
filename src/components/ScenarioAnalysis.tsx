@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { safeGetJSON, safeSetJSON } from "@/utils/safeStorage";
 import {
   Plus,
   Save,
@@ -326,7 +327,7 @@ const ScenarioAnalysis: React.FC = () => {
         labels: [
           "Συνολικό Κόστος",
           "Κόστος/Μονάδα",
-          "Καθαρό Κέρδος",
+          "Καθαρό Κέρ��ος",
           "Περιθώριο %",
         ],
         datasets: [
@@ -746,7 +747,7 @@ const ScenarioAnalysis: React.FC = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Ανάλυση Ευαισθησίας (Tornado Chart)</CardTitle>
+              <CardTitle>Ανάλυση Ευαισθ��σίας (Tornado Chart)</CardTitle>
             </CardHeader>
             <CardContent>
               <div id="tornado-chart" className="h-64">
@@ -921,7 +922,7 @@ const ScenarioAnalysis: React.FC = () => {
                         <div className="grid grid-cols-2 gap-3 text-sm">
                           <div>
                             <span className="text-gray-600 dark:text-gray-300">
-                              Συνολικό Κόστος:
+                              Συνολικό Κό��τος:
                             </span>
                             <span className="font-medium ml-2">
                               €
