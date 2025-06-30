@@ -238,8 +238,7 @@ export const useCalculation = () => {
       const savedResults = safeGetJSON("kostoProResults", null);
 
       if (savedFormData) {
-        const parsedFormData = JSON.parse(savedFormData);
-        setFormData(parsedFormData);
+        setFormData(savedFormData);
 
         toast.info(
           language === "el"
@@ -249,8 +248,7 @@ export const useCalculation = () => {
       }
 
       if (savedResults) {
-        const parsedResults = JSON.parse(savedResults);
-        setResults(parsedResults);
+        setResults(savedResults);
       }
     } catch (error) {
       console.error("Error loading saved data:", error);
