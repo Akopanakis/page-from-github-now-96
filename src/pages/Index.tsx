@@ -166,7 +166,7 @@ const Index = () => {
     await libraryLoader.waitForLibrary("introjs");
 
     // Check if tour has been shown before
-    const tourShown = localStorage.getItem("guidedTourShown");
+    const tourShown = safeGetItem("guidedTourShown");
     if (!tourShown && window.introJs) {
       // Auto-start tour after 2 seconds
       setTimeout(() => {
