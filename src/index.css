@@ -3,6 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import mobile responsive enhancements */
+@import "./styles/mobile-responsive.css";
+
 @layer base {
   :root {
     /* Professional Theme System */
