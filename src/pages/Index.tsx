@@ -178,7 +178,7 @@ const Index = () => {
   const startGuidedTour = () => {
     if (window.introJs) {
       window.introJs().start();
-      localStorage.setItem("guidedTourShown", "true");
+      safeSetItem("guidedTourShown", "true");
     }
   };
 
