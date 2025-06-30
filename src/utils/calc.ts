@@ -132,12 +132,13 @@ export interface CalculationResults {
 }
 
 export function calculateCosts(formData: FormData): CalculationResults {
-  // Input validation and defaults
-  const weight = formData.weight || 0;
-  const quantity = formData.quantity || 1;
-  const purchasePrice = formData.purchasePrice || 0;
-  const targetSellingPrice = formData.targetSellingPrice || 0;
-  const vatRate = formData.vatRate || 0;
+  // Input validation and defaults - prevent NaN
+  const weight = parseFloat(String(formData.weight)) || 0;
+  const quantity = parseFloat(String(formData.quantity)) || 1;
+  const purchasePrice = parseFloat(String(formData.purchasePrice)) || 0;
+  const targetSellingPrice =
+    parseFloat(String(formData.targetSellingPrice)) || 0;
+  const vatRate = parseFloat(String(formData.vatRate)) || 0;
 
   // Calculate processing losses
   const processingPhases = formData.processingPhases || [];
@@ -191,14 +192,14 @@ export function calculateCosts(formData: FormData): CalculationResults {
     totalTransportCosts +
     totalProcessingCosts;
 
-  // Cost per unit calculations
+  // Cost per unit calculations - prevent division by zero
   const costPerKg = netWeight > 0 ? totalCosts / netWeight : 0;
   const costPerUnit = quantity > 0 ? totalCosts / quantity : 0;
 
-  // VAT calculations - proper logic
-  let netPrice = targetSellingPrice;
+  // VAT calculations - proper logic with safety checks
+  let netPrice = parseFloat(String(targetSellingPrice)) || 0;
   let vatAmount = 0;
-  let finalPrice = targetSellingPrice;
+  let finalPrice = parseFloat(String(targetSellingPrice)) || 0;
 
   if (vatRate > 0 && targetSellingPrice > 0) {
     // If target price includes VAT, calculate net price
@@ -212,11 +213,22 @@ export function calculateCosts(formData: FormData): CalculationResults {
     finalPrice = targetSellingPrice;
   }
 
-  // Profit calculations
-  const grossProfit = netPrice * netWeight - totalCosts;
+  // Ensure values are finite numbers
+  netPrice = isFinite(netPrice) ? netPrice : 0;
+  vatAmount = isFinite(vatAmount) ? vatAmount : 0;
+  finalPrice = isFinite(finalPrice) ? finalPrice : 0;
+
+  // Profit calculations with safety checks
+  const revenueTotal = netPrice * netWeight;
+  const grossProfit =
+    isFinite(revenueTotal) && isFinite(totalCosts)
+      ? revenueTotal - totalCosts
+      : 0;
   const netProfit = grossProfit; // Simplified, could include tax calculations
   const profitMargin =
-    netPrice > 0 ? (grossProfit / (netPrice * netWeight)) * 100 : 0;
+    revenueTotal > 0 && isFinite(grossProfit)
+      ? (grossProfit / revenueTotal) * 100
+      : 0;
 
   // Break-even and recommendations
   const breakEvenPrice = netWeight > 0 ? totalCosts / netWeight : 0;
@@ -244,41 +256,59 @@ export function calculateCosts(formData: FormData): CalculationResults {
     packaging: totalDirectCosts * 0.1, // Estimate
   };
 
-  return {
-    rawWeight,
-    netWeight,
-    totalDirectCosts,
-    totalIndirectCosts,
-    totalTransportCosts,
-    totalProcessingCosts,
-    totalCosts,
-    costPerKg,
-    costPerUnit,
-    netPrice,
-    vatAmount,
-    finalPrice,
-    grossProfit,
-    netProfit,
-    profitMargin,
-    breakEvenPrice,
-    recommendedPrice,
+  // Ensure all returned values are finite numbers
+  const safeResults = {
+    rawWeight: isFinite(rawWeight) ? rawWeight : 0,
+    netWeight: isFinite(netWeight) ? netWeight : 0,
+    totalDirectCosts: isFinite(totalDirectCosts) ? totalDirectCosts : 0,
+    totalIndirectCosts: isFinite(totalIndirectCosts) ? totalIndirectCosts : 0,
+    totalTransportCosts: isFinite(totalTransportCosts)
+      ? totalTransportCosts
+      : 0,
+    totalProcessingCosts: isFinite(totalProcessingCosts)
+      ? totalProcessingCosts
+      : 0,
+    totalCosts: isFinite(totalCosts) ? totalCosts : 0,
+    costPerKg: isFinite(costPerKg) ? costPerKg : 0,
+    costPerUnit: isFinite(costPerUnit) ? costPerUnit : 0,
+    netPrice: isFinite(netPrice) ? netPrice : 0,
+    vatAmount: isFinite(vatAmount) ? vatAmount : 0,
+    finalPrice: isFinite(finalPrice) ? finalPrice : 0,
+    grossProfit: isFinite(grossProfit) ? grossProfit : 0,
+    netProfit: isFinite(netProfit) ? netProfit : 0,
+    profitMargin: isFinite(profitMargin) ? profitMargin : 0,
+    breakEvenPrice: isFinite(breakEvenPrice) ? breakEvenPrice : 0,
+    recommendedPrice: isFinite(recommendedPrice) ? recommendedPrice : 0,
     competitivePosition,
-    totalLossPercentage,
-    efficiencyScore,
-    breakdown,
+    totalLossPercentage: isFinite(totalLossPercentage)
+      ? totalLossPercentage
+      : 0,
+    efficiencyScore: isFinite(efficiencyScore) ? efficiencyScore : 0,
+    breakdown: {
+      materials: isFinite(breakdown.materials) ? breakdown.materials : 0,
+      labor: isFinite(breakdown.labor) ? breakdown.labor : 0,
+      processing: isFinite(breakdown.processing) ? breakdown.processing : 0,
+      transport: isFinite(breakdown.transport) ? breakdown.transport : 0,
+      overhead: isFinite(breakdown.overhead) ? breakdown.overhead : 0,
+      packaging: isFinite(breakdown.packaging) ? breakdown.packaging : 0,
+    },
   };
+
+  return safeResults;
 }
 
-// Utility functions
+// Utility functions with NaN protection
 export function formatCurrency(amount: number, currency = "€"): string {
-  return `${currency}${amount.toLocaleString("el-GR", {
+  const safeAmount = isFinite(amount) ? amount : 0;
+  return `${currency}${safeAmount.toLocaleString("el-GR", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
 }
 
 export function formatPercentage(value: number): string {
-  return `${value.toFixed(1)}%`;
+  const safeValue = isFinite(value) ? value : 0;
+  return `${safeValue.toFixed(1)}%`;
 }
 
 export function calculateEfficiency(losses: ProcessingPhase[]): number {

@@ -3,6 +3,7 @@ import type { FormData, CalculationResults } from "@/utils/calc";
 import { calculateCosts, validateFormData } from "@/utils/calc";
 import { toast } from "@/components/ui/sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { safeGetJSON, safeSetJSON, safeRemoveItem } from "@/utils/safeStorage";
 
 export const useCalculation = () => {
   const { language } = useLanguage();
@@ -168,11 +169,8 @@ export const useCalculation = () => {
       );
 
       // Auto-save to localStorage
-      localStorage.setItem("kostoProFormData", JSON.stringify(formData));
-      localStorage.setItem(
-        "kostoProResults",
-        JSON.stringify(calculationResults),
-      );
+      safeSetJSON("kostoProFormData", formData);
+      safeSetJSON("kostoProResults", calculationResults);
     } catch (error) {
       console.error("Calculation error:", error);
       const errorMessage =
@@ -224,8 +222,8 @@ export const useCalculation = () => {
     setErrors([]);
 
     // Clear localStorage
-    localStorage.removeItem("kostoProFormData");
-    localStorage.removeItem("kostoProResults");
+    safeRemoveItem("kostoProFormData");
+    safeRemoveItem("kostoProResults");
 
     toast.success(
       language === "el"
@@ -236,12 +234,11 @@ export const useCalculation = () => {
 
   const loadSavedData = useCallback(() => {
     try {
-      const savedFormData = localStorage.getItem("kostoProFormData");
-      const savedResults = localStorage.getItem("kostoProResults");
+      const savedFormData = safeGetJSON("kostoProFormData", null);
+      const savedResults = safeGetJSON("kostoProResults", null);
 
       if (savedFormData) {
-        const parsedFormData = JSON.parse(savedFormData);
-        setFormData(parsedFormData);
+        setFormData(savedFormData);
 
         toast.info(
           language === "el"
@@ -251,8 +248,7 @@ export const useCalculation = () => {
       }
 
       if (savedResults) {
-        const parsedResults = JSON.parse(savedResults);
-        setResults(parsedResults);
+        setResults(savedResults);
       }
     } catch (error) {
       console.error("Error loading saved data:", error);

@@ -3,7 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Fish, Crown, Globe2, FileText, Zap, User } from "lucide-react";
+import {
+  Fish,
+  Crown,
+  Globe2,
+  FileText,
+  Zap,
+  User,
+  HelpCircle,
+} from "lucide-react";
 import { useTheme } from "next-themes";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -14,6 +22,7 @@ interface HeaderProps {
   setIsPremium: (value: boolean) => void;
   showFileUpload: boolean;
   setShowFileUpload: (value: boolean) => void;
+  onShowGuide?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -21,6 +30,7 @@ const Header: React.FC<HeaderProps> = ({
   setIsPremium,
   showFileUpload,
   setShowFileUpload,
+  onShowGuide,
 }) => {
   const { language, setLanguage, currency, setCurrency } = useLanguage();
   const { user } = useAuth();
@@ -90,6 +100,19 @@ const Header: React.FC<HeaderProps> = ({
               <FileText className="w-4 h-4" />
               <span>{language === "el" ? "Αρχεία" : "Files"}</span>
             </Button>
+
+            {/* User Guide Button */}
+            {onShowGuide && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onShowGuide}
+                className="flex items-center space-x-2 border-green-200 text-green-600 hover:bg-green-50"
+              >
+                <HelpCircle className="w-4 h-4" />
+                <span>{language === "el" ? "Οδηγός" : "Guide"}</span>
+              </Button>
+            )}
 
             {/* User Authentication */}
             {user ? (

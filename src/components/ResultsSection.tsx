@@ -24,10 +24,16 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
   const { language, currency } = useLanguage();
 
   const formatCurrency = (amount: number) => {
+    const safeAmount = isFinite(amount) ? amount : 0;
     return new Intl.NumberFormat(language === "el" ? "el-GR" : "en-US", {
       style: "currency",
       currency: currency,
-    }).format(amount);
+    }).format(safeAmount);
+  };
+
+  const formatNumber = (amount: number, decimals = 2) => {
+    const safeAmount = isFinite(amount) ? amount : 0;
+    return safeAmount.toFixed(decimals);
   };
 
   return (
@@ -66,10 +72,10 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
                 <div className="bg-green-50 p-4 rounded-lg border border-green-200">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-green-700">
-                      {language === "el" ? "Τιμή Πώλησης" : "Selling Price"}
+                      {language === "el" ? "Τελική Τιμή" : "Final Price"}
                     </span>
                     <span className="text-lg font-bold text-green-800">
-                      {formatCurrency(results.sellingPrice)}
+                      {formatCurrency(results.finalPrice || 0)}
                     </span>
                   </div>
                 </div>
@@ -80,7 +86,7 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
                       {language === "el" ? "Συνολικό Κόστος" : "Total Cost"}
                     </span>
                     <span className="text-lg font-bold text-blue-800">
-                      {formatCurrency(results.totalCostWithVat)}
+                      {formatCurrency(results.totalCosts || 0)}
                     </span>
                   </div>
                 </div>
@@ -88,29 +94,90 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
                 <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-purple-700">
-                      {language === "el" ? "Κέρδος/kg" : "Profit/kg"}
+                      {language === "el" ? "Κόστος/kg" : "Cost/kg"}
                     </span>
                     <span className="text-lg font-bold text-purple-800">
-                      {formatCurrency(results.profitPerKg)}
+                      {formatCurrency(results.costPerKg || 0)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-orange-700">
+                      {language === "el" ? "Καθαρό Κέρδος" : "Net Profit"}
+                    </span>
+                    <span className="text-lg font-bold text-orange-800">
+                      {formatCurrency(results.grossProfit || 0)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-indigo-700">
+                      {language === "el"
+                        ? "Περιθώριο Κέρδους"
+                        : "Profit Margin"}
+                    </span>
+                    <span className="text-lg font-bold text-indigo-800">
+                      {formatNumber(results.profitMargin || 0, 1)}%
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-teal-50 p-4 rounded-lg border border-teal-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-teal-700">
+                      {language === "el" ? "Καθαρό Βάρος" : "Net Weight"}
+                    </span>
+                    <span className="text-lg font-bold text-teal-800">
+                      {formatNumber(results.netWeight || 0, 1)} kg
                     </span>
                   </div>
                 </div>
               </div>
 
-              {results.costBreakdown && (
+              {results.breakdown && (
                 <div className="space-y-2">
-                  <h4 className="font-medium text-gray-700">
+                  <h4 className="font-medium text-gray-700 flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4" />
                     {language === "el" ? "Ανάλυση Κόστους" : "Cost Breakdown"}
                   </h4>
-                  {results.costBreakdown.map((item: any, index: number) => (
-                    <div key={index} className="flex justify-between text-sm">
-                      <span>{item.category}</span>
-                      <span>
-                        {formatCurrency(item.amount)} (
-                        {item.percentage.toFixed(1)}%)
-                      </span>
-                    </div>
-                  ))}
+                  <div className="space-y-2">
+                    {Object.entries(results.breakdown).map(
+                      ([key, value]: [string, any]) => {
+                        const percentage =
+                          results.totalCosts > 0
+                            ? (value / results.totalCosts) * 100
+                            : 0;
+                        const labels: {
+                          [key: string]: { el: string; en: string };
+                        } = {
+                          materials: { el: "Πρώτες Ύλες", en: "Materials" },
+                          labor: { el: "Εργατικά", en: "Labor" },
+                          processing: { el: "Επεξεργασία", en: "Processing" },
+                          transport: { el: "Μεταφορά", en: "Transport" },
+                          overhead: { el: "Γενικά Έξοδα", en: "Overhead" },
+                          packaging: { el: "Συσκευασία", en: "Packaging" },
+                        };
+                        return (
+                          <div
+                            key={key}
+                            className="flex justify-between text-sm bg-gray-50 p-2 rounded"
+                          >
+                            <span>
+                              {labels[key]?.[language as "el" | "en"] || key}
+                            </span>
+                            <span className="font-medium">
+                              {formatCurrency(value || 0)} (
+                              {formatNumber(percentage, 1)}%)
+                            </span>
+                          </div>
+                        );
+                      },
+                    )}
+                  </div>
                 </div>
               )}
             </div>

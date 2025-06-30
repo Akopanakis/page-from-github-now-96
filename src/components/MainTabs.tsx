@@ -22,6 +22,9 @@ import RevenueForecast from "@/components/RevenueForecast";
 import FinancialModels from "@/components/FinancialModels";
 import AnalysisTab from "@/components/AnalysisTab";
 import AdvancedAnalysisTab from "@/components/AdvancedAnalysisTab";
+import AdvancedCostingFeatures from "@/components/AdvancedCostingFeatures";
+import InventoryTrackingSystem from "@/components/InventoryTrackingSystem";
+import MarketIntelligenceSystem from "@/components/MarketIntelligenceSystem";
 
 interface MainTabsProps {
   activeTab: string;
@@ -243,7 +246,15 @@ const MainTabs: React.FC<MainTabsProps> = ({
           {/* Advanced Tab - Premium Only */}
           <TabsContent value="advanced" className="space-y-6">
             {isPremium ? (
-              <AdvancedFeaturesSection results={results} formData={formData} />
+              <div className="space-y-6">
+                <AdvancedCostingFeatures
+                  formData={formData}
+                  results={results}
+                  onUpdateFormData={updateFormData}
+                />
+                <InventoryTrackingSystem />
+                <MarketIntelligenceSystem />
+              </div>
             ) : (
               <PremiumFeatureMessage feature="Advanced Features" />
             )}

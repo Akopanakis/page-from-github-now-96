@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { safeGetJSON, safeSetJSON } from "@/utils/safeStorage";
 import {
   BarChart3,
   LineChart,
@@ -195,7 +196,7 @@ const AdvancedDashboard: React.FC<DashboardProps> = ({
         id: "efficiency-drop",
         type: "info",
         title: "Μείωση Αποδοτικότητας",
-        message: "Η αποδοτικότητα της γραμμής παραγωγής Α έχει μειωθεί",
+        message: "Η αποδοτικ��τητα της γραμμής παραγωγής Α έχει μειωθεί",
         timestamp: Date.now() - 7200000,
       },
     ];
@@ -250,7 +251,7 @@ const AdvancedDashboard: React.FC<DashboardProps> = ({
           const [moved] = newLayout.splice(evt.oldIndex, 1);
           newLayout.splice(evt.newIndex, 0, moved);
           setDashboardLayout(newLayout);
-          localStorage.setItem("dashboardLayout", JSON.stringify(newLayout));
+          safeSetJSON("dashboardLayout", newLayout);
         },
       });
     }
@@ -410,24 +411,21 @@ const AdvancedDashboard: React.FC<DashboardProps> = ({
       const updatedComments = [comment, ...comments];
       setComments(updatedComments);
       setNewComment("");
-      localStorage.setItem(
-        "dashboardComments",
-        JSON.stringify(updatedComments),
-      );
+      safeSetJSON("dashboardComments", updatedComments);
     }
   };
 
   const loadSavedComments = () => {
-    const saved = localStorage.getItem("dashboardComments");
+    const saved = safeGetJSON("dashboardComments", null);
     if (saved) {
-      setComments(JSON.parse(saved));
+      setComments(saved);
     }
   };
 
   const loadSavedLayout = () => {
-    const saved = localStorage.getItem("dashboardLayout");
+    const saved = safeGetJSON("dashboardLayout", null);
     if (saved) {
-      setDashboardLayout(JSON.parse(saved));
+      setDashboardLayout(saved);
     }
   };
 
@@ -490,7 +488,7 @@ const AdvancedDashboard: React.FC<DashboardProps> = ({
             className="flex items-center gap-2"
           >
             <Share2 className="w-4 h-4" />
-            Κοινοποίηση
+            Κοινοποίη��η
           </Button>
         </div>
 
@@ -522,7 +520,7 @@ const AdvancedDashboard: React.FC<DashboardProps> = ({
       >
         <div className="flex items-center gap-2">
           <Calendar className="w-5 h-5 text-gray-500" />
-          <span className="text-sm font-medium">Φίλτρα Ημερομηνιών:</span>
+          <span className="text-sm font-medium">Φίλτρα Ημερομηνιώ��:</span>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -775,7 +773,7 @@ const AdvancedDashboard: React.FC<DashboardProps> = ({
                 Πρόβλεψη
               </h4>
               <p className="text-sm text-green-600 dark:text-green-400 mt-1">
-                Αναμένεται μείωση κόστους 12% τον επόμενο μήνα
+                Αναμέ��εται μείωση κόστους 12% τον επόμενο μήνα
               </p>
             </div>
           </div>

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { safeGetJSON, safeSetJSON } from "@/utils/safeStorage";
 import {
   Plus,
   Save,
@@ -140,9 +141,9 @@ const ScenarioAnalysis: React.FC = () => {
   }, [comparisonMode, scenarioA, scenarioB]);
 
   const loadScenarios = () => {
-    const saved = localStorage.getItem("costingScenarios");
+    const saved = safeGetJSON("costingScenarios", null);
     if (saved) {
-      setScenarios(JSON.parse(saved));
+      setScenarios(saved);
     } else {
       // Create initial demo scenarios
       const demoScenarios = [
@@ -168,7 +169,7 @@ const ScenarioAnalysis: React.FC = () => {
   };
 
   const saveScenarios = (scenariosToSave: Scenario[]) => {
-    localStorage.setItem("costingScenarios", JSON.stringify(scenariosToSave));
+    safeSetJSON("costingScenarios", scenariosToSave);
   };
 
   const createScenario = (
@@ -326,7 +327,7 @@ const ScenarioAnalysis: React.FC = () => {
         labels: [
           "Συνολικό Κόστος",
           "Κόστος/Μονάδα",
-          "Καθαρό Κέρδος",
+          "Καθαρό Κέρ��ος",
           "Περιθώριο %",
         ],
         datasets: [
@@ -454,7 +455,7 @@ const ScenarioAnalysis: React.FC = () => {
       ["Κόστος Ενέργειας", scenario.parameters.energyCost],
       ["Κόστος Μεταφοράς", scenario.parameters.transportCost],
       ["Γενικά Έξοδα", scenario.parameters.overhead],
-      ["Όγκος Παραγωγής", scenario.parameters.productionVolume],
+      ["Όγκος Πα��αγωγής", scenario.parameters.productionVolume],
       ["Τιμή Πώλησης", scenario.parameters.sellingPrice],
       ["Ποσοστό Απωλειών (%)", scenario.parameters.wastageRate],
       ["Αποδοτικότητα (%)", scenario.parameters.efficiency],
@@ -746,7 +747,7 @@ const ScenarioAnalysis: React.FC = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Ανάλυση Ευαισθησίας (Tornado Chart)</CardTitle>
+              <CardTitle>Ανάλυση Ευαισθ��σίας (Tornado Chart)</CardTitle>
             </CardHeader>
             <CardContent>
               <div id="tornado-chart" className="h-64">
@@ -921,7 +922,7 @@ const ScenarioAnalysis: React.FC = () => {
                         <div className="grid grid-cols-2 gap-3 text-sm">
                           <div>
                             <span className="text-gray-600 dark:text-gray-300">
-                              Συνολικό Κόστος:
+                              Συνολικό Κό��τος:
                             </span>
                             <span className="font-medium ml-2">
                               €

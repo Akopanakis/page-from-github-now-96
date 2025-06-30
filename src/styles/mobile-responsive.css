@@ -1,0 +1,354 @@
+/* Mobile-First Responsive Design */
+
+/* Base mobile styles */
+@media (max-width: 640px) {
+  /* Typography scaling */
+  .text-4xl {
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
+  .text-3xl {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+  .text-2xl {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+  .text-xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+
+  /* Container adjustments */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Card responsive padding */
+  .card-responsive {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Grid adjustments */
+  .grid-responsive {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Button adjustments */
+  .btn-responsive {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  /* Form input adjustments */
+  .input-responsive {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem; /* Prevents zoom on iOS */
+  }
+
+  /* Table responsive */
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-responsive table {
+    min-width: 600px;
+  }
+
+  /* Modal adjustments */
+  .modal-responsive {
+    margin: 0.5rem;
+    max-height: calc(100vh - 1rem);
+    overflow-y: auto;
+  }
+
+  /* Chart containers */
+  .chart-responsive {
+    height: 250px;
+    margin-bottom: 1rem;
+  }
+
+  /* Navbar mobile */
+  .navbar-mobile {
+    padding: 0.5rem 1rem;
+  }
+
+  /* Footer mobile */
+  .footer-mobile {
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .footer-mobile .footer-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* PDF export button mobile */
+  .pdf-export-mobile {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 50;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Back to top mobile */
+  .back-to-top-mobile {
+    bottom: 5rem;
+    right: 1rem;
+    width: 48px;
+    height: 48px;
+  }
+
+  /* Enhanced analysis mobile */
+  .analysis-grid-mobile {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .analysis-card-mobile {
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  /* Performance summary mobile */
+  .performance-summary-mobile {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .performance-summary-mobile .performance-item {
+    padding: 0.75rem;
+    text-align: center;
+  }
+
+  .performance-summary-mobile .performance-value {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+  }
+
+  .performance-summary-mobile .performance-label {
+    font-size: 0.75rem;
+    opacity: 0.8;
+  }
+}
+
+/* Tablet styles */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .grid-tablet {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .card-tablet {
+    padding: 1.5rem;
+  }
+
+  .chart-tablet {
+    height: 300px;
+  }
+
+  .performance-summary-tablet {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 1025px) {
+  .grid-desktop {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .card-desktop {
+    padding: 2rem;
+  }
+
+  .chart-desktop {
+    height: 400px;
+  }
+
+  .performance-summary-desktop {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+/* Touch-friendly interactions */
+@media (hover: none) and (pointer: coarse) {
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .hover-effect:hover {
+    transform: none;
+  }
+
+  .button-touch {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .crisp-edges {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 896px) and (orientation: landscape) {
+  .landscape-adjustment {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .modal-landscape {
+    max-height: 80vh;
+  }
+}
+
+/* Dark mode responsive adjustments */
+@media (prefers-color-scheme: dark) {
+  .dark-responsive {
+    background-color: rgb(17, 24, 39);
+    color: rgb(243, 244, 246);
+  }
+
+  .card-dark-responsive {
+    background-color: rgb(31, 41, 55);
+    border-color: rgb(55, 65, 81);
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .respect-motion-preference {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .print-hidden {
+    display: none !important;
+  }
+
+  .print-page-break {
+    page-break-before: always;
+  }
+
+  .print-optimized {
+    color: black;
+    background: white;
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-contrast: high) {
+  .high-contrast {
+    border: 2px solid currentColor;
+  }
+
+  .high-contrast-bg {
+    background-color: white;
+    color: black;
+  }
+}
+
+/* Custom utility classes for mobile optimization */
+.mobile-full-width {
+  width: 100%;
+}
+
+.mobile-hidden {
+  display: none;
+}
+
+.mobile-center {
+  text-align: center;
+}
+
+.mobile-stack {
+  flex-direction: column;
+}
+
+.mobile-gap {
+  gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .mobile-hidden {
+    display: block;
+  }
+
+  .sm-mobile-stack {
+    flex-direction: row;
+  }
+}
+
+/* Safe area insets for modern mobile devices */
+.safe-area-padding {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+  padding-top: max(0.5rem, env(safe-area-inset-top));
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
+
+/* Scroll improvements for mobile */
+.smooth-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile-optimized font sizes for better readability */
+.mobile-text-optimize {
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  line-height: 1.5;
+}
+
+.mobile-heading-optimize {
+  font-size: clamp(1.25rem, 4vw, 1.5rem);
+  line-height: 1.3;
+}
+
+/* Improved focus states for mobile navigation */
+.mobile-focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Mobile-specific loading states */
+.mobile-skeleton {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

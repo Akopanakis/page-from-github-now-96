@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Building2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { CompanyInfo } from "@/types/company";
+import { safeGetJSON } from "@/utils/safeStorage";
 
 interface CompanySettingsProps {
   onChange: (info: CompanyInfo) => void;
@@ -13,8 +14,7 @@ interface CompanySettingsProps {
 const CompanySettings: React.FC<CompanySettingsProps> = ({ onChange }) => {
   const { language } = useLanguage();
   const [companyInfo, setCompanyInfo] = React.useState<CompanyInfo>(() => {
-    const stored = localStorage.getItem("companyInfo");
-    return stored ? JSON.parse(stored) : { logoUrl: "", name: "", address: "" };
+    return safeGetJSON("companyInfo", { logoUrl: "", name: "", address: "" });
   });
 
   const handleChange = (field: keyof CompanyInfo, value: string) => {

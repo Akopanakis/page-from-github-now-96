@@ -12,14 +12,21 @@ import MainTabs from "@/components/MainTabs";
 import PremiumInfoCard from "@/components/PremiumInfoCard";
 import FileUpload from "@/components/FileUpload";
 import OnboardingTour from "@/components/OnboardingTour";
-import ResultsSection from "@/components/ResultsSection";
+import CompactResultsPanel from "@/components/CompactResultsPanel";
 import PDFExport from "@/components/PDFExport";
 import DataExport from "@/components/DataExport";
-import SmartInsightsPanel from "@/components/SmartInsightsPanel";
 import CompanySettings from "@/components/CompanySettings";
 import ExampleData from "@/components/ExampleData";
+import UserGuide from "@/components/UserGuide";
+import FloatingHelpButton from "@/components/FloatingHelpButton";
 import { CompanyInfo } from "@/types/company";
 import { libraryLoader } from "@/utils/libraryLoader";
+import {
+  safeGetJSON,
+  safeSetJSON,
+  safeGetItem,
+  safeSetItem,
+} from "@/utils/safeStorage";
 
 interface CostItem {
   id: string;
@@ -52,8 +59,7 @@ const Index = () => {
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo>(() => {
-    const stored = localStorage.getItem("companyInfo");
-    return stored ? JSON.parse(stored) : { logoUrl: "", name: "", address: "" };
+    return safeGetJSON("companyInfo", { logoUrl: "", name: "", address: "" });
   });
 
   const [directCosts, setDirectCosts] = useState<CostItem[]>([
@@ -82,6 +88,7 @@ const Index = () => {
   const [showTooltips, setShowTooltips] = useState(true);
   const [showExampleData, setShowExampleData] = useState(false);
   const [hasLoadedExample, setHasLoadedExample] = useState(false);
+  const [showUserGuide, setShowUserGuide] = useState(false);
 
   // Refs
   const backToTopRef = useRef<HTMLButtonElement>(null);
@@ -118,7 +125,7 @@ const Index = () => {
     }
 
     // Check for premium mode in localStorage
-    const savedPremium = localStorage.getItem("isPremium");
+    const savedPremium = safeGetItem("isPremium");
     if (savedPremium === "true") {
       setIsPremium(true);
     }
@@ -161,7 +168,7 @@ const Index = () => {
     await libraryLoader.waitForLibrary("introjs");
 
     // Check if tour has been shown before
-    const tourShown = localStorage.getItem("guidedTourShown");
+    const tourShown = safeGetItem("guidedTourShown");
     if (!tourShown && window.introJs) {
       // Auto-start tour after 2 seconds
       setTimeout(() => {
@@ -173,7 +180,7 @@ const Index = () => {
   const startGuidedTour = () => {
     if (window.introJs) {
       window.introJs().start();
-      localStorage.setItem("guidedTourShown", "true");
+      safeSetItem("guidedTourShown", "true");
     }
   };
 
@@ -352,7 +359,7 @@ const Index = () => {
       targetSellingPrice: 12.0, // €/kg
       origin: "Αργεντίνη",
       quality: "A",
-      notes: "Premium θράψαλο block, κατάψυξη στη θάλασσα",
+      notes: "Premium θράψα��ο block, κατάψυξη στη θάλασσα",
 
       // Pricing
       profitMargin: 25,
@@ -397,7 +404,7 @@ const Index = () => {
           to: "Πειραιάς",
           distance: 12000,
           cost: 800,
-          type: "Ναυτιλιακό",
+          type: "Να��τιλιακό",
         },
         {
           id: "2",
@@ -433,7 +440,7 @@ const Index = () => {
 
   const handleCompanyChange = React.useCallback((info: CompanyInfo) => {
     setCompanyInfo(info);
-    localStorage.setItem("companyInfo", JSON.stringify(info));
+    safeSetJSON("companyInfo", info);
   }, []);
 
   const handleFileUpload = React.useCallback(
@@ -446,28 +453,50 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
-      {/* Background decoration */}
+      {/* Enhanced Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-indigo-400/20 to-pink-400/20 rounded-full blur-3xl"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl animate-pulse"></div>
+        <div
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-indigo-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "1s" }}
+        ></div>
+        <div
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-green-400/10 to-blue-400/10 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "2s" }}
+        ></div>
+
+        {/* Floating particles */}
+        <div
+          className="absolute top-20 left-20 w-2 h-2 bg-blue-400/30 rounded-full animate-bounce"
+          style={{ animationDelay: "0.5s" }}
+        ></div>
+        <div
+          className="absolute top-40 right-32 w-1 h-1 bg-purple-400/40 rounded-full animate-bounce"
+          style={{ animationDelay: "1.2s" }}
+        ></div>
+        <div
+          className="absolute bottom-32 left-1/3 w-1.5 h-1.5 bg-indigo-400/35 rounded-full animate-bounce"
+          style={{ animationDelay: "2.1s" }}
+        ></div>
       </div>
       <Header
         isPremium={isPremium}
         setIsPremium={setIsPremium}
         showFileUpload={showFileUpload}
         setShowFileUpload={setShowFileUpload}
+        onShowGuide={() => setShowUserGuide(true)}
       />
 
       <div id="start-tour">
         <OnboardingTour />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="relative max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 animate-in fade-in duration-700">
         {/* Example Data Banner */}
         {!hasLoadedExample && (
-          <Card className="mb-8 bg-gradient-to-r from-green-50 to-blue-50 border-green-200">
-            <div className="p-6">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <Card className="mb-6 lg:mb-8 bg-gradient-to-r from-green-50 to-blue-50 border-green-200 shadow-lg">
+            <div className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
                 <div className="flex items-center gap-4">
                   <div className="p-3 bg-green-100 rounded-full">
                     <PlayCircle className="w-6 h-6 text-green-600" />
@@ -536,9 +565,12 @@ const Index = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-1 gap-6 lg:gap-8">
           {/* Left Column - Form */}
-          <div className="lg:col-span-2" data-tour="form">
+          <div
+            className="xl:col-span-2 animate-in slide-in-from-left duration-500"
+            data-tour="form"
+          >
             <Card className="shadow-2xl border-0 overflow-hidden bg-white/95 backdrop-blur-sm">
               <CardHeader className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 via-indigo-600/90 to-purple-600/90"></div>
@@ -577,19 +609,18 @@ const Index = () => {
           </div>
 
           {/* Right Column - Results */}
-          <div className="space-y-6" data-tour="results">
-            <ResultsSection
+          <div
+            className="space-y-6 animate-in slide-in-from-right duration-500"
+            style={{ animationDelay: "200ms" }}
+            data-tour="results"
+          >
+            <CompactResultsPanel
               results={results}
               formData={formData}
               isCalculating={isCalculating}
-              isPremium={isPremium}
               onCalculate={calculate}
               onReset={resetForm}
             />
-
-            {results && (
-              <SmartInsightsPanel results={results} formData={formData} />
-            )}
 
             <div data-tour="export" className="space-y-4">
               <CompanySettings onChange={handleCompanyChange} />
@@ -622,6 +653,15 @@ const Index = () => {
         onClose={() => setShowExampleData(false)}
       />
 
+      {/* User Guide Modal */}
+      <UserGuide
+        isOpen={showUserGuide}
+        onClose={() => setShowUserGuide(false)}
+      />
+
+      {/* Floating Help Button */}
+      <FloatingHelpButton onShowGuide={() => setShowUserGuide(true)} />
+
       {/* Back to Top Button */}
       <button
         ref={backToTopRef}
@@ -639,7 +679,7 @@ const Index = () => {
         onClick={() => {
           document.body.classList.toggle("dark");
           const isDark = document.body.classList.contains("dark");
-          localStorage.setItem("theme", isDark ? "dark" : "light");
+          safeSetItem("theme", isDark ? "dark" : "light");
         }}
         aria-label="Εναλλαγή θέματος"
       >
