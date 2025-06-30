@@ -351,7 +351,7 @@ const Index = () => {
   const loadExampleData = () => {
     const exampleFormData = {
       // Basic Product Info
-      productName: "Θράψαλο Block Αργεντίνης",
+      productName: "Θράψαλο Block ��ργεντίνης",
       productType: "fish",
       weight: 10, // kg per piece
       quantity: 200, // pieces (2 tons total)
@@ -506,7 +506,7 @@ const Index = () => {
                       Δοκιμάστε με Παράδειγμα
                     </h3>
                     <p className="text-green-600 text-sm">
-                      Φορτώστε δεδομένα θράψαλου Αργεντίνης για να δείτε πως
+                      Φορτ��στε δεδομένα θράψαλου Αργεντίνης για να δείτε πως
                       λειτουργεί η εφαρμογή
                     </p>
                   </div>
@@ -649,7 +649,26 @@ const Index = () => {
       {/* Example Data Modal */}
       <ExampleData
         isVisible={showExampleData}
-        onLoadExample={loadExampleData}
+        onLoadExample={(data) => {
+          // Update form data
+          updateFormData(data);
+
+          // Update costs if provided
+          if (data.directCosts) {
+            setDirectCosts(data.directCosts);
+          }
+          if (data.indirectCosts) {
+            setIndirectCosts(data.indirectCosts);
+          }
+          if (data.transportLegs) {
+            setTransportLegs(data.transportLegs);
+          }
+
+          setHasLoadedExample(true);
+          setShowExampleData(false);
+
+          toast.success("Τα δεδομένα παραδείγματος φορ��ώθηκαν!");
+        }}
         onClose={() => setShowExampleData(false)}
       />
 
