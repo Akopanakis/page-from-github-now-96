@@ -141,9 +141,9 @@ const ScenarioAnalysis: React.FC = () => {
   }, [comparisonMode, scenarioA, scenarioB]);
 
   const loadScenarios = () => {
-    const saved = localStorage.getItem("costingScenarios");
+    const saved = safeGetJSON("costingScenarios", null);
     if (saved) {
-      setScenarios(JSON.parse(saved));
+      setScenarios(saved);
     } else {
       // Create initial demo scenarios
       const demoScenarios = [
