@@ -3,6 +3,7 @@ import type { FormData, CalculationResults } from "@/utils/calc";
 import { calculateCosts, validateFormData } from "@/utils/calc";
 import { toast } from "@/components/ui/sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { safeGetJSON, safeSetJSON, safeRemoveItem } from "@/utils/safeStorage";
 
 export const useCalculation = () => {
   const { language } = useLanguage();
