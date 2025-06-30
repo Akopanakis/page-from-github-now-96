@@ -20,6 +20,12 @@ import CompanySettings from "@/components/CompanySettings";
 import ExampleData from "@/components/ExampleData";
 import { CompanyInfo } from "@/types/company";
 import { libraryLoader } from "@/utils/libraryLoader";
+import {
+  safeGetJSON,
+  safeSetJSON,
+  safeGetItem,
+  safeSetItem,
+} from "@/utils/safeStorage";
 
 interface CostItem {
   id: string;
