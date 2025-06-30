@@ -230,11 +230,26 @@ const PDFExport: React.FC<PDFExportProps> = ({
         yPosition = 20;
       }
 
-      // Financial Summary
-      pdf.setFontSize(14);
+      // Check if we need a new page
+      if (yPosition > 220) {
+        pdf.addPage();
+        yPosition = 20;
+      }
+
+      // Financial Analysis Section
+      pdf.setFontSize(16);
+      pdf.setTextColor(16, 185, 129);
+      pdf.text(
+        language === "el" ? "ΧΡΗΜΑΤΟΟΙΚΟΝΟΜΙΚΗ ΑΝΑΛΥΣΗ" : "FINANCIAL ANALYSIS",
+        leftMargin,
+        yPosition,
+      );
+      yPosition += 15;
+
+      pdf.setFontSize(12);
       pdf.setTextColor(59, 130, 246);
       pdf.text(
-        language === "el" ? "ΟΙΚΟΝΟΜΙΚΗ ΣΥΝΟΨΗ" : "FINANCIAL SUMMARY",
+        language === "el" ? "Κόστη και Τιμολόγηση" : "Costs and Pricing",
         leftMargin,
         yPosition,
       );
@@ -243,33 +258,199 @@ const PDFExport: React.FC<PDFExportProps> = ({
       pdf.setFontSize(10);
       pdf.setTextColor(0, 0, 0);
 
-      const financialSummary = [
+      const costAnalysis = [
+        [
+          `${language === "el" ? "Τιμή Αγοράς:" : "Purchase Price:"}`,
+          `€${formData.purchasePrice?.toFixed(2) || "0.00"}/kg`,
+        ],
+        [
+          `${language === "el" ? "Στοχευμένη Τιμή:" : "Target Price:"}`,
+          `€${formData.targetSellingPrice?.toFixed(2) || "0.00"}/kg`,
+        ],
+        [
+          `${language === "el" ? "Συνολικό Κόστος:" : "Total Cost:"}`,
+          `€${results.totalCosts?.toFixed(2) || "0.00"}`,
+        ],
+        [
+          `${language === "el" ? "Κόστος ανά kg:" : "Cost per kg:"}`,
+          `€${results.costPerKg?.toFixed(2) || "0.00"}`,
+        ],
+        [
+          `${language === "el" ? "Κόστος ανά τεμάχιο:" : "Cost per unit:"}`,
+          `€${results.costPerUnit?.toFixed(2) || "0.00"}`,
+        ],
+        [
+          `${language === "el" ? "Break-even Τιμή:" : "Break-even Price:"}`,
+          `€${results.breakEvenPrice?.toFixed(2) || "0.00"}/kg`,
+        ],
+        [
+          `${language === "el" ? "Συνιστώμενη Τιμή:" : "Recommended Price:"}`,
+          `€${results.recommendedPrice?.toFixed(2) || "0.00"}/kg`,
+        ],
+      ];
+
+      costAnalysis.forEach(([label, value]) => {
+        pdf.text(label, leftMargin, yPosition);
+        pdf.text(String(value), leftMargin + 70, yPosition);
+        yPosition += lineHeight;
+      });
+
+      yPosition += 10;
+
+      // Profitability Analysis
+      pdf.setFontSize(12);
+      pdf.setTextColor(59, 130, 246);
+      pdf.text(
+        language === "el" ? "Ανάλυση Κερδοφορίας" : "Profitability Analysis",
+        leftMargin,
+        yPosition,
+      );
+      yPosition += 10;
+
+      pdf.setFontSize(10);
+      pdf.setTextColor(0, 0, 0);
+
+      const profitabilityData = [
+        [
+          `${language === "el" ? "Καθαρή Τιμή:" : "Net Price:"}`,
+          `€${results.netPrice?.toFixed(2) || "0.00"}`,
+        ],
+        [
+          `${language === "el" ? "ΦΠΑ:" : "VAT Amount:"}`,
+          `€${results.vatAmount?.toFixed(2) || "0.00"} (${formData.vatRate || 0}%)`,
+        ],
+        [
+          `${language === "el" ? "Τελική Τιμή:" : "Final Price:"}`,
+          `€${results.finalPrice?.toFixed(2) || "0.00"}`,
+        ],
+        [
+          `${language === "el" ? "Μικτό Κέρδος:" : "Gross Profit:"}`,
+          `€${results.grossProfit?.toFixed(2) || "0.00"}`,
+        ],
+        [
+          `${language === "el" ? "Περιθώριο Κέρδους:" : "Profit Margin:"}`,
+          `${results.profitMargin?.toFixed(1) || "0.0"}%`,
+        ],
+        [
+          `${language === "el" ? "Ανταγωνιστική Θέση:" : "Competitive Position:"}`,
+          results.competitivePosition || "Average",
+        ],
+        [
+          `${language === "el" ? "Βαθμός Απόδοσης:" : "Efficiency Score:"}`,
+          `${results.efficiencyScore?.toFixed(1) || "0.0"}%`,
+        ],
+      ];
+
+      profitabilityData.forEach(([label, value]) => {
+        pdf.text(label, leftMargin, yPosition);
+        pdf.text(String(value), leftMargin + 70, yPosition);
+        yPosition += lineHeight;
+      });
+
+      yPosition += 15;
+
+      // Cost Breakdown Section
+      if (results.breakdown) {
+        pdf.setFontSize(12);
+        pdf.setTextColor(59, 130, 246);
+        pdf.text(
+          language === "el"
+            ? "Ανάλυση Κόστους κατά Κατηγορία"
+            : "Cost Breakdown by Category",
+          leftMargin,
+          yPosition,
+        );
+        yPosition += 10;
+
+        pdf.setFontSize(10);
+        pdf.setTextColor(0, 0, 0);
+
+        const costBreakdown = [
+          [
+            `${language === "el" ? "Πρώτες Ύλες:" : "Materials:"}`,
+            `€${results.breakdown.materials?.toFixed(2) || "0.00"}`,
+            `${results.totalCosts > 0 ? ((results.breakdown.materials / results.totalCosts) * 100).toFixed(1) : "0.0"}%`,
+          ],
+          [
+            `${language === "el" ? "Εργατικά:" : "Labor:"}`,
+            `€${results.breakdown.labor?.toFixed(2) || "0.00"}`,
+            `${results.totalCosts > 0 ? ((results.breakdown.labor / results.totalCosts) * 100).toFixed(1) : "0.0"}%`,
+          ],
+          [
+            `${language === "el" ? "Επεξεργασία:" : "Processing:"}`,
+            `€${results.breakdown.processing?.toFixed(2) || "0.00"}`,
+            `${results.totalCosts > 0 ? ((results.breakdown.processing / results.totalCosts) * 100).toFixed(1) : "0.0"}%`,
+          ],
+          [
+            `${language === "el" ? "Μεταφορά:" : "Transport:"}`,
+            `€${results.breakdown.transport?.toFixed(2) || "0.00"}`,
+            `${results.totalCosts > 0 ? ((results.breakdown.transport / results.totalCosts) * 100).toFixed(1) : "0.0"}%`,
+          ],
+          [
+            `${language === "el" ? "Γενικά Έξοδα:" : "Overhead:"}`,
+            `€${results.breakdown.overhead?.toFixed(2) || "0.00"}`,
+            `${results.totalCosts > 0 ? ((results.breakdown.overhead / results.totalCosts) * 100).toFixed(1) : "0.0"}%`,
+          ],
+          [
+            `${language === "el" ? "Συσκευασία:" : "Packaging:"}`,
+            `€${results.breakdown.packaging?.toFixed(2) || "0.00"}`,
+            `${results.totalCosts > 0 ? ((results.breakdown.packaging / results.totalCosts) * 100).toFixed(1) : "0.0"}%`,
+          ],
+        ];
+
+        costBreakdown.forEach(([label, amount, percentage]) => {
+          pdf.text(label, leftMargin, yPosition);
+          pdf.text(String(amount), leftMargin + 50, yPosition);
+          pdf.text(String(percentage), leftMargin + 80, yPosition);
+          yPosition += lineHeight;
+        });
+
+        yPosition += 15;
+      }
+
+      // Process Analysis Section
+      pdf.setFontSize(12);
+      pdf.setTextColor(59, 130, 246);
+      pdf.text(
+        language === "el" ? "Ανάλυση Επεξεργασίας" : "Processing Analysis",
+        leftMargin,
+        yPosition,
+      );
+      yPosition += 10;
+
+      pdf.setFontSize(10);
+      pdf.setTextColor(0, 0, 0);
+
+      const processAnalysis = [
         [
           `${language === "el" ? "Συνολικές Απώλειες:" : "Total Losses:"}`,
-          `${results.totalLossPercentage?.toFixed(1) || "0"}%`,
+          `${results.totalLossPercentage?.toFixed(1) || "0.0"}%`,
         ],
         [
           `${language === "el" ? "Glazing:" : "Glazing:"}`,
           `${formData.glazingPercentage || 0}%`,
         ],
-        [`${language === "el" ? "ΦΠΑ:" : "VAT:"}`, `${formData.vatRate || 0}%`],
+        [
+          `${language === "el" ? "Τύπος Glazing:" : "Glazing Type:"}`,
+          formData.glazingType || "none",
+        ],
+        [
+          `${language === "el" ? "Αρχικό Βάρος:" : "Initial Weight:"}`,
+          `${results.rawWeight?.toFixed(1) || "0.0"} kg`,
+        ],
         [
           `${language === "el" ? "Καθαρό Βάρος:" : "Net Weight:"}`,
-          `${results.netWeight?.toFixed(1) || "0"} kg`,
+          `${results.netWeight?.toFixed(1) || "0.0"} kg`,
         ],
         [
-          `${language === "el" ? "Break-even:" : "Break-even:"}`,
-          `€${results.breakEvenPrice?.toFixed(2) || "0.00"}`,
-        ],
-        [
-          `${language === "el" ? "Συνιστώμενη Τιμή:" : "Recommended Price:"}`,
-          `€${results.recommendedPrice?.toFixed(2) || "0.00"}`,
+          `${language === "el" ? "Απόδοση:" : "Yield:"}`,
+          `${results.rawWeight > 0 ? ((results.netWeight / results.rawWeight) * 100).toFixed(1) : "0.0"}%`,
         ],
       ];
 
-      financialSummary.forEach(([label, value]) => {
+      processAnalysis.forEach(([label, value]) => {
         pdf.text(label, leftMargin, yPosition);
-        pdf.text(value, leftMargin + 50, yPosition);
+        pdf.text(String(value), leftMargin + 60, yPosition);
         yPosition += lineHeight;
       });
 
