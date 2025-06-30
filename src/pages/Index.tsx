@@ -18,6 +18,7 @@ import DataExport from "@/components/DataExport";
 import CompanySettings from "@/components/CompanySettings";
 import ExampleData from "@/components/ExampleData";
 import UserGuide from "@/components/UserGuide";
+import FloatingHelpButton from "@/components/FloatingHelpButton";
 import { CompanyInfo } from "@/types/company";
 import { libraryLoader } from "@/utils/libraryLoader";
 import {
@@ -629,6 +630,9 @@ const Index = () => {
         isOpen={showUserGuide}
         onClose={() => setShowUserGuide(false)}
       />
+
+      {/* Floating Help Button */}
+      <FloatingHelpButton onShowGuide={() => setShowUserGuide(true)} />
 
       {/* Back to Top Button */}
       <button
