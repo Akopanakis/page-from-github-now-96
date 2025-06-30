@@ -244,7 +244,11 @@ const MainTabs: React.FC<MainTabsProps> = ({
           {/* Advanced Tab - Premium Only */}
           <TabsContent value="advanced" className="space-y-6">
             {isPremium ? (
-              <AdvancedFeaturesSection results={results} formData={formData} />
+              <AdvancedCostingFeatures
+                formData={formData}
+                results={results}
+                onUpdateFormData={updateFormData}
+              />
             ) : (
               <PremiumFeatureMessage feature="Advanced Features" />
             )}
