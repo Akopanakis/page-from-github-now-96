@@ -467,12 +467,12 @@ const Index = () => {
         <OnboardingTour />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="relative max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Example Data Banner */}
         {!hasLoadedExample && (
-          <Card className="mb-8 bg-gradient-to-r from-green-50 to-blue-50 border-green-200">
-            <div className="p-6">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <Card className="mb-6 lg:mb-8 bg-gradient-to-r from-green-50 to-blue-50 border-green-200 shadow-lg">
+            <div className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
                 <div className="flex items-center gap-4">
                   <div className="p-3 bg-green-100 rounded-full">
                     <PlayCircle className="w-6 h-6 text-green-600" />
@@ -541,9 +541,9 @@ const Index = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-1 gap-6 lg:gap-8">
           {/* Left Column - Form */}
-          <div className="lg:col-span-2" data-tour="form">
+          <div className="xl:col-span-2" data-tour="form">
             <Card className="shadow-2xl border-0 overflow-hidden bg-white/95 backdrop-blur-sm">
               <CardHeader className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 via-indigo-600/90 to-purple-600/90"></div>
