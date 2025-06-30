@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -30,6 +30,10 @@ import {
   Globe,
   Bookmark,
   HelpCircle,
+  Package,
+  Activity,
+  Briefcase,
+  TrendingDown,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -45,13 +49,21 @@ const Sidebar: React.FC<SidebarProps> = ({
   isPremium,
   className = "",
 }) => {
-  const { language } = useLanguage();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const { language, t } = useLanguage();
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    const saved = localStorage.getItem("kostopro-sidebar-collapsed");
+    return saved === "true";
+  });
+
+  // Save collapse state
+  useEffect(() => {
+    localStorage.setItem("kostopro-sidebar-collapsed", isCollapsed.toString());
+  }, [isCollapsed]);
 
   const navigationItems = [
     {
       id: "basics",
-      label: language === "el" ? "Βασικά Στοιχεία" : "Basic Info",
+      label: t("nav.basics"),
       icon: Fish,
       category: "main",
       description:
@@ -59,29 +71,29 @@ const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       id: "processing",
-      label: language === "el" ? "Επεξεργασία" : "Processing",
+      label: t("processing.phases"),
       icon: Settings,
       category: "main",
       description:
-        language === "el" ? "��άσεις επεξεργασίας" : "Processing phases",
+        language === "el" ? "Φάσεις επεξεργασίας" : "Processing phases",
     },
     {
       id: "costs",
-      label: language === "el" ? "Κόστη" : "Costs",
+      label: t("nav.costs"),
       icon: Calculator,
       category: "main",
       description: language === "el" ? "Διαχείριση κόστων" : "Cost management",
     },
     {
       id: "transport",
-      label: language === "el" ? "Μεταφορά" : "Transport",
+      label: t("nav.transport"),
       icon: Truck,
       category: "main",
       description: language === "el" ? "Κόστη μεταφοράς" : "Transport costs",
     },
     {
       id: "analysis",
-      label: language === "el" ? "Ανάλυση" : "Analysis",
+      label: t("nav.analysis"),
       icon: BarChart3,
       category: "analysis",
       description:
@@ -97,12 +109,23 @@ const Sidebar: React.FC<SidebarProps> = ({
         language === "el" ? "Εξειδικευμένη ανάλυση" : "Specialized analysis",
     },
     {
+      id: "cost-optimization",
+      label: language === "el" ? "Βελτιστοποίηση Κόστους" : "Cost Optimization",
+      icon: TrendingDown,
+      category: "analysis",
+      isPremium: true,
+      description:
+        language === "el"
+          ? "Αυτόματη βελτιστοποίηση"
+          : "Automated optimization",
+    },
+    {
       id: "dashboard",
-      label: language === "el" ? "Dashboard" : "Dashboard",
+      label: "Dashboard",
       icon: LineChart,
       category: "dashboard",
       isPremium: true,
-      description: language === "el" ? "Επισκ��πηση KPI" : "KPI overview",
+      description: language === "el" ? "Επισκόπηση KPI" : "KPI overview",
     },
     {
       id: "executive-dashboard",
@@ -115,9 +138,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       id: "financial-ratios",
-      label:
-        language === "el" ? "Χρηματοοικονομικοί Δείκτες" : "Financial Ratios",
-      icon: BarChart3,
+      label: t("financial.ratios"),
+      icon: Activity,
       category: "analysis",
       isPremium: true,
       description:
@@ -125,7 +147,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       id: "market-trends",
-      label: language === "el" ? "Τάσεις Αγοράς" : "Market Trends",
+      label: t("market.trends"),
       icon: TrendingUp,
       category: "analysis",
       isPremium: true,
@@ -133,8 +155,26 @@ const Sidebar: React.FC<SidebarProps> = ({
         language === "el" ? "Οικονομική ανάλυση" : "Economic analysis",
     },
     {
+      id: "pricing-models",
+      label: language === "el" ? "Μοντέλα Τιμολόγησης" : "Pricing Models",
+      icon: DollarSign,
+      category: "premium",
+      isPremium: true,
+      description:
+        language === "el" ? "Στρατηγικές τιμολόγησης" : "Pricing strategies",
+    },
+    {
+      id: "risk-analysis",
+      label: language === "el" ? "Ανάλυση Κινδύνου" : "Risk Analysis",
+      icon: AlertTriangle,
+      category: "premium",
+      isPremium: true,
+      description:
+        language === "el" ? "Αξιολόγηση κινδύνων" : "Risk assessment",
+    },
+    {
       id: "inventory",
-      label: language === "el" ? "Απόθεμα" : "Inventory",
+      label: t("inventory.management"),
       icon: Boxes,
       category: "premium",
       isPremium: true,
@@ -143,7 +183,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       id: "market",
-      label: language === "el" ? "Αγορά" : "Market",
+      label: t("market.intelligence"),
       icon: Globe,
       category: "premium",
       isPremium: true,
@@ -151,7 +191,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       id: "scenario",
-      label: language === "el" ? "Σενάρια" : "Scenarios",
+      label: t("scenario.analysis"),
       icon: Target,
       category: "premium",
       isPremium: true,
@@ -159,7 +199,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       id: "forecast",
-      label: language === "el" ? "Πρόβλεψη" : "Forecast",
+      label: t("forecast.revenue"),
       icon: TrendingUp,
       category: "premium",
       isPremium: true,
@@ -167,8 +207,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       id: "financial",
-      label: language === "el" ? "Χρηματοοικονομικά" : "Financial",
-      icon: DollarSign,
+      label: language === "el" ? "Χρηματοοικονομικά" : "Financial Models",
+      icon: Briefcase,
       category: "premium",
       isPremium: true,
       description:
@@ -184,17 +224,17 @@ const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       id: "analysis",
-      label: language === "el" ? "Ανάλυση" : "Analysis",
+      label: t("nav.analysis"),
       icon: BarChart3,
     },
     {
       id: "dashboard",
-      label: language === "el" ? "Dashboard" : "Dashboard",
+      label: "Dashboard",
       icon: LineChart,
     },
     {
       id: "premium",
-      label: language === "el" ? "Premium" : "Premium",
+      label: "Premium",
       icon: Crown,
     },
   ];
@@ -213,27 +253,30 @@ const Sidebar: React.FC<SidebarProps> = ({
         key={item.id}
         variant={isActive ? "default" : "ghost"}
         className={`
-          w-full justify-start h-auto p-3 mb-1 transition-all duration-200
+          w-full transition-all duration-200 mb-1
+          ${isCollapsed ? "h-12 p-2 justify-center" : "h-auto p-3 justify-start"}
           ${isActive ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg" : ""}
           ${isDisabled ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100 hover:shadow-md"}
-          ${isCollapsed ? "px-2" : "px-3"}
         `}
         onClick={() => !isDisabled && setActiveTab(item.id)}
         disabled={isDisabled}
+        title={isCollapsed ? item.label : undefined}
       >
-        <div className="flex items-center w-full">
+        <div
+          className={`flex items-center ${isCollapsed ? "justify-center" : "w-full"}`}
+        >
           <Icon
             className={`${isCollapsed ? "w-5 h-5" : "w-4 h-4 mr-3"} flex-shrink-0`}
           />
           {!isCollapsed && (
-            <div className="flex-1 text-left">
+            <div className="flex-1 text-left min-w-0">
               <div className="flex items-center justify-between">
-                <span className="font-medium">{item.label}</span>
+                <span className="font-medium truncate">{item.label}</span>
                 {item.isPremium && (
-                  <Crown className="w-3 h-3 text-yellow-500 ml-2" />
+                  <Crown className="w-3 h-3 text-yellow-500 ml-2 flex-shrink-0" />
                 )}
               </div>
-              <div className="text-xs opacity-70 mt-0.5">
+              <div className="text-xs opacity-70 mt-0.5 truncate">
                 {item.description}
               </div>
             </div>
@@ -243,38 +286,59 @@ const Sidebar: React.FC<SidebarProps> = ({
     );
   };
 
+  const renderCategoryHeader = (category: any) => {
+    const Icon = category.icon;
+
+    if (isCollapsed) {
+      return (
+        <div className="flex justify-center py-2 mb-2" key={category.id}>
+          <Icon className="w-4 h-4 text-gray-400" title={category.label} />
+        </div>
+      );
+    }
+
+    return (
+      <div key={category.id} className="px-3 py-2 mb-2">
+        <h4 className="text-sm font-semibold text-gray-600 uppercase tracking-wider flex items-center">
+          <Icon className="w-4 h-4 mr-2" />
+          {category.label}
+        </h4>
+      </div>
+    );
+  };
+
   return (
     <Card
-      className={`${className} h-full overflow-hidden shadow-xl border-r-2 border-gray-200`}
+      className={`${className} h-full overflow-hidden shadow-xl border-r-2 border-gray-200 transition-all duration-300 ${
+        isCollapsed ? "w-16" : "w-80"
+      }`}
     >
-      <div className="flex flex-col h-full">
-        {/* Header */}
-        <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-          <div className="flex items-center justify-between">
-            {!isCollapsed && (
-              <div className="flex items-center space-x-2">
-                <Fish className="w-6 h-6" />
-                <div>
-                  <h2 className="font-bold text-lg">KostoPro</h2>
-                  <p className="text-xs opacity-80">
-                    {language === "el" ? "Πλοήγηση" : "Navigation"}
-                  </p>
-                </div>
-              </div>
+      <div className="h-full flex flex-col">
+        {/* Header with collapse toggle */}
+        <div
+          className={`flex items-center justify-between p-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white ${
+            isCollapsed ? "px-2" : "px-4"
+          }`}
+        >
+          {!isCollapsed && (
+            <div className="flex items-center">
+              <Fish className="w-6 h-6 mr-2" />
+              <span className="font-bold text-lg">KostoPro</span>
+            </div>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="text-white hover:bg-white/20 p-1.5"
+            title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          >
+            {isCollapsed ? (
+              <ChevronRight className="w-4 h-4" />
+            ) : (
+              <ChevronLeft className="w-4 h-4" />
             )}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className="text-white hover:bg-white/20 p-1"
-            >
-              {isCollapsed ? (
-                <ChevronRight className="w-4 h-4" />
-              ) : (
-                <ChevronLeft className="w-4 h-4" />
-              )}
-            </Button>
-          </div>
+          </Button>
         </div>
 
         {/* Navigation */}
@@ -288,88 +352,42 @@ const Sidebar: React.FC<SidebarProps> = ({
 
             return (
               <div key={category.id} className="mb-4">
-                {!isCollapsed && (
-                  <div className="flex items-center space-x-2 px-2 py-2 text-sm font-semibold text-gray-600">
-                    <category.icon className="w-4 h-4" />
-                    <span>{category.label}</span>
-                    {category.id === "premium" && !isPremium && (
-                      <Badge
-                        variant="outline"
-                        className="text-xs border-yellow-500 text-yellow-600"
-                      >
-                        {language === "el" ? "Απαιτείται" : "Required"}
-                      </Badge>
-                    )}
-                  </div>
-                )}
-
-                {isCollapsed && (
-                  <div className="flex justify-center py-1 mb-2">
-                    <category.icon className="w-4 h-4 text-gray-600" />
-                  </div>
-                )}
-
+                {renderCategoryHeader(category)}
                 <div className="space-y-1">
                   {categoryItems.map(renderNavigationItem)}
                 </div>
-
-                {!isCollapsed && <Separator className="mt-3" />}
+                {!isCollapsed &&
+                  categories.indexOf(category) < categories.length - 1 && (
+                    <Separator className="my-4" />
+                  )}
               </div>
             );
           })}
         </div>
 
-        {/* Footer */}
-        <div className="p-3 border-t border-gray-200 bg-gray-50">
-          {!isCollapsed ? (
-            <div className="space-y-2">
-              {!isPremium && (
-                <div className="bg-gradient-to-r from-purple-100 to-pink-100 p-3 rounded-lg border border-purple-200">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Crown className="w-4 h-4 text-purple-600" />
-                    <span className="text-sm font-semibold text-purple-800">
-                      {language === "el"
-                        ? "Αναβάθμιση Premium"
-                        : "Upgrade Premium"}
-                    </span>
-                  </div>
-                  <p className="text-xs text-purple-700 mb-2">
-                    {language === "el"
-                      ? "Ξεκλειδώστε όλες τις δυνατότητες"
-                      : "Unlock all features"}
-                  </p>
-                  <Button
-                    size="sm"
-                    className="w-full bg-purple-600 hover:bg-purple-700"
-                  >
-                    <Crown className="w-3 h-3 mr-1" />
-                    {language === "el" ? "Αναβάθμιση" : "Upgrade"}
-                  </Button>
-                </div>
-              )}
-
-              <div className="text-center">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full text-gray-600 hover:text-gray-800"
-                >
-                  <HelpCircle className="w-4 h-4 mr-2" />
-                  {language === "el" ? "Βοήθεια" : "Help"}
-                </Button>
+        {/* Premium indicator */}
+        {!isCollapsed && (
+          <div className="p-4 border-t">
+            <div
+              className={`text-center p-3 rounded-lg ${
+                isPremium
+                  ? "bg-gradient-to-r from-yellow-400 to-orange-400 text-white"
+                  : "bg-gray-100 border-2 border-dashed border-gray-300"
+              }`}
+            >
+              <Crown className="w-6 h-6 mx-auto mb-2" />
+              <div className="text-sm font-medium">
+                {isPremium
+                  ? language === "el"
+                    ? "Premium Ενεργό"
+                    : "Premium Active"
+                  : language === "el"
+                    ? "Αναβάθμιση σε Premium"
+                    : "Upgrade to Premium"}
               </div>
             </div>
-          ) : (
-            <div className="flex flex-col items-center space-y-2">
-              <Button variant="ghost" size="sm" className="p-2">
-                <Crown className="w-4 h-4 text-purple-600" />
-              </Button>
-              <Button variant="ghost" size="sm" className="p-2">
-                <HelpCircle className="w-4 h-4 text-gray-600" />
-              </Button>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </Card>
   );
