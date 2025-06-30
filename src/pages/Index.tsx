@@ -123,7 +123,7 @@ const Index = () => {
     }
 
     // Check for premium mode in localStorage
-    const savedPremium = localStorage.getItem("isPremium");
+    const savedPremium = safeGetItem("isPremium");
     if (savedPremium === "true") {
       setIsPremium(true);
     }
