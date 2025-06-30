@@ -194,6 +194,14 @@ class LibraryLoader {
 
     return false;
   }
+
+  async load(libraryName: string): Promise<void> {
+    const config = CDN_LIBRARIES.find((lib) => lib.name === libraryName);
+    if (!config) {
+      throw new Error(`Library "${libraryName}" not found in CDN_LIBRARIES`);
+    }
+    return this.loadLibrary(config);
+  }
 }
 
 export const libraryLoader = new LibraryLoader();
