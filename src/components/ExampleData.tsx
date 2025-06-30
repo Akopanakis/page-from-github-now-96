@@ -19,6 +19,7 @@ import {
   Award,
   Star,
   Globe,
+  Target,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -113,7 +114,7 @@ const ExampleData: React.FC<ExampleDataProps> = ({
         weight: 0.4,
         quantity: 2500,
         purchasePrice: 8.5,
-        origin: "Κρήτη, Ελλάδα",
+        origin: "Κρήτη, Ελ��άδα",
         quality: "A+",
         supplierName: "Ιχθυοκαλλιέργειες Κρήτης",
         targetSellingPrice: 12.8,
@@ -365,7 +366,7 @@ const ExampleData: React.FC<ExampleDataProps> = ({
         processingPhases: [
           {
             id: "1",
-            name: "Καθαρισμός",
+            name: "Καθα��ισμός",
             lossPercentage: 30,
             costPerKg: 3.5,
             duration: 1.8,
