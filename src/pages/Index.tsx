@@ -18,6 +18,8 @@ import DataExport from "@/components/DataExport";
 import SmartInsightsPanel from "@/components/SmartInsightsPanel";
 import CompanySettings from "@/components/CompanySettings";
 import ExampleData from "@/components/ExampleData";
+import EnhancedCostAnalysis from "@/components/EnhancedCostAnalysis";
+import ProfitabilityAnalysis from "@/components/ProfitabilityAnalysis";
 import { CompanyInfo } from "@/types/company";
 import { libraryLoader } from "@/utils/libraryLoader";
 import {
@@ -367,7 +369,7 @@ const Index = () => {
       processingPhases: [
         {
           id: "1",
-          name: "Καθάρισμα",
+          name: "Καθά��ισμα",
           lossPercentage: 20, // από 10kg -> 8kg
           costPerKg: 0.3,
           duration: 0.5,
@@ -593,7 +595,11 @@ const Index = () => {
             />
 
             {results && (
-              <SmartInsightsPanel results={results} formData={formData} />
+              <>
+                <SmartInsightsPanel results={results} formData={formData} />
+                <EnhancedCostAnalysis results={results} formData={formData} />
+                <ProfitabilityAnalysis results={results} formData={formData} />
+              </>
             )}
 
             <div data-tour="export" className="space-y-4">
