@@ -129,19 +129,32 @@ const AdvancedAnalysisTab: React.FC<AdvancedAnalysisTabProps> = ({
   };
 
   const createMarginAnalysisData = () => {
-    if (!results) return [];
+    if (
+      !results ||
+      !results.totalCost ||
+      !results.netWeight ||
+      results.netWeight <= 0
+    )
+      return [];
 
-    const basePrice = results.totalCost / results.netWeight;
+    const basePrice = Number(results.totalCost) / Number(results.netWeight);
+    if (!isFinite(basePrice) || basePrice <= 0) return [];
+
     const margins = [10, 15, 20, 25, 30, 35, 40, 45, 50];
 
-    return margins.map((margin) => ({
-      margin: margin,
-      marginLabel: `${margin}%`,
-      price: basePrice * (1 + margin / 100),
-      profit: basePrice * (1 + margin / 100) - basePrice,
-      competitiveness:
-        margin <= 25 ? "Υψηλή" : margin <= 35 ? "Μέτρια" : "Χαμηλή",
-    }));
+    return margins.map((margin) => {
+      const price = basePrice * (1 + margin / 100);
+      const profit = price - basePrice;
+
+      return {
+        margin: margin,
+        marginLabel: `${margin}%`,
+        price: Number(price.toFixed(2)),
+        profit: Number(profit.toFixed(2)),
+        competitiveness:
+          margin <= 25 ? "Υψηλή" : margin <= 35 ? "Μέτρια" : "Χαμηλή",
+      };
+    });
   };
 
   const createProfitabilityData = () => {
