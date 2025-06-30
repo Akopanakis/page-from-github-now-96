@@ -423,9 +423,9 @@ const AdvancedDashboard: React.FC<DashboardProps> = ({
   };
 
   const loadSavedLayout = () => {
-    const saved = localStorage.getItem("dashboardLayout");
+    const saved = safeGetJSON("dashboardLayout", null);
     if (saved) {
-      setDashboardLayout(JSON.parse(saved));
+      setDashboardLayout(saved);
     }
   };
 
