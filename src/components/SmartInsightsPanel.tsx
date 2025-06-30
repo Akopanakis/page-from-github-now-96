@@ -413,7 +413,10 @@ const SmartInsightsPanel: React.FC<SmartInsightsPanelProps> = ({
                 <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 hover:shadow-md transition-shadow">
                   <div className="text-center">
                     <div className="text-2xl font-bold text-green-700 dark:text-green-400 mb-1">
-                      {isFinite(results.efficiencyScore) ? results.efficiencyScore.toFixed(0) : "0"}%
+                      {isFinite(results.efficiencyScore)
+                        ? results.efficiencyScore.toFixed(0)
+                        : "0"}
+                      %
                     </div>
                     <div className="text-xs text-green-600 dark:text-green-500 font-medium">
                       {language === "el" ? "Απόδοση" : "Efficiency"}
@@ -425,7 +428,10 @@ const SmartInsightsPanel: React.FC<SmartInsightsPanelProps> = ({
                 <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 hover:shadow-md transition-shadow">
                   <div className="text-center">
                     <div className="text-2xl font-bold text-blue-700 dark:text-blue-400 mb-1">
-                      {isFinite(results.profitMargin) ? results.profitMargin.toFixed(1) : "0.0"}%
+                      {isFinite(results.profitMargin)
+                        ? results.profitMargin.toFixed(1)
+                        : "0.0"}
+                      %
                     </div>
                     <div className="text-xs text-blue-600 dark:text-blue-500 font-medium">
                       {language === "el" ? "Περιθώριο" : "Margin"}
@@ -455,13 +461,18 @@ const SmartInsightsPanel: React.FC<SmartInsightsPanelProps> = ({
                 <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 hover:shadow-md transition-shadow">
                   <div className="text-center">
                     <div className="text-lg font-bold text-orange-700 dark:text-orange-400 mb-1">
-                      €{isFinite(results.totalCosts) ? (results.totalCosts / 1000).toFixed(1) : "0.0"}k
-                  </div>
-                  <div className="text-xs text-orange-600">
-                    {language === "el" ? "Συν. Κόστος" : "Total Cost"}
+                      €
+                      {isFinite(results.totalCosts)
+                        ? (results.totalCosts / 1000).toFixed(1)
+                        : "0.0"}
+                      k
+                    </div>
+                    <div className="text-xs text-orange-600 dark:text-orange-500 font-medium">
+                      {language === "el" ? "Συν. Κόστος" : "Total Cost"}
+                    </div>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         )}
