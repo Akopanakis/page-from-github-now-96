@@ -399,54 +399,63 @@ const SmartInsightsPanel: React.FC<SmartInsightsPanelProps> = ({
           })}
         </div>
 
-        {/* Summary Section */}
+        {/* Performance Summary Section */}
         {results && (
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <h5 className="font-medium text-gray-800 dark:text-gray-200 mb-3 flex items-center gap-2">
-              <PieChart className="w-4 h-4" />
-              {language === "el" ? "Σύνοψη Απόδοσης" : "Performance Summary"}
-            </h5>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {results.efficiencyScore !== undefined && (
-                <div className="text-center p-3 bg-gradient-to-br from-green-50 to-green-100 rounded-lg">
-                  <div className="text-2xl font-bold text-green-700">
-                    {results.efficiencyScore.toFixed(0)}%
-                  </div>
-                  <div className="text-xs text-green-600">
-                    {language === "el" ? "Απόδοση" : "Efficiency"}
-                  </div>
-                </div>
-              )}
-              {results.profitMargin !== undefined && (
-                <div className="text-center p-3 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-700">
-                    {results.profitMargin.toFixed(1)}%
-                  </div>
-                  <div className="text-xs text-blue-600">
-                    {language === "el" ? "Περιθώριο" : "Margin"}
+          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-lg p-4 border border-slate-200 dark:border-slate-600">
+              <h5 className="font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
+                <PieChart className="w-5 h-5 text-blue-600" />
+                {language === "el" ? "Σύνοψη Απόδοσης" : "Performance Summary"}
+              </h5>
+
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                {/* Efficiency Score */}
+                <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 hover:shadow-md transition-shadow">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-green-700 dark:text-green-400 mb-1">
+                      {isFinite(results.efficiencyScore) ? results.efficiencyScore.toFixed(0) : "0"}%
+                    </div>
+                    <div className="text-xs text-green-600 dark:text-green-500 font-medium">
+                      {language === "el" ? "Απόδοση" : "Efficiency"}
+                    </div>
                   </div>
                 </div>
-              )}
-              {results.competitivePosition && (
-                <div className="text-center p-3 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg">
-                  <div className="text-lg font-bold text-purple-700">
-                    {language === "el"
-                      ? results.competitivePosition === "Competitive"
-                        ? "Ανταγωνιστικό"
-                        : results.competitivePosition === "Premium"
-                          ? "Premium"
-                          : "Μέτριο"
-                      : results.competitivePosition}
-                  </div>
-                  <div className="text-xs text-purple-600">
-                    {language === "el" ? "Θέση" : "Position"}
+
+                {/* Profit Margin */}
+                <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 hover:shadow-md transition-shadow">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-blue-700 dark:text-blue-400 mb-1">
+                      {isFinite(results.profitMargin) ? results.profitMargin.toFixed(1) : "0.0"}%
+                    </div>
+                    <div className="text-xs text-blue-600 dark:text-blue-500 font-medium">
+                      {language === "el" ? "Περιθώριο" : "Margin"}
+                    </div>
                   </div>
                 </div>
-              )}
-              {results.totalCosts !== undefined && (
-                <div className="text-center p-3 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg">
-                  <div className="text-lg font-bold text-orange-700">
-                    €{(results.totalCosts / 1000).toFixed(1)}k
+
+                {/* Competitive Position */}
+                <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 hover:shadow-md transition-shadow">
+                  <div className="text-center">
+                    <div className="text-sm font-bold text-purple-700 dark:text-purple-400 mb-1">
+                      {language === "el"
+                        ? results.competitivePosition === "Competitive"
+                          ? "Ανταγωνιστικό"
+                          : results.competitivePosition === "Premium"
+                            ? "Premium"
+                            : "Μέτριο"
+                        : results.competitivePosition || "Average"}
+                    </div>
+                    <div className="text-xs text-purple-600 dark:text-purple-500 font-medium">
+                      {language === "el" ? "Θέση" : "Position"}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Total Costs */}
+                <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 hover:shadow-md transition-shadow">
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-orange-700 dark:text-orange-400 mb-1">
+                      €{isFinite(results.totalCosts) ? (results.totalCosts / 1000).toFixed(1) : "0.0"}k
                   </div>
                   <div className="text-xs text-orange-600">
                     {language === "el" ? "Συν. Κόστος" : "Total Cost"}
