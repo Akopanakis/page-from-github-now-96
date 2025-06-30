@@ -12,14 +12,12 @@ import MainTabs from "@/components/MainTabs";
 import PremiumInfoCard from "@/components/PremiumInfoCard";
 import FileUpload from "@/components/FileUpload";
 import OnboardingTour from "@/components/OnboardingTour";
-import ResultsSection from "@/components/ResultsSection";
+import CompactResultsPanel from "@/components/CompactResultsPanel";
 import PDFExport from "@/components/PDFExport";
 import DataExport from "@/components/DataExport";
-import SmartInsightsPanel from "@/components/SmartInsightsPanel";
 import CompanySettings from "@/components/CompanySettings";
 import ExampleData from "@/components/ExampleData";
-import EnhancedCostAnalysis from "@/components/EnhancedCostAnalysis";
-import ProfitabilityAnalysis from "@/components/ProfitabilityAnalysis";
+import UserGuide from "@/components/UserGuide";
 import { CompanyInfo } from "@/types/company";
 import { libraryLoader } from "@/utils/libraryLoader";
 import {
@@ -89,6 +87,7 @@ const Index = () => {
   const [showTooltips, setShowTooltips] = useState(true);
   const [showExampleData, setShowExampleData] = useState(false);
   const [hasLoadedExample, setHasLoadedExample] = useState(false);
+  const [showUserGuide, setShowUserGuide] = useState(false);
 
   // Refs
   const backToTopRef = useRef<HTMLButtonElement>(null);
@@ -369,7 +368,7 @@ const Index = () => {
       processingPhases: [
         {
           id: "1",
-          name: "Καθά��ισμα",
+          name: "Καθάρισμα",
           lossPercentage: 20, // από 10kg -> 8kg
           costPerKg: 0.3,
           duration: 0.5,
@@ -463,6 +462,7 @@ const Index = () => {
         setIsPremium={setIsPremium}
         showFileUpload={showFileUpload}
         setShowFileUpload={setShowFileUpload}
+        onShowGuide={() => setShowUserGuide(true)}
       />
 
       <div id="start-tour">
@@ -585,22 +585,13 @@ const Index = () => {
 
           {/* Right Column - Results */}
           <div className="space-y-6" data-tour="results">
-            <ResultsSection
+            <CompactResultsPanel
               results={results}
               formData={formData}
               isCalculating={isCalculating}
-              isPremium={isPremium}
               onCalculate={calculate}
               onReset={resetForm}
             />
-
-            {results && (
-              <>
-                <SmartInsightsPanel results={results} formData={formData} />
-                <EnhancedCostAnalysis results={results} formData={formData} />
-                <ProfitabilityAnalysis results={results} formData={formData} />
-              </>
-            )}
 
             <div data-tour="export" className="space-y-4">
               <CompanySettings onChange={handleCompanyChange} />
@@ -631,6 +622,12 @@ const Index = () => {
         isVisible={showExampleData}
         onLoadExample={loadExampleData}
         onClose={() => setShowExampleData(false)}
+      />
+
+      {/* User Guide Modal */}
+      <UserGuide
+        isOpen={showUserGuide}
+        onClose={() => setShowUserGuide(false)}
       />
 
       {/* Back to Top Button */}
