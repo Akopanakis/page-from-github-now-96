@@ -169,11 +169,8 @@ export const useCalculation = () => {
       );
 
       // Auto-save to localStorage
-      localStorage.setItem("kostoProFormData", JSON.stringify(formData));
-      localStorage.setItem(
-        "kostoProResults",
-        JSON.stringify(calculationResults),
-      );
+      safeSetJSON("kostoProFormData", formData);
+      safeSetJSON("kostoProResults", calculationResults);
     } catch (error) {
       console.error("Calculation error:", error);
       const errorMessage =
