@@ -58,8 +58,7 @@ const Index = () => {
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo>(() => {
-    const stored = localStorage.getItem("companyInfo");
-    return stored ? JSON.parse(stored) : { logoUrl: "", name: "", address: "" };
+    return safeGetJSON("companyInfo", { logoUrl: "", name: "", address: "" });
   });
 
   const [directCosts, setDirectCosts] = useState<CostItem[]>([
