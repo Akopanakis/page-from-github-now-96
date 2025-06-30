@@ -5,6 +5,7 @@ import { FileText, Download, Loader2, FileCheck } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { libraryLoader } from "@/utils/libraryLoader";
 import { toast } from "@/components/ui/sonner";
+import { jsPDF } from "jspdf";
 
 interface PDFExportProps {
   formData: any;
@@ -33,15 +34,32 @@ const PDFExport: React.FC<PDFExportProps> = ({
     setIsExporting(true);
 
     try {
-      // Wait for jsPDF library
-      await libraryLoader.waitForLibrary("jspdf");
+      // First try to load jsPDF library with explicit loading
+      console.log("Initializing PDF generation...");
 
-      if (!window.jsPDF) {
-        throw new Error("jsPDF library not available");
+      // Use the imported jsPDF directly - no need for window loading
+      let pdf;
+
+      try {
+        // Try direct import first
+        pdf = new jsPDF("p", "mm", "a4");
+        console.log("jsPDF initialized successfully via direct import");
+      } catch (directImportError) {
+        console.log("Direct import failed, trying CDN fallback...");
+
+        // Fallback to CDN loading
+        await libraryLoader.waitForLibrary("jspdf", 5000);
+
+        if (!window.jsPDF) {
+          throw new Error(
+            "jsPDF library could not be loaded. Please refresh the page and try again.",
+          );
+        }
+
+        pdf = new window.jsPDF("p", "mm", "a4");
+        console.log("jsPDF initialized successfully via CDN");
       }
-
-      const { jsPDF } = window;
-      const pdf = new jsPDF("p", "mm", "a4");
+      // pdf instance already created above
 
       // Add Greek font support
       pdf.setFont("Helvetica");
@@ -162,7 +180,7 @@ const PDFExport: React.FC<PDFExportProps> = ({
           `€${results.totalCosts?.toLocaleString("el-GR") || "0"}`,
         ],
         [
-          `${language === "el" ? "Κόστος/kg:" : "Cost per kg:"}`,
+          `${language === "el" ? "Κό��τος/kg:" : "Cost per kg:"}`,
           `€${results.costPerKg?.toFixed(2) || "0.00"}`,
         ],
         [
