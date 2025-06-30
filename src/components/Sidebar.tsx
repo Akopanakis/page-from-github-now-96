@@ -63,7 +63,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       icon: Settings,
       category: "main",
       description:
-        language === "el" ? "Φάσεις επεξεργασίας" : "Processing phases",
+        language === "el" ? "��άσεις επεξεργασίας" : "Processing phases",
     },
     {
       id: "costs",
@@ -102,7 +102,35 @@ const Sidebar: React.FC<SidebarProps> = ({
       icon: LineChart,
       category: "dashboard",
       isPremium: true,
-      description: language === "el" ? "Επισκόπηση KPI" : "KPI overview",
+      description: language === "el" ? "Επισκ��πηση KPI" : "KPI overview",
+    },
+    {
+      id: "executive-dashboard",
+      label: language === "el" ? "Executive Dashboard" : "Executive Dashboard",
+      icon: Crown,
+      category: "dashboard",
+      isPremium: true,
+      description:
+        language === "el" ? "Διοικητική επισκόπηση" : "Executive overview",
+    },
+    {
+      id: "financial-ratios",
+      label:
+        language === "el" ? "Χρηματοοικονομικοί Δείκτες" : "Financial Ratios",
+      icon: BarChart3,
+      category: "analysis",
+      isPremium: true,
+      description:
+        language === "el" ? "Αναλυτικοί δείκτες" : "Financial analytics",
+    },
+    {
+      id: "market-trends",
+      label: language === "el" ? "Τάσεις Αγοράς" : "Market Trends",
+      icon: TrendingUp,
+      category: "analysis",
+      isPremium: true,
+      description:
+        language === "el" ? "Οικονομική ανάλυση" : "Economic analysis",
     },
     {
       id: "inventory",
