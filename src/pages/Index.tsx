@@ -402,7 +402,7 @@ const Index = () => {
           to: "Πειραιάς",
           distance: 12000,
           cost: 800,
-          type: "Ναυτιλιακό",
+          type: "Να��τιλιακό",
         },
         {
           id: "2",
@@ -644,7 +644,7 @@ const Index = () => {
         onClick={() => {
           document.body.classList.toggle("dark");
           const isDark = document.body.classList.contains("dark");
-          localStorage.setItem("theme", isDark ? "dark" : "light");
+          safeSetItem("theme", isDark ? "dark" : "light");
         }}
         aria-label="Εναλλαγή θέματος"
       >
