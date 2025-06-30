@@ -222,8 +222,8 @@ export const useCalculation = () => {
     setErrors([]);
 
     // Clear localStorage
-    localStorage.removeItem("kostoProFormData");
-    localStorage.removeItem("kostoProResults");
+    safeRemoveItem("kostoProFormData");
+    safeRemoveItem("kostoProResults");
 
     toast.success(
       language === "el"
