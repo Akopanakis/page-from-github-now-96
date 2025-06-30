@@ -22,6 +22,7 @@ import RevenueForecast from "@/components/RevenueForecast";
 import FinancialModels from "@/components/FinancialModels";
 import AnalysisTab from "@/components/AnalysisTab";
 import AdvancedAnalysisTab from "@/components/AdvancedAnalysisTab";
+import AdvancedCostingFeatures from "@/components/AdvancedCostingFeatures";
 
 interface MainTabsProps {
   activeTab: string;
