@@ -359,7 +359,7 @@ const Index = () => {
       targetSellingPrice: 12.0, // €/kg
       origin: "Αργεντίνη",
       quality: "A",
-      notes: "Premium θράψαλο block, κατάψυξη στη θάλασσα",
+      notes: "Premium θράψα��ο block, κατάψυξη στη θάλασσα",
 
       // Pricing
       profitMargin: 25,
@@ -491,7 +491,7 @@ const Index = () => {
         <OnboardingTour />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+      <div className="relative max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 animate-in fade-in duration-700">
         {/* Example Data Banner */}
         {!hasLoadedExample && (
           <Card className="mb-6 lg:mb-8 bg-gradient-to-r from-green-50 to-blue-50 border-green-200 shadow-lg">
@@ -567,7 +567,10 @@ const Index = () => {
 
         <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-1 gap-6 lg:gap-8">
           {/* Left Column - Form */}
-          <div className="xl:col-span-2" data-tour="form">
+          <div
+            className="xl:col-span-2 animate-in slide-in-from-left duration-500"
+            data-tour="form"
+          >
             <Card className="shadow-2xl border-0 overflow-hidden bg-white/95 backdrop-blur-sm">
               <CardHeader className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 via-indigo-600/90 to-purple-600/90"></div>
@@ -606,7 +609,11 @@ const Index = () => {
           </div>
 
           {/* Right Column - Results */}
-          <div className="space-y-6" data-tour="results">
+          <div
+            className="space-y-6 animate-in slide-in-from-right duration-500"
+            style={{ animationDelay: "200ms" }}
+            data-tour="results"
+          >
             <CompactResultsPanel
               results={results}
               formData={formData}
