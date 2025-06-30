@@ -14,8 +14,7 @@ interface CompanySettingsProps {
 const CompanySettings: React.FC<CompanySettingsProps> = ({ onChange }) => {
   const { language } = useLanguage();
   const [companyInfo, setCompanyInfo] = React.useState<CompanyInfo>(() => {
-    const stored = localStorage.getItem("companyInfo");
-    return stored ? JSON.parse(stored) : { logoUrl: "", name: "", address: "" };
+    return safeGetJSON("companyInfo", { logoUrl: "", name: "", address: "" });
   });
 
   const handleChange = (field: keyof CompanyInfo, value: string) => {
