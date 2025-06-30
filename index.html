@@ -1,35 +1,276 @@
 <!doctype html>
-<html lang="en">
+<html lang="el">
   <head>
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1"
+      content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover"
+    />
+
+    <!-- Primary Meta Tags -->
+    <title>
+      KostoPro Enhanced - Επαγγελματικό Σύστημα Κοστολόγησης Αλιευτικών
+    </title>
+    <meta
+      name="title"
+      content="KostoPro Enhanced - Επαγγελματικό Σύστημα Κοστολόγησης Αλιευτικών"
     />
     <meta
       name="description"
-      content="KostoPro - Professional seafood costing and pricing application"
+      content="Προηγμένη εφαρμογή κοστολόγησης για τη βιομηχανία θαλασσινών. Ακριβείς υπολογισμοί κόστους, ανάλυση κερδοφορίας, executive dashboard και επαγγελματικές αναφορές PDF."
     />
     <meta
+      name="keywords"
+      content="κοστολόγηση, θαλασσινά, αλιεία, seafood costing, ψάρι, οστρακοειδή, κεφαλόποδα, business analysis, executive dashboard"
+    />
+    <meta name="author" content="Alexandros Kopanakis" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="Greek" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://kostopro-enhanced.vercel.app/" />
+    <meta
       property="og:title"
-      content="KostoPro - Seafood Costing Application"
+      content="KostoPro Enhanced - Επαγγελματικό Σύστημα Κοστολόγησης Αλιευτικών"
     />
     <meta
       property="og:description"
-      content="Professional cost calculation and pricing tool for seafood businesses"
+      content="Προηγμένη εφαρμογή κοστολόγησης για τη βιομηχανία θαλασσινών με executive dashboard, οικονομική ανάλυση και επαγγελματικές αναφορές."
     />
-    <meta property="og:type" content="website" />
+    <meta
+      property="og:image"
+      content="https://kostopro-enhanced.vercel.app/og-image.png"
+    />
+    <meta property="og:site_name" content="KostoPro Enhanced" />
+    <meta property="og:locale" content="el_GR" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta
+      property="twitter:url"
+      content="https://kostopro-enhanced.vercel.app/"
+    />
+    <meta
+      property="twitter:title"
+      content="KostoPro Enhanced - Επαγγελματικό Σύστημα Κοστολόγησης Αλιευτικών"
+    />
+    <meta
+      property="twitter:description"
+      content="Προηγμένη εφαρμογή κοστολόγησης για τη βιομηχανία θαλασσινών με executive dashboard, οικονομική ανάλυση και επαγγελματικές αναφορές."
+    />
+    <meta
+      property="twitter:image"
+      content="https://kostopro-enhanced.vercel.app/og-image.png"
+    />
+
+    <!-- Favicon and Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#3b82f6" />
+
+    <!-- PWA Configuration -->
+    <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#3b82f6" />
+    <meta name="background-color" content="#ffffff" />
+    <meta name="display" content="standalone" />
+    <meta name="orientation" content="portrait-primary" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="KostoPro" />
-    <title>KostoPro - Seafood Costing Application</title>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="apple-touch-icon" href="/manifest.json" />
+    <meta name="msapplication-TileColor" content="#3b82f6" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+
+    <!-- Mobile Optimization -->
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="KostoPro Enhanced" />
+
+    <!-- iOS Specific -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-touch-fullscreen" content="yes" />
+
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta
+      http-equiv="Referrer-Policy"
+      content="strict-origin-when-cross-origin"
+    />
+
+    <!-- Performance Optimization -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "KostoPro Enhanced",
+        "description": "Επαγγελματικό σύστημα κοστολόγησης για τη βιομηχανία αλιευτικών προϊόντων",
+        "url": "https://kostopro-enhanced.vercel.app/",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web Browser",
+        "creator": {
+          "@type": "Person",
+          "name": "Alexandros Kopanakis"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "EUR"
+        },
+        "featureList": [
+          "Κοστολόγηση αλιευτικών προϊόντων",
+          "Executive Dashboard",
+          "Οικονομική ανάλυση",
+          "PDF αναφορές",
+          "Excel/CSV export",
+          "Mobile responsive",
+          "PWA support"
+        ]
+      }
+    </script>
+
+    <!-- Google Fonts Preload -->
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript
+      ><link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap"
+    /></noscript>
+
+    <!-- Critical CSS (will be inlined by Vite) -->
+    <style>
+      /* Critical above-the-fold styles */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+        background: #f8fafc;
+        color: #1e293b;
+        overflow-x: hidden;
+      }
+
+      #root {
+        min-height: 100vh;
+        position: relative;
+      }
+
+      /* Loading indicator */
+      .loading-indicator {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        z-index: 9999;
+      }
+
+      .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #e2e8f0;
+        border-top: 4px solid #3b82f6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .loading-text {
+        color: #64748b;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+
+      /* Hide loading when app loads */
+      .app-loaded .loading-indicator {
+        display: none;
+      }
+
+      /* Safe area insets for mobile devices */
+      @supports (padding: max(0px)) {
+        body {
+          padding-left: max(0px, env(safe-area-inset-left));
+          padding-right: max(0px, env(safe-area-inset-right));
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Loading indicator shown while app initializes -->
+      <div class="loading-indicator">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Φόρτωση KostoPro Enhanced...</div>
+      </div>
+    </div>
+
+    <!-- Service Worker Registration -->
+    <script>
+      // Register service worker for PWA functionality
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/sw.js")
+            .then((registration) => {
+              console.log("SW registered: ", registration);
+            })
+            .catch((registrationError) => {
+              console.log("SW registration failed: ", registrationError);
+            });
+        });
+      }
+
+      // Remove loading indicator when app loads
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          document.body.classList.add("app-loaded");
+        }, 500);
+      });
+
+      // Performance monitoring
+      if ("performance" in window) {
+        window.addEventListener("load", () => {
+          setTimeout(() => {
+            const perfData = performance.getEntriesByType("navigation")[0];
+            console.log(
+              "Page Load Time:",
+              perfData.loadEventEnd - perfData.loadEventStart,
+              "ms",
+            );
+          }, 0);
+        });
+      }
+    </script>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
