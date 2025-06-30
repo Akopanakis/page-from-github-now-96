@@ -158,23 +158,33 @@ const AdvancedAnalysisTab: React.FC<AdvancedAnalysisTabProps> = ({
   };
 
   const createProfitabilityData = () => {
-    if (!results) return [];
+    if (
+      !results ||
+      !results.totalCost ||
+      !formData.quantity ||
+      formData.quantity <= 0
+    )
+      return [];
+
+    const baseUnitCost = Number(results.totalCost) / Number(formData.quantity);
+    const sellingPrice = Number(results.sellingPrice) || 0;
+
+    if (!isFinite(baseUnitCost) || baseUnitCost <= 0) return [];
 
     const quantities = [100, 250, 500, 750, 1000, 1500, 2000];
-    const baseUnitCost = results.totalCost / (formData.quantity || 1);
 
     return quantities.map((qty) => {
       const totalCost = baseUnitCost * qty;
-      const revenue = results.sellingPrice * qty;
+      const revenue = sellingPrice * qty;
       const profit = revenue - totalCost;
-      const margin = ((profit / revenue) * 100).toFixed(1);
+      const marginValue = revenue > 0 ? (profit / revenue) * 100 : 0;
 
       return {
         quantity: qty,
-        cost: totalCost,
-        revenue: revenue,
-        profit: profit,
-        margin: parseFloat(margin),
+        cost: Number(totalCost.toFixed(2)),
+        revenue: Number(revenue.toFixed(2)),
+        profit: Number(profit.toFixed(2)),
+        margin: Number(marginValue.toFixed(1)),
       };
     });
   };
@@ -292,7 +302,7 @@ const AdvancedAnalysisTab: React.FC<AdvancedAnalysisTabProps> = ({
                     : "Pricing Analysis",
                 labor:
                   language === "el"
-                    ? "Βελτιστοποίηση Εργασίας"
+                    ? "Βελτιστοποίηση Ερ��ασίας"
                     : "Labor Optimization",
                 packaging:
                   language === "el"
@@ -473,7 +483,7 @@ const AdvancedAnalysisTab: React.FC<AdvancedAnalysisTabProps> = ({
               <Package className="w-5 h-5 text-orange-600" />
               <span>
                 {language === "el"
-                  ? "Ανάλυση Συσκευασίας"
+                  ? "Ανάλυση Συσκευασί��ς"
                   : "Packaging Analysis"}
               </span>
             </CardTitle>
@@ -578,7 +588,7 @@ const AdvancedAnalysisTab: React.FC<AdvancedAnalysisTabProps> = ({
                 <li>
                   •{" "}
                   {language === "el"
-                    ? "Χαμηλή ζήτηση το χειμώνα - εστιάστε στην ποιότητα"
+                    ? "Χαμηλή ζήτηση το χειμώνα - εστι��στε στην ποιότητα"
                     : "Low demand in winter - focus on quality"}
                 </li>
                 <li>
