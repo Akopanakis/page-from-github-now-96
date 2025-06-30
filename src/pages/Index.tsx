@@ -438,7 +438,7 @@ const Index = () => {
 
   const handleCompanyChange = React.useCallback((info: CompanyInfo) => {
     setCompanyInfo(info);
-    localStorage.setItem("companyInfo", JSON.stringify(info));
+    safeSetJSON("companyInfo", info);
   }, []);
 
   const handleFileUpload = React.useCallback(
