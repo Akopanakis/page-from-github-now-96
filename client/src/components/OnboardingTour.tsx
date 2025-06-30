@@ -25,7 +25,7 @@ const OnboardingTour: React.FC = () => {
   const [run, setRun] = useState(false);
 
   useEffect(() => {
-    const completed = localStorage.getItem("tourCompleted");
+    const completed = safeGetItem("tourCompleted");
     if (!completed) {
       setRun(true);
     }
@@ -34,7 +34,7 @@ const OnboardingTour: React.FC = () => {
   const handleCallback = (data: CallBackProps) => {
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(data.status)) {
       setRun(false);
-      localStorage.setItem("tourCompleted", "true");
+      safeSetItem("tourCompleted", "true");
     }
   };
 
