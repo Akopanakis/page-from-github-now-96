@@ -68,6 +68,8 @@ const PDFExport: React.FC<PDFExportProps> = ({
       const leftMargin = 20;
       const rightMargin = 190;
       const lineHeight = 7;
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
 
       // Header with company info
       if (companyInfo.logoUrl) {
@@ -319,7 +321,7 @@ const PDFExport: React.FC<PDFExportProps> = ({
       pdf.setFontSize(12);
       pdf.setTextColor(59, 130, 246);
       pdf.text(
-        language === "el" ? "Ανάλυση Κερδοφορίας" : "Profitability Analysis",
+        language === "el" ? "Ανάλυση Κ��ρδοφορίας" : "Profitability Analysis",
         leftMargin,
         yPosition,
       );
