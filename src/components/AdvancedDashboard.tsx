@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { safeGetJSON, safeSetJSON } from "@/utils/safeStorage";
 import {
   BarChart3,
   LineChart,
@@ -195,7 +196,7 @@ const AdvancedDashboard: React.FC<DashboardProps> = ({
         id: "efficiency-drop",
         type: "info",
         title: "Μείωση Αποδοτικότητας",
-        message: "Η αποδοτικότητα της γραμμής παραγωγής Α έχει μειωθεί",
+        message: "Η αποδοτικ��τητα της γραμμής παραγωγής Α έχει μειωθεί",
         timestamp: Date.now() - 7200000,
       },
     ];
