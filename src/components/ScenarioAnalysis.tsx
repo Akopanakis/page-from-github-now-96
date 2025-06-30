@@ -169,7 +169,7 @@ const ScenarioAnalysis: React.FC = () => {
   };
 
   const saveScenarios = (scenariosToSave: Scenario[]) => {
-    localStorage.setItem("costingScenarios", JSON.stringify(scenariosToSave));
+    safeSetJSON("costingScenarios", scenariosToSave);
   };
 
   const createScenario = (
@@ -455,7 +455,7 @@ const ScenarioAnalysis: React.FC = () => {
       ["Κόστος Ενέργειας", scenario.parameters.energyCost],
       ["Κόστος Μεταφοράς", scenario.parameters.transportCost],
       ["Γενικά Έξοδα", scenario.parameters.overhead],
-      ["Όγκος Παραγωγής", scenario.parameters.productionVolume],
+      ["Όγκος Πα��αγωγής", scenario.parameters.productionVolume],
       ["Τιμή Πώλησης", scenario.parameters.sellingPrice],
       ["Ποσοστό Απωλειών (%)", scenario.parameters.wastageRate],
       ["Αποδοτικότητα (%)", scenario.parameters.efficiency],
