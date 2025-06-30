@@ -14,6 +14,7 @@ interface HeaderProps {
   setIsPremium: (value: boolean) => void;
   showFileUpload: boolean;
   setShowFileUpload: (value: boolean) => void;
+  onShowGuide?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -21,6 +22,7 @@ const Header: React.FC<HeaderProps> = ({
   setIsPremium,
   showFileUpload,
   setShowFileUpload,
+  onShowGuide,
 }) => {
   const { language, setLanguage, currency, setCurrency } = useLanguage();
   const { user } = useAuth();
