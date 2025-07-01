@@ -35,6 +35,7 @@ import {
   Globe,
   Target,
   Briefcase,
+  Factory,
 } from "lucide-react";
 
 interface MainTabsProps {
@@ -43,10 +44,23 @@ interface MainTabsProps {
   formData: any;
   updateFormData: (updates: any) => void;
   results: any;
-  calculate: () => void;
-  resetForm: () => void;
-  isCalculating: boolean;
+  calculate?: () => void;
+  resetForm?: () => void;
+  isCalculating?: boolean;
   isPremium: boolean;
+  directCosts?: any[];
+  indirectCosts?: any[];
+  transportLegs?: any[];
+  onUpdateCost?: (id: string, field: string, value: string | number) => void;
+  onAddCost?: (category: "direct" | "indirect") => void;
+  onRemoveCost?: (id: string) => void;
+  onUpdateTransport?: (
+    id: string,
+    field: string,
+    value: string | number,
+  ) => void;
+  onAddTransport?: () => void;
+  onRemoveTransport?: (id: string) => void;
 }
 
 const MainTabs: React.FC<MainTabsProps> = ({
@@ -59,6 +73,15 @@ const MainTabs: React.FC<MainTabsProps> = ({
   resetForm,
   isCalculating,
   isPremium,
+  directCosts = [],
+  indirectCosts = [],
+  transportLegs = [],
+  onUpdateCost = () => {},
+  onAddCost = () => {},
+  onRemoveCost = () => {},
+  onUpdateTransport = () => {},
+  onAddTransport = () => {},
+  onRemoveTransport = () => {},
 }) => {
   const { language, t } = useLanguage();
 
@@ -208,6 +231,22 @@ const MainTabs: React.FC<MainTabsProps> = ({
       category: "premium",
       isPremium: true,
     },
+    {
+      id: "production-economics",
+      label: language === "el" ? "Οικονομία Παραγωγής" : "Production Economics",
+      icon: Factory,
+      component: AdvancedFinancialModels, // Will show production tab
+      category: "premium",
+      isPremium: true,
+    },
+    {
+      id: "cost-theory",
+      label: language === "el" ? "Θεωρία Κόστους" : "Cost Theory",
+      icon: TrendingDown,
+      component: AdvancedFinancialModels, // Will show cost theory tab
+      category: "premium",
+      isPremium: true,
+    },
   ];
 
   // Filter tabs based on premium status and active tab
@@ -297,6 +336,16 @@ const MainTabs: React.FC<MainTabsProps> = ({
         isCalculating={isCalculating}
         onUpdateFormData={updateFormData}
         isPremium={isPremium}
+        directCosts={directCosts}
+        indirectCosts={indirectCosts}
+        transportLegs={transportLegs}
+        onUpdateCost={onUpdateCost}
+        onAddCost={onAddCost}
+        onRemoveCost={onRemoveCost}
+        onUpdateTransport={onUpdateTransport}
+        onAddTransport={onAddTransport}
+        onRemoveTransport={onRemoveTransport}
+        productType={formData.productType}
       />
     );
   };
