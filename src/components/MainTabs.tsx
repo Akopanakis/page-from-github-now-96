@@ -73,6 +73,15 @@ const MainTabs: React.FC<MainTabsProps> = ({
   resetForm,
   isCalculating,
   isPremium,
+  directCosts = [],
+  indirectCosts = [],
+  transportLegs = [],
+  onUpdateCost = () => {},
+  onAddCost = () => {},
+  onRemoveCost = () => {},
+  onUpdateTransport = () => {},
+  onAddTransport = () => {},
+  onRemoveTransport = () => {},
 }) => {
   const { language, t } = useLanguage();
 
