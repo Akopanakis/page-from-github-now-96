@@ -35,6 +35,7 @@ import {
   Globe,
   Target,
   Briefcase,
+  Factory,
 } from "lucide-react";
 
 interface MainTabsProps {
@@ -218,6 +219,22 @@ const MainTabs: React.FC<MainTabsProps> = ({
       label: language === "el" ? "Χρηματοοικονομικά" : "Financial Models",
       icon: Briefcase,
       component: AdvancedFinancialModels,
+      category: "premium",
+      isPremium: true,
+    },
+    {
+      id: "production-economics",
+      label: language === "el" ? "Οικονομία Παραγωγής" : "Production Economics",
+      icon: Factory,
+      component: AdvancedFinancialModels, // Will show production tab
+      category: "premium",
+      isPremium: true,
+    },
+    {
+      id: "cost-theory",
+      label: language === "el" ? "Θεωρία Κόστους" : "Cost Theory",
+      icon: TrendingDown,
+      component: AdvancedFinancialModels, // Will show cost theory tab
       category: "premium",
       isPremium: true,
     },
