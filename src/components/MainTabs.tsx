@@ -43,10 +43,23 @@ interface MainTabsProps {
   formData: any;
   updateFormData: (updates: any) => void;
   results: any;
-  calculate: () => void;
-  resetForm: () => void;
-  isCalculating: boolean;
+  calculate?: () => void;
+  resetForm?: () => void;
+  isCalculating?: boolean;
   isPremium: boolean;
+  directCosts?: any[];
+  indirectCosts?: any[];
+  transportLegs?: any[];
+  onUpdateCost?: (id: string, field: string, value: string | number) => void;
+  onAddCost?: (category: "direct" | "indirect") => void;
+  onRemoveCost?: (id: string) => void;
+  onUpdateTransport?: (
+    id: string,
+    field: string,
+    value: string | number,
+  ) => void;
+  onAddTransport?: () => void;
+  onRemoveTransport?: (id: string) => void;
 }
 
 const MainTabs: React.FC<MainTabsProps> = ({
@@ -297,6 +310,16 @@ const MainTabs: React.FC<MainTabsProps> = ({
         isCalculating={isCalculating}
         onUpdateFormData={updateFormData}
         isPremium={isPremium}
+        directCosts={directCosts}
+        indirectCosts={indirectCosts}
+        transportLegs={transportLegs}
+        onUpdateCost={onUpdateCost}
+        onAddCost={onAddCost}
+        onRemoveCost={onRemoveCost}
+        onUpdateTransport={onUpdateTransport}
+        onAddTransport={onAddTransport}
+        onRemoveTransport={onRemoveTransport}
+        productType={formData.productType}
       />
     );
   };
