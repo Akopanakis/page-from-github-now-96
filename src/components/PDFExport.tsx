@@ -13,6 +13,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { libraryLoader } from "@/utils/libraryLoader";
 import { toast } from "@/components/ui/sonner";
+// Import jsPDF for type checking, but use dynamic loading
 import { jsPDF } from "jspdf";
 
 interface PDFExportProps {
@@ -561,7 +562,7 @@ const PDFExport: React.FC<PDFExportProps> = ({
         { fontStyle: "bold" },
       );
       addText(
-        `${language === "el" ? "Τιμή αγοράς:" : "Purchase price:"} ${formatCurrency(formData.purchasePrice || 0)}/kg`,
+        `${language === "el" ? "Τιμή ��γοράς:" : "Purchase price:"} ${formatCurrency(formData.purchasePrice || 0)}/kg`,
         col2X,
         currentY,
         { fontStyle: "bold" },
