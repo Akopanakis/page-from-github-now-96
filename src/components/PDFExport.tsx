@@ -315,7 +315,13 @@ const PDFExport: React.FC<PDFExportProps> = ({
       // Load jsPDF library
       await libraryLoader.load("jspdf");
 
-      const pdf = new jsPDF({
+      // Get jsPDF constructor - handle different global variable formats
+      const jsPDFConstructor = window.jsPDF || window.jspdf?.jsPDF || jsPDF;
+      if (!jsPDFConstructor) {
+        throw new Error("jsPDF library not available");
+      }
+
+      const pdf = new jsPDFConstructor({
         orientation: "portrait",
         unit: "mm",
         format: "a4",
