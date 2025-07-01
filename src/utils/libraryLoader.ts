@@ -45,7 +45,10 @@ const CDN_LIBRARIES: LibraryConfig[] = [
     url: "https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js",
     type: "script",
     global: "jsPDF",
-    check: () => typeof window.jsPDF !== "undefined",
+    check: () =>
+      typeof window.jsPDF !== "undefined" ||
+      typeof window.jspdf !== "undefined" ||
+      (typeof window.jspdf === "object" && window.jspdf?.jsPDF),
   },
   {
     name: "xlsx",
