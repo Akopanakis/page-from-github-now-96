@@ -573,7 +573,9 @@ const EnhancedIndex = () => {
                 ? isMobile
                   ? "-translate-x-full"
                   : "w-16"
-                : "w-72"
+                : isMobile
+                  ? "w-64"
+                  : "w-72"
             }`}
           >
             <Sidebar
@@ -594,7 +596,7 @@ const EnhancedIndex = () => {
 
           {/* Main Content */}
           <div className="flex-1 min-h-screen">
-            <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+            <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-4 md:py-6 lg:py-8">
               {/* Mobile sidebar toggle */}
               {isMobile && (
                 <Button
@@ -700,13 +702,13 @@ const EnhancedIndex = () => {
                 </div>
               )}
 
-              <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-1 gap-6 lg:gap-8">
+              <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-1 gap-4 md:gap-6 lg:gap-8">
                 {/* Left Column - Form */}
                 <div
                   className="xl:col-span-2 animate-in slide-in-from-left duration-500"
                   data-tour="form"
                 >
-                  <Card className="shadow-2xl border-0 overflow-hidden bg-white/95 backdrop-blur-sm">
+                  <Card className="shadow-lg md:shadow-2xl border-0 overflow-hidden bg-white/95 backdrop-blur-sm">
                     <CardHeader className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white relative">
                       <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 via-indigo-600/90 to-purple-600/90"></div>
                       <CardTitle className="relative flex items-center justify-between">
