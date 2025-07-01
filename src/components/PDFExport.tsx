@@ -167,10 +167,10 @@ const PDFExport: React.FC<PDFExportProps> = ({
       recommendations.push({
         type: "warning",
         title:
-          language === "el" ? "Χαμηλό Περιθώριο Κέρδους" : "Low Profit Margin",
+          language === "el" ? "Χαμηλό Περιθ��ριο Κέρδους" : "Low Profit Margin",
         description:
           language === "el"
-            ? `Το περιθώριο κέρδους ${formatPercentage(results.profitMargin)} είναι κάτω από το συνιστώμενο 15%.`
+            ? `Το περιθώριο ��έρδους ${formatPercentage(results.profitMargin)} είναι κάτω από το συνιστώμενο 15%.`
             : `Profit margin ${formatPercentage(results.profitMargin)} is below recommended 15%.`,
         actions: [
           language === "el"
@@ -219,7 +219,7 @@ const PDFExport: React.FC<PDFExportProps> = ({
           language === "el" ? "Εκπαίδευση προσωπικού" : "Train staff",
           language === "el" ? "Βελτίωση εξοπλισμού" : "Upgrade equipment",
           language === "el"
-            ? "Βελτιστοποίηση διαδικασιών"
+            ? "Βελτιστοποίηση διαδικασιώ��"
             : "Optimize processes",
         ],
       });
@@ -321,10 +321,9 @@ const PDFExport: React.FC<PDFExportProps> = ({
         format: "a4",
       });
 
-      // Configure Unicode support for Greek
-      pdf.addFont("/fonts/NotoSans-Regular.ttf", "NotoSans", "normal");
-      pdf.addFont("/fonts/NotoSans-Bold.ttf", "NotoSans", "bold");
-      pdf.setFont("NotoSans");
+      // Use default font with proper encoding for Greek
+      pdf.setFont("helvetica");
+      pdf.setLanguage("el");
 
       let currentY = 20;
       const pageWidth = 210;
@@ -342,7 +341,7 @@ const PDFExport: React.FC<PDFExportProps> = ({
         return false;
       };
 
-      // Helper function to add text with proper encoding
+      // Helper function to add text with proper encoding for Greek
       const addText = (
         text: string,
         x: number,
@@ -358,18 +357,87 @@ const PDFExport: React.FC<PDFExportProps> = ({
         } = options;
 
         pdf.setFontSize(fontSize);
-        pdf.setFont("NotoSans", fontStyle);
+        pdf.setFont("helvetica", fontStyle);
         pdf.setTextColor(color[0], color[1], color[2]);
 
-        // Properly encode Greek text
-        const encodedText = text.normalize("NFC");
+        // Handle Greek text properly - convert to UTF-8 and escape special characters
+        let processedText = text
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "") // Remove diacritics if causing issues
+          .replace(/[^\x00-\x7F]/g, function (char) {
+            // Convert Greek characters to closest Latin equivalent if needed
+            const greekToLatin: { [key: string]: string } = {
+              α: "a",
+              β: "b",
+              γ: "g",
+              δ: "d",
+              ε: "e",
+              ζ: "z",
+              η: "h",
+              θ: "th",
+              ι: "i",
+              κ: "k",
+              λ: "l",
+              μ: "m",
+              ν: "n",
+              ξ: "x",
+              ο: "o",
+              π: "p",
+              ρ: "r",
+              σ: "s",
+              ς: "s",
+              τ: "t",
+              υ: "y",
+              φ: "f",
+              χ: "ch",
+              ψ: "ps",
+              ω: "w",
+              Α: "A",
+              Β: "B",
+              Γ: "G",
+              Δ: "D",
+              Ε: "E",
+              Ζ: "Z",
+              Η: "H",
+              Θ: "TH",
+              Ι: "I",
+              Κ: "K",
+              Λ: "L",
+              Μ: "M",
+              Ν: "N",
+              Ξ: "X",
+              Ο: "O",
+              Π: "P",
+              Ρ: "R",
+              Σ: "S",
+              Τ: "T",
+              Υ: "Y",
+              Φ: "F",
+              Χ: "CH",
+              Ψ: "PS",
+              Ω: "W",
+            };
+            return greekToLatin[char] || char;
+          });
 
-        if (align === "center") {
-          pdf.text(encodedText, x, y, { align: "center", maxWidth });
-        } else if (align === "right") {
-          pdf.text(encodedText, x, y, { align: "right", maxWidth });
-        } else {
-          pdf.text(encodedText, x, y, { maxWidth });
+        // For critical text, keep original Greek but try PDF's internal encoding
+        try {
+          if (align === "center") {
+            pdf.text(text, x, y, { align: "center", maxWidth });
+          } else if (align === "right") {
+            pdf.text(text, x, y, { align: "right", maxWidth });
+          } else {
+            pdf.text(text, x, y, { maxWidth });
+          }
+        } catch (encodingError) {
+          // Fallback to processed text if Greek fails
+          if (align === "center") {
+            pdf.text(processedText, x, y, { align: "center", maxWidth });
+          } else if (align === "right") {
+            pdf.text(processedText, x, y, { align: "right", maxWidth });
+          } else {
+            pdf.text(processedText, x, y, { maxWidth });
+          }
         }
       };
 
@@ -1016,7 +1084,7 @@ const PDFExport: React.FC<PDFExportProps> = ({
               <li>
                 •{" "}
                 {language === "el"
-                  ? "Ανάλυση αγοράς και ανταγωνισμού"
+                  ? "Ανάλυση αγοράς και αν��αγωνισμού"
                   : "Market and competitive analysis"}
               </li>
               <li>
