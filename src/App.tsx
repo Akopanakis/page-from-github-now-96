@@ -37,10 +37,16 @@ function App() {
                 <Toaster />
                 <Sonner />
                 <Router>
-                  <Route path="/login" component={Login} />
+                  <Route
+                    path="/login"
+                    component={() => <div>Login page test</div>}
+                  />
                   <Route path="/signup" component={Signup} />
                   <Route path="/profile" component={Profile} />
-                  <Route path="/app" component={EnhancedIndex} />
+                  <Route
+                    path="/app"
+                    component={() => <div>App page test</div>}
+                  />
                   <Route path="/classic" component={Index} />
                   <Route path="/expenses" component={Expenses} />
                   <Route path="/" component={LandingPage} />
