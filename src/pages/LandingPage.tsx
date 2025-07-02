@@ -151,7 +151,7 @@ export default function LandingPage() {
   };
 
   const handleDemo = () => {
-    setLocation("/");
+    setLocation("/app");
   };
 
   return (
