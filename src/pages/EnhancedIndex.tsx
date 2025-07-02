@@ -183,20 +183,6 @@ const EnhancedIndex = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   };
 
-  const setupResponsive = () => {
-    const handleResize = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
-      if (mobile) {
-        setSidebarCollapsed(true);
-      }
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  };
-
   const setupTooltips = () => {
     if (!showTooltips) return;
 
