@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useLocation } from "wouter";
+import MobileDashboard from "./MobileDashboard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +12,7 @@ import {
   X,
   Menu,
   LayoutGrid,
+  Smartphone,
 } from "lucide-react";
 import { useCalculation } from "@/hooks/useCalculation";
 import Header from "@/components/Header";
@@ -407,7 +411,7 @@ const EnhancedIndex = () => {
         { id: "3", name: "Ενέργεια Κατάψυξης", value: 200, category: "direct" },
       ],
       indirectCosts: [
-        { id: "4", name: "Γενικά Έξοδα", value: 300, category: "indirect" },
+        { id: "4", name: "Γενικά Έξοδ��", value: 300, category: "indirect" },
         { id: "5", name: "Αποθήκευση", value: 150, category: "indirect" },
         { id: "6", name: "Ασφάλιστρα", value: 100, category: "indirect" },
       ],
