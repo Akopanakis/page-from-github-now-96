@@ -548,18 +548,116 @@
   }
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
+/* Mobile-First Responsive Design */
+@media (max-width: 640px) {
+  body {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .container {
+    @apply px-4;
+  }
+
+  /* Touch-friendly buttons */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Mobile navigation */
+  .mobile-nav {
+    @apply fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-900;
+    @apply border-t border-gray-200 dark:border-gray-700;
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Mobile cards */
+  .mobile-card {
+    @apply rounded-xl shadow-sm border border-gray-200 dark:border-gray-700;
+    @apply bg-white dark:bg-gray-800 p-4 mb-4;
+  }
+
+  /* Mobile grid adjustments */
   .kpi-grid {
     @apply grid-cols-1 gap-4;
   }
 
+  .quick-actions-grid {
+    @apply grid-cols-2 gap-3;
+  }
+
+  /* Mobile typography */
+  h1 {
+    @apply text-2xl;
+  }
+
+  h2 {
+    @apply text-xl;
+  }
+
+  h3 {
+    @apply text-lg;
+  }
+
+  /* Mobile spacing */
+  .mobile-section {
+    @apply py-4 px-4;
+  }
+
+  .mobile-spacing {
+    @apply space-y-4;
+  }
+}
+
+@media (max-width: 768px) {
   .adv-pill {
     @apply text-xs px-3 py-1;
   }
 
   .export-controls {
     @apply flex-col gap-2;
+  }
+
+  /* Tablet adjustments */
+  .tablet-grid {
+    @apply grid-cols-2;
+  }
+}
+
+@media (min-width: 769px) {
+  /* Desktop styles */
+  .desktop-sidebar {
+    @apply block;
+  }
+
+  .mobile-nav {
+    @apply hidden;
+  }
+}
+
+/* Touch and gesture optimizations */
+@media (pointer: coarse) {
+  /* Larger touch targets */
+  .touch-target {
+    min-height: 48px;
+    min-width: 48px;
+  }
+
+  /* Hover effects disabled on touch devices */
+  .hover-effect:hover {
+    transform: none;
+  }
+}
+
+/* Landscape mobile */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .mobile-layout {
+    @apply pb-12;
+  }
+
+  .bottom-nav {
+    @apply h-12;
   }
 }
 
