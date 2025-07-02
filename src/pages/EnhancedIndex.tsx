@@ -133,7 +133,7 @@ const EnhancedIndex = () => {
   useEffect(() => {
     initializeApp();
     setupScrollHandler();
-    setupResponsive();
+
     setTimeout(setupTooltips, 500);
     setupGuidedTour();
     checkPWASupport();
