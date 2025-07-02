@@ -61,6 +61,14 @@ const Sidebar: React.FC<SidebarProps> = ({
   }, [isCollapsed]);
 
   const navigationItems = [
+    // Main Operations
+    {
+      id: "comprehensive-dashboard",
+      label: language === "el" ? "Κέντρο Ελέγχου" : "Control Center",
+      icon: Home,
+      category: "main",
+      description: language === "el" ? "Κεντρικό dashboard" : "Main dashboard",
+    },
     {
       id: "basics",
       label: t("nav.basics"),
@@ -91,6 +99,56 @@ const Sidebar: React.FC<SidebarProps> = ({
       category: "main",
       description: language === "el" ? "Κόστη μεταφοράς" : "Transport costs",
     },
+
+    // Business Operations
+    {
+      id: "fleet-management",
+      label: language === "el" ? "Διαχείριση Στόλου" : "Fleet Management",
+      icon: Globe,
+      category: "operations",
+      isPremium: true,
+      description:
+        language === "el" ? "Παρακολούθηση στόλου" : "Fleet tracking",
+    },
+    {
+      id: "inventory-management",
+      label:
+        language === "el" ? "Διαχείριση Αποθέματος" : "Inventory Management",
+      icon: Boxes,
+      category: "operations",
+      isPremium: true,
+      description:
+        language === "el" ? "Διαχείριση αποθέματος" : "Inventory management",
+    },
+    {
+      id: "order-management",
+      label: language === "el" ? "Διαχείριση Παραγγελιών" : "Order Management",
+      icon: ShoppingCart,
+      category: "operations",
+      isPremium: true,
+      description:
+        language === "el" ? "Παραγγελίες πελατών" : "Customer orders",
+    },
+    {
+      id: "customer-management",
+      label: language === "el" ? "Διαχείριση Πελατών" : "Customer Management",
+      icon: Users,
+      category: "operations",
+      isPremium: true,
+      description: language === "el" ? "CRM σύστημα" : "CRM system",
+    },
+    {
+      id: "supplier-management",
+      label:
+        language === "el" ? "Διαχείριση Προμηθευτών" : "Supplier Management",
+      icon: Factory,
+      category: "operations",
+      isPremium: true,
+      description:
+        language === "el" ? "Διαχείριση προμηθευτών" : "Supplier management",
+    },
+
+    // Analytics & Reporting
     {
       id: "analysis",
       label: t("nav.analysis"),
@@ -107,34 +165,6 @@ const Sidebar: React.FC<SidebarProps> = ({
       isPremium: true,
       description:
         language === "el" ? "Εξειδικευμένη ανάλυση" : "Specialized analysis",
-    },
-    {
-      id: "cost-optimization",
-      label: language === "el" ? "Βελτιστοποίηση Κόστους" : "Cost Optimization",
-      icon: TrendingDown,
-      category: "analysis",
-      isPremium: true,
-      description:
-        language === "el"
-          ? "Αυτόματη βελτιστοποίηση"
-          : "Automated optimization",
-    },
-    {
-      id: "dashboard",
-      label: "Dashboard",
-      icon: LineChart,
-      category: "dashboard",
-      isPremium: true,
-      description: language === "el" ? "Επισκόπηση KPI" : "KPI overview",
-    },
-    {
-      id: "executive-dashboard",
-      label: language === "el" ? "Executive Dashboard" : "Executive Dashboard",
-      icon: Crown,
-      category: "dashboard",
-      isPremium: true,
-      description:
-        language === "el" ? "Διοικητική επισκόπηση" : "Executive overview",
     },
     {
       id: "financial-ratios",
@@ -155,10 +185,76 @@ const Sidebar: React.FC<SidebarProps> = ({
         language === "el" ? "Οικονομική ανάλυση" : "Economic analysis",
     },
     {
+      id: "cost-optimization",
+      label: language === "el" ? "Βελτιστοποίηση Κόστους" : "Cost Optimization",
+      icon: TrendingDown,
+      category: "analysis",
+      isPremium: true,
+      description:
+        language === "el"
+          ? "Αυτόματη βελτιστοποίηση"
+          : "Automated optimization",
+    },
+
+    // Executive Dashboards
+    {
+      id: "executive-dashboard",
+      label: language === "el" ? "Executive Dashboard" : "Executive Dashboard",
+      icon: Crown,
+      category: "executive",
+      isPremium: true,
+      description:
+        language === "el" ? "Διοικητική επισκόπηση" : "Executive overview",
+    },
+    {
+      id: "performance-dashboard",
+      label:
+        language === "el" ? "Dashboard Επιδόσεων" : "Performance Dashboard",
+      icon: LineChart,
+      category: "executive",
+      isPremium: true,
+      description: language === "el" ? "Επισκόπηση KPI" : "KPI overview",
+    },
+    {
+      id: "financial-dashboard",
+      label: language === "el" ? "Οικονομικό Dashboard" : "Financial Dashboard",
+      icon: DollarSign,
+      category: "executive",
+      isPremium: true,
+      description:
+        language === "el" ? "Οικονομικά στοιχεία" : "Financial metrics",
+    },
+
+    // Advanced Features
+    {
+      id: "market-intelligence",
+      label: language === "el" ? "Market Intelligence" : "Market Intelligence",
+      icon: Globe,
+      category: "advanced",
+      isPremium: true,
+      description: language === "el" ? "Ανάλυση αγοράς" : "Market analysis",
+    },
+    {
+      id: "scenario-analysis",
+      label: language === "el" ? "Ανάλυση Σεναρίων" : "Scenario Analysis",
+      icon: Target,
+      category: "advanced",
+      isPremium: true,
+      description: language === "el" ? "Ανάλυση σεναρίων" : "Scenario analysis",
+    },
+    {
+      id: "forecast-revenue",
+      label: language === "el" ? "Πρόβλεψη Εσόδων" : "Revenue Forecast",
+      icon: TrendingUp,
+      category: "advanced",
+      isPremium: true,
+      description: language === "el" ? "Πρόβλεψη εσόδων" : "Revenue forecast",
+    },
+    {
       id: "pricing-models",
       label: language === "el" ? "Μοντέλα Τιμολόγησης" : "Pricing Models",
       icon: DollarSign,
-      category: "premium",
+      category: "advanced",
       isPremium: true,
       description:
         language === "el" ? "Στρατηγικές τιμολόγησης" : "Pricing strategies",
@@ -167,52 +263,71 @@ const Sidebar: React.FC<SidebarProps> = ({
       id: "risk-analysis",
       label: language === "el" ? "Ανάλυση Κινδύνου" : "Risk Analysis",
       icon: AlertTriangle,
-      category: "premium",
+      category: "advanced",
       isPremium: true,
       description:
         language === "el" ? "Αξιολόγηση κινδύνων" : "Risk assessment",
     },
     {
-      id: "inventory",
-      label: t("inventory.management"),
-      icon: Boxes,
-      category: "premium",
-      isPremium: true,
-      description:
-        language === "el" ? "Διαχείριση αποθέματος" : "Inventory management",
-    },
-    {
-      id: "market",
-      label: t("market.intelligence"),
-      icon: Globe,
-      category: "premium",
-      isPremium: true,
-      description: language === "el" ? "Ανάλυση αγοράς" : "Market analysis",
-    },
-    {
-      id: "scenario",
-      label: t("scenario.analysis"),
-      icon: Target,
-      category: "premium",
-      isPremium: true,
-      description: language === "el" ? "Ανάλυση σεναρίων" : "Scenario analysis",
-    },
-    {
-      id: "forecast",
-      label: t("forecast.revenue"),
-      icon: TrendingUp,
-      category: "premium",
-      isPremium: true,
-      description: language === "el" ? "Πρόβλεψη εσόδων" : "Revenue forecast",
-    },
-    {
-      id: "financial",
-      label: language === "el" ? "Χρηματοοικονομικά" : "Financial Models",
+      id: "financial-models",
+      label:
+        language === "el" ? "Χρηματοοικονομικά Μοντέλα" : "Financial Models",
       icon: Briefcase,
-      category: "premium",
+      category: "advanced",
       isPremium: true,
       description:
         language === "el" ? "Χρηματοοικονομικά μοντέλα" : "Financial models",
+    },
+
+    // Compliance & Quality
+    {
+      id: "quality-control",
+      label: language === "el" ? "Έλεγχος Ποιότητας" : "Quality Control",
+      icon: Award,
+      category: "compliance",
+      isPremium: true,
+      description:
+        language === "el" ? "Διασφάλιση ποιότητας" : "Quality assurance",
+    },
+    {
+      id: "regulatory-compliance",
+      label: language === "el" ? "Συμμόρφωση" : "Regulatory Compliance",
+      icon: Shield,
+      category: "compliance",
+      isPremium: true,
+      description:
+        language === "el" ? "Κανονιστική συμμόρφωση" : "Regulatory compliance",
+    },
+    {
+      id: "sustainability-tracking",
+      label: language === "el" ? "Βιωσιμότητα" : "Sustainability",
+      icon: Leaf,
+      category: "compliance",
+      isPremium: true,
+      description:
+        language === "el"
+          ? "Παρακολούθηση βιωσιμότητας"
+          : "Sustainability tracking",
+    },
+
+    // Reports & Documentation
+    {
+      id: "reports-center",
+      label: language === "el" ? "Κέντρο Αναφορών" : "Reports Center",
+      icon: FileText,
+      category: "reports",
+      isPremium: true,
+      description:
+        language === "el" ? "Αναφορές και εκθέσεις" : "Reports and statements",
+    },
+    {
+      id: "document-management",
+      label: language === "el" ? "Διαχείριση Εγγράφων" : "Document Management",
+      icon: BookOpen,
+      category: "reports",
+      isPremium: true,
+      description:
+        language === "el" ? "Αρχειοθέτηση εγγράφων" : "Document archiving",
     },
   ];
 
