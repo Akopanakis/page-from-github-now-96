@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import EnhancedIndex from "./pages/EnhancedIndex";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
+import SimpleLogin from "./pages/SimpleLogin";
 import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
 import Expenses from "./pages/Expenses";
@@ -37,7 +38,7 @@ function App() {
                 <Toaster />
                 <Sonner />
                 <Router>
-                  <Route path="/login" component={Login} />
+                  <Route path="/login" component={SimpleLogin} />
                   <Route path="/signup" component={Signup} />
                   <Route path="/profile" component={Profile} />
                   <Route path="/app" component={EnhancedIndex} />
