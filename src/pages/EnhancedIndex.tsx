@@ -87,7 +87,7 @@ const EnhancedIndex = () => {
   const [indirectCosts, setIndirectCosts] = useState<CostItem[]>([
     { id: "4", name: "Γενικά Έξοδα", value: 0, category: "indirect" },
     { id: "5", name: "Αποσβέσεις", value: 0, category: "indirect" },
-    { id: "6", name: "Ασφάλιστρα", value: 0, category: "indirect" },
+    { id: "6", name: "Ασφάλι��τρα", value: 0, category: "indirect" },
   ]);
   const [transportLegs, setTransportLegs] = useState<TransportLeg[]>([
     {
@@ -413,7 +413,7 @@ const EnhancedIndex = () => {
       indirectCosts: [
         { id: "4", name: "Γενικά Έξοδα", value: 300, category: "indirect" },
         { id: "5", name: "Αποθήκευση", value: 150, category: "indirect" },
-        { id: "6", name: "Ασφάλιστρα", value: 100, category: "indirect" },
+        { id: "6", name: "Ασφά��ιστρα", value: 100, category: "indirect" },
       ],
       transportLegs: [
         {
@@ -463,69 +463,44 @@ const EnhancedIndex = () => {
   );
 
   const renderMainContent = () => {
-    const isAdvancedTab = [
-      "executive-dashboard",
-      "financial-ratios",
-      "market-trends",
-      "inventory",
-      "market",
-      "scenario",
-      "forecast",
-      "financial",
-    ].includes(activeTab);
-
-    if (isAdvancedTab) {
-      switch (activeTab) {
-        case "executive-dashboard":
-          return <ExecutiveDashboard results={results} formData={formData} />;
-        case "financial-ratios":
-          return <FinancialRatios results={results} formData={formData} />;
-        case "market-trends":
-          return <EconomicTrends productType={formData.productType} />;
-        default:
-          return (
-            <MainTabs
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-              isPremium={isPremium}
-              setIsPremium={setIsPremium}
-              formData={formData}
-              updateFormData={updateFormData}
-              results={results}
-              directCosts={directCosts}
-              indirectCosts={indirectCosts}
-              transportLegs={transportLegs}
-              onUpdateCost={updateCostItem}
-              onAddCost={addCostItem}
-              onRemoveCost={removeCostItem}
-              onUpdateTransport={updateTransportLeg}
-              onAddTransport={addTransportLeg}
-              onRemoveTransport={removeTransportLeg}
-            />
-          );
-      }
+    // Handle new comprehensive components
+    switch (activeTab) {
+      case "comprehensive-dashboard":
+        return <ComprehensiveDashboard />;
+      case "fleet-management":
+        return <FleetManagement />;
+      case "inventory-management":
+        return <InventoryManagement />;
+      case "order-management":
+        return <OrderManagement />;
+      case "executive-dashboard":
+        return <ExecutiveDashboard results={results} formData={formData} />;
+      case "financial-ratios":
+        return <FinancialRatios results={results} formData={formData} />;
+      case "market-trends":
+        return <EconomicTrends productType={formData.productType} />;
+      default:
+        return (
+          <MainTabs
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            isPremium={isPremium}
+            setIsPremium={setIsPremium}
+            formData={formData}
+            updateFormData={updateFormData}
+            results={results}
+            directCosts={directCosts}
+            indirectCosts={indirectCosts}
+            transportLegs={transportLegs}
+            onUpdateCost={updateCostItem}
+            onAddCost={addCostItem}
+            onRemoveCost={removeCostItem}
+            onUpdateTransport={updateTransportLeg}
+            onAddTransport={addTransportLeg}
+            onRemoveTransport={removeTransportLeg}
+          />
+        );
     }
-
-    return (
-      <MainTabs
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        isPremium={isPremium}
-        setIsPremium={setIsPremium}
-        formData={formData}
-        updateFormData={updateFormData}
-        results={results}
-        directCosts={directCosts}
-        indirectCosts={indirectCosts}
-        transportLegs={transportLegs}
-        onUpdateCost={updateCostItem}
-        onAddCost={addCostItem}
-        onRemoveCost={removeCostItem}
-        onUpdateTransport={updateTransportLeg}
-        onAddTransport={addTransportLeg}
-        onRemoveTransport={removeTransportLeg}
-      />
-    );
   };
 
   return (
