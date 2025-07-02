@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Route, Router } from "wouter";
 import Index from "./pages/Index";
 import EnhancedIndex from "./pages/EnhancedIndex";
+import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
@@ -13,6 +14,7 @@ import Expenses from "./pages/Expenses";
 import NotFound from "./pages/NotFound";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { AuthProvider } from "./contexts/AuthContext";
+import { ThemeProvider } from "./components/theme/ThemeProvider";
 import ErrorBoundary from "./components/ErrorBoundary";
 
 const queryClient = new QueryClient({
@@ -27,25 +29,28 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <LanguageProvider>
-          <TooltipProvider>
-            <ErrorBoundary>
-              <Toaster />
-              <Sonner />
-              <Router>
-                <Route path="/" component={EnhancedIndex} />
-                <Route path="/classic" component={Index} />
-                <Route path="/expenses" component={Expenses} />
-                <Route path="/login" component={Login} />
-                <Route path="/signup" component={Signup} />
-                <Route path="/profile" component={Profile} />
-                <Route path="/:rest*" component={NotFound} />
-              </Router>
-            </ErrorBoundary>
-          </TooltipProvider>
-        </LanguageProvider>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <LanguageProvider>
+            <TooltipProvider>
+              <ErrorBoundary>
+                <Toaster />
+                <Sonner />
+                <Router>
+                  <Route path="/" component={LandingPage} />
+                  <Route path="/app" component={EnhancedIndex} />
+                  <Route path="/classic" component={Index} />
+                  <Route path="/expenses" component={Expenses} />
+                  <Route path="/login" component={Login} />
+                  <Route path="/signup" component={Signup} />
+                  <Route path="/profile" component={Profile} />
+                  <Route path="/:rest*" component={NotFound} />
+                </Router>
+              </ErrorBoundary>
+            </TooltipProvider>
+          </LanguageProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
