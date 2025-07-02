@@ -22,11 +22,11 @@ export default {
           foreground: "hsl(var(--popover-foreground))",
         },
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT: "#1F4E79",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
+          DEFAULT: "#F29F05",
           foreground: "hsl(var(--secondary-foreground))",
         },
         muted: {
@@ -34,7 +34,7 @@ export default {
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
+          DEFAULT: "#4CB944",
           foreground: "hsl(var(--accent-foreground))",
         },
         destructive: {
@@ -61,6 +61,17 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+      },
+      fontSize: {
+        base: "1rem",
+        lg: "1.125rem",
+        xl: "1.25rem",
+        "2xl": "1.5rem",
+      },
+      spacing: {
+        4: "1rem",
+        8: "2rem",
+        16: "4rem",
       },
       keyframes: {
         "accordion-down": {
