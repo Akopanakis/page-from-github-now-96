@@ -39,10 +39,20 @@ function App() {
                 <Toaster />
                 <Sonner />
                 <Router>
-                  <Route path="/login" component={SimpleLogin} />
+                  <Route
+                    path="/login"
+                    component={() => (
+                      <div style={{ padding: "20px" }}>Login page works!</div>
+                    )}
+                  />
                   <Route path="/signup" component={Signup} />
                   <Route path="/profile" component={Profile} />
-                  <Route path="/app" component={SimpleApp} />
+                  <Route
+                    path="/app"
+                    component={() => (
+                      <div style={{ padding: "20px" }}>App page works!</div>
+                    )}
+                  />
                   <Route path="/classic" component={Index} />
                   <Route path="/expenses" component={Expenses} />
                   <Route path="/" component={LandingPage} />
