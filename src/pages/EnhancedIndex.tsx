@@ -65,7 +65,7 @@ interface TransportLeg {
 const EnhancedIndex = () => {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
 
   const {
     formData,
@@ -83,17 +83,6 @@ const EnhancedIndex = () => {
       return;
     }
   }, [user, setLocation]);
-
-  // Mobile detection
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
 
   // Return mobile dashboard for mobile devices
   if (isMobile) {
@@ -462,7 +451,7 @@ const EnhancedIndex = () => {
           type: "Οδικό",
         },
       ],
-      supplierName: "��οπ��νάκης",
+      supplierName: "��οπανάκης",
       batchNumber: "TH-ARG-2024-001",
     };
 
