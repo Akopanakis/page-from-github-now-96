@@ -343,7 +343,7 @@ export default function LandingPage() {
                   </p>
                   <div className="flex items-center">
                     <div className="h-12 w-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-3">
-                      <User className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                      <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div>
                       <div className="font-semibold text-gray-900 dark:text-white">
