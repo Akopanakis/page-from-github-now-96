@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Calculator, ChevronUp, PlayCircle, X } from "lucide-react";
+import { toast } from "sonner";
 import { useCalculation } from "@/hooks/useCalculation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -394,7 +395,7 @@ const Index = () => {
       ],
       indirectCosts: [
         { id: "4", name: "Γενικά Έξοδα", value: 300, category: "indirect" },
-        { id: "5", name: "Αποθήκευση", value: 150, category: "indirect" },
+        { id: "5", name: "Απ��θήκευση", value: 150, category: "indirect" },
         { id: "6", name: "Ασφάλιστρα", value: 100, category: "indirect" },
       ],
       transportLegs: [
@@ -537,7 +538,7 @@ const Index = () => {
                       Πα��άδειγμα Φορτωμένο
                     </h4>
                     <p className="text-blue-600 text-sm">
-                      Δεδομένα θράψαλου Αργεντίνης - 2 τόνοι
+                      Δεδομένα θ��άψαλου Αργεντίνης - 2 τόνοι
                     </p>
                   </div>
                 </div>

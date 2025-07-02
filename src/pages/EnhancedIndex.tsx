@@ -27,6 +27,7 @@ import FloatingHelpButton from "@/components/FloatingHelpButton";
 import Sidebar from "@/components/Sidebar";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import QuickActions from "@/components/QuickActions";
+import QuickAccessCard from "@/components/QuickAccessCard";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import ExecutiveDashboard from "@/components/ExecutiveDashboard";
 import FinancialRatios from "@/components/FinancialRatios";
@@ -389,7 +390,7 @@ const EnhancedIndex = () => {
           costPerKg: 0.3,
           duration: 0.5,
           temperature: 4,
-          description: "Αφαίρεση κεφαλιού, εντόσθιων και πτερυγίων",
+          description: "Αφαίρεση κεφ��λιού, εντόσθιων και πτερυγίων",
         },
       ],
       totalLossPercentage: 0,
@@ -428,7 +429,7 @@ const EnhancedIndex = () => {
           type: "Οδικό",
         },
       ],
-      supplierName: "Κοπανάκης",
+      supplierName: "��οπανάκης",
       batchNumber: "TH-ARG-2024-001",
     };
 
@@ -628,6 +629,9 @@ const EnhancedIndex = () => {
                 isPremium={isPremium}
                 className="mb-6"
               />
+
+              {/* Quick Access to Expenses */}
+              <QuickAccessCard />
 
               {/* Example Data Banner */}
               {!hasLoadedExample && (
