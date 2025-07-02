@@ -59,7 +59,7 @@ const features = [
     description: "Secure cloud storage with real-time sync and backup",
   },
   {
-    icon: Analytics,
+    icon: BarChart3,
     title: "Business Intelligence",
     description: "Advanced analytics and forecasting for data-driven decisions",
   },
