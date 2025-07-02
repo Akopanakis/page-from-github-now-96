@@ -38,11 +38,7 @@ function App() {
                 <Sonner />
                 <Router>
                   <Route path="/login" component={Login} />
-                  <Route
-                    path="/signup"
-                    component={() => <div>Signup page works!</div>}
-                  />
-                  <Route path="/signup-full" component={Signup} />
+                  <Route path="/signup" component={Signup} />
                   <Route path="/profile" component={Profile} />
                   <Route path="/app" component={EnhancedIndex} />
                   <Route path="/classic" component={Index} />

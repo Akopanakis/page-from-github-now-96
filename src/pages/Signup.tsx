@@ -19,7 +19,7 @@ import {
   Fish,
   Mail,
   Lock,
-  User,
+  Users,
   Eye,
   EyeOff,
   ArrowLeft,
@@ -201,7 +201,7 @@ export default function Signup() {
                   <div className="space-y-2">
                     <Label htmlFor="firstName">First Name</Label>
                     <div className="relative">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Users className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Input
                         id="firstName"
                         placeholder="John"
