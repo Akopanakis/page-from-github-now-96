@@ -338,19 +338,34 @@ const Sidebar: React.FC<SidebarProps> = ({
       icon: Home,
     },
     {
+      id: "operations",
+      label: language === "el" ? "Λειτουργίες" : "Operations",
+      icon: Settings,
+    },
+    {
       id: "analysis",
-      label: t("nav.analysis"),
+      label: language === "el" ? "Αναλυτικά" : "Analytics",
       icon: BarChart3,
     },
     {
-      id: "dashboard",
-      label: "Dashboard",
-      icon: LineChart,
+      id: "executive",
+      label: language === "el" ? "Διοίκηση" : "Executive",
+      icon: Crown,
     },
     {
-      id: "premium",
-      label: "Premium",
-      icon: Crown,
+      id: "advanced",
+      label: language === "el" ? "Προχωρημένα" : "Advanced",
+      icon: Zap,
+    },
+    {
+      id: "compliance",
+      label: language === "el" ? "Συμμόρφωση" : "Compliance",
+      icon: Shield,
+    },
+    {
+      id: "reports",
+      label: language === "el" ? "Αναφορές" : "Reports",
+      icon: FileText,
     },
   ];
 
