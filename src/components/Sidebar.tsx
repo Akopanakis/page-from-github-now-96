@@ -34,6 +34,12 @@ import {
   Activity,
   Briefcase,
   TrendingDown,
+  Factory,
+  Award,
+  Shield,
+  Leaf,
+  BookOpen,
+  Zap,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -118,7 +124,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       category: "operations",
       isPremium: true,
       description:
-        language === "el" ? "Διαχείριση αποθέματος" : "Inventory management",
+        language === "el" ? "Διαχείριση αποθέματο��" : "Inventory management",
     },
     {
       id: "order-management",
