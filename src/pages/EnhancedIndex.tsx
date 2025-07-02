@@ -62,6 +62,10 @@ interface TransportLeg {
 }
 
 const EnhancedIndex = () => {
+  const { user } = useAuth();
+  const [, setLocation] = useLocation();
+  const [isMobile, setIsMobile] = useState(false);
+
   const {
     formData,
     updateFormData,
@@ -70,6 +74,30 @@ const EnhancedIndex = () => {
     results,
     isCalculating,
   } = useCalculation();
+
+  // Check if user is authenticated
+  useEffect(() => {
+    if (!user) {
+      setLocation("/login");
+      return;
+    }
+  }, [user, setLocation]);
+
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Return mobile dashboard for mobile devices
+  if (isMobile) {
+    return <MobileDashboard />;
+  }
 
   // Core state
   const [activeTab, setActiveTab] = useState("basics");
