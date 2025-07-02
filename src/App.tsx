@@ -9,6 +9,7 @@ import EnhancedIndex from "./pages/EnhancedIndex";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import SimpleLogin from "./pages/SimpleLogin";
+import SimpleApp from "./pages/SimpleApp";
 import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
 import Expenses from "./pages/Expenses";
@@ -41,7 +42,7 @@ function App() {
                   <Route path="/login" component={SimpleLogin} />
                   <Route path="/signup" component={Signup} />
                   <Route path="/profile" component={Profile} />
-                  <Route path="/app" component={EnhancedIndex} />
+                  <Route path="/app" component={SimpleApp} />
                   <Route path="/classic" component={Index} />
                   <Route path="/expenses" component={Expenses} />
                   <Route path="/" component={LandingPage} />
