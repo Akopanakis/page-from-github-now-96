@@ -17,6 +17,10 @@ import MarketIntelligenceSystem from "./MarketIntelligenceSystem";
 import ScenarioAnalysis from "./ScenarioAnalysis";
 import RevenueForecast from "./RevenueForecast";
 import AdvancedFinancialModels from "./AdvancedFinancialModels";
+import ComprehensiveDashboard from "./ComprehensiveDashboard";
+import FleetManagement from "./FleetManagement";
+import InventoryManagement from "./InventoryManagement";
+import OrderManagement from "./OrderManagement";
 import {
   Fish,
   Settings,
@@ -315,7 +319,7 @@ const MainTabs: React.FC<MainTabsProps> = ({
                 <li>
                   •{" "}
                   {language === "el"
-                    ? "Χρηματοοικονομικά μοντέλα"
+                    ? "Χρηματοοικονομι��ά μοντέλα"
                     : "Financial models"}
                 </li>
               </ul>
