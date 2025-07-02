@@ -33,7 +33,6 @@ import {
 } from "lucide-react";
 import { expenseAPI } from "@/api/expenses";
 import { Expense } from "@/types/expense";
-import { useFormatCurrency } from "@/utils/exportUtils";
 
 type SortField = "description" | "amount" | "date";
 type SortDirection = "asc" | "desc";
@@ -52,7 +51,9 @@ export default function ExpensesList({
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState<SortField>("date");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
-  const formatCurrency = useFormatCurrency();
+
+  // Simple currency formatter
+  const formatCurrency = (amount: number) => `€${amount.toFixed(2)}`;
 
   // Debounced search functionality
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
