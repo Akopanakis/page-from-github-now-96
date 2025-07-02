@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocation } from "wouter";
+import { useIsMobile } from "@/hooks/useMobile";
 import MobileDashboard from "./MobileDashboard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -461,7 +462,7 @@ const EnhancedIndex = () => {
           type: "Οδικό",
         },
       ],
-      supplierName: "��οπανάκης",
+      supplierName: "��οπ��νάκης",
       batchNumber: "TH-ARG-2024-001",
     };
 
