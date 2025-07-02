@@ -21,7 +21,6 @@ import {
   Target,
   Smartphone,
   Cloud,
-  Analytics,
   Award,
   Lightbulb,
   Timer,
