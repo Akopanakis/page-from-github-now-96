@@ -32,6 +32,10 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import ExecutiveDashboard from "@/components/ExecutiveDashboard";
 import FinancialRatios from "@/components/FinancialRatios";
 import EconomicTrends from "@/components/EconomicTrends";
+import ComprehensiveDashboard from "@/components/ComprehensiveDashboard";
+import FleetManagement from "@/components/FleetManagement";
+import InventoryManagement from "@/components/InventoryManagement";
+import OrderManagement from "@/components/OrderManagement";
 import { CompanyInfo } from "@/types/company";
 import { libraryLoader } from "@/utils/libraryLoader";
 import {
