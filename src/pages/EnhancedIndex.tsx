@@ -104,7 +104,7 @@ const EnhancedIndex = () => {
   ]);
   const [indirectCosts, setIndirectCosts] = useState<CostItem[]>([
     { id: "4", name: "Γενικά Έξοδα", value: 0, category: "indirect" },
-    { id: "5", name: "Αποσβέσεις", value: 0, category: "indirect" },
+    { id: "5", name: "Αποσ��έσεις", value: 0, category: "indirect" },
     { id: "6", name: "Ασφάλιστρα", value: 0, category: "indirect" },
   ]);
   const [transportLegs, setTransportLegs] = useState<TransportLeg[]>([
@@ -125,7 +125,6 @@ const EnhancedIndex = () => {
   const [hasLoadedExample, setHasLoadedExample] = useState(false);
   const [showUserGuide, setShowUserGuide] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
 
   // Refs
   const backToTopRef = useRef<HTMLButtonElement>(null);
@@ -426,7 +425,12 @@ const EnhancedIndex = () => {
           value: 600,
           category: "direct",
         },
-        { id: "3", name: "Ενέργεια Κατάψυξης", value: 200, category: "direct" },
+        {
+          id: "3",
+          name: "Ενέργει�� Κατάψυξης",
+          value: 200,
+          category: "direct",
+        },
       ],
       indirectCosts: [
         { id: "4", name: "Γενικά Έξοδ��", value: 300, category: "indirect" },
