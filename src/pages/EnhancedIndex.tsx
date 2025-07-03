@@ -300,7 +300,7 @@ const EnhancedIndex = () => {
     if (totalCosts > 50000) {
       alerts.push({
         type: "error",
-        message: "Πολύ υψηλό κόστος! Ε��ετάστε τις επιλογές βελτιστοποίησης",
+        message: "Πολύ υψηλό κόστος! Εξετάστε τις επιλογές βελτιστοποίησης",
       });
     }
 
@@ -478,6 +478,22 @@ const EnhancedIndex = () => {
         return <InventoryManagement />;
       case "order-management":
         return <OrderManagement />;
+      case "customer-management":
+        return <CustomerManagement />;
+      case "navigation-system":
+        return (
+          <NavigationSystem
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            isPremium={isPremium}
+          />
+        );
+      case "business-intelligence":
+        return <BusinessIntelligenceDashboard />;
+      case "operations-center":
+        return <RealTimeOperationsCenter />;
+      case "financial-analytics":
+        return <AdvancedFinancialAnalytics />;
       case "executive-dashboard":
         return <ExecutiveDashboard results={results} formData={formData} />;
       case "financial-ratios":
