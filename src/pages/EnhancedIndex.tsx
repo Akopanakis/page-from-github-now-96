@@ -494,6 +494,8 @@ const EnhancedIndex = () => {
         return <RealTimeOperationsCenter />;
       case "financial-analytics":
         return <AdvancedFinancialAnalytics />;
+      case "quality-compliance":
+        return <QualityComplianceCenter />;
       case "executive-dashboard":
         return <ExecutiveDashboard results={results} formData={formData} />;
       case "financial-ratios":
