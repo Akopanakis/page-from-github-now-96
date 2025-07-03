@@ -36,6 +36,11 @@ import ComprehensiveDashboard from "@/components/ComprehensiveDashboard";
 import FleetManagement from "@/components/FleetManagement";
 import InventoryManagement from "@/components/InventoryManagement";
 import OrderManagement from "@/components/OrderManagement";
+import CustomerManagement from "@/components/CustomerManagement";
+import NavigationSystem from "@/components/NavigationSystem";
+import BusinessIntelligenceDashboard from "@/components/BusinessIntelligenceDashboard";
+import RealTimeOperationsCenter from "@/components/RealTimeOperationsCenter";
+import AdvancedFinancialAnalytics from "@/components/AdvancedFinancialAnalytics";
 import { CompanyInfo } from "@/types/company";
 import { libraryLoader } from "@/utils/libraryLoader";
 import {
@@ -295,7 +300,7 @@ const EnhancedIndex = () => {
     if (totalCosts > 50000) {
       alerts.push({
         type: "error",
-        message: "Πολύ υψηλό κόστος! Εξετάστε τις επιλογές βελτιστοποίησης",
+        message: "Πολύ υψηλό κόστος! Ε��ετάστε τις επιλογές βελτιστοποίησης",
       });
     }
 
