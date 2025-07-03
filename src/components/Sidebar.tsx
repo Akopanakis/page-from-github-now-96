@@ -272,7 +272,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       category: "advanced",
       isPremium: true,
       description:
-        language === "el" ? "Αξιολόγηση κινδύνων" : "Risk assessment",
+        language === "el" ? "Αξιολό��ηση κινδύνων" : "Risk assessment",
     },
     {
       id: "financial-models",
@@ -314,6 +314,66 @@ const Sidebar: React.FC<SidebarProps> = ({
         language === "el"
           ? "Παρακολούθηση βιωσιμότητας"
           : "Sustainability tracking",
+    },
+
+    // New Advanced Features
+    {
+      id: "navigation-system",
+      label: language === "el" ? "Σύστημα Πλοήγησης" : "Navigation System",
+      icon: Globe,
+      category: "advanced",
+      isPremium: false,
+      description:
+        language === "el"
+          ? "Κεντρικό σύστημα πλοήγησης"
+          : "Central navigation system",
+    },
+    {
+      id: "business-intelligence",
+      label:
+        language === "el" ? "Business Intelligence" : "Business Intelligence",
+      icon: Zap,
+      category: "advanced",
+      isPremium: true,
+      description:
+        language === "el"
+          ? "Επιχειρηματική νοημοσύνη"
+          : "Business intelligence",
+    },
+    {
+      id: "operations-center",
+      label: language === "el" ? "Κέντρο Λειτουργιών" : "Operations Center",
+      icon: Activity,
+      category: "advanced",
+      isPremium: true,
+      description:
+        language === "el"
+          ? "Κέντρο ελέγχου λειτουργιών"
+          : "Operations control center",
+    },
+    {
+      id: "financial-analytics",
+      label:
+        language === "el"
+          ? "Χρηματοοικονομικά Analytics"
+          : "Financial Analytics",
+      icon: BarChart3,
+      category: "advanced",
+      isPremium: true,
+      description:
+        language === "el"
+          ? "Προχωρημένα χρηματοοικονομικά"
+          : "Advanced financial analytics",
+    },
+    {
+      id: "quality-compliance",
+      label:
+        language === "el" ? "Ποιότητα & Συμμόρφωση" : "Quality & Compliance",
+      icon: Award,
+      category: "compliance",
+      isPremium: true,
+      description:
+        language === "el" ? "Διαχείριση ποιότητας" : "Quality management",
     },
 
     // Reports & Documentation
