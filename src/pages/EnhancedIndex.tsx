@@ -41,6 +41,7 @@ import NavigationSystem from "@/components/NavigationSystem";
 import BusinessIntelligenceDashboard from "@/components/BusinessIntelligenceDashboard";
 import RealTimeOperationsCenter from "@/components/RealTimeOperationsCenter";
 import AdvancedFinancialAnalytics from "@/components/AdvancedFinancialAnalytics";
+import QualityComplianceCenter from "@/components/QualityComplianceCenter";
 import { CompanyInfo } from "@/types/company";
 import { libraryLoader } from "@/utils/libraryLoader";
 import {
@@ -91,7 +92,7 @@ const EnhancedIndex = () => {
   ]);
   const [indirectCosts, setIndirectCosts] = useState<CostItem[]>([
     { id: "4", name: "Γενικά Έξοδα", value: 0, category: "indirect" },
-    { id: "5", name: "Αποσβέσεις", value: 0, category: "indirect" },
+    { id: "5", name: "Αποσβέσ��ις", value: 0, category: "indirect" },
     { id: "6", name: "Ασφάλιστρα", value: 0, category: "indirect" },
   ]);
   const [transportLegs, setTransportLegs] = useState<TransportLeg[]>([
