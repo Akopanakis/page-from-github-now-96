@@ -66,6 +66,7 @@ import {
   Timer,
   Percent,
   ArrowUpDown,
+  Trophy,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { realisticSeafoodData } from "@/mock/realisticSeafoodData";
@@ -1136,7 +1137,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = ({
                   <Send className="w-16 h-16 mx-auto mb-4 opacity-50" />
                   <p>
                     {language === "el"
-                      ? "Διαχείριση καμπανιών και επικοινωνίας"
+                      ? "Διαχείριση καμπανιών και επι��οινωνίας"
                       : "Campaign and communication management"}
                   </p>
                 </div>
