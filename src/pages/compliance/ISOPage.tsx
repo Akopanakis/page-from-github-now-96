@@ -156,12 +156,12 @@ const ISOPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Certificate className="w-8 h-8 text-blue-600" />
+            <BadgeCheck className="w-8 h-8 text-blue-600" />
             {language === "el" ? "Πρότυπα ISO" : "ISO Standards"}
           </h1>
           <p className="text-gray-600 mt-2">
             {language === "el"
-              ? "Διαχείριση και π��ρακολούθηση συμμόρφωσης με διεθνή πρότυπα"
+              ? "Διαχείριση και παρακολούθηση συμμόρφωσης με διεθνή πρότυπα"
               : "Management and monitoring of international standards compliance"}
           </p>
         </div>
@@ -261,7 +261,7 @@ const ISOPage: React.FC = () => {
                     }
                   </div>
                   <div className="text-sm text-gray-600">
-                    {language === "el" ? "Μη Αξιο��ογημένα" : "Not Assessed"}
+                    {language === "el" ? "Μη Αξιολογημένα" : "Not Assessed"}
                   </div>
                 </div>
               </div>
@@ -458,7 +458,7 @@ const ISOPage: React.FC = () => {
             <CardContent>
               <p className="text-gray-600 mb-6">
                 {language === "el"
-                  ? "Παρακάτω βρίσκεται η επίσημη τεκμηρίωση και οι σύνδεσμοι προς τα πρότυπα ISO που σχετίζονται με την ασφάλεια τροφίμων και την ιχνηλασιμότητα."
+                  ? "Παρακάτω β��ίσκεται η επίσημη τεκμηρίωση και οι σύνδεσμοι προς τα πρότυπα ISO που σχετίζονται με την ασφάλεια τροφίμων και την ιχνηλασιμότητα."
                   : "Below you will find official documentation and links to ISO standards related to food safety and traceability."}
               </p>
 
@@ -569,7 +569,7 @@ const ISOPage: React.FC = () => {
                   </h4>
                   <p className="text-sm text-gray-600 mb-3">
                     {language === "el"
-                      ? "Ε��γαλεία και λίστες ελέγχου για εσωτερικούς ελέγχους."
+                      ? "Εργαλεία και λίστες ελέγχου για εσωτερικούς ελέγχους."
                       : "Tools and checklists for internal auditing processes."}
                   </p>
                   <Button variant="outline" size="sm">
