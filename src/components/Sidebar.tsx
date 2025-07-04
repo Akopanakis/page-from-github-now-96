@@ -222,7 +222,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       id: "cost-optimization",
-      label: language === "el" ? "Βελτιστοποίηση Κόστους" : "Cost Optimization",
+      label:
+        language === "el" ? "��ελτιστοποίηση Κόστους" : "Cost Optimization",
       icon: TrendingDown,
       category: "analysis",
       isPremium: true,
@@ -580,7 +581,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   ? "Αφαίρεση από αγαπημένα"
                   : "Remove from favorites"
                 : language === "el"
-                  ? "Προσθήκη στα αγαπη��ένα"
+                  ? "Προσθήκη στα αγαπημένα"
                   : "Add to favorites"
             }
           >
@@ -596,6 +597,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const renderCategoryHeader = (category: any) => {
     const Icon = category.icon;
+    const isSectionCollapsed = collapsedSections.includes(category.id);
 
     if (isCollapsed) {
       return (
@@ -607,10 +609,23 @@ const Sidebar: React.FC<SidebarProps> = ({
 
     return (
       <div key={category.id} className="px-3 py-2 mb-2">
-        <h4 className="text-sm font-semibold text-gray-600 uppercase tracking-wider flex items-center">
-          <Icon className="w-4 h-4 mr-2" />
-          {category.label}
-        </h4>
+        <Button
+          variant="ghost"
+          className="w-full p-0 h-auto justify-start hover:bg-gray-50"
+          onClick={() => toggleSection(category.id)}
+        >
+          <h4 className="text-sm font-semibold text-gray-600 uppercase tracking-wider flex items-center justify-between w-full">
+            <div className="flex items-center">
+              <Icon className="w-4 h-4 mr-2" />
+              {category.label}
+            </div>
+            {isSectionCollapsed ? (
+              <ChevronRight className="w-3 h-3" />
+            ) : (
+              <ChevronDown className="w-3 h-3" />
+            )}
+          </h4>
+        </Button>
       </div>
     );
   };
