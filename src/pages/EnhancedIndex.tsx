@@ -412,7 +412,7 @@ const EnhancedIndex = () => {
       glazingPercentage: 15,
       glazingType: "ice",
       directCosts: [
-        { id: "1", name: "Πρώτες Ύλες", value: 9000, category: "direct" },
+        { id: "1", name: "Πρ��τες Ύλες", value: 9000, category: "direct" },
         {
           id: "2",
           name: "Εργατικά Καθαρίσματος",
@@ -846,11 +846,31 @@ const EnhancedIndex = () => {
 
         <FloatingHelpButton onShowGuide={() => setShowUserGuide(true)} />
 
+        {/* Command Palette */}
+        <CommandPalette
+          isOpen={showCommandPalette}
+          onClose={() => setShowCommandPalette(false)}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          isPremium={isPremium}
+        />
+
+        {/* Floating Action Button */}
+        <FloatingActionButton
+          onCalculate={() => {
+            setActiveTab("costs");
+            calculate();
+          }}
+          onOpenHACCP={() => setActiveTab("haccp-module")}
+          onOpenCommandPalette={() => setShowCommandPalette(true)}
+          setActiveTab={setActiveTab}
+        />
+
         {/* Back to Top Button */}
         <button
           ref={backToTopRef}
           id="back-to-top"
-          className="fixed bottom-6 right-6 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 flex items-center justify-center opacity-0 translate-y-4 pointer-events-none"
+          className="fixed bottom-6 left-6 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 flex items-center justify-center opacity-0 translate-y-4 pointer-events-none"
           aria-label="Επιστροφή στην κορυφή"
         >
           <ChevronUp className="w-6 h-6" />
