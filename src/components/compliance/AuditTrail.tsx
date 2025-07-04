@@ -170,7 +170,7 @@ const AuditTrail: React.FC = () => {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <FileText className="w-5 h-5" />
-            {language === "el" ? "Ιχ��ηλάτης Ελέγχου" : "Audit Trail"}
+            {language === "el" ? "Ιχ��ηλάτης Ελέ��χου" : "Audit Trail"}
           </CardTitle>
           <Button onClick={exportLogs} variant="outline">
             <Download className="w-4 h-4 mr-2" />
@@ -197,9 +197,12 @@ const AuditTrail: React.FC = () => {
           </div>
 
           <Select
-            value={filter.type || ""}
+            value={filter.type || "all"}
             onValueChange={(value) =>
-              setFilter((prev) => ({ ...prev, type: value || undefined }))
+              setFilter((prev) => ({
+                ...prev,
+                type: value === "all" ? undefined : value,
+              }))
             }
           >
             <SelectTrigger className="w-40">
