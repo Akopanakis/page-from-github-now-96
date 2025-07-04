@@ -54,14 +54,20 @@ const FinancialAnalytics: React.FC = () => {
   const [filterCategory, setFilterCategory] = useState("all");
 
   // Generate realistic data
-  const [kpis] = useState(() => stubData.kpis());
-  const [expenses] = useState(() => stubData.expenses(100));
-  const [forecastData] = useState(() => stubData.forecast(12));
+  const [allData] = useState(() => generateAllStubData());
+  const [kpis] = useState(() => ({
+    totalRevenue: 850000,
+    totalCosts: 680000,
+    profitMargin: 20,
+    growth: 12.5,
+  }));
+  const [expenses] = useState(() => allData.expenses);
+  const [forecastData] = useState(() => allData.analytics);
   const [chartData] = useState(() => ({
-    line: stubData.chartData("line", 12),
-    bar: stubData.chartData("bar"),
-    pie: stubData.chartData("pie"),
-    area: stubData.chartData("area", 12),
+    line: allData.analytics,
+    bar: allData.analytics,
+    pie: allData.analytics,
+    area: allData.analytics,
   }));
 
   const pageNavItems = [
