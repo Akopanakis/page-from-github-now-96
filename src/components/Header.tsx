@@ -37,6 +37,8 @@ const Header: React.FC<HeaderProps> = ({
   setShowFileUpload,
   onShowGuide,
   onOpenCommandPalette,
+  activeTab = "",
+  setActiveTab,
 }) => {
   const { language, setLanguage, currency, setCurrency } = useLanguage();
   const { user } = useAuth();
