@@ -44,6 +44,8 @@ import AdvancedFinancialAnalytics from "@/components/AdvancedFinancialAnalytics"
 import QualityComplianceCenter from "@/components/QualityComplianceCenter";
 import HACCPPage from "@/pages/compliance/HACCPPage";
 import ISOPage from "@/pages/compliance/ISOPage";
+import CommandPalette from "@/components/layout/CommandPalette";
+import FloatingActionButton from "@/components/ui/FloatingActionButton";
 import { CompanyInfo } from "@/types/company";
 import { libraryLoader } from "@/utils/libraryLoader";
 import {
@@ -94,7 +96,7 @@ const EnhancedIndex = () => {
   ]);
   const [indirectCosts, setIndirectCosts] = useState<CostItem[]>([
     { id: "4", name: "Γενικά Έξοδα", value: 0, category: "indirect" },
-    { id: "5", name: "Αποσβέσ��ι��", value: 0, category: "indirect" },
+    { id: "5", name: "Αποσβέσ��ις", value: 0, category: "indirect" },
     { id: "6", name: "Ασφάλιστρα", value: 0, category: "indirect" },
   ]);
   const [transportLegs, setTransportLegs] = useState<TransportLeg[]>([
