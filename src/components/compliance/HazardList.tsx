@@ -496,9 +496,12 @@ const HazardList: React.FC = () => {
             </SelectContent>
           </Select>
           <Select
-            value={filter.severity || ""}
+            value={filter.severity || "all"}
             onValueChange={(value) =>
-              setFilter((prev) => ({ ...prev, severity: value || undefined }))
+              setFilter((prev) => ({
+                ...prev,
+                severity: value === "all" ? undefined : value,
+              }))
             }
           >
             <SelectTrigger className="w-40">
