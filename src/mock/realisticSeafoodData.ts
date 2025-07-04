@@ -438,6 +438,22 @@ export interface QualityCheck {
   notes: string;
 }
 
+export interface IndustryBenchmark {
+  id: string;
+  category: string;
+  metric: string;
+  value: number;
+  unit: string;
+  source: string;
+  year?: number;
+  percentiles?: {
+    p25: number;
+    p50: number;
+    p75: number;
+    p90: number;
+  };
+}
+
 // Realistic data implementation
 export const realisticSeafoodData: RealisticSeafoodData = {
   vessels: [

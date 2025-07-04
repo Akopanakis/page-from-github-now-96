@@ -107,9 +107,9 @@ const MainTabs: React.FC<MainTabsProps> = ({
       case "market-trends":
         return <EconomicTrends productType={formData.productType} />;
       case "advanced-analysis":
-        return <AdvancedAnalysisTab />;
+        return <AdvancedAnalysisTab formData={formData} updateFormData={updateFormData} results={results} />;
       case "cost-optimization":
-        return <AdvancedCostOptimization />;
+        return <AdvancedCostOptimization formData={formData} results={results} onUpdateFormData={updateFormData} />;
       case "market-intelligence":
         return <MarketIntelligenceSystem />;
       case "scenario-analysis":
@@ -117,33 +117,61 @@ const MainTabs: React.FC<MainTabsProps> = ({
       case "forecast-revenue":
         return <RevenueForecast />;
       case "financial-models":
-        return <AdvancedFinancialModels />;
+        return <AdvancedFinancialModels formData={formData} results={results} />;
       default:
         return renderTabContent();
     }
   };
 
   const renderTabContent = () => {
-    return (
-      <MainTabs
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        isPremium={isPremium}
-        setIsPremium={setIsPremium}
-        formData={formData}
-        updateFormData={updateFormData}
-        results={results}
-        directCosts={directCosts}
-        indirectCosts={indirectCosts}
-        transportLegs={transportLegs}
-        onUpdateCost={onUpdateCost}
-        onAddCost={onAddCost}
-        onRemoveCost={onRemoveCost}
-        onUpdateTransport={onUpdateTransport}
-        onAddTransport={onAddTransport}
-        onRemoveTransport={onRemoveTransport}
-      />
-    );
+    switch (activeTab) {
+      case "basics":
+        return (
+          <ProductBasics
+            formData={formData}
+            updateFormData={updateFormData}
+          />
+        );
+      case "processing":
+        return (
+          <ProcessingPhases
+            formData={formData}
+            updateFormData={updateFormData}
+          />
+        );
+      case "costs":
+        return (
+          <CostsTab
+            formData={formData}
+            updateFormData={updateFormData}
+            costs={directCosts}
+            indirectCosts={indirectCosts}
+            onUpdateCost={onUpdateCost}
+            onAddCost={onAddCost}
+            onRemoveCost={onRemoveCost}
+          />
+        );
+      case "transport":
+        return (
+          <TransportTab
+            formData={formData}
+            updateFormData={updateFormData}
+            legs={transportLegs}
+            onUpdateTransport={onUpdateTransport}
+            onAddTransport={onAddTransport}
+            onRemoveTransport={onRemoveTransport}
+          />
+        );
+      case "analysis":
+        return (
+          <AnalysisTab
+            formData={formData}
+            updateFormData={updateFormData}
+          />
+        );
+      default:
+        return null;
+    }
   };
 
   // Define all available tabs with their configurations
@@ -392,11 +420,7 @@ const MainTabs: React.FC<MainTabsProps> = ({
         formData={formData}
         updateFormData={updateFormData}
         results={results}
-        calculate={calculate}
-        resetForm={resetForm}
-        isCalculating={isCalculating}
         onUpdateFormData={updateFormData}
-        isPremium={isPremium}
         directCosts={directCosts}
         indirectCosts={indirectCosts}
         transportLegs={transportLegs}
