@@ -56,6 +56,7 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Minus,
+  DollarSign,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { realisticSeafoodData } from "@/mock/realisticSeafoodData";
