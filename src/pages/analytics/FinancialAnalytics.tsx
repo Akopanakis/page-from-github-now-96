@@ -207,7 +207,7 @@ const FinancialAnalytics: React.FC = () => {
       }
       subtitle={
         language === "el"
-          ? "Προχωρημένη ανάλυση οικονομικών δεδομένων και προβλέψεις"
+          ? "Προχωρημένη ανάλυση οικονομικών δεδομένων ��αι προβλέψεις"
           : "Advanced financial data analysis and forecasting"
       }
       pageNavItems={pageNavItems}
@@ -326,7 +326,7 @@ const FinancialAnalytics: React.FC = () => {
                       <div>
                         <h4 className="font-semibold text-red-900">
                           {language === "el"
-                            ? "Απόκλιση από Στόχους"
+                            ? "Απόκλιση από Στόχου��"
                             : "Target Deviation"}
                         </h4>
                         <p className="text-sm text-red-700">
@@ -500,7 +500,7 @@ const FinancialAnalytics: React.FC = () => {
                           <div className="text-right">
                             <div className="font-semibold">{item.value}%</div>
                             <div className="text-sm text-gray-500">
-                              {stubData.formatters.currency(item.value * 1000)}
+                              €{(item.value * 1000).toLocaleString()}
                             </div>
                           </div>
                         </div>
@@ -667,7 +667,7 @@ const FinancialAnalytics: React.FC = () => {
                           <TableCell>{expense.category}</TableCell>
                           <TableCell>{expense.supplier}</TableCell>
                           <TableCell className="text-right font-medium">
-                            {stubData.formatters.currency(expense.amount)}
+                            €{expense.amount.toLocaleString()}
                           </TableCell>
                           <TableCell>
                             <Badge
@@ -707,7 +707,7 @@ const FinancialAnalytics: React.FC = () => {
                     : `Showing 1-20 of ${filteredExpenses.length} transactions`}
                 </span>
                 <Button variant="outline" size="sm">
-                  {language === "el" ? "Φόρτωση περισσότερων" : "Load more"}
+                  {language === "el" ? "Φόρτωση περισσότερ��ν" : "Load more"}
                 </Button>
               </div>
             </div>
