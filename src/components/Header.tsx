@@ -24,6 +24,7 @@ interface HeaderProps {
   showFileUpload: boolean;
   setShowFileUpload: (value: boolean) => void;
   onShowGuide?: () => void;
+  onOpenCommandPalette?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
