@@ -1,4 +1,5 @@
 import { Expense, CreateExpenseData, UpdateExpenseData } from "@/types/expense";
+import { generateExpenseData } from "@/utils/stubData";
 
 const STORAGE_KEY = "expenses";
 
@@ -12,11 +13,29 @@ const getCurrentTimestamp = (): string => {
   return new Date().toISOString();
 };
 
-// Get expenses from localStorage
+// Get expenses from localStorage with stub data fallback
 const getExpensesFromStorage = (): Expense[] => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : [];
+    if (!stored) {
+      // Initialize with stub data if no data exists
+      const stubData = generateExpenseData(50);
+      const expenseData = stubData.map((item) => ({
+        id: item.id,
+        description: item.description,
+        amount: item.amount,
+        date: item.date,
+        createdAt: item.date,
+        updatedAt: item.date,
+        category: item.category,
+        supplier: item.supplier,
+        status: item.status,
+        batch: item.batch,
+      }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(expenseData));
+      return expenseData;
+    }
+    return JSON.parse(stored);
   } catch (error) {
     console.error("Error reading expenses from localStorage:", error);
     return [];
