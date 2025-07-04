@@ -237,6 +237,20 @@ const Header: React.FC<HeaderProps> = ({
             <Globe2 className="w-5 h-5 text-gray-400" />
           </div>
         </div>
+
+        {/* MegaMenu Navigation */}
+        {setActiveTab && (
+          <div className="border-t border-gray-100">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <MegaMenu
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                isPremium={isPremium}
+                className="py-2"
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Premium Features Banner */}
