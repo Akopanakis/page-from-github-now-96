@@ -44,6 +44,7 @@ import AdvancedFinancialAnalytics from "@/components/AdvancedFinancialAnalytics"
 import QualityComplianceCenter from "@/components/QualityComplianceCenter";
 import HACCPPage from "@/pages/compliance/HACCPPage";
 import ISOPage from "@/pages/compliance/ISOPage";
+import FinancialAnalyticsPage from "@/pages/analytics/FinancialAnalytics";
 import CommandPalette from "@/components/layout/CommandPalette";
 import FloatingActionButton from "@/components/ui/FloatingActionButton";
 import { CompanyInfo } from "@/types/company";
@@ -412,7 +413,7 @@ const EnhancedIndex = () => {
       glazingPercentage: 15,
       glazingType: "ice",
       directCosts: [
-        { id: "1", name: "Πρ��τες Ύλες", value: 9000, category: "direct" },
+        { id: "1", name: "Πρώτες Ύλες", value: 9000, category: "direct" },
         {
           id: "2",
           name: "Εργατικά Καθαρίσματος",
