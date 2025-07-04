@@ -144,7 +144,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({
             ? "Παραγγελίες και διαχείριση πελατών"
             : "Orders and customer management",
         category: language === "el" ? "Λειτουργίες" : "Operations",
-        keywords: ["orders", "customers", "sales", "παραγγελίες", "πελάτ��ς"],
+        keywords: ["orders", "customers", "sales", "παραγγελίες", "πελάτες"],
         action: () => {
           setActiveTab("order-management");
           onClose();
@@ -188,13 +188,13 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({
           setActiveTab("iso-standards");
           onClose();
         },
-        icon: Certificate,
+        icon: BadgeCheck,
         shortcut: "Ctrl+I",
       },
       {
         id: "quality-compliance",
         title:
-          language === "el" ? "Ποιότητα & Συμμόρφωση" : "Quality & Compliance",
+          language === "el" ? "Ποιότητα & Συμμόρ��ωση" : "Quality & Compliance",
         description:
           language === "el"
             ? "Κέντρο ελέγχου ποιότητας"
@@ -243,7 +243,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({
           language === "el"
             ? "Προχωρημένη χρηματοοικονομική ανάλυση"
             : "Advanced financial analysis",
-        category: language === "el" ? "Ανα��υτικά" : "Analytics",
+        category: language === "el" ? "Αναλυτικά" : "Analytics",
         keywords: [
           "financial",
           "analytics",
