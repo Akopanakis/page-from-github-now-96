@@ -2,9 +2,14 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import mdx from "@mdx-js/rollup";
 import path from "path";
+import { componentTagger } from "lovable-tagger";
 
-export default defineConfig({
-  plugins: [{ ...mdx({}), enforce: "pre" }, react()],
+export default defineConfig(({ mode }) => ({
+  plugins: [
+    { ...mdx({}), enforce: "pre" }, 
+    react(),
+    mode === 'development' && componentTagger(),
+  ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -81,13 +86,12 @@ export default defineConfig({
     sourcemap: false,
   },
   server: {
+    host: "::",
     port: 8080,
-    strictPort: true,
-    host: true,
   },
   preview: {
     port: 4173,
     strictPort: true,
     host: true,
   },
-});
+}));
