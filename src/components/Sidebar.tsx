@@ -519,46 +519,78 @@ const Sidebar: React.FC<SidebarProps> = ({
     favorites.includes(item.id),
   );
 
-  const renderNavigationItem = (item: any) => {
+  const renderNavigationItem = (item: any, showFavorite = true) => {
     const Icon = item.icon;
     const isActive = activeTab === item.id;
     const isDisabled = isItemDisabled(item);
+    const isFavorite = favorites.includes(item.id);
 
     return (
-      <Button
-        key={item.id}
-        variant={isActive ? "default" : "ghost"}
-        className={`
-          w-full transition-all duration-200 mb-1
-          ${isCollapsed ? "h-12 p-2 justify-center" : "h-auto p-3 justify-start"}
-          ${isActive ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg" : ""}
-          ${isDisabled ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100 hover:shadow-md"}
-        `}
-        onClick={() => !isDisabled && setActiveTab(item.id)}
-        disabled={isDisabled}
-        title={isCollapsed ? item.label : undefined}
-      >
-        <div
-          className={`flex items-center ${isCollapsed ? "justify-center" : "w-full"}`}
+      <div key={item.id} className="relative group">
+        <Button
+          variant={isActive ? "default" : "ghost"}
+          className={`
+            w-full transition-all duration-200 mb-1 pr-8
+            ${isCollapsed ? "h-12 p-2 justify-center" : "h-auto p-3 justify-start"}
+            ${isActive ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg" : ""}
+            ${isDisabled ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100 hover:shadow-md"}
+          `}
+          onClick={() => !isDisabled && setActiveTab(item.id)}
+          disabled={isDisabled}
+          title={isCollapsed ? item.label : undefined}
         >
-          <Icon
-            className={`${isCollapsed ? "w-5 h-5" : "w-4 h-4 mr-3"} flex-shrink-0`}
-          />
-          {!isCollapsed && (
-            <div className="flex-1 text-left min-w-0">
-              <div className="flex items-center justify-between">
-                <span className="font-medium truncate">{item.label}</span>
-                {item.isPremium && (
-                  <Crown className="w-3 h-3 text-yellow-500 ml-2 flex-shrink-0" />
-                )}
+          <div
+            className={`flex items-center ${isCollapsed ? "justify-center" : "w-full"}`}
+          >
+            <Icon
+              className={`${isCollapsed ? "w-5 h-5" : "w-4 h-4 mr-3"} flex-shrink-0`}
+            />
+            {!isCollapsed && (
+              <div className="flex-1 text-left min-w-0">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium truncate">{item.label}</span>
+                  {item.isPremium && (
+                    <Crown className="w-3 h-3 text-yellow-500 ml-2 flex-shrink-0" />
+                  )}
+                </div>
+                <div className="text-xs opacity-70 mt-0.5 truncate">
+                  {item.description}
+                </div>
               </div>
-              <div className="text-xs opacity-70 mt-0.5 truncate">
-                {item.description}
-              </div>
-            </div>
-          )}
-        </div>
-      </Button>
+            )}
+          </div>
+        </Button>
+
+        {showFavorite && !isCollapsed && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className={`
+              absolute right-1 top-1/2 transform -translate-y-1/2 p-1 h-6 w-6
+              opacity-0 group-hover:opacity-100 transition-opacity
+              ${isFavorite ? "opacity-100 text-yellow-500" : "text-gray-400 hover:text-yellow-500"}
+            `}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleFavorite(item.id);
+            }}
+            title={
+              isFavorite
+                ? language === "el"
+                  ? "Αφαίρεση από αγαπημένα"
+                  : "Remove from favorites"
+                : language === "el"
+                  ? "Προσθήκη στα αγαπη��ένα"
+                  : "Add to favorites"
+            }
+          >
+            <Star
+              className="w-3 h-3"
+              fill={isFavorite ? "currentColor" : "none"}
+            />
+          </Button>
+        )}
+      </div>
     );
   };
 
