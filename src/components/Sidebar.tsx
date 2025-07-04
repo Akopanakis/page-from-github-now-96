@@ -491,6 +491,34 @@ const Sidebar: React.FC<SidebarProps> = ({
     return item.isPremium && !isPremium;
   };
 
+  const toggleFavorite = (itemId: string) => {
+    setFavorites((prev) =>
+      prev.includes(itemId)
+        ? prev.filter((id) => id !== itemId)
+        : [...prev, itemId],
+    );
+  };
+
+  const toggleSection = (categoryId: string) => {
+    setCollapsedSections((prev) =>
+      prev.includes(categoryId)
+        ? prev.filter((id) => id !== categoryId)
+        : [...prev, categoryId],
+    );
+  };
+
+  const filteredNavigationItems = navigationItems.filter((item) => {
+    if (!searchTerm) return true;
+    return (
+      item.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+
+  const favoriteItems = navigationItems.filter((item) =>
+    favorites.includes(item.id),
+  );
+
   const renderNavigationItem = (item: any) => {
     const Icon = item.icon;
     const isActive = activeTab === item.id;
