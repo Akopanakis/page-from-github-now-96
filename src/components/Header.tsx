@@ -33,6 +33,7 @@ const Header: React.FC<HeaderProps> = ({
   showFileUpload,
   setShowFileUpload,
   onShowGuide,
+  onOpenCommandPalette,
 }) => {
   const { language, setLanguage, currency, setCurrency } = useLanguage();
   const { user } = useAuth();
