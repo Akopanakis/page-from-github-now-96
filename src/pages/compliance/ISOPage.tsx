@@ -471,7 +471,7 @@ const ISOPage: React.FC = () => {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <h4 className="font-semibold text-blue-600 flex items-center gap-2">
-                          <Certificate className="w-4 h-4" />
+                          <BadgeCheck className="w-4 h-4" />
                           {link.code}
                         </h4>
                         <h5 className="font-medium text-gray-900 mt-1">
