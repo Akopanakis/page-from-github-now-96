@@ -1,14 +1,5 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
   "routes": [
     {
       "src": "/assets/(.*)",
@@ -40,12 +31,9 @@
       ]
     }
   ],
-  "functions": {
-    "app/**/*.ts": {
-      "runtime": "nodejs18.x"
+  "build": {
+    "env": {
+      "NODE_ENV": "production"
     }
-  },
-  "env": {
-    "NODE_ENV": "production"
   }
 }
