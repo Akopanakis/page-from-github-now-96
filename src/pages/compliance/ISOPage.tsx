@@ -286,7 +286,7 @@ const ISOPage: React.FC = () => {
                     className="flex items-center gap-4 p-4 border rounded-lg"
                   >
                     <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                      <Certificate className="w-6 h-6 text-blue-600" />
+                      <BadgeCheck className="w-6 h-6 text-blue-600" />
                     </div>
                     <div className="flex-1">
                       <h4 className="font-semibold">{standard.code}</h4>
@@ -564,7 +564,7 @@ const ISOPage: React.FC = () => {
                 <div className="p-4 border rounded-lg">
                   <h4 className="font-semibold mb-2">
                     {language === "el"
-                      ? "Εσωτε��ικοί Έλεγχοι"
+                      ? "Εσωτερικοί Έλεγχοι"
                       : "Internal Audits"}
                   </h4>
                   <p className="text-sm text-gray-600 mb-3">
