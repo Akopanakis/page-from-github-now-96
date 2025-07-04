@@ -330,7 +330,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     {
       id: "iso-standards",
       label: language === "el" ? "Πρότυπα ISO" : "ISO Standards",
-      icon: Certificate,
+      icon: BadgeCheck,
       category: "compliance",
       isPremium: false,
       description:
@@ -445,7 +445,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       category: "reports",
       isPremium: true,
       description:
-        language === "el" ? "Αρχειοθέτηση εγγράφων" : "Document archiving",
+        language === "el" ? "Αρ��ειοθέτηση εγγράφων" : "Document archiving",
     },
   ];
 
