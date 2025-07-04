@@ -47,6 +47,7 @@ import ISOPage from "@/pages/compliance/ISOPage";
 import FinancialAnalyticsPage from "@/pages/analytics/FinancialAnalytics";
 import CommandPalette from "@/components/layout/CommandPalette";
 import FloatingActionButton from "@/components/ui/FloatingActionButton";
+import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import { CompanyInfo } from "@/types/company";
 import { libraryLoader } from "@/utils/libraryLoader";
 import {
@@ -442,7 +443,7 @@ const EnhancedIndex = () => {
           to: "Κέντρο Διανομής",
           distance: 25,
           cost: 120,
-          type: "Οδικό",
+          type: "Οδι��ό",
         },
       ],
       supplierName: "��οπανάκης",
