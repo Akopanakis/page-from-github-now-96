@@ -317,6 +317,28 @@ const Sidebar: React.FC<SidebarProps> = ({
 
     // Compliance & Quality
     {
+      id: "haccp-module",
+      label: language === "el" ? "Μονάδα HACCP" : "HACCP Module",
+      icon: Biohazard,
+      category: "compliance",
+      isPremium: false,
+      description:
+        language === "el"
+          ? "Σύστημα HACCP και κρίσιμα σημεία ελέγχου"
+          : "HACCP system and critical control points",
+    },
+    {
+      id: "iso-standards",
+      label: language === "el" ? "Πρότυπα ISO" : "ISO Standards",
+      icon: Certificate,
+      category: "compliance",
+      isPremium: false,
+      description:
+        language === "el"
+          ? "Διαχείριση προτύπων ISO"
+          : "ISO standards management",
+    },
+    {
       id: "quality-control",
       label: language === "el" ? "Έλεγχος Ποιότητας" : "Quality Control",
       icon: Award,
