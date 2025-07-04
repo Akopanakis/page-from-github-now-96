@@ -55,12 +55,80 @@ const FinancialAnalytics: React.FC = () => {
 
   // Generate realistic data
   const [allData] = useState(() => generateAllStubData());
-  const [kpis] = useState(() => ({
-    totalRevenue: 850000,
-    totalCosts: 680000,
-    profitMargin: 20,
-    growth: 12.5,
-  }));
+  const [kpis] = useState(() => [
+    {
+      id: "revenue",
+      title: language === "el" ? "Συνολικά Έσοδα" : "Total Revenue",
+      value: "€850,000",
+      change: "+12.5%",
+      trend: "up" as const,
+      icon: "euro",
+      color: "blue",
+      description: language === "el" ? "Μηνιαίος τζίρος" : "Monthly turnover",
+    },
+    {
+      id: "costs",
+      title: language === "el" ? "Συνολικά Κόστη" : "Total Costs",
+      value: "€680,000",
+      change: "+8.2%",
+      trend: "up" as const,
+      icon: "trending-down",
+      color: "red",
+      description:
+        language === "el" ? "Λειτουργικά έξοδα" : "Operating expenses",
+    },
+    {
+      id: "profit",
+      title: language === "el" ? "Καθαρό Κέρδος" : "Net Profit",
+      value: "€170,000",
+      change: "+20.1%",
+      trend: "up" as const,
+      icon: "trending-up",
+      color: "green",
+      description: language === "el" ? "Μετά από φόρους" : "After taxes",
+    },
+    {
+      id: "margin",
+      title: language === "el" ? "Περιθώριο Κέρδους" : "Profit Margin",
+      value: "20.0%",
+      change: "+2.1%",
+      trend: "up" as const,
+      icon: "percent",
+      color: "purple",
+      description:
+        language === "el" ? "Ποσοστό κερδοφορίας" : "Profitability ratio",
+    },
+    {
+      id: "customers",
+      title: language === "el" ? "Ενεργοί Πελάτες" : "Active Customers",
+      value: "245",
+      change: "+15.3%",
+      trend: "up" as const,
+      icon: "users",
+      color: "cyan",
+      description: language === "el" ? "Μηνιαίοι πελάτες" : "Monthly customers",
+    },
+    {
+      id: "orders",
+      title: language === "el" ? "Παραγγελίες" : "Orders",
+      value: "1,240",
+      change: "+18.7%",
+      trend: "up" as const,
+      icon: "shopping-cart",
+      color: "orange",
+      description: language === "el" ? "Σύνολο παραγγελιών" : "Total orders",
+    },
+    {
+      id: "volume",
+      title: language === "el" ? "Όγκος Πωλήσεων" : "Sales Volume",
+      value: "12.5 tons",
+      change: "+5.2%",
+      trend: "up" as const,
+      icon: "package",
+      color: "indigo",
+      description: language === "el" ? "Φυσικός όγκος" : "Physical volume",
+    },
+  ]);
   const [expenses] = useState(() => allData.expenses);
   const [forecastData] = useState(() => allData.analytics);
   const [chartData] = useState(() => ({
