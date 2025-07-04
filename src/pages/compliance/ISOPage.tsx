@@ -336,7 +336,7 @@ const ISOPage: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="flex items-center gap-2">
-                      <Certificate className="w-5 h-5" />
+                      <BadgeCheck className="w-5 h-5" />
                       {standard.code} - {standard.title}
                     </CardTitle>
                     <p className="text-gray-600 mt-1">{standard.description}</p>
@@ -564,7 +564,7 @@ const ISOPage: React.FC = () => {
                 <div className="p-4 border rounded-lg">
                   <h4 className="font-semibold mb-2">
                     {language === "el"
-                      ? "Εσωτερικοί Έλεγχοι"
+                      ? "Εσωτε��ικοί Έλεγχοι"
                       : "Internal Audits"}
                   </h4>
                   <p className="text-sm text-gray-600 mb-3">
