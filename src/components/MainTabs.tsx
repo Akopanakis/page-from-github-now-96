@@ -144,11 +144,6 @@ const MainTabs: React.FC<MainTabsProps> = ({
           <CostsTab
             formData={formData}
             updateFormData={updateFormData}
-            costs={directCosts}
-            indirectCosts={indirectCosts}
-            onUpdateCost={onUpdateCost}
-            onAddCost={onAddCost}
-            onRemoveCost={onRemoveCost}
           />
         );
       case "transport":
@@ -156,10 +151,6 @@ const MainTabs: React.FC<MainTabsProps> = ({
           <TransportTab
             formData={formData}
             updateFormData={updateFormData}
-            legs={transportLegs}
-            onUpdateTransport={onUpdateTransport}
-            onAddTransport={onAddTransport}
-            onRemoveTransport={onRemoveTransport}
           />
         );
       case "analysis":
@@ -421,15 +412,6 @@ const MainTabs: React.FC<MainTabsProps> = ({
         updateFormData={updateFormData}
         results={results}
         onUpdateFormData={updateFormData}
-        directCosts={directCosts}
-        indirectCosts={indirectCosts}
-        transportLegs={transportLegs}
-        onUpdateCost={onUpdateCost}
-        onAddCost={onAddCost}
-        onRemoveCost={onRemoveCost}
-        onUpdateTransport={onUpdateTransport}
-        onAddTransport={onAddTransport}
-        onRemoveTransport={onRemoveTransport}
         productType={formData.productType}
       />
     );
