@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Certificate,
+  BadgeCheck,
   ExternalLink,
   CheckCircle,
   AlertTriangle,
@@ -161,7 +161,7 @@ const ISOPage: React.FC = () => {
           </h1>
           <p className="text-gray-600 mt-2">
             {language === "el"
-              ? "Διαχείριση και παρακολούθηση συμμόρφωσης με διεθνή πρότυπα"
+              ? "Διαχείριση και π��ρακολούθηση συμμόρφωσης με διεθνή πρότυπα"
               : "Management and monitoring of international standards compliance"}
           </p>
         </div>
@@ -261,7 +261,7 @@ const ISOPage: React.FC = () => {
                     }
                   </div>
                   <div className="text-sm text-gray-600">
-                    {language === "el" ? "Μη Αξιολογημένα" : "Not Assessed"}
+                    {language === "el" ? "Μη Αξιο��ογημένα" : "Not Assessed"}
                   </div>
                 </div>
               </div>
@@ -569,7 +569,7 @@ const ISOPage: React.FC = () => {
                   </h4>
                   <p className="text-sm text-gray-600 mb-3">
                     {language === "el"
-                      ? "Εργαλεία και λίστες ελέγχου για εσωτερικούς ελέγχους."
+                      ? "Ε��γαλεία και λίστες ελέγχου για εσωτερικούς ελέγχους."
                       : "Tools and checklists for internal auditing processes."}
                   </p>
                   <Button variant="outline" size="sm">
