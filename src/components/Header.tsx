@@ -11,6 +11,8 @@ import {
   Zap,
   User,
   HelpCircle,
+  Search,
+  Command as CommandIcon,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
