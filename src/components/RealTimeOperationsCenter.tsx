@@ -75,6 +75,9 @@ const RealTimeOperationsCenter: React.FC<RealTimeOperationsCenterProps> = ({
   const [alertsEnabled, setAlertsEnabled] = useState(true);
   const [updateInterval, setUpdateInterval] = useState(30); // seconds
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [activeSection, setActiveSection] = useState("overview");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [filterStatus, setFilterStatus] = useState("all");
 
   // Simulate real-time data updates
   useEffect(() => {
