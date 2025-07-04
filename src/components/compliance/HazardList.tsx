@@ -403,7 +403,7 @@ const HazardList: React.FC = () => {
                           }
                           placeholder={
                             language === "el"
-                              ? "Μέτρο ελέ��χου..."
+                              ? "Μέτρο ελέγχου..."
                               : "Control measure..."
                           }
                         />
@@ -481,7 +481,7 @@ const HazardList: React.FC = () => {
               <SelectValue placeholder={language === "el" ? "Τύπος" : "Type"} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">
+              <SelectItem value="all">
                 {language === "el" ? "Όλοι οι τύποι" : "All types"}
               </SelectItem>
               <SelectItem value="Biological">
