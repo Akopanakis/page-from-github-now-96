@@ -239,7 +239,7 @@ const AuditTrail: React.FC = () => {
               />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">
+              <SelectItem value="all">
                 {language === "el" ? "Όλες" : "All severities"}
               </SelectItem>
               <SelectItem value="Critical">
