@@ -154,22 +154,918 @@ interface MarketIntelligenceSystemProps {
   className?: string;
 }
 
-const MarketIntelligenceSystem: React.FC = () => {
+const MarketIntelligenceSystem: React.FC<MarketIntelligenceSystemProps> = ({
+  className = "",
+}) => {
   const { language } = useLanguage();
   const [activeTab, setActiveTab] = useState("overview");
   const [competitors, setCompetitors] = useState<CompetitorData[]>([]);
   const [marketTrends, setMarketTrends] = useState<MarketTrend[]>([]);
   const [priceAlerts, setPriceAlerts] = useState<PriceAlert[]>([]);
-  const [selectedCompetitor, setSelectedCompetitor] =
-    useState<CompetitorData | null>(null);
+  const [marketAnalyses, setMarketAnalyses] = useState<MarketAnalysis[]>([]);
+  const [selectedCompetitor, setSelectedCompetitor] = useState<CompetitorData | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterCategory, setFilterCategory] = useState("all");
+  const [refreshInterval, setRefreshInterval] = useState(30);
+  const [lastUpdate, setLastUpdate] = useState(new Date());
 
-  // Initialize with sample data
+  // Initialize with comprehensive sample data
   useEffect(() => {
     const sampleCompetitors: CompetitorData[] = [
       {
-        id: "1",
-        name: "Seafood Premium Ltd",
-        marketShare: 25.5,
+        id: "comp-001",
+        name: "Aegean Premium Seafood",
+        marketShare: 28.5,
+        avgPrice: 14.50,
+        priceChange: 2.3,
+        qualityRating: 4.7,
+        sustainabilityScore: 89,
+        strongPoints: [
+          language === "el" ? "Υψηλή ποιότητα" : "High quality",
+          language === "el" ? "Ισχυρό brand" : "Strong brand",
+          language === "el" ? "Πιστοποιήσεις" : "Certifications",
+          language === "el" ? "Δίκτυο διανομής" : "Distribution network"
+        ],
+        weakPoints: [
+          language === "el" ? "Υψηλές τιμές" : "High prices",
+          language === "el" ? "Περιορισμένη γκάμα" : "Limited range"
+        ],
+        lastUpdated: new Date("2024-11-20"),
+        products: [
+          {
+            name: language === "el" ? "Τσιπούρα Premium" : "Premium Sea Bream",
+            price: 16.80,
+            quality: "A+",
+            availability: language === "el" ? "Διαθέσιμο" : "Available",
+            marketPosition: "leader"
+          },
+          {
+            name: language === "el" ? "Λαβράκι Βιολογικό" : "Organic Sea Bass",
+            price: 19.20,
+            quality: "A+",
+            availability: language === "el" ? "Περιορισμένο" : "Limited",
+            marketPosition: "leader"
+          }
+        ],
+        marketStrategy: "premium",
+        geographicFocus: ["Αττική", "Θεσσαλονίκη", "Κρήτη", "Εξαγωγές ΕΕ"],
+        financial: {
+          revenue: 15200000,
+          growth: 8.5,
+          marketCap: 45000000,
+          employees: 185
+        },
+        certifications: ["MSC", "HACCP", "ISO 22000", "Organic", "BRC"],
+        channels: ["Λιανική", "Χονδρική", "Online", "Εστιατόρια", "Εξαγωγές"],
+        threats: [
+          language === "el" ? "Νέοι ανταγωνιστές" : "New competitors",
+          language === "el" ? "Κόστος πρώτων υλών" : "Raw material costs"
+        ],
+        opportunities: [
+          language === "el" ? "Βιολογικά προϊόντα" : "Organic products",
+          language === "el" ? "Νέες αγορές" : "New markets"
+        ]
+      },
+      {
+        id: "comp-002",
+        name: "Mediterranean Fish Co",
+        marketShare: 22.1,
+        avgPrice: 11.80,
+        priceChange: -1.2,
+        qualityRating: 4.3,
+        sustainabilityScore: 76,
+        strongPoints: [
+          language === "el" ? "Ανταγωνιστικές τιμές" : "Competitive prices",
+          language === "el" ? "Μεγάλη γκάμα" : "Wide range",
+          language === "el" ? "Διαθεσιμότητα" : "Availability"
+        ],
+        weakPoints: [
+          language === "el" ? "Ποιότητα" : "Quality inconsistency",
+          language === "el" ? "Brand αναγνώριση" : "Brand recognition"
+        ],
+        lastUpdated: new Date("2024-11-19"),
+        products: [
+          {
+            name: language === "el" ? "Τσιπούρα Standard" : "Standard Sea Bream",
+            price: 12.50,
+            quality: "B+",
+            availability: language === "el" ? "Διαθέσιμο" : "Available",
+            marketPosition: "challenger"
+          },
+          {
+            name: language === "el" ? "Μπακαλιάρος" : "Cod Fillet",
+            price: 18.90,
+            quality: "A-",
+            availability: language === "el" ? "Διαθέσιμο" : "Available",
+            marketPosition: "challenger"
+          }
+        ],
+        marketStrategy: "value",
+        geographicFocus: ["Κεντρική Ελλάδα", "Πελοπόννησος", "Βόρεια Ελλάδα"],
+        financial: {
+          revenue: 11800000,
+          growth: 3.2,
+          employees: 142
+        },
+        certifications: ["HACCP", "ISO 22000"],
+        channels: ["Χονδρική", "Σούπερ Μάρκετ", "Ψαραγορά"],
+        threats: [
+          language === "el" ? "Πίεση τιμών" : "Price pressure",
+          language === "el" ? "Κανονισμοί" : "Regulations"
+        ],
+        opportunities: [
+          language === "el" ? "Διεύρυνση δικτύου" : "Network expansion",
+          language === "el" ? "Ιδιωτική ετικέτα" : "Private label"
+        ]
+      },
+      {
+        id: "comp-003",
+        name: "Island Fresh Fisheries",
+        marketShare: 15.8,
+        avgPrice: 13.20,
+        priceChange: 1.8,
+        qualityRating: 4.5,
+        sustainabilityScore: 92,
+        strongPoints: [
+          language === "el" ? "Φρεσκάδα" : "Freshness",
+          language === "el" ? "Τοπική προέλευση" : "Local sourcing",
+          language === "el" ? "Βιωσιμότητα" : "Sustainability"
+        ],
+        weakPoints: [
+          language === "el" ? "Περιορισμένη διανομή" : "Limited distribution",
+          language === "el" ? "Εποχικότητα" : "Seasonality"
+        ],
+        lastUpdated: new Date("2024-11-18"),
+        products: [
+          {
+            name: language === "el" ? "Σαρδέλες Αιγαίου" : "Aegean Sardines",
+            price: 8.50,
+            quality: "A",
+            availability: language === "el" ? "Εποχιακό" : "Seasonal",
+            marketPosition: "nicher"
+          },
+          {
+            name: language === "el" ? "Μύδια Θερμαϊκού" : "Thermaikos Mussels",
+            price: 6.80,
+            quality: "A+",
+            availability: language === "el" ? "Διαθέσιμο" : "Available",
+            marketPosition: "leader"
+          }
+        ],
+        marketStrategy: "niche",
+        geographicFocus: ["Νησιά Αιγαίου", "Κυκλάδες", "Δωδεκάνησα"],
+        financial: {
+          revenue: 7400000,
+          growth: 12.1,
+          employees: 89
+        },
+        certifications: ["MSC", "HACCP", "Organic", "Local Origin"],
+        channels: ["Εστιατόρια", "Boutique", "Τουρισμός"],
+        threats: [
+          language === "el" ? "Κλιματική αλλαγή" : "Climate change",
+          language === "el" ? "Μεγάλοι παίκτες" : "Large players"
+        ],
+        opportunities: [
+          language === "el" ? "Eco-tourism" : "Eco-tourism",
+          language === "el" ? "Premium positioning" : "Premium positioning"
+        ]
+      }
+    ];
+
+    const sampleTrends: MarketTrend[] = [
+      {
+        id: "trend-001",
+        category: language === "el" ? "Τιμές Τσιπούρας" : "Sea Bream Prices",
+        trend: "up",
+        percentage: 8.5,
+        description: language === "el"
+          ? "Αύξηση τιμών λόγω μειωμένης παραγωγής και αυξημένης ζήτησης"
+          : "Price increase due to reduced supply and increased demand",
+        timeframe: language === "el" ? "Τελευταίοι 3 μήνες" : "Last 3 months",
+        confidence: 87,
+        sources: ["FishMarket Analytics", "EU Fish Price Index", "Greek Aquaculture Report"],
+        impact: "high",
+        region: "Μεσόγειος",
+        relatedProducts: ["Λαβράκι", "Μπακαλιάρος"]
+      },
+      {
+        id: "trend-002",
+        category: language === "el" ? "Βιολογικά Προϊόντα" : "Organic Products",
+        trend: "up",
+        percentage: 15.2,
+        description: language === "el"
+          ? "Αυξανόμενη ζήτηση για βιολογικά θαλασσινά προϊόντα"
+          : "Growing demand for organic seafood products",
+        timeframe: language === "el" ? "Ετήσια βάση" : "Annual basis",
+        confidence: 92,
+        sources: ["Organic Market Report", "Consumer Research", "EU Organic Sales"],
+        impact: "medium",
+        region: "Ευρώπη",
+        relatedProducts: ["Τσιπούρα", "Λαβράκι", "Μύδια"]
+      },
+      {
+        id: "trend-003",
+        category: language === "el" ? "Online Πωλήσεις" : "Online Sales",
+        trend: "up",
+        percentage: 23.7,
+        description: language === "el"
+          ? "Ραγδαία αύξηση των online πωλήσεων θαλασσινών"
+          : "Rapid growth in online seafood sales",
+        timeframe: language === "el" ? "Τελευταίο έτος" : "Last year",
+        confidence: 89,
+        sources: ["E-commerce Analytics", "Digital Sales Report", "Online Fish Markets"],
+        impact: "high",
+        region: "Ελλάδα",
+        relatedProducts: ["Όλα τα προϊόντα"]
+      },
+      {
+        id: "trend-004",
+        category: language === "el" ? "Κόστος Καυσίμων" : "Fuel Costs",
+        trend: "up",
+        percentage: 12.3,
+        description: language === "el"
+          ? "Αύξηση κόστους καυσίμων επηρεάζει τις τιμές"
+          : "Rising fuel costs affecting prices",
+        timeframe: language === "el" ? "Τελευταίοι 6 μήνες" : "Last 6 months",
+        confidence: 94,
+        sources: ["Fuel Price Index", "Shipping Cost Report", "Fleet Analysis"],
+        impact: "medium",
+        region: "Παγκό��μια",
+        relatedProducts: ["Όλα τα προϊόντα"]
+      }
+    ];
+
+    const sampleAlerts: PriceAlert[] = [
+      {
+        id: "alert-001",
+        productName: language === "el" ? "Τσιπούρα Premium" : "Premium Sea Bream",
+        currentPrice: 16.80,
+        targetPrice: 15.00,
+        alertType: "above",
+        competitor: "Aegean Premium Seafood",
+        isActive: true,
+        createdDate: new Date("2024-11-15"),
+        priority: "high",
+        triggered: true
+      },
+      {
+        id: "alert-002",
+        productName: language === "el" ? "Μπακαλιάρος" : "Cod Fillet",
+        currentPrice: 18.90,
+        targetPrice: 20.00,
+        alertType: "below",
+        competitor: "Mediterranean Fish Co",
+        isActive: true,
+        createdDate: new Date("2024-11-10"),
+        priority: "medium",
+        triggered: false
+      }
+    ];
+
+    const sampleAnalyses: MarketAnalysis[] = [
+      {
+        id: "analysis-001",
+        title: language === "el" ? "Ανάλυση Ανταγωνισμού Q4 2024" : "Competitive Analysis Q4 2024",
+        type: "competitive",
+        summary: language === "el"
+          ? "Εμπεριστατωμένη ανάλυση του ανταγωνιστικού τοπίου"
+          : "Comprehensive analysis of the competitive landscape",
+        keyFindings: [
+          language === "el" ? "Aegean Premium διατηρεί ηγετική θέση" : "Aegean Premium maintains market leadership",
+          language === "el" ? "Αύξηση ζήτησης για βιολογικά προϊόντα" : "Increased demand for organic products",
+          language === "el" ? "Πίεση στις τιμές από νέους παίκτες" : "Price pressure from new entrants"
+        ],
+        recommendations: [
+          language === "el" ? "Επένδυση σε βιολογικά προϊόντα" : "Invest in organic products",
+          language === "el" ? "Ενίσχυση online παρουσίας" : "Strengthen online presence",
+          language === "el" ? "Διαφοροποίηση προϊόντων" : "Product differentiation"
+        ],
+        confidence: 88,
+        dateCreated: new Date("2024-11-18"),
+        author: "Market Research Team",
+        status: "published"
+      }
+    ];
+
+    setCompetitors(sampleCompetitors);
+    setMarketTrends(sampleTrends);
+    setPriceAlerts(sampleAlerts);
+    setMarketAnalyses(sampleAnalyses);
+  }, [language]);
+
+  // Auto refresh
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLastUpdate(new Date());
+    }, refreshInterval * 1000);
+
+    return () => clearInterval(interval);
+  }, [refreshInterval]);
+
+  const formatCurrency = (amount: number) => {
+    return `€${amount.toLocaleString("el-GR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+  };
+
+  const getTrendIcon = (trend: string, percentage: number) => {
+    if (trend === "up") {
+      return <ArrowUpRight className="w-4 h-4 text-green-600" />;
+    } else if (trend === "down") {
+      return <ArrowDownRight className="w-4 h-4 text-red-600" />;
+    } else {
+      return <Minus className="w-4 h-4 text-gray-500" />;
+    }
+  };
+
+  const getMarketShareColor = (share: number) => {
+    if (share > 25) return "text-green-600";
+    if (share > 15) return "text-blue-600";
+    if (share > 10) return "text-yellow-600";
+    return "text-red-600";
+  };
+
+  const getQualityStars = (rating: number) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+    const stars = [];
+
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />);
+    }
+    if (hasHalfStar) {
+      stars.push(<Star key="half" className="w-4 h-4 text-yellow-400" />);
+    }
+    return stars;
+  };
+
+  const filteredCompetitors = competitors.filter(comp =>
+    comp.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    (filterCategory === "all" || comp.marketStrategy === filterCategory)
+  );
+
+  return (
+    <div className={`space-y-6 ${className}`}>
+      {/* Header */}
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {language === "el" ? "Market Intelligence" : "Market Intelligence"}
+          </h1>
+          <p className="text-gray-600">
+            {language === "el"
+              ? "Ανάλυση αγοράς, ανταγωνισμού και τάσεων σε πραγματικό χρόνο"
+              : "Real-time market analysis, competitive intelligence and trend monitoring"}
+          </p>
+        </div>
+        <div className="flex items-center space-x-3">
+          <Badge variant="outline" className="flex items-center">
+            <Activity className="w-3 h-3 mr-1" />
+            {language === "el" ? "Τελευταία ενημέρωση:" : "Last updated:"} {lastUpdate.toLocaleTimeString()}
+          </Badge>
+          <Button size="sm" variant="outline" onClick={() => setLastUpdate(new Date())}>
+            <RefreshCw className="w-4 h-4 mr-2" />
+            {language === "el" ? "Ανανέωση" : "Refresh"}
+          </Button>
+          <Button size="sm" variant="outline">
+            <Download className="w-4 h-4 mr-2" />
+            {language === "el" ? "Εξαγωγή" : "Export"}
+          </Button>
+          <Button size="sm">
+            <Plus className="w-4 h-4 mr-2" />
+            {language === "el" ? "Νέα Ανάλυση" : "New Analysis"}
+          </Button>
+        </div>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">
+                  {language === "el" ? "Ανταγωνιστές" : "Competitors"}
+                </p>
+                <p className="text-2xl font-bold">{competitors.length}</p>
+              </div>
+              <Building className="w-8 h-8 text-blue-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">
+                  {language === "el" ? "Ενεργές Τάσεις" : "Active Trends"}
+                </p>
+                <p className="text-2xl font-bold text-green-600">{marketTrends.filter(t => t.trend === "up").length}</p>
+              </div>
+              <TrendingUp className="w-8 h-8 text-green-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">
+                  {language === "el" ? "Ειδοποιήσεις Τιμών" : "Price Alerts"}
+                </p>
+                <p className="text-2xl font-bold text-orange-600">{priceAlerts.filter(a => a.triggered).length}</p>
+              </div>
+              <Bell className="w-8 h-8 text-orange-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">
+                  {language === "el" ? "Μέσο Market Share" : "Avg Market Share"}
+                </p>
+                <p className="text-2xl font-bold text-purple-600">
+                  {(competitors.reduce((sum, c) => sum + c.marketShare, 0) / competitors.length).toFixed(1)}%
+                </p>
+              </div>
+              <PieChart className="w-8 h-8 text-purple-600" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Main Content */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList className="grid w-full grid-cols-6">
+          <TabsTrigger value="overview">
+            {language === "el" ? "Επισκόπηση" : "Overview"}
+          </TabsTrigger>
+          <TabsTrigger value="competitors">
+            {language === "el" ? "Ανταγωνιστές" : "Competitors"}
+          </TabsTrigger>
+          <TabsTrigger value="trends">
+            {language === "el" ? "Τάσεις" : "Trends"}
+          </TabsTrigger>
+          <TabsTrigger value="pricing">
+            {language === "el" ? "Τιμές" : "Pricing"}
+          </TabsTrigger>
+          <TabsTrigger value="analysis">
+            {language === "el" ? "Αναλύσεις" : "Analysis"}
+          </TabsTrigger>
+          <TabsTrigger value="reports">
+            {language === "el" ? "Αναφορές" : "Reports"}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Market Trends Overview */}
+            <div className="lg:col-span-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <TrendingUp className="w-5 h-5 mr-2 text-green-600" />
+                    {language === "el" ? "Τάσεις Αγοράς" : "Market Trends"}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {marketTrends.slice(0, 4).map((trend) => (
+                      <div key={trend.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          {getTrendIcon(trend.trend, trend.percentage)}
+                          <div>
+                            <h4 className="font-medium">{trend.category}</h4>
+                            <p className="text-sm text-gray-600">{trend.description}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className={`font-bold ${
+                            trend.trend === "up" ? "text-green-600" :
+                            trend.trend === "down" ? "text-red-600" : "text-gray-600"
+                          }`}>
+                            {trend.trend === "up" ? "+" : trend.trend === "down" ? "-" : ""}{trend.percentage}%
+                          </div>
+                          <div className="text-xs text-gray-500">{trend.timeframe}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Competitive Overview */}
+            <div className="space-y-6">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center text-sm">
+                    <Building className="w-4 h-4 mr-2 text-blue-600" />
+                    {language === "el" ? "Κορυφαίοι Ανταγωνιστές" : "Top Competitors"}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {competitors.slice(0, 3).map((competitor) => (
+                    <div key={competitor.id} className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium text-sm">{competitor.name}</div>
+                        <div className="flex items-center space-x-1">
+                          {getQualityStars(competitor.qualityRating)}
+                          <span className="text-xs text-gray-500 ml-1">
+                            {competitor.qualityRating.toFixed(1)}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className={`font-bold ${getMarketShareColor(competitor.marketShare)}`}>
+                          {competitor.marketShare.toFixed(1)}%
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {formatCurrency(competitor.avgPrice)}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center text-sm">
+                    <AlertTriangle className="w-4 h-4 mr-2 text-orange-600" />
+                    {language === "el" ? "Ειδοποιήσεις" : "Alerts"}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {priceAlerts.filter(a => a.triggered).slice(0, 3).map((alert) => (
+                    <Alert key={alert.id} className="border-orange-200 bg-orange-50">
+                      <Bell className="h-4 w-4 text-orange-600" />
+                      <AlertDescription className="text-orange-800">
+                        <div className="font-medium">{alert.productName}</div>
+                        <div className="text-xs">
+                          {formatCurrency(alert.currentPrice)} vs {formatCurrency(alert.targetPrice)}
+                        </div>
+                      </AlertDescription>
+                    </Alert>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="competitors" className="space-y-6">
+          {/* Filters */}
+          <Card>
+            <CardContent className="p-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="search">{language === "el" ? "Αναζήτηση" : "Search"}</Label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
+                      id="search"
+                      placeholder={language === "el" ? "Όνομα εταιρείας..." : "Company name..."}
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="category">{language === "el" ? "Στρατηγική" : "Strategy"}</Label>
+                  <select
+                    id="category"
+                    value={filterCategory}
+                    onChange={(e) => setFilterCategory(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  >
+                    <option value="all">{language === "el" ? "Όλες" : "All"}</option>
+                    <option value="premium">{language === "el" ? "Premium" : "Premium"}</option>
+                    <option value="value">{language === "el" ? "Αξία" : "Value"}</option>
+                    <option value="volume">{language === "el" ? "Όγκος" : "Volume"}</option>
+                    <option value="niche">{language === "el" ? "Niche" : "Niche"}</option>
+                  </select>
+                </div>
+                <div className="flex items-end">
+                  <Badge variant="outline">
+                    {filteredCompetitors.length} {language === "el" ? "ανταγωνιστές" : "competitors"}
+                  </Badge>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Competitors Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {filteredCompetitors.map((competitor) => (
+              <Card
+                key={competitor.id}
+                className={`cursor-pointer transition-all hover:shadow-lg ${
+                  selectedCompetitor?.id === competitor.id ? "ring-2 ring-blue-500" : ""
+                }`}
+                onClick={() => setSelectedCompetitor(competitor)}
+              >
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center justify-between text-lg">
+                    <span>{competitor.name}</span>
+                    <div className="flex items-center space-x-2">
+                      <Badge
+                        className={
+                          competitor.marketStrategy === "premium"
+                            ? "bg-purple-100 text-purple-800"
+                            : competitor.marketStrategy === "value"
+                              ? "bg-blue-100 text-blue-800"
+                              : competitor.marketStrategy === "volume"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-orange-100 text-orange-800"
+                        }
+                      >
+                        {competitor.marketStrategy}
+                      </Badge>
+                      <Button size="sm" variant="ghost">
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <div className="text-sm text-gray-600">{language === "el" ? "Market Share" : "Market Share"}</div>
+                      <div className={`text-xl font-bold ${getMarketShareColor(competitor.marketShare)}`}>
+                        {competitor.marketShare.toFixed(1)}%
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-gray-600">{language === "el" ? "Μέση Τιμή" : "Avg Price"}</div>
+                      <div className="text-xl font-bold">{formatCurrency(competitor.avgPrice)}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-gray-600">{language === "el" ? "Ποιότητα" : "Quality"}</div>
+                      <div className="flex items-center space-x-1">
+                        {getQualityStars(competitor.qualityRating)}
+                        <span className="text-sm font-medium ml-1">
+                          {competitor.qualityRating.toFixed(1)}
+                        </span>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-gray-600">{language === "el" ? "Βιωσιμότητα" : "Sustainability"}</div>
+                      <div className="text-xl font-bold text-green-600">
+                        {competitor.sustainabilityScore}%
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="text-sm text-gray-600 mb-2">{language === "el" ? "Δυνατά Σημεία" : "Strengths"}</div>
+                    <div className="flex flex-wrap gap-1">
+                      {competitor.strongPoints.slice(0, 3).map((point, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {point}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">{language === "el" ? "Έσοδα:" : "Revenue:"}</span>
+                      <span className="font-medium">{formatCurrency(competitor.financial.revenue)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">{language === "el" ? "Ανάπτυξη:" : "Growth:"}</span>
+                      <span className={`font-medium ${
+                        competitor.financial.growth > 0 ? "text-green-600" : "text-red-600"
+                      }`}>
+                        {competitor.financial.growth > 0 ? "+" : ""}{competitor.financial.growth}%
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="trends" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {marketTrends.map((trend) => (
+              <Card key={trend.id}>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center justify-between text-sm">
+                    <span className="flex items-center">
+                      {getTrendIcon(trend.trend, trend.percentage)}
+                      <span className="ml-2">{trend.category}</span>
+                    </span>
+                    <div className="flex items-center space-x-2">
+                      <Badge
+                        className={
+                          trend.impact === "high"
+                            ? "bg-red-100 text-red-800"
+                            : trend.impact === "medium"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-green-100 text-green-800"
+                        }
+                      >
+                        {trend.impact}
+                      </Badge>
+                      <Badge variant="outline">
+                        {trend.confidence}% {language === "el" ? "εμπιστοσύνη" : "confidence"}
+                      </Badge>
+                    </div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <div className={`text-3xl font-bold ${
+                      trend.trend === "up" ? "text-green-600" :
+                      trend.trend === "down" ? "text-red-600" : "text-gray-600"
+                    }`}>
+                      {trend.trend === "up" ? "+" : trend.trend === "down" ? "-" : ""}{trend.percentage}%
+                    </div>
+                    <div className="text-sm text-gray-500">{trend.timeframe}</div>
+                  </div>
+
+                  <p className="text-sm text-gray-700">{trend.description}</p>
+
+                  <div>
+                    <div className="text-sm text-gray-600 mb-2">{language === "el" ? "Σχετικά Προϊόντα" : "Related Products"}</div>
+                    <div className="flex flex-wrap gap-1">
+                      {trend.relatedProducts.map((product, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {product}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t">
+                    <div className="text-xs text-gray-500">
+                      {language === "el" ? "Πηγές:" : "Sources:"} {trend.sources.join(", ")}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="pricing" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <DollarSign className="w-5 h-5 mr-2 text-green-600" />
+                {language === "el" ? "Ειδοποιήσεις Τιμών" : "Price Alerts"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{language === "el" ? "Προϊόν" : "Product"}</TableHead>
+                    <TableHead>{language === "el" ? "Ανταγωνιστής" : "Competitor"}</TableHead>
+                    <TableHead>{language === "el" ? "Τρέχουσα Τιμή" : "Current Price"}</TableHead>
+                    <TableHead>{language === "el" ? "Στόχος" : "Target"}</TableHead>
+                    <TableHead>{language === "el" ? "Κατάσταση" : "Status"}</TableHead>
+                    <TableHead>{language === "el" ? "Προτεραιότητα" : "Priority"}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {priceAlerts.map((alert) => (
+                    <TableRow key={alert.id}>
+                      <TableCell className="font-medium">{alert.productName}</TableCell>
+                      <TableCell>{alert.competitor}</TableCell>
+                      <TableCell>{formatCurrency(alert.currentPrice)}</TableCell>
+                      <TableCell>{formatCurrency(alert.targetPrice)}</TableCell>
+                      <TableCell>
+                        <Badge
+                          className={
+                            alert.triggered
+                              ? "bg-red-100 text-red-800"
+                              : alert.isActive
+                                ? "bg-blue-100 text-blue-800"
+                                : "bg-gray-100 text-gray-800"
+                          }
+                        >
+                          {alert.triggered
+                            ? language === "el" ? "Ενεργοποιήθηκε" : "Triggered"
+                            : alert.isActive
+                              ? language === "el" ? "Ενεργό" : "Active"
+                              : language === "el" ? "Ανενεργό" : "Inactive"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          className={
+                            alert.priority === "high"
+                              ? "bg-red-100 text-red-800"
+                              : alert.priority === "medium"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-green-100 text-green-800"
+                          }
+                        >
+                          {alert.priority}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="analysis" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {marketAnalyses.map((analysis) => (
+              <Card key={analysis.id}>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center justify-between text-sm">
+                    <span>{analysis.title}</span>
+                    <div className="flex items-center space-x-2">
+                      <Badge
+                        className={
+                          analysis.type === "competitive"
+                            ? "bg-blue-100 text-blue-800"
+                            : analysis.type === "pricing"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-purple-100 text-purple-800"
+                        }
+                      >
+                        {analysis.type}
+                      </Badge>
+                      <Badge variant="outline">
+                        {analysis.confidence}%
+                      </Badge>
+                    </div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-gray-700">{analysis.summary}</p>
+
+                  <div>
+                    <div className="text-sm font-medium mb-2">{language === "el" ? "Βασικά Ευρήματα" : "Key Findings"}</div>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      {analysis.keyFindings.map((finding, index) => (
+                        <li key={index} className="flex items-start">
+                          <CheckCircle className="w-3 h-3 text-green-600 mt-1 mr-2 flex-shrink-0" />
+                          {finding}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div>
+                    <div className="text-sm font-medium mb-2">{language === "el" ? "Συστάσεις" : "Recommendations"}</div>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      {analysis.recommendations.map((recommendation, index) => (
+                        <li key={index} className="flex items-start">
+                          <Lightbulb className="w-3 h-3 text-yellow-600 mt-1 mr-2 flex-shrink-0" />
+                          {recommendation}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="pt-2 border-t flex justify-between text-xs text-gray-500">
+                    <span>{analysis.author}</span>
+                    <span>{analysis.dateCreated.toLocaleDateString()}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="reports" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <FileText className="w-5 h-5 mr-2 text-blue-600" />
+                {language === "el" ? "Αναφορές Market Intelligence" : "Market Intelligence Reports"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="h-64">
+              <div className="flex items-center justify-center h-full text-gray-500">
+                <div className="text-center">
+                  <FileText className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                  <p>{language === "el" ? "Δημιουργία και εξαγωγή αναφορών" : "Generate and export market reports"}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
         avgPrice: 15.2,
         priceChange: 2.3,
         qualityRating: 4.5,
@@ -300,7 +1196,7 @@ const MarketIntelligenceSystem: React.FC = () => {
       },
       {
         id: "3",
-        category: language === "el" ? "Κόστη Μεταφοράς" : "Transport Costs",
+        category: language === "el" ? "Κόστη Μεταφορά��" : "Transport Costs",
         trend: "down",
         percentage: -5.2,
         description:
