@@ -443,7 +443,7 @@ const EnhancedIndex = () => {
           to: "Κέντρο Διανομής",
           distance: 25,
           cost: 120,
-          type: "Οδι��ό",
+          type: "Οδικό",
         },
       ],
       supplierName: "��οπανάκης",
@@ -852,6 +852,13 @@ const EnhancedIndex = () => {
         <CommandPalette
           isOpen={showCommandPalette}
           onClose={() => setShowCommandPalette(false)}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          isPremium={isPremium}
+        />
+
+        {/* Mobile Bottom Navigation */}
+        <MobileBottomNav
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           isPremium={isPremium}
