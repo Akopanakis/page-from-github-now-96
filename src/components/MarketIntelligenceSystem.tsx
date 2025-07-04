@@ -85,17 +85,29 @@ interface CompetitorData {
   avgPrice: number;
   priceChange: number;
   qualityRating: number;
+  sustainabilityScore: number;
   strongPoints: string[];
   weakPoints: string[];
-  lastUpdated: string;
+  lastUpdated: Date;
   products: {
     name: string;
     price: number;
     quality: string;
     availability: string;
+    marketPosition: "leader" | "challenger" | "follower" | "nicher";
   }[];
   marketStrategy: "premium" | "value" | "volume" | "niche";
   geographicFocus: string[];
+  financial: {
+    revenue: number;
+    growth: number;
+    marketCap?: number;
+    employees: number;
+  };
+  certifications: string[];
+  channels: string[];
+  threats: string[];
+  opportunities: string[];
 }
 
 interface MarketTrend {
@@ -107,6 +119,9 @@ interface MarketTrend {
   timeframe: string;
   confidence: number;
   sources: string[];
+  impact: "high" | "medium" | "low";
+  region: string;
+  relatedProducts: string[];
 }
 
 interface PriceAlert {
@@ -117,7 +132,26 @@ interface PriceAlert {
   alertType: "above" | "below";
   competitor: string;
   isActive: boolean;
-  createdDate: string;
+  createdDate: Date;
+  priority: "high" | "medium" | "low";
+  triggered: boolean;
+}
+
+interface MarketAnalysis {
+  id: string;
+  title: string;
+  type: "competitive" | "pricing" | "demand" | "supply" | "regulatory";
+  summary: string;
+  keyFindings: string[];
+  recommendations: string[];
+  confidence: number;
+  dateCreated: Date;
+  author: string;
+  status: "draft" | "published" | "archived";
+}
+
+interface MarketIntelligenceSystemProps {
+  className?: string;
 }
 
 const MarketIntelligenceSystem: React.FC = () => {
@@ -209,7 +243,7 @@ const MarketIntelligenceSystem: React.FC = () => {
         qualityRating: 4.2,
         strongPoints: [
           language === "el" ? "Τοπικά προϊόντα" : "Local products",
-          language === "el" ? "Φ��εσκάδα" : "Freshness",
+          language === "el" ? "Φρεσκάδα" : "Freshness",
           language === "el" ? "Εξειδίκευση" : "Specialization",
         ],
         weakPoints: [
@@ -510,7 +544,7 @@ const MarketIntelligenceSystem: React.FC = () => {
                     <div>
                       <p className="text-sm text-green-600">
                         {language === "el"
-                          ? "��έση Τιμή Αγοράς"
+                          ? "Μέση Τιμή Αγοράς"
                           : "Avg Market Price"}
                       </p>
                       <p className="text-2xl font-bold text-green-900">
