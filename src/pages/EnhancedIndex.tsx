@@ -25,7 +25,7 @@ import ExampleData from "@/components/ExampleData";
 import UserGuide from "@/components/UserGuide";
 import FloatingHelpButton from "@/components/FloatingHelpButton";
 import Sidebar from "@/components/Sidebar";
-import Breadcrumbs from "@/components/Breadcrumbs";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import QuickActions from "@/components/QuickActions";
 import QuickAccessCard from "@/components/QuickAccessCard";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -92,7 +92,7 @@ const EnhancedIndex = () => {
   });
 
   const [directCosts, setDirectCosts] = useState<CostItem[]>([
-    { id: "1", name: "Πρώ��ες Ύλες", value: 0, category: "direct" },
+    { id: "1", name: "Πρώτες Ύλες", value: 0, category: "direct" },
     { id: "2", name: "Εργατικά", value: 0, category: "direct" },
     { id: "3", name: "Ενέργεια", value: 0, category: "direct" },
   ]);
@@ -307,7 +307,7 @@ const EnhancedIndex = () => {
     if (totalCosts > 50000) {
       alerts.push({
         type: "error",
-        message: "Πολύ υψηλό κόστος! Εξετάστε τις επιλογ��ς βελτιστοποίησης",
+        message: "Πολύ υψηλό κόστος! Εξετάστε τις επιλογές βελτιστοποίησης",
       });
     }
 
