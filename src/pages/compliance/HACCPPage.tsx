@@ -274,7 +274,7 @@ const HACCPPage: React.FC = () => {
                     principle: 1,
                     title:
                       language === "el"
-                        ? "Ανά��υση Κινδύνων"
+                        ? "Ανάλυση Κινδύνων"
                         : "Hazard Analysis",
                     description:
                       language === "el"
@@ -362,7 +362,7 @@ const HACCPPage: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="audit">
-          <AuditTrail />
+          <AuditTrailEnhanced />
         </TabsContent>
       </Tabs>
     </div>
