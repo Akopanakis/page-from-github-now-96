@@ -11,6 +11,10 @@ import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
 import Expenses from "./pages/Expenses";
 import NotFound from "./pages/NotFound";
+import BusinessIntelligence from "./pages/analytics/BusinessIntelligence";
+import FinancialAnalytics from "./pages/analytics/FinancialAnalytics";
+import HACCPPage from "./pages/compliance/HACCPPage";
+import ISOPage from "./pages/compliance/ISOPage";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -37,6 +41,16 @@ function App() {
                 <Route path="/" component={EnhancedIndex} />
                 <Route path="/classic" component={Index} />
                 <Route path="/expenses" component={Expenses} />
+                <Route
+                  path="/analytics/business-intelligence"
+                  component={BusinessIntelligence}
+                />
+                <Route
+                  path="/analytics/financial"
+                  component={FinancialAnalytics}
+                />
+                <Route path="/compliance/haccp" component={HACCPPage} />
+                <Route path="/compliance/iso" component={ISOPage} />
                 <Route path="/login" component={Login} />
                 <Route path="/signup" component={Signup} />
                 <Route path="/profile" component={Profile} />
