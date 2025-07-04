@@ -613,6 +613,7 @@ const EnhancedIndex = () => {
           showFileUpload={showFileUpload}
           setShowFileUpload={setShowFileUpload}
           onShowGuide={() => setShowUserGuide(true)}
+          onOpenCommandPalette={() => setShowCommandPalette(true)}
         />
 
         <div id="start-tour">
