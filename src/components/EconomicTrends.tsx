@@ -474,7 +474,7 @@ const EconomicTrends: React.FC<EconomicTrendsProps> = ({
                                 : trendAnalysis.trend === "decreasing"
                                   ? "Καθοδική"
                                   : "Σταθερή"
-                            } 
+                            }
                              (+${trendAnalysis.priceChange.toFixed(1)} δείκτης)`
                           : `Price trend: ${
                               trendAnalysis.trend === "increasing"
@@ -482,7 +482,7 @@ const EconomicTrends: React.FC<EconomicTrendsProps> = ({
                                 : trendAnalysis.trend === "decreasing"
                                   ? "Falling"
                                   : "Stable"
-                            } 
+                            }
                              (+${trendAnalysis.priceChange.toFixed(1)} index points)`}
                       </p>
                     </div>
@@ -535,8 +535,8 @@ const EconomicTrends: React.FC<EconomicTrendsProps> = ({
                       </div>
                     )}
 
-                    {marketIndicators.find((i) => i.id === "fuel_cost")
-                      ?.change > 10 && (
+                    {(marketIndicators.find((i) => i.id === "fuel_cost")
+                      ?.change || 0) > 10 && (
                       <div className="flex items-start space-x-3 p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-400">
                         <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5" />
                         <div>
@@ -685,7 +685,7 @@ const EconomicTrends: React.FC<EconomicTrendsProps> = ({
                     </h4>
                     <p className="text-purple-800 text-sm">
                       {language === "el"
-                        ? "Τα επόμενα 2-3 χρόνια αναμένεται συνεχής άνοδος των τιμών λόγω περιβαλλοντικών περιορισμών και αυξημένης ζήτησης για premium προϊόντα. Η βιωσιμότητα θα γίνει κρίσιμος παράγοντας διαφοροποίησης."
+                        ? "Τα επόμενα 2-3 χρόνια αναμένεται συνεχής άνοδος των τιμών λόγω περιβαλλοντικών περιορισμών και αυξημένης ζήτησης για premium προϊόντα. Η βιωσιμ��τητα θα γίνει κρίσιμος παράγοντας διαφοροποίησης."
                         : "Over the next 2-3 years, continued price increases are expected due to environmental constraints and increased demand for premium products. Sustainability will become a critical differentiation factor."}
                     </p>
                   </div>
