@@ -14,8 +14,8 @@ const STORAGE_KEYS = {
 // Get analytics data from storage with stub data initialization
 const getAnalyticsFromStorage = (): AnalyticsRecord[] => {
   try {
-    const stored = safeGetJSON<AnalyticsRecord[]>(STORAGE_KEYS.analytics, null);
-    if (!stored) {
+    const stored = safeGetJSON<AnalyticsRecord[]>(STORAGE_KEYS.analytics, []);
+    if (stored.length === 0) {
       const stubData = generateAnalyticsData(30);
       safeSetJSON(STORAGE_KEYS.analytics, stubData);
       return stubData;
@@ -29,8 +29,8 @@ const getAnalyticsFromStorage = (): AnalyticsRecord[] => {
 
 const getMarketFromStorage = (): MarketRecord[] => {
   try {
-    const stored = safeGetJSON<MarketRecord[]>(STORAGE_KEYS.market, null);
-    if (!stored) {
+    const stored = safeGetJSON<MarketRecord[]>(STORAGE_KEYS.market, []);
+    if (stored.length === 0) {
       const stubData = generateMarketData(60);
       safeSetJSON(STORAGE_KEYS.market, stubData);
       return stubData;

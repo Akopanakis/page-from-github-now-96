@@ -6,8 +6,8 @@ const STORAGE_KEY = "batches";
 // Get batches from storage with stub data initialization
 const getBatchesFromStorage = (): ProductBatch[] => {
   try {
-    const stored = safeGetJSON<ProductBatch[]>(STORAGE_KEY, null);
-    if (!stored) {
+    const stored = safeGetJSON<ProductBatch[]>(STORAGE_KEY, []);
+    if (stored.length === 0) {
       // Initialize with stub data
       const stubData = generateBatchData(35);
       safeSetJSON(STORAGE_KEY, stubData);
