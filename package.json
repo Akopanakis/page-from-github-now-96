@@ -89,6 +89,7 @@
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.7",
+    "@types/lodash": "^4.17.20",
     "@types/node": "20.16.11",
     "@types/qrcode": "^1.5.5",
     "@types/react": "^18.3.11",
