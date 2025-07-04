@@ -338,10 +338,10 @@ export const ChartGrid: React.FC<{
   );
 };
 
+// Export enhanced chart components with cleaner names
 export {
   EnhancedLineChart as LineChart,
   EnhancedAreaChart as AreaChart,
   EnhancedBarChart as BarChart,
   EnhancedPieChart as PieChart,
-  ChartGrid,
 };
