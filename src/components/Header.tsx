@@ -105,6 +105,24 @@ const Header: React.FC<HeaderProps> = ({
               {isPremium && <Crown className="w-4 h-4 text-purple-600" />}
             </div>
 
+            {/* Command Palette */}
+            {onOpenCommandPalette && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onOpenCommandPalette}
+                className="flex items-center space-x-2 border-purple-200 text-purple-600 hover:bg-purple-50"
+              >
+                <CommandIcon className="w-4 h-4" />
+                <span className="hidden sm:inline">
+                  {language === "el" ? "Αναζήτηση" : "Search"}
+                </span>
+                <kbd className="hidden md:inline-flex items-center px-1.5 py-0.5 text-xs font-mono bg-gray-100 rounded">
+                  ⌘K
+                </kbd>
+              </Button>
+            )}
+
             {/* File Upload Toggle */}
             <Button
               variant="outline"
