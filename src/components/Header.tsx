@@ -17,6 +17,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocation } from "wouter";
+import MegaMenu from "@/components/layout/MegaMenu";
 
 interface HeaderProps {
   isPremium: boolean;
