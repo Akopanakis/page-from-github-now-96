@@ -45,7 +45,7 @@ import {
   Zap,
   Search,
   Star,
-  Certificate,
+  BadgeCheck,
   Biohazard,
 } from "lucide-react";
 
