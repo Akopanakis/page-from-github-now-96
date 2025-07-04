@@ -44,7 +44,7 @@ import {
   PieChart as PieChartComponent,
   ChartGrid,
 } from "@/components/charts/EnhancedCharts";
-import { stubData } from "@/utils/stubData";
+import { generateAllStubData } from "@/utils/stubData";
 
 const FinancialAnalytics: React.FC = () => {
   const { language } = useLanguage();
@@ -54,14 +54,88 @@ const FinancialAnalytics: React.FC = () => {
   const [filterCategory, setFilterCategory] = useState("all");
 
   // Generate realistic data
-  const [kpis] = useState(() => stubData.kpis());
-  const [expenses] = useState(() => stubData.expenses(100));
-  const [forecastData] = useState(() => stubData.forecast(12));
+  const [allData] = useState(() => generateAllStubData());
+  const [kpis] = useState(() => [
+    {
+      id: "revenue",
+      title: language === "el" ? "Συνολικά Έσοδα" : "Total Revenue",
+      value: "€850,000",
+      change: "+12.5%",
+      trend: "up" as const,
+      icon: "euro",
+      color: "blue",
+      description: language === "el" ? "Μηνιαίος τζίρος" : "Monthly turnover",
+    },
+    {
+      id: "costs",
+      title: language === "el" ? "Συνολικά Κόστη" : "Total Costs",
+      value: "€680,000",
+      change: "+8.2%",
+      trend: "up" as const,
+      icon: "trending-down",
+      color: "red",
+      description:
+        language === "el" ? "Λειτουργικά έξοδα" : "Operating expenses",
+    },
+    {
+      id: "profit",
+      title: language === "el" ? "Καθαρό Κέρδος" : "Net Profit",
+      value: "€170,000",
+      change: "+20.1%",
+      trend: "up" as const,
+      icon: "trending-up",
+      color: "green",
+      description: language === "el" ? "Μετά από φόρους" : "After taxes",
+    },
+    {
+      id: "margin",
+      title: language === "el" ? "Περιθώριο Κέρδους" : "Profit Margin",
+      value: "20.0%",
+      change: "+2.1%",
+      trend: "up" as const,
+      icon: "percent",
+      color: "purple",
+      description:
+        language === "el" ? "Ποσοστό κερδοφορίας" : "Profitability ratio",
+    },
+    {
+      id: "customers",
+      title: language === "el" ? "Ενεργοί Πελάτες" : "Active Customers",
+      value: "245",
+      change: "+15.3%",
+      trend: "up" as const,
+      icon: "users",
+      color: "cyan",
+      description: language === "el" ? "Μηνιαίοι πελάτες" : "Monthly customers",
+    },
+    {
+      id: "orders",
+      title: language === "el" ? "Παραγγελίες" : "Orders",
+      value: "1,240",
+      change: "+18.7%",
+      trend: "up" as const,
+      icon: "shopping-cart",
+      color: "orange",
+      description: language === "el" ? "Σύνολο παραγγελιών" : "Total orders",
+    },
+    {
+      id: "volume",
+      title: language === "el" ? "Όγκος Πωλήσεων" : "Sales Volume",
+      value: "12.5 tons",
+      change: "+5.2%",
+      trend: "up" as const,
+      icon: "package",
+      color: "indigo",
+      description: language === "el" ? "Φυσικός όγκος" : "Physical volume",
+    },
+  ]);
+  const [expenses] = useState(() => allData.expenses);
+  const [forecastData] = useState(() => allData.analytics);
   const [chartData] = useState(() => ({
-    line: stubData.chartData("line", 12),
-    bar: stubData.chartData("bar"),
-    pie: stubData.chartData("pie"),
-    area: stubData.chartData("area", 12),
+    line: allData.analytics,
+    bar: allData.analytics,
+    pie: allData.analytics,
+    area: allData.analytics,
   }));
 
   const pageNavItems = [
@@ -133,7 +207,7 @@ const FinancialAnalytics: React.FC = () => {
       }
       subtitle={
         language === "el"
-          ? "Προχωρημένη ανάλυση οικονομικών δεδομένων και προβλέψεις"
+          ? "Προχωρημένη ανάλυση οικονομικών δεδομένων ��αι προβλέψεις"
           : "Advanced financial data analysis and forecasting"
       }
       pageNavItems={pageNavItems}
@@ -252,7 +326,7 @@ const FinancialAnalytics: React.FC = () => {
                       <div>
                         <h4 className="font-semibold text-red-900">
                           {language === "el"
-                            ? "Απόκλιση από Στόχους"
+                            ? "Απόκλιση από Στόχου��"
                             : "Target Deviation"}
                         </h4>
                         <p className="text-sm text-red-700">
@@ -426,7 +500,7 @@ const FinancialAnalytics: React.FC = () => {
                           <div className="text-right">
                             <div className="font-semibold">{item.value}%</div>
                             <div className="text-sm text-gray-500">
-                              {stubData.formatters.currency(item.value * 1000)}
+                              €{(item.value * 1000).toLocaleString()}
                             </div>
                           </div>
                         </div>
@@ -593,7 +667,7 @@ const FinancialAnalytics: React.FC = () => {
                           <TableCell>{expense.category}</TableCell>
                           <TableCell>{expense.supplier}</TableCell>
                           <TableCell className="text-right font-medium">
-                            {stubData.formatters.currency(expense.amount)}
+                            €{expense.amount.toLocaleString()}
                           </TableCell>
                           <TableCell>
                             <Badge
@@ -633,7 +707,7 @@ const FinancialAnalytics: React.FC = () => {
                     : `Showing 1-20 of ${filteredExpenses.length} transactions`}
                 </span>
                 <Button variant="outline" size="sm">
-                  {language === "el" ? "Φόρτωση περισσότερων" : "Load more"}
+                  {language === "el" ? "Φόρτωση περισσότερ��ν" : "Load more"}
                 </Button>
               </div>
             </div>

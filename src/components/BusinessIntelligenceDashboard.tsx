@@ -817,7 +817,9 @@ const BusinessIntelligenceDashboard: React.FC<
               color="from-green-500 to-emerald-600"
             />
             <KPICard
-              title={language === "el" ? "Ημέρες Αποθέματος" : "Inventory Days"}
+              title={
+                language === "el" ? "Ημέρε�� Αποθέματος" : "Inventory Days"
+              }
               value={businessMetrics.inventory.daysOnHand}
               unit=" ημέρες"
               icon={Package}

@@ -79,7 +79,7 @@ const AdvancedAnalysisTab: React.FC<AdvancedAnalysisTabProps> = ({
   const toggleSection = (section: keyof typeof visibleSections) => {
     setVisibleSections((prev) => ({
       ...prev,
-      [section]: !prev[section],
+      [section]: !prev[section as keyof typeof prev],
     }));
   };
 
@@ -483,7 +483,7 @@ const AdvancedAnalysisTab: React.FC<AdvancedAnalysisTabProps> = ({
               <Package className="w-5 h-5 text-orange-600" />
               <span>
                 {language === "el"
-                  ? "Ανάλυση Συσκευασί��ς"
+                  ? "Ανάλυση Συσκευασί���ς"
                   : "Packaging Analysis"}
               </span>
             </CardTitle>
