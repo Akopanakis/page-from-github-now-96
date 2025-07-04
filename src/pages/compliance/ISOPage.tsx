@@ -182,7 +182,7 @@ const ISOPage: React.FC = () => {
             {language === "el" ? "Επισκόπηση" : "Overview"}
           </TabsTrigger>
           <TabsTrigger value="standards" className="flex items-center gap-2">
-            <Certificate className="w-4 h-4" />
+            <BadgeCheck className="w-4 h-4" />
             {language === "el" ? "Πρότυπα" : "Standards"}
           </TabsTrigger>
           <TabsTrigger value="resources" className="flex items-center gap-2">
@@ -458,7 +458,7 @@ const ISOPage: React.FC = () => {
             <CardContent>
               <p className="text-gray-600 mb-6">
                 {language === "el"
-                  ? "Παρακάτω β��ίσκεται η επίσημη τεκμηρίωση και οι σύνδεσμοι προς τα πρότυπα ISO που σχετίζονται με την ασφάλεια τροφίμων και την ιχνηλασιμότητα."
+                  ? "Παρακάτω βρίσκεται η επίσημη τεκμηρίωση και οι σύνδεσμοι προς τα πρότυπα ISO που σχετίζονται με την ασφάλεια τροφίμων και την ιχνηλασιμότητα."
                   : "Below you will find official documentation and links to ISO standards related to food safety and traceability."}
               </p>
 
