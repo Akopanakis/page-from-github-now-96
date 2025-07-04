@@ -20,7 +20,7 @@ import {
   Banknote,
   Receipt,
   Wallet,
-  TrendingLeftUp,
+  TrendingUp as TrendingLeftUp,
   ArrowUpRight,
   ArrowDownRight,
   Minus,

@@ -35,7 +35,7 @@ import {
   Layers,
   Database,
   Cpu,
-  TrendingLeftUp,
+  TrendingUp as TrendingLeftUp,
   ArrowUpRight,
   ArrowDownRight,
   Minus,

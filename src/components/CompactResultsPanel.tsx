@@ -203,10 +203,10 @@ const CompactResultsPanel: React.FC<CompactResultsPanelProps> = ({
   const costBreakdown = [
     {
       label: language === "el" ? "Αγορά Προϊόντος" : "Product Purchase",
-      value: results?.breakdown?.purchase || 0,
+      value: results?.breakdown?.materials || 0,
       percentage:
         results?.totalCosts > 0
-          ? ((results?.breakdown?.purchase || 0) / results.totalCosts) * 100
+          ? ((results?.breakdown?.materials || 0) / results.totalCosts) * 100
           : 0,
       color: "blue",
     },
@@ -230,10 +230,10 @@ const CompactResultsPanel: React.FC<CompactResultsPanelProps> = ({
     },
     {
       label: language === "el" ? "Λοιπά Κόστη" : "Other Costs",
-      value: results?.breakdown?.other || 0,
+      value: results?.breakdown?.overhead || results?.breakdown?.packaging || 0,
       percentage:
         results?.totalCosts > 0
-          ? ((results?.breakdown?.other || 0) / results.totalCosts) * 100
+          ? (((results?.breakdown?.overhead || 0) + (results?.breakdown?.packaging || 0)) / results.totalCosts) * 100
           : 0,
       color: "purple",
     },

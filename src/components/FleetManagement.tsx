@@ -60,6 +60,7 @@ import {
   AlertCircle,
   Info,
   RefreshCw,
+  Package,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
@@ -383,7 +384,7 @@ const FleetManagement: React.FC<FleetManagementProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card>
                   <CardContent className="p-4 text-center">
-                    <Fish className="w-8 h-8 mx-auto mb-2 text-green-600" />
+                    <Package className="w-8 h-8 mx-auto mb-2 text-green-600" />
                     <div className="text-2xl font-bold">{totalCatch}kg</div>
                     <div className="text-sm text-gray-600">
                       {language === "el" ? "Συνολικό Ψάρεμα" : "Total Catch"}

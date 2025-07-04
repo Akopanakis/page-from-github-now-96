@@ -28,7 +28,7 @@ import {
   Camera,
   Upload,
   Download,
-  Print,
+  Pin as Print,
   Share,
   Bell,
   Settings,

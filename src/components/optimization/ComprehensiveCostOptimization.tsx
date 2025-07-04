@@ -32,7 +32,7 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis,
   Radar,
-  TreemapChart,
+  
   Treemap,
 } from "recharts";
 import {
@@ -56,7 +56,7 @@ import {
   Leaf,
   Lightbulb,
   Settings,
-  Robot,
+  Bot as Robot,
   Scale,
   Database,
   Activity,
