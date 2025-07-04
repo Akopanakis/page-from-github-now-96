@@ -616,6 +616,8 @@ const EnhancedIndex = () => {
           setShowFileUpload={setShowFileUpload}
           onShowGuide={() => setShowUserGuide(true)}
           onOpenCommandPalette={() => setShowCommandPalette(true)}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
         />
 
         <div id="start-tour">
@@ -700,7 +702,7 @@ const EnhancedIndex = () => {
                         </div>
                         <div>
                           <h3 className="font-semibold text-green-800">
-                            Δοκιμάστε με Παράδειγμα
+                            Δοκιμά��τε με Παράδειγμα
                           </h3>
                           <p className="text-green-600 text-sm">
                             Φορτώστε δεδομένα θράψαλου Αργεντίνης για να δείτε
