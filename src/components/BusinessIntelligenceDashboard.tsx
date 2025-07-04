@@ -40,6 +40,7 @@ import {
   ArrowDownRight,
   Minus,
   Plus,
+  Calculator,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { realisticSeafoodData } from "@/mock/realisticSeafoodData";
