@@ -222,8 +222,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       id: "cost-optimization",
-      label:
-        language === "el" ? "��ελτιστοποίηση Κόστους" : "Cost Optimization",
+      label: language === "el" ? "Βελτιστοποίηση Κόστους" : "Cost Optimization",
       icon: TrendingDown,
       category: "analysis",
       isPremium: true,
@@ -664,21 +663,57 @@ const Sidebar: React.FC<SidebarProps> = ({
           </Button>
         </div>
 
+        {/* Search */}
+        {!isCollapsed && (
+          <div className="p-3 border-b">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Input
+                placeholder={language === "el" ? "Αναζήτηση..." : "Search..."}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9 h-8 text-sm"
+              />
+            </div>
+          </div>
+        )}
+
         {/* Navigation */}
         <div className="flex-1 overflow-y-auto p-2">
+          {/* Favorites Section */}
+          {!isCollapsed && favoriteItems.length > 0 && !searchTerm && (
+            <div className="mb-4">
+              <div className="px-3 py-2 mb-2">
+                <h4 className="text-sm font-semibold text-yellow-600 uppercase tracking-wider flex items-center">
+                  <Star className="w-4 h-4 mr-2" />
+                  {language === "el" ? "Αγαπημένα" : "Favorites"}
+                </h4>
+              </div>
+              <div className="space-y-1">
+                {favoriteItems.map((item) => renderNavigationItem(item, false))}
+              </div>
+              <Separator className="my-4" />
+            </div>
+          )}
+
+          {/* Regular Categories */}
           {categories.map((category) => {
-            const categoryItems = navigationItems.filter(
+            const categoryItems = filteredNavigationItems.filter(
               (item) => item.category === category.id,
             );
 
             if (categoryItems.length === 0) return null;
 
+            const isSectionCollapsed = collapsedSections.includes(category.id);
+
             return (
               <div key={category.id} className="mb-4">
                 {renderCategoryHeader(category)}
-                <div className="space-y-1">
-                  {categoryItems.map(renderNavigationItem)}
-                </div>
+                {(!isSectionCollapsed || isCollapsed) && (
+                  <div className="space-y-1">
+                    {categoryItems.map((item) => renderNavigationItem(item))}
+                  </div>
+                )}
                 {!isCollapsed &&
                   categories.indexOf(category) < categories.length - 1 && (
                     <Separator className="my-4" />
@@ -686,6 +721,20 @@ const Sidebar: React.FC<SidebarProps> = ({
               </div>
             );
           })}
+
+          {/* No results message */}
+          {searchTerm &&
+            filteredNavigationItems.length === 0 &&
+            !isCollapsed && (
+              <div className="text-center py-8 text-gray-500">
+                <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">
+                  {language === "el"
+                    ? "Δεν βρέθηκαν αποτελέσματα"
+                    : "No results found"}
+                </p>
+              </div>
+            )}
         </div>
 
         {/* Premium indicator */}
