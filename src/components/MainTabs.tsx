@@ -17,6 +17,10 @@ import MarketIntelligenceSystem from "./MarketIntelligenceSystem";
 import ScenarioAnalysis from "./ScenarioAnalysis";
 import RevenueForecast from "./RevenueForecast";
 import AdvancedFinancialModels from "./AdvancedFinancialModels";
+import ComprehensiveDashboard from "./ComprehensiveDashboard";
+import FleetManagement from "./FleetManagement";
+import InventoryManagement from "./InventoryManagement";
+import OrderManagement from "./OrderManagement";
 import {
   Fish,
   Settings,
@@ -84,6 +88,63 @@ const MainTabs: React.FC<MainTabsProps> = ({
   onRemoveTransport = () => {},
 }) => {
   const { language, t } = useLanguage();
+
+  // Handle new comprehensive routes
+  const renderComponent = () => {
+    switch (activeTab) {
+      case "comprehensive-dashboard":
+        return <ComprehensiveDashboard />;
+      case "fleet-management":
+        return <FleetManagement />;
+      case "inventory-management":
+        return <InventoryManagement />;
+      case "order-management":
+        return <OrderManagement />;
+      case "executive-dashboard":
+        return <ExecutiveDashboard results={results} formData={formData} />;
+      case "financial-ratios":
+        return <FinancialRatios results={results} formData={formData} />;
+      case "market-trends":
+        return <EconomicTrends productType={formData.productType} />;
+      case "advanced-analysis":
+        return <AdvancedAnalysisTab />;
+      case "cost-optimization":
+        return <AdvancedCostOptimization />;
+      case "market-intelligence":
+        return <MarketIntelligenceSystem />;
+      case "scenario-analysis":
+        return <ScenarioAnalysis />;
+      case "forecast-revenue":
+        return <RevenueForecast />;
+      case "financial-models":
+        return <AdvancedFinancialModels />;
+      default:
+        return renderTabContent();
+    }
+  };
+
+  const renderTabContent = () => {
+    return (
+      <MainTabs
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        isPremium={isPremium}
+        setIsPremium={setIsPremium}
+        formData={formData}
+        updateFormData={updateFormData}
+        results={results}
+        directCosts={directCosts}
+        indirectCosts={indirectCosts}
+        transportLegs={transportLegs}
+        onUpdateCost={onUpdateCost}
+        onAddCost={onAddCost}
+        onRemoveCost={onRemoveCost}
+        onUpdateTransport={onUpdateTransport}
+        onAddTransport={onAddTransport}
+        onRemoveTransport={onRemoveTransport}
+      />
+    );
+  };
 
   // Define all available tabs with their configurations
   const tabs = [

@@ -25,13 +25,29 @@ import ExampleData from "@/components/ExampleData";
 import UserGuide from "@/components/UserGuide";
 import FloatingHelpButton from "@/components/FloatingHelpButton";
 import Sidebar from "@/components/Sidebar";
-import Breadcrumbs from "@/components/Breadcrumbs";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import QuickActions from "@/components/QuickActions";
 import QuickAccessCard from "@/components/QuickAccessCard";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import ExecutiveDashboard from "@/components/ExecutiveDashboard";
 import FinancialRatios from "@/components/FinancialRatios";
 import EconomicTrends from "@/components/EconomicTrends";
+import ComprehensiveDashboard from "@/components/ComprehensiveDashboard";
+import FleetManagement from "@/components/FleetManagement";
+import InventoryManagement from "@/components/InventoryManagement";
+import OrderManagement from "@/components/OrderManagement";
+import CustomerManagement from "@/components/CustomerManagement";
+import NavigationSystem from "@/components/NavigationSystem";
+import BusinessIntelligenceDashboard from "@/components/BusinessIntelligenceDashboard";
+import RealTimeOperationsCenter from "@/components/RealTimeOperationsCenter";
+import AdvancedFinancialAnalytics from "@/components/AdvancedFinancialAnalytics";
+import QualityComplianceCenter from "@/components/QualityComplianceCenter";
+import HACCPPage from "@/pages/compliance/HACCPPage";
+import ISOPage from "@/pages/compliance/ISOPage";
+import FinancialAnalyticsPage from "@/pages/analytics/FinancialAnalytics";
+import CommandPalette from "@/components/layout/CommandPalette";
+import FloatingActionButton from "@/components/ui/FloatingActionButton";
+import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import { CompanyInfo } from "@/types/company";
 import { libraryLoader } from "@/utils/libraryLoader";
 import {
@@ -68,9 +84,10 @@ const EnhancedIndex = () => {
   } = useCalculation();
 
   // Core state
-  const [activeTab, setActiveTab] = useState("basics");
+  const [activeTab, setActiveTab] = useState("comprehensive-dashboard");
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
+  const [showCommandPalette, setShowCommandPalette] = useState(false);
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo>(() => {
     return safeGetJSON("companyInfo", { logoUrl: "", name: "", address: "" });
   });
@@ -82,7 +99,7 @@ const EnhancedIndex = () => {
   ]);
   const [indirectCosts, setIndirectCosts] = useState<CostItem[]>([
     { id: "4", name: "Γενικά Έξοδα", value: 0, category: "indirect" },
-    { id: "5", name: "Αποσβέσεις", value: 0, category: "indirect" },
+    { id: "5", name: "Αποσβέσ��ις", value: 0, category: "indirect" },
     { id: "6", name: "Ασφάλιστρα", value: 0, category: "indirect" },
   ]);
   const [transportLegs, setTransportLegs] = useState<TransportLeg[]>([
@@ -407,7 +424,7 @@ const EnhancedIndex = () => {
         { id: "3", name: "Ενέργεια Κατάψυξης", value: 200, category: "direct" },
       ],
       indirectCosts: [
-        { id: "4", name: "Γενικά Έξοδα", value: 300, category: "indirect" },
+        { id: "4", name: "Γε��ικά Έξοδα", value: 300, category: "indirect" },
         { id: "5", name: "Αποθήκευση", value: 150, category: "indirect" },
         { id: "6", name: "Ασφάλιστρα", value: 100, category: "indirect" },
       ],
@@ -458,70 +475,108 @@ const EnhancedIndex = () => {
     [updateFormData],
   );
 
-  const renderMainContent = () => {
-    const isAdvancedTab = [
-      "executive-dashboard",
-      "financial-ratios",
-      "market-trends",
-      "inventory",
-      "market",
-      "scenario",
-      "forecast",
-      "financial",
-    ].includes(activeTab);
-
-    if (isAdvancedTab) {
-      switch (activeTab) {
-        case "executive-dashboard":
-          return <ExecutiveDashboard results={results} formData={formData} />;
-        case "financial-ratios":
-          return <FinancialRatios results={results} formData={formData} />;
-        case "market-trends":
-          return <EconomicTrends productType={formData.productType} />;
-        default:
-          return (
-            <MainTabs
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-              isPremium={isPremium}
-              setIsPremium={setIsPremium}
-              formData={formData}
-              updateFormData={updateFormData}
-              results={results}
-              directCosts={directCosts}
-              indirectCosts={indirectCosts}
-              transportLegs={transportLegs}
-              onUpdateCost={updateCostItem}
-              onAddCost={addCostItem}
-              onRemoveCost={removeCostItem}
-              onUpdateTransport={updateTransportLeg}
-              onAddTransport={addTransportLeg}
-              onRemoveTransport={removeTransportLeg}
-            />
-          );
+  // Global keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey) {
+        switch (e.key) {
+          case "k":
+            e.preventDefault();
+            setShowCommandPalette(true);
+            break;
+          case "d":
+            e.preventDefault();
+            setActiveTab("comprehensive-dashboard");
+            break;
+          case "c":
+            e.preventDefault();
+            setActiveTab("costs");
+            break;
+          case "h":
+            e.preventDefault();
+            setActiveTab("haccp-module");
+            break;
+          case "i":
+            e.preventDefault();
+            setActiveTab("iso-standards");
+            break;
+          case "b":
+            e.preventDefault();
+            setActiveTab("business-intelligence");
+            break;
+          case ",":
+            e.preventDefault();
+            setActiveTab("settings");
+            break;
+        }
       }
-    }
+    };
 
-    return (
-      <MainTabs
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        isPremium={isPremium}
-        setIsPremium={setIsPremium}
-        formData={formData}
-        updateFormData={updateFormData}
-        results={results}
-        directCosts={directCosts}
-        indirectCosts={indirectCosts}
-        transportLegs={transportLegs}
-        onUpdateCost={updateCostItem}
-        onAddCost={addCostItem}
-        onRemoveCost={removeCostItem}
-        onUpdateTransport={updateTransportLeg}
-        onAddTransport={addTransportLeg}
-        onRemoveTransport={removeTransportLeg}
-      />
-    );
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  const renderMainContent = () => {
+    // Handle new comprehensive components
+    switch (activeTab) {
+      case "comprehensive-dashboard":
+        return <ComprehensiveDashboard />;
+      case "fleet-management":
+        return <FleetManagement />;
+      case "inventory-management":
+        return <InventoryManagement />;
+      case "order-management":
+        return <OrderManagement />;
+      case "customer-management":
+        return <CustomerManagement />;
+      case "navigation-system":
+        return (
+          <NavigationSystem
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            isPremium={isPremium}
+          />
+        );
+      case "business-intelligence":
+        return <BusinessIntelligenceDashboard />;
+      case "operations-center":
+        return <RealTimeOperationsCenter />;
+      case "financial-analytics":
+        return <FinancialAnalyticsPage />;
+      case "quality-compliance":
+        return <QualityComplianceCenter />;
+      case "haccp-module":
+        return <HACCPPage />;
+      case "iso-standards":
+        return <ISOPage />;
+      case "executive-dashboard":
+        return <ExecutiveDashboard results={results} formData={formData} />;
+      case "financial-ratios":
+        return <FinancialRatios results={results} formData={formData} />;
+      case "market-trends":
+        return <EconomicTrends productType={formData.productType} />;
+      default:
+        return (
+          <MainTabs
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            isPremium={isPremium}
+            setIsPremium={setIsPremium}
+            formData={formData}
+            updateFormData={updateFormData}
+            results={results}
+            directCosts={directCosts}
+            indirectCosts={indirectCosts}
+            transportLegs={transportLegs}
+            onUpdateCost={updateCostItem}
+            onAddCost={addCostItem}
+            onRemoveCost={removeCostItem}
+            onUpdateTransport={updateTransportLeg}
+            onAddTransport={addTransportLeg}
+            onRemoveTransport={removeTransportLeg}
+          />
+        );
+    }
   };
 
   return (
@@ -560,6 +615,9 @@ const EnhancedIndex = () => {
           showFileUpload={showFileUpload}
           setShowFileUpload={setShowFileUpload}
           onShowGuide={() => setShowUserGuide(true)}
+          onOpenCommandPalette={() => setShowCommandPalette(true)}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
         />
 
         <div id="start-tour">
@@ -644,7 +702,7 @@ const EnhancedIndex = () => {
                         </div>
                         <div>
                           <h3 className="font-semibold text-green-800">
-                            Δοκιμάστε με Παράδειγμα
+                            Δοκιμά��τε με Παράδειγμα
                           </h3>
                           <p className="text-green-600 text-sm">
                             Φορτώστε δεδομένα θράψαλου Αργεντίνης για να δείτε
@@ -792,11 +850,38 @@ const EnhancedIndex = () => {
 
         <FloatingHelpButton onShowGuide={() => setShowUserGuide(true)} />
 
+        {/* Command Palette */}
+        <CommandPalette
+          isOpen={showCommandPalette}
+          onClose={() => setShowCommandPalette(false)}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          isPremium={isPremium}
+        />
+
+        {/* Mobile Bottom Navigation */}
+        <MobileBottomNav
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          isPremium={isPremium}
+        />
+
+        {/* Floating Action Button */}
+        <FloatingActionButton
+          onCalculate={() => {
+            setActiveTab("costs");
+            calculate();
+          }}
+          onOpenHACCP={() => setActiveTab("haccp-module")}
+          onOpenCommandPalette={() => setShowCommandPalette(true)}
+          setActiveTab={setActiveTab}
+        />
+
         {/* Back to Top Button */}
         <button
           ref={backToTopRef}
           id="back-to-top"
-          className="fixed bottom-6 right-6 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 flex items-center justify-center opacity-0 translate-y-4 pointer-events-none"
+          className="fixed bottom-6 left-6 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 flex items-center justify-center opacity-0 translate-y-4 pointer-events-none"
           aria-label="Επιστροφή στην κορυφή"
         >
           <ChevronUp className="w-6 h-6" />

@@ -11,10 +11,13 @@ import {
   Zap,
   User,
   HelpCircle,
+  Search,
+  Command as CommandIcon,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocation } from "wouter";
+import MegaMenu from "@/components/layout/MegaMenu";
 
 interface HeaderProps {
   isPremium: boolean;
@@ -22,6 +25,9 @@ interface HeaderProps {
   showFileUpload: boolean;
   setShowFileUpload: (value: boolean) => void;
   onShowGuide?: () => void;
+  onOpenCommandPalette?: () => void;
+  activeTab?: string;
+  setActiveTab?: (tab: string) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -30,6 +36,9 @@ const Header: React.FC<HeaderProps> = ({
   showFileUpload,
   setShowFileUpload,
   onShowGuide,
+  onOpenCommandPalette,
+  activeTab = "",
+  setActiveTab,
 }) => {
   const { language, setLanguage, currency, setCurrency } = useLanguage();
   const { user } = useAuth();
@@ -100,6 +109,24 @@ const Header: React.FC<HeaderProps> = ({
               />
               {isPremium && <Crown className="w-4 h-4 text-purple-600" />}
             </div>
+
+            {/* Command Palette */}
+            {onOpenCommandPalette && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onOpenCommandPalette}
+                className="flex items-center space-x-2 border-purple-200 text-purple-600 hover:bg-purple-50"
+              >
+                <CommandIcon className="w-4 h-4" />
+                <span className="hidden sm:inline">
+                  {language === "el" ? "Αναζήτηση" : "Search"}
+                </span>
+                <kbd className="hidden md:inline-flex items-center px-1.5 py-0.5 text-xs font-mono bg-gray-100 rounded">
+                  ⌘K
+                </kbd>
+              </Button>
+            )}
 
             {/* File Upload Toggle */}
             <Button
@@ -210,6 +237,20 @@ const Header: React.FC<HeaderProps> = ({
             <Globe2 className="w-5 h-5 text-gray-400" />
           </div>
         </div>
+
+        {/* MegaMenu Navigation */}
+        {setActiveTab && (
+          <div className="border-t border-gray-100">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <MegaMenu
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                isPremium={isPremium}
+                className="py-2"
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Premium Features Banner */}
