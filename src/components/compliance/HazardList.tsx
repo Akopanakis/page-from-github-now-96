@@ -403,7 +403,7 @@ const HazardList: React.FC = () => {
                           }
                           placeholder={
                             language === "el"
-                              ? "Μέτρο ελέγχου..."
+                              ? "Μέτρο ελέ��χου..."
                               : "Control measure..."
                           }
                         />
@@ -469,9 +469,12 @@ const HazardList: React.FC = () => {
             </div>
           </div>
           <Select
-            value={filter.type || ""}
+            value={filter.type || "all"}
             onValueChange={(value) =>
-              setFilter((prev) => ({ ...prev, type: value || undefined }))
+              setFilter((prev) => ({
+                ...prev,
+                type: value === "all" ? undefined : value,
+              }))
             }
           >
             <SelectTrigger className="w-40">
