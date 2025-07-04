@@ -57,7 +57,9 @@ const PageLayout: React.FC<PageLayoutProps> = ({
     if (showTOC) {
       const headings = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
       const items = Array.from(headings).map((heading, index) => {
-        const id = heading.id || `heading-${index}`;
+        // Generate unique ID using timestamp to avoid duplicates
+        const timestamp = Date.now();
+        const id = heading.id || `heading-${timestamp}-${index}`;
         if (!heading.id) {
           heading.id = id;
         }
