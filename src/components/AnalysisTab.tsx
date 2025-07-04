@@ -231,7 +231,10 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({
   ]);
 
   const handleChartToggle = (chartKey: string) => {
-    setSelectedCharts((prev) => ({ ...prev, [chartKey]: !prev[chartKey] }));
+    setSelectedCharts((prev) => ({
+      ...prev,
+      [chartKey]: !prev[chartKey as keyof typeof prev],
+    }));
   };
 
   const handleProfitTargetChange = (checked: boolean | "indeterminate") => {
