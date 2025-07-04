@@ -317,7 +317,7 @@ const PDFExport: React.FC<PDFExportProps> = ({
       await libraryLoader.load("jspdf");
 
       // Get jsPDF constructor - handle different global variable formats
-      const jsPDFConstructor = window.jsPDF || window.jspdf?.jsPDF || jsPDF;
+      const jsPDFConstructor = (window as any).jsPDF || (window as any).jspdf?.jsPDF;
       if (!jsPDFConstructor) {
         throw new Error("jsPDF library not available");
       }
