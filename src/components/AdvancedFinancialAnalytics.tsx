@@ -20,7 +20,7 @@ import {
   Banknote,
   Receipt,
   Wallet,
-  TrendingLeftUp,
+  TrendingUp as TrendingLeftUp,
   ArrowUpRight,
   ArrowDownRight,
   Minus,
@@ -423,7 +423,7 @@ const AdvancedFinancialAnalytics: React.FC<AdvancedFinancialAnalyticsProps> = ({
           </div>
           <div className="flex justify-between items-center">
             <span className="text-sm">
-              {language === "el" ? "Χρηματοδοτικές" : "Financing"}
+              {language === "el" ? "Χρηματοδοτικ��ς" : "Financing"}
             </span>
             <span
               className={`font-medium ${financialData.cashFlow.financing > 0 ? "text-green-600" : "text-red-600"}`}
