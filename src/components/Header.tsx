@@ -26,6 +26,8 @@ interface HeaderProps {
   setShowFileUpload: (value: boolean) => void;
   onShowGuide?: () => void;
   onOpenCommandPalette?: () => void;
+  activeTab?: string;
+  setActiveTab?: (tab: string) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
