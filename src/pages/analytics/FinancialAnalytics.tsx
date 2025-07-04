@@ -44,7 +44,7 @@ import {
   PieChart as PieChartComponent,
   ChartGrid,
 } from "@/components/charts/EnhancedCharts";
-import { stubData } from "@/utils/stubData";
+import { generateAllStubData } from "@/utils/stubData";
 
 const FinancialAnalytics: React.FC = () => {
   const { language } = useLanguage();
