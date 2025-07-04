@@ -94,7 +94,7 @@ const EnhancedIndex = () => {
   ]);
   const [indirectCosts, setIndirectCosts] = useState<CostItem[]>([
     { id: "4", name: "Γενικά Έξοδα", value: 0, category: "indirect" },
-    { id: "5", name: "Αποσβέσ��ις", value: 0, category: "indirect" },
+    { id: "5", name: "Αποσβέσ��ι��", value: 0, category: "indirect" },
     { id: "6", name: "Ασφάλιστρα", value: 0, category: "indirect" },
   ]);
   const [transportLegs, setTransportLegs] = useState<TransportLeg[]>([
@@ -499,6 +499,10 @@ const EnhancedIndex = () => {
         return <AdvancedFinancialAnalytics />;
       case "quality-compliance":
         return <QualityComplianceCenter />;
+      case "haccp-module":
+        return <HACCPPage />;
+      case "iso-standards":
+        return <ISOPage />;
       case "executive-dashboard":
         return <ExecutiveDashboard results={results} formData={formData} />;
       case "financial-ratios":
