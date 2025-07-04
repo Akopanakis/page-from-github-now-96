@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Fish,
@@ -17,6 +18,8 @@ import {
   Crown,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   Home,
   Boxes,
   LineChart,
@@ -40,6 +43,10 @@ import {
   Leaf,
   BookOpen,
   Zap,
+  Search,
+  Star,
+  Certificate,
+  Biohazard,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -170,7 +177,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       category: "analysis",
       isPremium: true,
       description:
-        language === "el" ? "Εξειδικευμένη ανάλυση" : "Specialized analysis",
+        language === "el" ? "Εξειδικευμένη ανά��υση" : "Specialized analysis",
     },
     {
       id: "financial-ratios",
