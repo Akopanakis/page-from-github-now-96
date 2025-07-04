@@ -230,11 +230,12 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({
     language,
   ]);
 
-  const handleChartToggle = (chartKey: string) => {
-    setSelectedCharts((prev) => ({
-      ...prev,
-      [chartKey]: !prev[chartKey as keyof typeof prev],
-    }));
+const handleChartToggle = (chartKey: keyof typeof selectedCharts) => {
+  setSelectedCharts(prev => ({
+    ...prev,
+    [chartKey]: !prev[chartKey]
+  }));
+};
   };
 
   const handleProfitTargetChange = (checked: boolean | "indeterminate") => {
@@ -479,7 +480,7 @@ const AnalysisTab: React.FC<AnalysisTabProps> = ({
                   <Checkbox
                     id={key}
                     checked={selected}
-                    onCheckedChange={(checked) => handleChartToggle(key)}
+                    onCheckedChange={(checked) => handleChartToggle(key as keyof typeof selectedCharts)}
                   />
                   <Label htmlFor={key} className="text-slate-700">
                     {labels[key as keyof typeof labels]}

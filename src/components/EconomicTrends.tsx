@@ -535,8 +535,14 @@ const EconomicTrends: React.FC<EconomicTrendsProps> = ({
                       </div>
                     )}
 
-                    {(marketIndicators.find((i) => i.id === "fuel_cost")
-                      ?.change || 0) > 10 && (
+{(() => {
+  const fuelCostChange = marketIndicators.find(i => i.id === "fuel_cost")?.change ?? 0;
+  return fuelCostChange > 10 ? (
+    <span className="text-red-600">
+      Significant fuel cost increase: {fuelCostChange}%
+    </span>
+  ) : null;
+})()}
                       <div className="flex items-start space-x-3 p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-400">
                         <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5" />
                         <div>

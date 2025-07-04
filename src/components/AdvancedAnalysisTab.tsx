@@ -76,7 +76,7 @@ const AdvancedAnalysisTab: React.FC<AdvancedAnalysisTabProps> = ({
     },
   };
 
-  const toggleSection = (section: string) => {
+  const toggleSection = (section: keyof typeof visibleSections) => {
     setVisibleSections((prev) => ({
       ...prev,
       [section]: !prev[section as keyof typeof prev],
@@ -319,7 +319,7 @@ const AdvancedAnalysisTab: React.FC<AdvancedAnalysisTabProps> = ({
                   <Checkbox
                     id={key}
                     checked={visible}
-                    onCheckedChange={(checked) => toggleSection(key)}
+                    onCheckedChange={(checked) => toggleSection(key as keyof typeof visibleSections)}
                   />
                   <Label htmlFor={key} className="text-sm">
                     {labels[key as keyof typeof labels]}
