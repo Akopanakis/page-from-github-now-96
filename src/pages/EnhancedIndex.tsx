@@ -422,7 +422,7 @@ const EnhancedIndex = () => {
         { id: "3", name: "Ενέργεια Κατάψυξης", value: 200, category: "direct" },
       ],
       indirectCosts: [
-        { id: "4", name: "Γενικά Έξοδα", value: 300, category: "indirect" },
+        { id: "4", name: "Γε��ικά Έξοδα", value: 300, category: "indirect" },
         { id: "5", name: "Αποθήκευση", value: 150, category: "indirect" },
         { id: "6", name: "Ασφάλιστρα", value: 100, category: "indirect" },
       ],
@@ -472,6 +472,47 @@ const EnhancedIndex = () => {
     },
     [updateFormData],
   );
+
+  // Global keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey) {
+        switch (e.key) {
+          case "k":
+            e.preventDefault();
+            setShowCommandPalette(true);
+            break;
+          case "d":
+            e.preventDefault();
+            setActiveTab("comprehensive-dashboard");
+            break;
+          case "c":
+            e.preventDefault();
+            setActiveTab("costs");
+            break;
+          case "h":
+            e.preventDefault();
+            setActiveTab("haccp-module");
+            break;
+          case "i":
+            e.preventDefault();
+            setActiveTab("iso-standards");
+            break;
+          case "b":
+            e.preventDefault();
+            setActiveTab("business-intelligence");
+            break;
+          case ",":
+            e.preventDefault();
+            setActiveTab("settings");
+            break;
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const renderMainContent = () => {
     // Handle new comprehensive components
