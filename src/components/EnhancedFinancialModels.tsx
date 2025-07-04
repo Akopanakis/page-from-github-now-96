@@ -79,12 +79,12 @@ const EnhancedFinancialModels: React.FC<EnhancedFinancialModelsProps> = ({
     revenueGrowthRate: 0.08, // 8% ετήσια ανάπτυξη
     ebitdaMargin: 0.18, // 18% EBITDA margin
     capexRate: 0.05, // 5% των εσόδων σε επενδύσεις
-    taxRate: 0.29, // 29% φορολογικός συντελεστής Ελλάδας
+    taxRate: 0.29, // 29% φ��ρολογικός συντελεστής Ελλάδας
   });
 
   // Υπολογισμός DCF
   const calculateDCF = () => {
-    const projections = [];
+    const projections: any[] = [];
     let currentRevenue = dcfParameters.initialRevenue;
 
     for (let year = 1; year <= dcfParameters.projectionYears; year++) {
@@ -850,7 +850,7 @@ const EnhancedFinancialModels: React.FC<EnhancedFinancialModelsProps> = ({
                         ? "Εξαιρετική"
                         : kpis.customerRetention > 70
                           ? "Καλή"
-                          : "Χαμηλή"}
+                          : "Χαμη��ή"}
                     </Badge>
                   </CardContent>
                 </Card>
