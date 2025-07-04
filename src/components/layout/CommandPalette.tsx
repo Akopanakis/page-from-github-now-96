@@ -15,7 +15,7 @@ import {
   Package,
   Truck,
   Shield,
-  Certificate,
+  BadgeCheck,
   Biohazard,
   Award,
   Zap,
@@ -144,7 +144,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({
             ? "Παραγγελίες και διαχείριση πελατών"
             : "Orders and customer management",
         category: language === "el" ? "Λειτουργίες" : "Operations",
-        keywords: ["orders", "customers", "sales", "παραγγελίες", "πελάτες"],
+        keywords: ["orders", "customers", "sales", "παραγγελίες", "πελάτ��ς"],
         action: () => {
           setActiveTab("order-management");
           onClose();
@@ -243,7 +243,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({
           language === "el"
             ? "Προχωρημένη χρηματοοικονομική ανάλυση"
             : "Advanced financial analysis",
-        category: language === "el" ? "Αναλυτικά" : "Analytics",
+        category: language === "el" ? "Ανα��υτικά" : "Analytics",
         keywords: [
           "financial",
           "analytics",
