@@ -20,7 +20,7 @@ import { complianceAPI } from "@/api/compliance";
 import { ComplianceStats } from "@/types/compliance";
 import HazardList from "@/components/compliance/HazardList";
 import CCPList from "@/components/compliance/CCPList";
-import AuditTrail from "@/components/compliance/AuditTrail";
+import AuditTrailEnhanced from "@/components/compliance/AuditTrailEnhanced";
 
 const HACCPPage: React.FC = () => {
   const { language } = useLanguage();
@@ -274,7 +274,7 @@ const HACCPPage: React.FC = () => {
                     principle: 1,
                     title:
                       language === "el"
-                        ? "Ανάλυση Κινδύνων"
+                        ? "Ανά��υση Κινδύνων"
                         : "Hazard Analysis",
                     description:
                       language === "el"
