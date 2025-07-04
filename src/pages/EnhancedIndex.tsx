@@ -85,6 +85,7 @@ const EnhancedIndex = () => {
   const [activeTab, setActiveTab] = useState("comprehensive-dashboard");
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
+  const [showCommandPalette, setShowCommandPalette] = useState(false);
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo>(() => {
     return safeGetJSON("companyInfo", { logoUrl: "", name: "", address: "" });
   });
