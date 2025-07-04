@@ -211,8 +211,8 @@ const AuditTrail: React.FC = () => {
               />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">
-                {language === "el" ? "Όλες οι μονάδ��ς" : "All modules"}
+              <SelectItem value="all">
+                {language === "el" ? "Όλες οι μονάδες" : "All modules"}
               </SelectItem>
               <SelectItem value="HACCP">HACCP</SelectItem>
               <SelectItem value="ISO">ISO</SelectItem>
