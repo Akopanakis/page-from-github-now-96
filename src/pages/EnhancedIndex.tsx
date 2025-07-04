@@ -42,6 +42,8 @@ import BusinessIntelligenceDashboard from "@/components/BusinessIntelligenceDash
 import RealTimeOperationsCenter from "@/components/RealTimeOperationsCenter";
 import AdvancedFinancialAnalytics from "@/components/AdvancedFinancialAnalytics";
 import QualityComplianceCenter from "@/components/QualityComplianceCenter";
+import HACCPPage from "@/pages/compliance/HACCPPage";
+import ISOPage from "@/pages/compliance/ISOPage";
 import { CompanyInfo } from "@/types/company";
 import { libraryLoader } from "@/utils/libraryLoader";
 import {
