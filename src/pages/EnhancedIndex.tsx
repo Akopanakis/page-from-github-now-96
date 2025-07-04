@@ -92,7 +92,7 @@ const EnhancedIndex = () => {
   });
 
   const [directCosts, setDirectCosts] = useState<CostItem[]>([
-    { id: "1", name: "Πρώτες Ύλες", value: 0, category: "direct" },
+    { id: "1", name: "Πρώ��ες Ύλες", value: 0, category: "direct" },
     { id: "2", name: "Εργατικά", value: 0, category: "direct" },
     { id: "3", name: "Ενέργεια", value: 0, category: "direct" },
   ]);
@@ -307,7 +307,7 @@ const EnhancedIndex = () => {
     if (totalCosts > 50000) {
       alerts.push({
         type: "error",
-        message: "Πολύ υψηλό κόστος! Εξετάστε τις επιλογές βελτιστοποίησης",
+        message: "Πολύ υψηλό κόστος! Εξετάστε τις επιλογ��ς βελτιστοποίησης",
       });
     }
 
@@ -541,7 +541,7 @@ const EnhancedIndex = () => {
       case "operations-center":
         return <RealTimeOperationsCenter />;
       case "financial-analytics":
-        return <AdvancedFinancialAnalytics />;
+        return <FinancialAnalyticsPage />;
       case "quality-compliance":
         return <QualityComplianceCenter />;
       case "haccp-module":
