@@ -67,11 +67,34 @@ const Sidebar: React.FC<SidebarProps> = ({
     const saved = localStorage.getItem("kostopro-sidebar-collapsed");
     return saved === "true";
   });
+  const [searchTerm, setSearchTerm] = useState("");
+  const [favorites, setFavorites] = useState<string[]>(() => {
+    const saved = localStorage.getItem("kostopro-sidebar-favorites");
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [collapsedSections, setCollapsedSections] = useState<string[]>(() => {
+    const saved = localStorage.getItem("kostopro-sidebar-collapsed-sections");
+    return saved ? JSON.parse(saved) : [];
+  });
 
-  // Save collapse state
+  // Save states
   useEffect(() => {
     localStorage.setItem("kostopro-sidebar-collapsed", isCollapsed.toString());
   }, [isCollapsed]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "kostopro-sidebar-favorites",
+      JSON.stringify(favorites),
+    );
+  }, [favorites]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "kostopro-sidebar-collapsed-sections",
+      JSON.stringify(collapsedSections),
+    );
+  }, [collapsedSections]);
 
   const navigationItems = [
     // Main Operations
@@ -177,7 +200,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       category: "analysis",
       isPremium: true,
       description:
-        language === "el" ? "Εξειδικευμένη ανά��υση" : "Specialized analysis",
+        language === "el" ? "Εξειδικευμένη ανάλυση" : "Specialized analysis",
     },
     {
       id: "financial-ratios",
