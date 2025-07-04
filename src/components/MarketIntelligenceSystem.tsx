@@ -5,6 +5,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Progress } from "@/components/ui/progress";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   Select,
   SelectContent,
@@ -37,6 +47,35 @@ import {
   RefreshCw,
   Download,
   Search,
+  Filter,
+  Settings,
+  Bell,
+  Activity,
+  Star,
+  Shield,
+  Package,
+  Fish,
+  Ship,
+  Factory,
+  Navigation,
+  Anchor,
+  Clock,
+  Percent,
+  ArrowUpRight,
+  ArrowDownRight,
+  Minus,
+  MoreVertical,
+  ExternalLink,
+  Calculator,
+  PieChart,
+  Award,
+  Timer,
+  Scale,
+  Briefcase,
+  Container,
+  Truck,
+  Heart,
+  Leaf,
 } from "lucide-react";
 
 interface CompetitorData {
@@ -170,7 +209,7 @@ const MarketIntelligenceSystem: React.FC = () => {
         qualityRating: 4.2,
         strongPoints: [
           language === "el" ? "Τοπικά προϊόντα" : "Local products",
-          language === "el" ? "Φρεσκάδα" : "Freshness",
+          language === "el" ? "Φ��εσκάδα" : "Freshness",
           language === "el" ? "Εξειδίκευση" : "Specialization",
         ],
         weakPoints: [
@@ -471,7 +510,7 @@ const MarketIntelligenceSystem: React.FC = () => {
                     <div>
                       <p className="text-sm text-green-600">
                         {language === "el"
-                          ? "Μέση Τιμή Αγοράς"
+                          ? "��έση Τιμή Αγοράς"
                           : "Avg Market Price"}
                       </p>
                       <p className="text-2xl font-bold text-green-900">
