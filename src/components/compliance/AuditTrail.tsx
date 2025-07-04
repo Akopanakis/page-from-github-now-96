@@ -225,9 +225,12 @@ const AuditTrail: React.FC = () => {
           </Select>
 
           <Select
-            value={filter.status || ""}
+            value={filter.status || "all"}
             onValueChange={(value) =>
-              setFilter((prev) => ({ ...prev, status: value || undefined }))
+              setFilter((prev) => ({
+                ...prev,
+                status: value === "all" ? undefined : value,
+              }))
             }
           >
             <SelectTrigger className="w-40">
