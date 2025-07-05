@@ -301,7 +301,7 @@ const MainTabs: React.FC<MainTabsProps> = ({
       id: "forecast",
       label: t("forecast.revenue"),
       icon: TrendingUp,
-      component: RevenueForecast,
+      component: RevenueForecastingEnhanced,
       category: "premium",
       isPremium: true,
     },
