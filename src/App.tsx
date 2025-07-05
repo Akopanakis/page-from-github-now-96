@@ -11,6 +11,7 @@ import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
 import Expenses from "./pages/Expenses";
 import NotFound from "./pages/NotFound";
+import TestEnhancedComponents from "./pages/TestEnhancedComponents";
 import LoadingSkeleton from "./components/LoadingSkeleton";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -47,6 +48,7 @@ function App() {
               <Router>
                 <Route path="/" component={EnhancedIndex} />
                 <Route path="/classic" component={Index} />
+                <Route path="/test" component={TestEnhancedComponents} />
                 <Route path="/expenses" component={Expenses} />
                 <Route
                   path="/analytics/business-intelligence"

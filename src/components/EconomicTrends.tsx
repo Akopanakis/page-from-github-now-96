@@ -178,7 +178,7 @@ const EconomicTrends: React.FC<EconomicTrendsProps> = ({
         unit: "Index",
         description:
           language === "el"
-            ? "Δείκτης παγκόσμιων τιμών θαλασσινών (βάση 100=2023)"
+            ? "Δείκτης παγκόσμιων τιμών ��αλασσινών (βάση 100=2023)"
             : "Global seafood price index (base 100=2023)",
         impact: "high",
       },
@@ -535,30 +535,28 @@ const EconomicTrends: React.FC<EconomicTrendsProps> = ({
                       </div>
                     )}
 
-{(() => {
-  const fuelCostChange = marketIndicators.find(i => i.id === "fuel_cost")?.change ?? 0;
-  return fuelCostChange > 10 ? (
-    <span className="text-red-600">
-      Significant fuel cost increase: {fuelCostChange}%
-    </span>
-  ) : null;
-})()}
-                      <div className="flex items-start space-x-3 p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-400">
-                        <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5" />
-                        <div>
-                          <h4 className="font-medium text-yellow-800">
-                            {language === "el"
-                              ? "Προσοχή στα Κόστη Μεταφοράς"
-                              : "Monitor Transport Costs"}
-                          </h4>
-                          <p className="text-yellow-700 text-sm">
-                            {language === "el"
-                              ? "Σημαντική αύξηση κόστους καυσίμων. Εξετάστε εναλλακτικές μεταφοράς."
-                              : "Significant fuel cost increase. Consider alternative transport options."}
-                          </p>
+                    {(() => {
+                      const fuelCostChange =
+                        marketIndicators.find((i) => i.id === "fuel_cost")
+                          ?.change ?? 0;
+                      return fuelCostChange > 10 ? (
+                        <div className="flex items-start space-x-3 p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-400">
+                          <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5" />
+                          <div>
+                            <h4 className="font-medium text-yellow-800">
+                              {language === "el"
+                                ? "Προσοχή στα Κόστη Μεταφοράς"
+                                : "Monitor Transport Costs"}
+                            </h4>
+                            <p className="text-yellow-700 text-sm">
+                              {language === "el"
+                                ? "Σημαντική αύξηση κόστους καυσίμων. Εξετάστε εναλλακτικές μεταφοράς."
+                                : "Significant fuel cost increase. Consider alternative transport options."}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      ) : null;
+                    })()}
 
                     <div className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">
                       <Info className="w-5 h-5 text-blue-600 mt-0.5" />

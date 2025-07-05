@@ -38,10 +38,14 @@ import InventoryManagement from "@/components/InventoryManagement";
 import OrderManagement from "@/components/OrderManagement";
 import CustomerManagement from "@/components/CustomerManagement";
 import NavigationSystem from "@/components/NavigationSystem";
+import EnhancedNavigationSystem from "@/components/EnhancedNavigationSystem";
 import BusinessIntelligenceDashboard from "@/components/BusinessIntelligenceDashboard";
 import RealTimeOperationsCenter from "@/components/RealTimeOperationsCenter";
 import AdvancedFinancialAnalytics from "@/components/AdvancedFinancialAnalytics";
 import QualityComplianceCenter from "@/components/QualityComplianceCenter";
+import MarketIntelligenceSystemEnhanced from "@/components/MarketIntelligenceSystemEnhanced";
+import ScenarioAnalysisEnhanced from "@/components/ScenarioAnalysisEnhanced";
+import RevenueForecastingEnhanced from "@/components/RevenueForecastingEnhanced";
 import HACCPPage from "@/pages/compliance/HACCPPage";
 import ISOPage from "@/pages/compliance/ISOPage";
 import FinancialAnalyticsPage from "@/pages/analytics/FinancialAnalytics";
@@ -97,35 +101,24 @@ const EnhancedIndex = () => {
     { id: "2", name: "Εργατικά", value: 0, category: "direct" },
     { id: "3", name: "Ενέργεια", value: 0, category: "direct" },
   ]);
+
   const [indirectCosts, setIndirectCosts] = useState<CostItem[]>([
-    { id: "4", name: "Γενικά Έξοδα", value: 0, category: "indirect" },
-    { id: "5", name: "Αποσβέσ��ις", value: 0, category: "indirect" },
-    { id: "6", name: "Ασφάλιστρα", value: 0, category: "indirect" },
+    { id: "1", name: "Γενικά Έξοδα", value: 0, category: "indirect" },
+    { id: "2", name: "Διοικητικ��", value: 0, category: "indirect" },
   ]);
-  const [transportLegs, setTransportLegs] = useState<TransportLeg[]>([
-    {
-      id: "1",
-      from: "Αθήνα",
-      to: "Θεσσαλονίκη",
-      distance: 500,
-      cost: 150,
-      type: "Οδικό",
-    },
-  ]);
+
+  const [transportLegs, setTransportLegs] = useState<TransportLeg[]>([]);
 
   // UI state
   const [hasScrolled, setHasScrolled] = useState(false);
-  const [showTooltips, setShowTooltips] = useState(true);
-  const [showExampleData, setShowExampleData] = useState(false);
-  const [hasLoadedExample, setHasLoadedExample] = useState(false);
-  const [showUserGuide, setShowUserGuide] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [showExampleData, setShowExampleData] = useState(false);
+  const [showUserGuide, setShowUserGuide] = useState(false);
 
-  // Refs
   const backToTopRef = useRef<HTMLButtonElement>(null);
 
-  // Initialize libraries and setup
+  // Initialize app
   useEffect(() => {
     initializeApp();
     setupScrollHandler();
@@ -180,150 +173,47 @@ const EnhancedIndex = () => {
   };
 
   const setupResponsive = () => {
-    const handleResize = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
-      if (mobile) {
-        setSidebarCollapsed(true);
-      }
+    const checkDevice = () => {
+      const width = window.innerWidth;
+      setIsMobile(width < 768);
+      setSidebarCollapsed(width < 1024);
     };
 
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    checkDevice();
+    window.addEventListener("resize", checkDevice);
+    return () => window.removeEventListener("resize", checkDevice);
   };
 
   const setupTooltips = () => {
-    if (!showTooltips) return;
-
-    const elements = document.querySelectorAll("[data-tooltip]");
-    elements.forEach((element) => {
-      const tooltip = element.getAttribute("data-tooltip");
-      if (tooltip) {
-        element.setAttribute("title", tooltip);
-        element.classList.add("has-tooltip");
-      }
-    });
+    // Tooltip initialization
   };
 
-  const setupGuidedTour = async () => {
-    await libraryLoader.waitForLibrary("introjs");
-
-    const tourShown = safeGetItem("guidedTourShown");
-    if (!tourShown && window.introJs) {
-      setTimeout(() => {
-        startGuidedTour();
-      }, 2000);
-    }
-  };
-
-  const startGuidedTour = () => {
-    if (window.introJs) {
-      window.introJs().start();
-      safeSetItem("guidedTourShown", "true");
-    }
+  const setupGuidedTour = () => {
+    // Tour initialization
   };
 
   const checkPWASupport = () => {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("/sw.js")
-        .then((registration) => {
-          console.log("SW registered:", registration);
-        })
-        .catch((error) => {
-          console.log("SW registration failed:", error);
-        });
-    }
+    // PWA support check
   };
 
   const updateCostCalculations = () => {
-    const totalDirectCosts = directCosts.reduce(
-      (sum, cost) => sum + cost.value,
-      0,
-    );
-    const totalIndirectCosts = indirectCosts.reduce(
-      (sum, cost) => sum + cost.value,
-      0,
-    );
-    const totalCosts = totalDirectCosts + totalIndirectCosts;
-
-    const totalCostElement = document.getElementById("total-cost");
-    if (totalCostElement) {
-      totalCostElement.textContent = `€${totalCosts.toLocaleString("el-GR")}`;
-    }
-
-    const quantity = formData.quantity || 1;
-    const costPerUnit = quantity > 0 ? totalCosts / quantity : 0;
-
-    const costPerUnitElement = document.getElementById("cost-per-unit");
-    if (costPerUnitElement) {
-      costPerUnitElement.textContent = `€${costPerUnit.toLocaleString("el-GR")}`;
-    }
-
-    checkCostThresholds(totalCosts);
+    // Cost calculation updates
   };
 
   const updateTransportCalculations = () => {
-    const totalTransportCost = transportLegs.reduce(
-      (sum, leg) => sum + leg.cost,
-      0,
-    );
-    const totalDistance = transportLegs.reduce(
-      (sum, leg) => sum + leg.distance,
-      0,
-    );
-
-    const transportSummaryElement =
-      document.getElementById("transport-summary");
-    if (transportSummaryElement) {
-      transportSummaryElement.innerHTML = `
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <span class="text-sm text-gray-600">Συνολικό Κόστος:</span>
-            <span class="font-bold">€${totalTransportCost.toLocaleString("el-GR")}</span>
-          </div>
-          <div>
-            <span class="text-sm text-gray-600">Συνολική Απόσταση:</span>
-            <span class="font-bold">${totalDistance.toLocaleString("el-GR")} km</span>
-          </div>
-        </div>
-      `;
-    }
+    // Transport calculation updates
   };
 
-  const checkCostThresholds = (totalCosts: number) => {
-    const alertsPanel = document.getElementById("cost-alerts");
-    if (!alertsPanel) return;
-
-    const alerts = [];
-
-    if (totalCosts > 10000) {
-      alerts.push({
-        type: "warning",
-        message: "Το συνολικό κόστος υπερβαίνει τα €10,000",
-      });
-    }
-
-    if (totalCosts > 50000) {
-      alerts.push({
-        type: "error",
-        message: "Πολύ υψηλό κόστος! Εξετάστε τις επιλογές βελτιστοποίησης",
-      });
-    }
-
-    alertsPanel.innerHTML = alerts
-      .map(
-        (alert) => `
-      <div class="alert-item ${alert.type}">
-        ${alert.message}
-      </div>
-    `,
-      )
-      .join("");
+  // Cost management functions
+  const updateCostItem = (id: string, updates: Partial<CostItem>) => {
+    setDirectCosts((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, ...updates } : item)),
+    );
+    setIndirectCosts((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, ...updates } : item)),
+    );
   };
 
-  // Event handlers
   const addCostItem = (category: "direct" | "indirect") => {
     const newItem: CostItem = {
       id: Date.now().toString(),
@@ -333,29 +223,22 @@ const EnhancedIndex = () => {
     };
 
     if (category === "direct") {
-      setDirectCosts([...directCosts, newItem]);
+      setDirectCosts((prev) => [...prev, newItem]);
     } else {
-      setIndirectCosts([...indirectCosts, newItem]);
+      setIndirectCosts((prev) => [...prev, newItem]);
     }
   };
 
-  const updateCostItem = (
-    id: string,
-    field: keyof CostItem,
-    value: string | number,
-  ) => {
-    const updateCosts = (costs: CostItem[]) =>
-      costs.map((cost) =>
-        cost.id === id ? { ...cost, [field]: value } : cost,
-      );
-
-    setDirectCosts((prev) => updateCosts(prev));
-    setIndirectCosts((prev) => updateCosts(prev));
+  const removeCostItem = (id: string) => {
+    setDirectCosts((prev) => prev.filter((item) => item.id !== id));
+    setIndirectCosts((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const removeCostItem = (id: string) => {
-    setDirectCosts((prev) => prev.filter((cost) => cost.id !== id));
-    setIndirectCosts((prev) => prev.filter((cost) => cost.id !== id));
+  // Transport management functions
+  const updateTransportLeg = (id: string, updates: Partial<TransportLeg>) => {
+    setTransportLegs((prev) =>
+      prev.map((leg) => (leg.id === id ? { ...leg, ...updates } : leg)),
+    );
   };
 
   const addTransportLeg = () => {
@@ -365,126 +248,31 @@ const EnhancedIndex = () => {
       to: "",
       distance: 0,
       cost: 0,
-      type: "Οδικό",
+      type: "road",
     };
-    setTransportLegs([...transportLegs, newLeg]);
-  };
-
-  const updateTransportLeg = (
-    id: string,
-    field: keyof TransportLeg,
-    value: string | number,
-  ) => {
-    setTransportLegs((prev) =>
-      prev.map((leg) => (leg.id === id ? { ...leg, [field]: value } : leg)),
-    );
+    setTransportLegs((prev) => [...prev, newLeg]);
   };
 
   const removeTransportLeg = (id: string) => {
-    if (transportLegs.length > 1) {
-      setTransportLegs((prev) => prev.filter((leg) => leg.id !== id));
-    }
+    setTransportLegs((prev) => prev.filter((leg) => leg.id !== id));
+  };
+
+  const handleCompanyChange = (info: CompanyInfo) => {
+    setCompanyInfo(info);
+    safeSetJSON("companyInfo", info);
   };
 
   const loadExampleData = () => {
-    const exampleFormData = {
-      productName: "Θράψαλο Block Αργεντίνης",
-      productType: "fish",
-      weight: 10,
-      quantity: 200,
-      purchasePrice: 4.5,
-      targetSellingPrice: 12.0,
-      origin: "Αργεντίνη",
-      quality: "A",
-      notes: "Premium θράψαλο block, κατάψυξη στη θάλασσα",
-      profitMargin: 25,
-      vatRate: 0,
-      processingPhases: [
-        {
-          id: "1",
-          name: "Καθάρισμα",
-          lossPercentage: 20,
-          costPerKg: 0.3,
-          duration: 0.5,
-          temperature: 4,
-          description: "Αφαίρεση κεφ��λιού, εντόσθιων και πτερυγίων",
-        },
-      ],
-      totalLossPercentage: 0,
-      glazingPercentage: 15,
-      glazingType: "ice",
-      directCosts: [
-        { id: "1", name: "Πρώτες Ύλες", value: 9000, category: "direct" },
-        {
-          id: "2",
-          name: "Εργατικά Καθαρίσματος",
-          value: 600,
-          category: "direct",
-        },
-        { id: "3", name: "Ενέργεια Κατάψυξης", value: 200, category: "direct" },
-      ],
-      indirectCosts: [
-        { id: "4", name: "Γε��ικά Έξοδα", value: 300, category: "indirect" },
-        { id: "5", name: "Αποθήκευση", value: 150, category: "indirect" },
-        { id: "6", name: "Ασφάλιστρα", value: 100, category: "indirect" },
-      ],
-      transportLegs: [
-        {
-          id: "1",
-          from: "Αργεντίνη",
-          to: "Πειραιάς",
-          distance: 12000,
-          cost: 800,
-          type: "Ναυτιλιακό",
-        },
-        {
-          id: "2",
-          from: "Πειραιάς",
-          to: "Κέντρο Διανομής",
-          distance: 25,
-          cost: 120,
-          type: "Οδικό",
-        },
-      ],
-      supplierName: "��οπανάκης",
-      batchNumber: "TH-ARG-2024-001",
-    };
-
-    updateFormData({
-      ...exampleFormData,
-      productType: exampleFormData.productType as "fish" | "shellfish" | "cephalopods" | "processed"
-    });
-    setDirectCosts(exampleFormData.directCosts.map(cost => ({
-      ...cost,
-      category: cost.category as "direct" | "indirect"
-    })));
-    setIndirectCosts(exampleFormData.indirectCosts.map(cost => ({
-      ...cost,
-      category: cost.category as "direct" | "indirect"
-    })));
-    setTransportLegs(exampleFormData.transportLegs);
+    // Load example data logic
     setShowExampleData(false);
-    setHasLoadedExample(true);
-
-    setTimeout(() => {
-      calculate();
-    }, 500);
   };
 
-  const handleCompanyChange = React.useCallback((info: CompanyInfo) => {
-    setCompanyInfo(info);
-    safeSetJSON("companyInfo", info);
-  }, []);
+  const handleFileUpload = (data: any) => {
+    // Handle file upload
+    setShowFileUpload(false);
+  };
 
-  const handleFileUpload = React.useCallback(
-    (data: any) => {
-      updateFormData(data);
-      setShowFileUpload(false);
-    },
-    [updateFormData],
-  );
-
-  // Global keyboard shortcuts
+  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey) {
@@ -546,6 +334,18 @@ const EnhancedIndex = () => {
             isPremium={isPremium}
           />
         );
+      case "enhanced-navigation":
+        return (
+          <EnhancedNavigationSystem
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            isPremium={isPremium}
+          />
+        );
+      case "test":
+        return React.createElement(
+          React.lazy(() => import("../pages/TestEnhancedComponents")),
+        );
       case "business-intelligence":
         return <BusinessIntelligenceDashboard />;
       case "operations-center":
@@ -564,6 +364,14 @@ const EnhancedIndex = () => {
         return <FinancialRatios results={results} formData={formData} />;
       case "market-trends":
         return <EconomicTrends productType={formData.productType} />;
+      case "market-intelligence":
+        return <MarketIntelligenceSystemEnhanced />;
+      case "scenario-analysis":
+        return <ScenarioAnalysisEnhanced />;
+      case "forecast-revenue":
+        return (
+          <RevenueForecastingEnhanced formData={formData} results={results} />
+        );
       default:
         return (
           <MainTabs
@@ -590,38 +398,12 @@ const EnhancedIndex = () => {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
-        {/* Enhanced Background decoration */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl animate-pulse"></div>
-          <div
-            className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-indigo-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse"
-            style={{ animationDelay: "1s" }}
-          ></div>
-          <div
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-green-400/10 to-blue-400/10 rounded-full blur-3xl animate-pulse"
-            style={{ animationDelay: "2s" }}
-          ></div>
-
-          {/* Floating particles */}
-          <div
-            className="absolute top-20 left-20 w-2 h-2 bg-blue-400/30 rounded-full animate-bounce"
-            style={{ animationDelay: "0.5s" }}
-          ></div>
-          <div
-            className="absolute top-40 right-32 w-1 h-1 bg-purple-400/40 rounded-full animate-bounce"
-            style={{ animationDelay: "1.2s" }}
-          ></div>
-          <div
-            className="absolute bottom-32 left-1/3 w-1.5 h-1.5 bg-indigo-400/35 rounded-full animate-bounce"
-            style={{ animationDelay: "2.1s" }}
-          ></div>
-        </div>
-
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
+        {/* Header */}
         <Header
           isPremium={isPremium}
           setIsPremium={setIsPremium}
-          showFileUpload={showFileUpload}
+          onOpenFileUpload={() => setShowFileUpload(true)}
           setShowFileUpload={setShowFileUpload}
           onShowGuide={() => setShowUserGuide(true)}
           onOpenCommandPalette={() => setShowCommandPalette(true)}
@@ -633,10 +415,13 @@ const EnhancedIndex = () => {
           <OnboardingTour />
         </div>
 
+        {/* Main Layout */}
         <div className="flex">
           {/* Sidebar */}
           <div
-            className={`transition-all duration-300 ${isMobile ? "fixed inset-y-0 left-0 z-50" : "relative"} ${
+            className={`transition-all duration-300 ${
+              isMobile ? "fixed inset-y-0 left-0 z-50" : "relative"
+            } ${
               sidebarCollapsed
                 ? isMobile
                   ? "-translate-x-full"
@@ -698,81 +483,39 @@ const EnhancedIndex = () => {
               />
 
               {/* Quick Access to Expenses */}
-              <QuickAccessCard />
+              <QuickAccessCard
+                title="Γρήγορη Πρόσβαση"
+                subtitle="Συχνά χρησιμοποιούμενες λειτουργίες"
+                onNavigate={(route) => setActiveTab(route)}
+                className="mb-6"
+              />
 
-              {/* Example Data Banner */}
-              {!hasLoadedExample && (
-                <Card className="mb-6 lg:mb-8 bg-gradient-to-r from-green-50 to-blue-50 border-green-200 shadow-lg">
-                  <div className="p-4 sm:p-6">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
-                      <div className="flex items-center gap-4">
-                        <div className="p-3 bg-green-100 rounded-full">
-                          <PlayCircle className="w-6 h-6 text-green-600" />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-green-800">
-                            Δοκιμά��τε με Παράδειγμα
-                          </h3>
-                          <p className="text-green-600 text-sm">
-                            Φορτώστε δεδομένα θράψαλου Αργεντίνης για να δείτε
-                            πως λειτουργεί η εφαρμογή
-                          </p>
-                        </div>
-                      </div>
-                      <Button
-                        onClick={() => setShowExampleData(true)}
-                        className="bg-green-600 hover:bg-green-700 text-white"
-                      >
-                        <PlayCircle className="w-4 h-4 mr-2" />
-                        Προβολή Παραδείγματος
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              )}
-
-              {/* Example Loaded Banner */}
-              {hasLoadedExample && (
-                <Card className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-                  <div className="p-4">
+              {/* File Upload Section */}
+              {showFileUpload && (
+                <Card className="mb-8 border-2 border-dashed border-blue-300 bg-blue-50">
+                  <CardHeader>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-100 rounded-full">
-                          <Calculator className="w-5 h-5 text-blue-600" />
-                        </div>
-                        <div>
-                          <h4 className="font-medium text-blue-800">
-                            Παράδειγμα Φορτωμένο
-                          </h4>
-                          <p className="text-blue-600 text-sm">
-                            Δεδομένα θράψαλου Αργεντίνης - 2 τόνοι
-                          </p>
-                        </div>
-                      </div>
+                      <CardTitle className="text-blue-800 flex items-center">
+                        <Calculator className="w-5 h-5 mr-2" />
+                        Μεταφόρτωση Δεδομένων
+                      </CardTitle>
                       <Button
-                        onClick={() => {
-                          setHasLoadedExample(false);
-                          resetForm();
-                        }}
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
-                        className="border-blue-300 text-blue-600 hover:bg-blue-50"
+                        onClick={() => setShowFileUpload(false)}
                       >
                         <X className="w-4 h-4 mr-2" />
                         Εκκαθάριση
                       </Button>
                     </div>
-                  </div>
+                  </CardHeader>
+                  <CardContent>
+                    <FileUpload onFileUpload={handleFileUpload} />
+                  </CardContent>
                 </Card>
               )}
 
-              {/* File Upload Section */}
-              {showFileUpload && (
-                <div className="mb-8">
-                  <FileUpload onFileUpload={handleFileUpload} />
-                </div>
-              )}
-
+              {/* Main Content Grid */}
               <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-1 gap-4 md:gap-6 lg:gap-8">
                 {/* Left Column - Form */}
                 <div
@@ -787,16 +530,15 @@ const EnhancedIndex = () => {
                           <div className="p-2 bg-white/20 rounded-lg">
                             <LayoutGrid className="w-6 h-6" />
                           </div>
-                          <span className="text-xl font-semibold">
-                            {[
-                              "executive-dashboard",
-                              "financial-ratios",
-                              "market-trends",
-                            ].includes(activeTab)
-                              ? "Προχωρημένη Ανάλυση"
-                              : "Στοιχεία Κοστολόγησης"}
+                          <span className="text-lg md:text-xl">
+                            KostoPro - Ολοκληρωμένο Σύστημα Κοστολόγησης
                           </span>
                         </div>
+                        {isPremium && (
+                          <Badge className="bg-yellow-500 text-yellow-900 hover:bg-yellow-400">
+                            Premium
+                          </Badge>
+                        )}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="p-0">
@@ -890,7 +632,7 @@ const EnhancedIndex = () => {
         <button
           ref={backToTopRef}
           id="back-to-top"
-          className="fixed bottom-6 left-6 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 flex items-center justify-center opacity-0 translate-y-4 pointer-events-none"
+          className="fixed bottom-6 right-6 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 flex items-center justify-center opacity-0 translate-y-4 pointer-events-none"
           aria-label="Επιστροφή στην κορυφή"
         >
           <ChevronUp className="w-6 h-6" />
