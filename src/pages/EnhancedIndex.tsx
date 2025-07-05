@@ -52,6 +52,7 @@ import FinancialAnalyticsPage from "@/pages/analytics/FinancialAnalytics";
 import CommandPalette from "@/components/layout/CommandPalette";
 import FloatingActionButton from "@/components/ui/FloatingActionButton";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
+import ResponsiveNavigation from "@/components/layout/ResponsiveNavigation";
 import { CompanyInfo } from "@/types/company";
 import { libraryLoader } from "@/utils/libraryLoader";
 import {
