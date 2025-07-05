@@ -285,7 +285,7 @@ const MainTabs: React.FC<MainTabsProps> = ({
       id: "market",
       label: t("market.intelligence"),
       icon: Globe,
-      component: MarketIntelligenceSystem,
+      component: MarketIntelligenceSystemEnhanced,
       category: "premium",
       isPremium: true,
     },
