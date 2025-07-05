@@ -181,6 +181,7 @@ import {
   Hash,
   AtSign,
   Percent,
+  Recycle,
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -866,7 +867,7 @@ const ComprehensiveReportingSystem: React.FC<
         language === "el" ? "Κατάσταση Πιστοποιήσεων" : "Certification Status",
       description:
         language === "el"
-          ? "Παρακολούθηση πιστοποιήσεων και ανανεώσεων"
+          ? "Παρακολούθηση πι��τοποιήσεων και ανανεώσεων"
           : "Track certifications and renewals",
       category: "compliance",
       icon: <Award className="w-5 h-5" />,
@@ -1718,7 +1719,7 @@ const ComprehensiveReportingSystem: React.FC<
                   <div>
                     <div className="font-medium">
                       {language === "el"
-                        ? "Email ειδοποιήσεις"
+                        ? "Email ειδο��οιήσεις"
                         : "Email notifications"}
                     </div>
                     <div className="text-sm text-gray-600">
