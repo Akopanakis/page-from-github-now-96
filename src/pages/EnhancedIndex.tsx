@@ -42,6 +42,9 @@ import BusinessIntelligenceDashboard from "@/components/BusinessIntelligenceDash
 import RealTimeOperationsCenter from "@/components/RealTimeOperationsCenter";
 import AdvancedFinancialAnalytics from "@/components/AdvancedFinancialAnalytics";
 import QualityComplianceCenter from "@/components/QualityComplianceCenter";
+import MarketIntelligenceSystemEnhanced from "@/components/MarketIntelligenceSystemEnhanced";
+import ScenarioAnalysisEnhanced from "@/components/ScenarioAnalysisEnhanced";
+import RevenueForecastingEnhanced from "@/components/RevenueForecastingEnhanced";
 import HACCPPage from "@/pages/compliance/HACCPPage";
 import ISOPage from "@/pages/compliance/ISOPage";
 import FinancialAnalyticsPage from "@/pages/analytics/FinancialAnalytics";
@@ -452,16 +455,24 @@ const EnhancedIndex = () => {
 
     updateFormData({
       ...exampleFormData,
-      productType: exampleFormData.productType as "fish" | "shellfish" | "cephalopods" | "processed"
+      productType: exampleFormData.productType as
+        | "fish"
+        | "shellfish"
+        | "cephalopods"
+        | "processed",
     });
-    setDirectCosts(exampleFormData.directCosts.map(cost => ({
-      ...cost,
-      category: cost.category as "direct" | "indirect"
-    })));
-    setIndirectCosts(exampleFormData.indirectCosts.map(cost => ({
-      ...cost,
-      category: cost.category as "direct" | "indirect"
-    })));
+    setDirectCosts(
+      exampleFormData.directCosts.map((cost) => ({
+        ...cost,
+        category: cost.category as "direct" | "indirect",
+      })),
+    );
+    setIndirectCosts(
+      exampleFormData.indirectCosts.map((cost) => ({
+        ...cost,
+        category: cost.category as "direct" | "indirect",
+      })),
+    );
     setTransportLegs(exampleFormData.transportLegs);
     setShowExampleData(false);
     setHasLoadedExample(true);
