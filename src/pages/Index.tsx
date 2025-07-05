@@ -423,11 +423,20 @@ const Index = () => {
     };
 
     // Update form data
-    updateFormData(exampleFormData);
+    updateFormData({
+      ...exampleFormData,
+      productType: exampleFormData.productType as "fish" | "shellfish" | "cephalopods" | "processed"
+    });
 
     // Update direct state
-    setDirectCosts(exampleFormData.directCosts);
-    setIndirectCosts(exampleFormData.indirectCosts);
+    setDirectCosts(exampleFormData.directCosts.map(cost => ({
+      ...cost,
+      category: cost.category as "direct" | "indirect"
+    })));
+    setIndirectCosts(exampleFormData.indirectCosts.map(cost => ({
+      ...cost,
+      category: cost.category as "direct" | "indirect"
+    })));
     setTransportLegs(exampleFormData.transportLegs);
 
     setShowExampleData(false);

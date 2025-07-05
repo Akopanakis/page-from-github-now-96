@@ -32,7 +32,15 @@ const SmartInsightsPanel: React.FC<SmartInsightsPanelProps> = ({
 
   // Generate comprehensive insights based on calculation results
   const generateInsights = () => {
-    const insights = [];
+    const insights: Array<{
+      type: string;
+      severity: string;
+      title: string;
+      message: string;
+      value?: string;
+      change?: string;
+      trend?: string;
+    }> = [];
 
     if (!results) return insights;
 

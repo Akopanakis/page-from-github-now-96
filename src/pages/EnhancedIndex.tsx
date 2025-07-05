@@ -450,9 +450,18 @@ const EnhancedIndex = () => {
       batchNumber: "TH-ARG-2024-001",
     };
 
-    updateFormData(exampleFormData);
-    setDirectCosts(exampleFormData.directCosts);
-    setIndirectCosts(exampleFormData.indirectCosts);
+    updateFormData({
+      ...exampleFormData,
+      productType: exampleFormData.productType as "fish" | "shellfish" | "cephalopods" | "processed"
+    });
+    setDirectCosts(exampleFormData.directCosts.map(cost => ({
+      ...cost,
+      category: cost.category as "direct" | "indirect"
+    })));
+    setIndirectCosts(exampleFormData.indirectCosts.map(cost => ({
+      ...cost,
+      category: cost.category as "direct" | "indirect"
+    })));
     setTransportLegs(exampleFormData.transportLegs);
     setShowExampleData(false);
     setHasLoadedExample(true);

@@ -202,50 +202,44 @@ const CompactResultsPanel: React.FC<CompactResultsPanelProps> = ({
 
   const costBreakdown = [
     {
-[
-  {
-    label: language === "el" ? "Υλικά" : "Materials",
-    value: results?.breakdown?.materials || 0,
-    percentage:
-      results?.totalCosts > 0
-        ? ((results?.breakdown?.materials || 0) / results.totalCosts) * 100
-        : 0,
-    color: "blue",
-  },
-  {
-    label: language === "el" ? "Επεξεργασία" : "Processing",
-    value: results?.breakdown?.processing || 0,
-    percentage:
-      results?.totalCosts > 0
-        ? ((results?.breakdown?.processing || 0) / results.totalCosts) * 100
-        : 0,
-    color: "green",
-  },
-  {
-    label: language === "el" ? "Μεταφορά" : "Transport",
-    value: results?.breakdown?.transport || 0,
-    percentage:
-      results?.totalCosts > 0
-        ? ((results?.breakdown?.transport || 0) / results.totalCosts) * 100
-        : 0,
-    color: "orange",
-  },
-  {
-    label: language === "el" ? "Λοιπά Κόστη" : "Other Costs",
-    value:
-      (results?.breakdown?.overhead || 0) +
-      (results?.breakdown?.packaging || 0),
-    percentage:
-      results?.totalCosts > 0
-        ? (
-            ((results?.breakdown?.overhead || 0) +
-              (results?.breakdown?.packaging || 0)) /
-            results.totalCosts
-          ) * 100
-        : 0,
-    color: "purple",
-  },
-]
+      label: language === "el" ? "Υλικά" : "Materials",
+      value: results?.breakdown?.materials || 0,
+      percentage:
+        results?.totalCosts > 0
+          ? ((results?.breakdown?.materials || 0) / results.totalCosts) * 100
+          : 0,
+      color: "blue",
+    },
+    {
+      label: language === "el" ? "Επεξεργασία" : "Processing",
+      value: results?.breakdown?.processing || 0,
+      percentage:
+        results?.totalCosts > 0
+          ? ((results?.breakdown?.processing || 0) / results.totalCosts) * 100
+          : 0,
+      color: "green",
+    },
+    {
+      label: language === "el" ? "Μεταφορά" : "Transport",
+      value: results?.breakdown?.transport || 0,
+      percentage:
+        results?.totalCosts > 0
+          ? ((results?.breakdown?.transport || 0) / results.totalCosts) * 100
+          : 0,
+      color: "orange",
+    },
+    {
+      label: language === "el" ? "Λοιπά Κόστη" : "Other Costs",
+      value:
+        (results?.breakdown?.overhead || 0) +
+        (results?.breakdown?.packaging || 0),
+      percentage:
+        results?.totalCosts > 0
+          ? (
+              ((results?.breakdown?.overhead || 0) +
+                (results?.breakdown?.packaging || 0)) /
+              results.totalCosts
+            ) * 100
           : 0,
       color: "purple",
     },
