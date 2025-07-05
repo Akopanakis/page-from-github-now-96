@@ -60,6 +60,7 @@ import {
   safeGetItem,
   safeSetItem,
 } from "@/utils/safeStorage";
+import ComprehensiveReportingSystem from "@/components/reports/ComprehensiveReportingSystem";
 
 interface CostItem {
   id: string;
