@@ -558,6 +558,14 @@ const EnhancedIndex = () => {
             isPremium={isPremium}
           />
         );
+      case "enhanced-navigation":
+        return (
+          <EnhancedNavigationSystem
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            isPremium={isPremium}
+          />
+        );
       case "business-intelligence":
         return <BusinessIntelligenceDashboard />;
       case "operations-center":
