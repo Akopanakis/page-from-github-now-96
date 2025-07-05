@@ -101,6 +101,7 @@ import {
   Scan,
   Search,
   Archive,
+  Circle,
 } from "lucide-react";
 
 interface SustainabilityMetric {
@@ -909,7 +910,7 @@ const SustainabilityTrackingSystem: React.FC<
         lastAssessment: new Date("2024-11-15"),
         threats: [
           language === "el" ? "Θερμική ρύπανση" : "Thermal pollution",
-          language === "el" ? "Πλαστικά απόβλητα" : "Plastic waste",
+          language === "el" ? "Πλαστ��κά απόβλητα" : "Plastic waste",
         ],
         conservationActions: [
           language === "el"
@@ -1393,7 +1394,7 @@ const SustainabilityTrackingSystem: React.FC<
                       </div>
                       {getTrendIcon(metric.trend)}
                     </div>
-                    
+
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
                         <span className="text-2xl font-bold text-gray-900">
@@ -1403,24 +1404,24 @@ const SustainabilityTrackingSystem: React.FC<
                           {metric.unit}
                         </span>
                       </div>
-                      
-                      <Progress 
-                        value={Math.min(100, (metric.value / metric.target) * 100)} 
+
+                      <Progress
+                        value={Math.min(100, (metric.value / metric.target) * 100)}
                         className="h-2"
                       />
-                      
+
                       <div className="flex justify-between text-xs">
                         <span className="text-gray-500">
                           {language === "el" ? "Στόχος" : "Target"}: {metric.target}
                         </span>
-                        <Badge 
-                          variant="secondary" 
+                        <Badge
+                          variant="secondary"
                           className={`text-xs ${getStatusColor(metric.status)}`}
                         >
                           {metric.status}
                         </Badge>
                       </div>
-                      
+
                       {metric.change !== 0 && (
                         <div className="flex items-center text-xs">
                           {metric.change > 0 ? (
@@ -1575,8 +1576,8 @@ const SustainabilityTrackingSystem: React.FC<
                       }))}
                     >
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis 
-                        dataKey="name" 
+                      <XAxis
+                        dataKey="name"
                         angle={-45}
                         textAnchor="end"
                         height={80}
@@ -1585,24 +1586,24 @@ const SustainabilityTrackingSystem: React.FC<
                       <YAxis />
                       <Tooltip />
                       <Legend />
-                      <Line 
-                        type="monotone" 
-                        dataKey="current" 
-                        stroke="#22c55e" 
+                      <Line
+                        type="monotone"
+                        dataKey="current"
+                        stroke="#22c55e"
                         strokeWidth={2}
                         name={language === "el" ? "Τρέχουσα" : "Current"}
                       />
-                      <Line 
-                        type="monotone" 
-                        dataKey="target" 
-                        stroke="#ef4444" 
+                      <Line
+                        type="monotone"
+                        dataKey="target"
+                        stroke="#ef4444"
                         strokeDasharray="5 5"
                         name={language === "el" ? "Στόχος" : "Target"}
                       />
-                      <Line 
-                        type="monotone" 
-                        dataKey="benchmark" 
-                        stroke="#64748b" 
+                      <Line
+                        type="monotone"
+                        dataKey="benchmark"
+                        stroke="#64748b"
                         strokeDasharray="2 2"
                         name={language === "el" ? "Benchmark" : "Benchmark"}
                       />
@@ -1741,7 +1742,7 @@ const SustainabilityTrackingSystem: React.FC<
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                       </Pie>
-                      <Tooltip 
+                      <Tooltip
                         formatter={(value, name) => [`${value} tCO2e`, name]}
                       />
                       <Legend />
@@ -1766,14 +1767,14 @@ const SustainabilityTrackingSystem: React.FC<
                       <YAxis />
                       <Tooltip />
                       <Legend />
-                      <Bar 
-                        dataKey="emissions" 
-                        fill="#ef4444" 
+                      <Bar
+                        dataKey="emissions"
+                        fill="#ef4444"
                         name={language === "el" ? "Τρέχουσες" : "Current"}
                       />
-                      <Bar 
-                        dataKey="target" 
-                        fill="#22c55e" 
+                      <Bar
+                        dataKey="target"
+                        fill="#22c55e"
                         name={language === "el" ? "Στόχος" : "Target"}
                       />
                     </BarChart>
@@ -1802,7 +1803,7 @@ const SustainabilityTrackingSystem: React.FC<
                             {item.category.toUpperCase()}
                           </Badge>
                         </div>
-                        
+
                         <div className="space-y-2 mb-4">
                           <div className="flex justify-between">
                             <span className="text-sm text-gray-600">
@@ -1816,8 +1817,8 @@ const SustainabilityTrackingSystem: React.FC<
                             </span>
                             <span className="text-green-600 font-semibold">{item.target} tCO2e</span>
                           </div>
-                          <Progress 
-                            value={(item.target / item.emissions) * 100} 
+                          <Progress
+                            value={(item.target / item.emissions) * 100}
                             className="h-2"
                           />
                         </div>
@@ -1861,8 +1862,8 @@ const SustainabilityTrackingSystem: React.FC<
                   <ResponsiveContainer width="100%" height={300}>
                     <RadarChart data={oceanHealth}>
                       <PolarGrid />
-                      <PolarAngleAxis 
-                        dataKey="indicator" 
+                      <PolarAngleAxis
+                        dataKey="indicator"
                         tick={{ fontSize: 10 }}
                       />
                       <PolarRadiusAxis />
@@ -1895,9 +1896,9 @@ const SustainabilityTrackingSystem: React.FC<
                           <h4 className="font-semibold text-gray-900">
                             {indicator.indicator} - {indicator.region}
                           </h4>
-                          <Badge 
+                          <Badge
                             className={
-                              indicator.status === "healthy" 
+                              indicator.status === "healthy"
                                 ? "bg-green-100 text-green-800"
                                 : indicator.status === "concerning"
                                 ? "bg-yellow-100 text-yellow-800"
@@ -1907,7 +1908,7 @@ const SustainabilityTrackingSystem: React.FC<
                             {indicator.status}
                           </Badge>
                         </div>
-                        
+
                         <div className="flex justify-between items-center mb-3">
                           <span className="text-2xl font-bold text-blue-600">
                             {indicator.value} {indicator.unit}
@@ -2000,7 +2001,7 @@ const SustainabilityTrackingSystem: React.FC<
                               {goal.title}
                             </h3>
                             <p className="text-gray-600 mb-3">{goal.description}</p>
-                            
+
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                               <div>
                                 <span className="text-sm text-gray-500">
@@ -2013,7 +2014,7 @@ const SustainabilityTrackingSystem: React.FC<
                                   </span>
                                 </div>
                               </div>
-                              
+
                               <div>
                                 <span className="text-sm text-gray-500">
                                   {language === "el" ? "Τρέχουσα Τιμή" : "Current Value"}:
@@ -2022,7 +2023,7 @@ const SustainabilityTrackingSystem: React.FC<
                                   {goal.currentValue} {goal.unit}
                                 </div>
                               </div>
-                              
+
                               <div>
                                 <span className="text-sm text-gray-500">
                                   {language === "el" ? "Στόχος" : "Target"}:
@@ -2033,7 +2034,7 @@ const SustainabilityTrackingSystem: React.FC<
                               </div>
                             </div>
                           </div>
-                          
+
                           <div className="flex flex-col items-end space-y-2">
                             <Badge
                               className={
@@ -2048,7 +2049,7 @@ const SustainabilityTrackingSystem: React.FC<
                             >
                               {goal.status}
                             </Badge>
-                            
+
                             <Badge
                               variant="outline"
                               className={
@@ -2091,7 +2092,7 @@ const SustainabilityTrackingSystem: React.FC<
                               ))}
                             </div>
                           </div>
-                          
+
                           <div>
                             <h4 className="font-medium text-gray-700 mb-2">
                               {language === "el" ? "Δράσεις" : "Actions"}:
@@ -2104,7 +2105,7 @@ const SustainabilityTrackingSystem: React.FC<
                                 </li>
                               ))}
                             </ul>
-                            
+
                             <div className="mt-4 pt-4 border-t">
                               <div className="flex justify-between items-center">
                                 <span className="text-sm text-gray-500">
@@ -2310,7 +2311,7 @@ const SustainabilityTrackingSystem: React.FC<
                       <option>{language === "el" ? "Ετήσια" : "Annually"}</option>
                     </select>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label>{language === "el" ? "Τύπος Αναφοράς" : "Report Type"}</Label>
                     <select className="w-full p-2 border rounded">
@@ -2320,7 +2321,7 @@ const SustainabilityTrackingSystem: React.FC<
                       <option>ESG</option>
                     </select>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label>{language === "el" ? "Μορφή" : "Format"}</Label>
                     <select className="w-full p-2 border rounded">
@@ -2329,7 +2330,7 @@ const SustainabilityTrackingSystem: React.FC<
                       <option>PowerPoint</option>
                     </select>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label>{language === "el" ? "Αποστολή" : "Delivery"}</Label>
                     <select className="w-full p-2 border rounded">
@@ -2339,7 +2340,7 @@ const SustainabilityTrackingSystem: React.FC<
                     </select>
                   </div>
                 </div>
-                
+
                 <div className="mt-4 flex space-x-3">
                   <Button>
                     <Plus className="w-4 h-4 mr-2" />
