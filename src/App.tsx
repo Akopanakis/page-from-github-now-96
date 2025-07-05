@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Route, Router } from "wouter";
 import Index from "./pages/Index";
-import EnhancedIndex from "./pages/EnhancedIndex";
+import EnhancedIndex from "./pages/EnhancedIndexClean";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
