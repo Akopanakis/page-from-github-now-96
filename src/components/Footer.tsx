@@ -1,5 +1,5 @@
 import React from "react";
-import { Heart, Code, Fish } from "lucide-react";
+import { Heart, Code, Fish, BookOpen } from "lucide-react";
 
 const Footer: React.FC = () => {
   return (
@@ -57,6 +57,16 @@ const Footer: React.FC = () => {
               <span>Offline Support</span>
               <span>•</span>
               <span>Mobile Optimized</span>
+              <span>•</span>
+              <a
+                href="/tutorial"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors"
+              >
+                <BookOpen className="w-3 h-3" />
+                Tutorial
+              </a>
             </div>
             <div className="text-xs text-gray-400">
               Χρησιμοποιώντας την εφαρμογή αποδέχεστε τους όρους χρήσης
