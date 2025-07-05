@@ -178,9 +178,10 @@ const SustainabilityTrackingSystem: React.FC<
     useState<SustainabilityMetric | null>(null);
   const [lastUpdate, setLastUpdate] = useState(new Date());
 
-  // Initialize comprehensive sustainability data
+  // Initialize comprehensive sustainability data with 20+ features
   useEffect(() => {
     const sampleMetrics: SustainabilityMetric[] = [
+      // Environmental Metrics (Enhanced)
       {
         id: "env-001",
         name: language === "el" ? "Αποτύπωμα Άνθρακα" : "Carbon Footprint",
@@ -195,7 +196,7 @@ const SustainabilityTrackingSystem: React.FC<
         status: "good",
         description:
           language === "el"
-            ? "Συνολικές εκπομπές CO2 ανά τόνο παραγόμενου ψαριού"
+            ? "Συνολικές εκπομπές CO2 ανά τόνο παραγό��ενου ψαριού"
             : "Total CO2 emissions per ton of fish produced",
         methodology: "GHG Protocol Standards",
         dataSource: "IoT Sensors + Energy Bills",
