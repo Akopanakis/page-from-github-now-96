@@ -293,7 +293,7 @@ const MainTabs: React.FC<MainTabsProps> = ({
       id: "scenario",
       label: t("scenario.analysis"),
       icon: Target,
-      component: ScenarioAnalysis,
+      component: ScenarioAnalysisEnhanced,
       category: "premium",
       isPremium: true,
     },
