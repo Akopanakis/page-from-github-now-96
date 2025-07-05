@@ -536,41 +536,27 @@ const EconomicTrends: React.FC<EconomicTrendsProps> = ({
                     )}
 
                     {(() => {
-                      const fuelCostChange = marketIndicators.find(i => i.id === "fuel_cost")?.change ?? 0;
+                      const fuelCostChange =
+                        marketIndicators.find((i) => i.id === "fuel_cost")
+                          ?.change ?? 0;
                       return fuelCostChange > 10 ? (
-                        <div className="flex items-start space-x-3 p-3 bg-red-50 rounded-lg border-l-4 border-red-400 mb-3">
-                          <AlertTriangle className="w-5 h-5 text-red-600 mt-0.5" />
+                        <div className="flex items-start space-x-3 p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-400">
+                          <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5" />
                           <div>
-                            <h4 className="font-medium text-red-800">
-                              {language === "el" ? "Προειδοποίηση Κόστους Καυσίμων" : "Fuel Cost Warning"}
+                            <h4 className="font-medium text-yellow-800">
+                              {language === "el"
+                                ? "Προσοχή στα Κόστη Μεταφοράς"
+                                : "Monitor Transport Costs"}
                             </h4>
-                            <p className="text-red-700 text-sm">
-                              Significant fuel cost increase: {fuelCostChange}%
+                            <p className="text-yellow-700 text-sm">
+                              {language === "el"
+                                ? "Σημαντική αύξηση κόστους καυσίμων. Εξετάστε εναλλακτικές μεταφοράς."
+                                : "Significant fuel cost increase. Consider alternative transport options."}
                             </p>
                           </div>
                         </div>
                       ) : null;
                     })()}
-
-                    {(() => {
-                      const fuelCostChange = marketIndicators.find(i => i.id === "fuel_cost")?.change ?? 0;
-                      return fuelCostChange > 10 ? (
-                        <div className="flex items-start space-x-3 p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-400">
-                        <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5" />
-                        <div>
-                          <h4 className="font-medium text-yellow-800">
-                            {language === "el"
-                              ? "Προσοχή στα Κόστη Μεταφοράς"
-                              : "Monitor Transport Costs"}
-                          </h4>
-                          <p className="text-yellow-700 text-sm">
-                            {language === "el"
-                              ? "Σημαντική αύξηση κόστους καυσίμων. Εξετάστε εναλλακτικές μεταφοράς."
-                              : "Significant fuel cost increase. Consider alternative transport options."}
-                          </p>
-                        </div>
-                      </div>
-                    )}
 
                     <div className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">
                       <Info className="w-5 h-5 text-blue-600 mt-0.5" />
