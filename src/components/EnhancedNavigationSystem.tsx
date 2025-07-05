@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   Calculator,
   TrendingUp,
+  TrendingDown,
   Globe,
   Target,
   BarChart3,
@@ -229,7 +230,7 @@ const EnhancedNavigationSystem: React.FC<EnhancedNavigationSystemProps> = ({
       color: "purple",
       description:
         language === "el"
-          ? "Προηγμένα εργαλεία ανάλυσης και πρόβλεψης"
+          ? "Προηγμένα ερ��αλεία ανάλυσης και πρόβλεψης"
           : "Advanced analysis and forecasting tools",
       items: [
         {
@@ -261,7 +262,7 @@ const EnhancedNavigationSystem: React.FC<EnhancedNavigationSystemProps> = ({
             language === "el" ? "Market Intelligence" : "Market Intelligence",
           description:
             language === "el"
-              ? "Ανάλυση αγοράς και ανταγωνισμού"
+              ? "Ανάλυση αγοράς και αν��αγωνισμού"
               : "Market and competitive analysis",
           icon: Globe,
           isPremium: true,
@@ -932,7 +933,7 @@ const EnhancedNavigationSystem: React.FC<EnhancedNavigationSystemProps> = ({
                   <Search className="w-12 h-12 mx-auto mb-4 opacity-50" />
                   <p>
                     {language === "el"
-                      ? "Δεν βρέθηκαν αποτελέσματα"
+                      ? "Δεν βρέθηκαν ��ποτελέσματα"
                       : "No results found"}
                   </p>
                 </div>
