@@ -373,6 +373,8 @@ const EnhancedIndex = () => {
         return (
           <RevenueForecastingEnhanced formData={formData} results={results} />
         );
+      case "reports-center":
+        return <ComprehensiveReportingSystem />;
       default:
         return (
           <MainTabs
