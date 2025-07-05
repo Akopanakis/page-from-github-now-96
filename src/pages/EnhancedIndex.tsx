@@ -658,45 +658,16 @@ const EnhancedIndex = () => {
           <OnboardingTour />
         </div>
 
-        <div className="flex">
-          {/* Sidebar */}
-          <div
-            className={`transition-all duration-300 ${isMobile ? "fixed inset-y-0 left-0 z-50" : "relative"} ${
-              sidebarCollapsed
-                ? isMobile
-                  ? "-translate-x-full"
-                  : "w-16"
-                : isMobile
-                  ? "w-64"
-                  : "w-72"
-            }`}
-          >
-            <Sidebar
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-              isPremium={isPremium}
-              className="h-screen"
-            />
-          </div>
+        {/* Responsive Navigation */}
+        <ResponsiveNavigation
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          isPremium={isPremium}
+        />
 
-          {/* Mobile sidebar backdrop */}
-          {isMobile && !sidebarCollapsed && (
-            <div
-              className="fixed inset-0 bg-black bg-opacity-50 z-40"
-              onClick={() => setSidebarCollapsed(true)}
-            />
-          )}
-
-          {/* Responsive Navigation */}
-          <ResponsiveNavigation
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            isPremium={isPremium}
-          />
-
-          {/* Main Content */}
-          <div className="flex-1 min-h-screen">
-            <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-4 md:py-6 lg:py-8">
+        {/* Main Content - Centered and Clean */}
+        <div className="min-h-screen bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
               {/* Breadcrumbs */}
               <div className="mb-4">
                 <Breadcrumbs
