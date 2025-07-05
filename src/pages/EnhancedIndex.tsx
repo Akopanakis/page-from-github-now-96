@@ -429,7 +429,7 @@ const EnhancedIndex = () => {
         { id: "3", name: "Ενέργεια Κατάψυξης", value: 200, category: "direct" },
       ],
       indirectCosts: [
-        { id: "4", name: "Γε��ικά Έξοδα", value: 300, category: "indirect" },
+        { id: "4", name: "Γε��ικά Έξοδ��", value: 300, category: "indirect" },
         { id: "5", name: "Αποθήκευση", value: 150, category: "indirect" },
         { id: "6", name: "Ασφάλιστρα", value: 100, category: "indirect" },
       ],
@@ -566,6 +566,10 @@ const EnhancedIndex = () => {
             setActiveTab={setActiveTab}
             isPremium={isPremium}
           />
+        );
+      case "test":
+        return React.createElement(
+          React.lazy(() => import("../pages/TestEnhancedComponents")),
         );
       case "business-intelligence":
         return <BusinessIntelligenceDashboard />;
