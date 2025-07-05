@@ -38,6 +38,7 @@ import InventoryManagement from "@/components/InventoryManagement";
 import OrderManagement from "@/components/OrderManagement";
 import CustomerManagement from "@/components/CustomerManagement";
 import NavigationSystem from "@/components/NavigationSystem";
+import EnhancedNavigationSystem from "@/components/EnhancedNavigationSystem";
 import BusinessIntelligenceDashboard from "@/components/BusinessIntelligenceDashboard";
 import RealTimeOperationsCenter from "@/components/RealTimeOperationsCenter";
 import AdvancedFinancialAnalytics from "@/components/AdvancedFinancialAnalytics";
