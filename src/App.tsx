@@ -11,6 +11,7 @@ import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
 import Expenses from "./pages/Expenses";
 import NotFound from "./pages/NotFound";
+import TestEnhancedComponents from "./pages/TestEnhancedComponents";
 import LoadingSkeleton from "./components/LoadingSkeleton";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { AuthProvider } from "./contexts/AuthContext";
