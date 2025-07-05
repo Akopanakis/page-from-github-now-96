@@ -48,6 +48,7 @@ function App() {
               <Router>
                 <Route path="/" component={EnhancedIndex} />
                 <Route path="/classic" component={Index} />
+                <Route path="/test" component={TestEnhancedComponents} />
                 <Route path="/expenses" component={Expenses} />
                 <Route
                   path="/analytics/business-intelligence"
