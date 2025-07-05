@@ -123,11 +123,13 @@ const MainTabs: React.FC<MainTabsProps> = ({
           />
         );
       case "market-intelligence":
-        return <MarketIntelligenceSystem />;
+        return <MarketIntelligenceSystemEnhanced />;
       case "scenario-analysis":
-        return <ScenarioAnalysis />;
+        return <ScenarioAnalysisEnhanced />;
       case "forecast-revenue":
-        return <RevenueForecast />;
+        return (
+          <RevenueForecastingEnhanced formData={formData} results={results} />
+        );
       case "financial-models":
         return (
           <AdvancedFinancialModels formData={formData} results={results} />
