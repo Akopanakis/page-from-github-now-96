@@ -13,9 +13,9 @@ import ExecutiveDashboard from "./ExecutiveDashboard";
 import FinancialRatios from "./FinancialRatios";
 import EconomicTrends from "./EconomicTrends";
 import InventoryTrackingSystem from "./InventoryTrackingSystem";
-import MarketIntelligenceSystem from "./MarketIntelligenceSystem";
-import ScenarioAnalysis from "./ScenarioAnalysis";
-import RevenueForecast from "./RevenueForecast";
+import MarketIntelligenceSystemEnhanced from "./MarketIntelligenceSystemEnhanced";
+import ScenarioAnalysisEnhanced from "./ScenarioAnalysisEnhanced";
+import RevenueForecastingEnhanced from "./RevenueForecastingEnhanced";
 import AdvancedFinancialModels from "./AdvancedFinancialModels";
 import ComprehensiveDashboard from "./ComprehensiveDashboard";
 import FleetManagement from "./FleetManagement";
@@ -107,9 +107,21 @@ const MainTabs: React.FC<MainTabsProps> = ({
       case "market-trends":
         return <EconomicTrends productType={formData.productType} />;
       case "advanced-analysis":
-        return <AdvancedAnalysisTab formData={formData} updateFormData={updateFormData} results={results} />;
+        return (
+          <AdvancedAnalysisTab
+            formData={formData}
+            updateFormData={updateFormData}
+            results={results}
+          />
+        );
       case "cost-optimization":
-        return <AdvancedCostOptimization formData={formData} results={results} onUpdateFormData={updateFormData} />;
+        return (
+          <AdvancedCostOptimization
+            formData={formData}
+            results={results}
+            onUpdateFormData={updateFormData}
+          />
+        );
       case "market-intelligence":
         return <MarketIntelligenceSystem />;
       case "scenario-analysis":
@@ -117,7 +129,9 @@ const MainTabs: React.FC<MainTabsProps> = ({
       case "forecast-revenue":
         return <RevenueForecast />;
       case "financial-models":
-        return <AdvancedFinancialModels formData={formData} results={results} />;
+        return (
+          <AdvancedFinancialModels formData={formData} results={results} />
+        );
       default:
         return renderTabContent();
     }
@@ -127,10 +141,7 @@ const MainTabs: React.FC<MainTabsProps> = ({
     switch (activeTab) {
       case "basics":
         return (
-          <ProductBasics
-            formData={formData}
-            updateFormData={updateFormData}
-          />
+          <ProductBasics formData={formData} updateFormData={updateFormData} />
         );
       case "processing":
         return (
@@ -140,25 +151,14 @@ const MainTabs: React.FC<MainTabsProps> = ({
           />
         );
       case "costs":
-        return (
-          <CostsTab
-            formData={formData}
-            updateFormData={updateFormData}
-          />
-        );
+        return <CostsTab formData={formData} updateFormData={updateFormData} />;
       case "transport":
         return (
-          <TransportTab
-            formData={formData}
-            updateFormData={updateFormData}
-          />
+          <TransportTab formData={formData} updateFormData={updateFormData} />
         );
       case "analysis":
         return (
-          <AnalysisTab
-            formData={formData}
-            updateFormData={updateFormData}
-          />
+          <AnalysisTab formData={formData} updateFormData={updateFormData} />
         );
       default:
         return null;
