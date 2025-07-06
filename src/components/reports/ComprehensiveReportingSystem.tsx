@@ -111,7 +111,7 @@ import {
   UserCheck,
   UserPlus,
   UserMinus,
-  Team,
+  Users,
   Crown,
   Gift,
   Coins,

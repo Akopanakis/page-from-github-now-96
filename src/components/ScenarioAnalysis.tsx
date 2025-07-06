@@ -411,7 +411,7 @@ const ScenarioAnalysis: React.FC = () => {
     parameters: ScenarioParameters,
   ): number[] => {
     const baseResults = calculateScenario(parameters);
-    const sensitivity = [];
+    const sensitivity: { parameter: string; impact: number; }[] = [];
 
     // Test 10% increase for each parameter
     const testParams = [
@@ -428,10 +428,10 @@ const ScenarioAnalysis: React.FC = () => {
         ((testResults.totalCost - baseResults.totalCost) /
           baseResults.totalCost) *
         100;
-      sensitivity.push(impact);
+      sensitivity.push({ parameter: 'param', impact: impact });
     });
 
-    return sensitivity;
+    return sensitivity.map(s => s.impact);
   };
 
   const exportScenario = async (scenario: Scenario) => {

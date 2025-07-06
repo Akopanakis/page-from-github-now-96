@@ -300,18 +300,20 @@ const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
   };
 
   const renderAlerts = () => {
-    const alerts = [];
+    const alerts: { type: string; severity: string; title: string; message: string; }[] = [];
 
     kpiCards.forEach((kpi) => {
       if (kpi.status === "critical") {
         alerts.push({
           type: "critical",
+          severity: "critical",
           title: `${kpi.title} ${language === "el" ? "Κρίσιμο" : "Critical"}`,
           message: `${kpi.title} ${language === "el" ? "χρειάζεται άμεση προσοχή" : "requires immediate attention"}`,
         });
       } else if (kpi.status === "warning") {
         alerts.push({
           type: "warning",
+          severity: "warning",
           title: `${kpi.title} ${language === "el" ? "Προσοχή" : "Warning"}`,
           message: `${kpi.title} ${language === "el" ? "κάτω από τον στόχο" : "below target"}`,
         });

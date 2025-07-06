@@ -177,7 +177,7 @@ const ProductionAnalysis: React.FC<ProductionAnalysisProps> = ({
 
   // Δημιουργία isoquant curves
   const generateIsoquantData = () => {
-    const data = [];
+    const data: { month: string; production: number; quality: number; efficiency: number; }[] = [];
     const { technology, laborElasticity, capitalElasticity } = parameters;
     const targetOutputs = [50, 75, 100, 125, 150];
 
@@ -193,7 +193,15 @@ const ProductionAnalysis: React.FC<ProductionAnalysisProps> = ({
           isoquant.push({ labor: L, capital: K, output: Q });
         }
       }
-      data.push(...isoquant);
+      // Map isoquant data to match expected type
+      const mappedIsoquant = isoquant.map((item, index) => ({
+        month: `Q${index + 1}`,
+        production: item.output,
+        quality: 95,
+        efficiency: 85,
+        ...item
+      }));
+      data.push(...mappedIsoquant);
     });
 
     return data;
