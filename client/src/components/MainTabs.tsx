@@ -24,6 +24,7 @@ import StatisticalModels from '@/components/StatisticalModels';
 import AdvancedFinancialModels from '@/components/AdvancedFinancialModels';
 import Dashboard from '@/components/Dashboard';
 import BatchManagement from '@/components/BatchManagement';
+import SeafoodProcessingFeatures from '@/components/SeafoodProcessingFeatures';
 
 interface MainTabsProps {
   activeTab: string;
@@ -181,6 +182,7 @@ const MainTabs: React.FC<MainTabsProps> = ({
           <div className="space-y-6">
             <StatisticalModels formData={formData} results={results} />
             <FinancialGlossary />
+            <SeafoodProcessingFeatures />
           </div>
         </TabsContent>
       </div>

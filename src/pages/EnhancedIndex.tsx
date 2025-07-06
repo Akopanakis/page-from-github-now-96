@@ -360,7 +360,7 @@ const EnhancedIndex = () => {
       case "iso-standards":
         return <ISOPage />;
       case "executive-dashboard":
-        return <ExecutiveDashboard results={results} formData={formData} />;
+        return <ExecutiveDashboard results={results || {}} formData={formData || {}} />;
       case "financial-ratios":
         return <FinancialRatios results={results} formData={formData} />;
       case "market-trends":

@@ -35,7 +35,8 @@ interface CostAnalysisChartProps {
 }
 
 const CostAnalysisChart: React.FC<CostAnalysisChartProps> = ({ data }) => {
-  const { language, currency, t } = useLanguage();
+  const { language } = useLanguage();
+  const currency = "EUR";
 
   const defaultData = {
     costBreakdown: [
