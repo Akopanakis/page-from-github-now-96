@@ -26,6 +26,7 @@ const FinancialAnalytics = React.lazy(
 );
 const HACCPPage = React.lazy(() => import("./pages/compliance/HACCPPage"));
 const ISOPage = React.lazy(() => import("./pages/compliance/ISOPage"));
+const Tutorial = React.lazy(() => import("./pages/Tutorial"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -79,6 +80,14 @@ function App() {
                   component={() => (
                     <Suspense fallback={<LoadingSkeleton type="dashboard" />}>
                       <ISOPage />
+                    </Suspense>
+                  )}
+                />
+                <Route
+                  path="/tutorial"
+                  component={() => (
+                    <Suspense fallback={<LoadingSkeleton type="dashboard" />}>
+                      <Tutorial />
                     </Suspense>
                   )}
                 />

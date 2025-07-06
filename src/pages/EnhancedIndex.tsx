@@ -60,6 +60,7 @@ import {
   safeGetItem,
   safeSetItem,
 } from "@/utils/safeStorage";
+import ComprehensiveReportingSystem from "@/components/reports/ComprehensiveReportingSystem";
 
 interface CostItem {
   id: string;
@@ -372,6 +373,8 @@ const EnhancedIndex = () => {
         return (
           <RevenueForecastingEnhanced formData={formData} results={results} />
         );
+      case "reports-center":
+        return <ComprehensiveReportingSystem />;
       default:
         return (
           <MainTabs
