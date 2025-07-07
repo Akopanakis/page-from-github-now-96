@@ -96,7 +96,6 @@ const EnhancedNavigation: React.FC<EnhancedNavigationProps> = ({
       breadcrumbs.push({
         href: currentPath,
         label,
-        isLast,
       });
     });
 
@@ -188,12 +187,12 @@ const EnhancedNavigation: React.FC<EnhancedNavigationProps> = ({
                 {breadcrumbs.map((crumb, index) => (
                   <React.Fragment key={crumb.href}>
                     <BreadcrumbItem>
-                      {crumb.isLast ? (
+                      {index === breadcrumbs.length - 1 ? (
                         <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
                       ) : (
                         <BreadcrumbLink
                           href={crumb.href}
-                          onClick={(e) => {
+                          onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
                             e.preventDefault();
                             handleNavigate(crumb.href);
                           }}

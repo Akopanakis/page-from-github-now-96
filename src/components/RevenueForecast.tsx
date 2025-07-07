@@ -328,7 +328,7 @@ const RevenueForecast: React.FC = () => {
             mode: "index",
             intersect: false,
             callbacks: {
-              label: (context) => {
+              label: (context: any) => {
                 const value = context.parsed.y;
                 return `${context.dataset.label}: €${value.toLocaleString("el-GR")}`;
               },
@@ -350,7 +350,7 @@ const RevenueForecast: React.FC = () => {
               text: "Ποσό (€)",
             },
             ticks: {
-              callback: function (value) {
+              callback: function (value: any) {
                 return "€" + Number(value).toLocaleString("el-GR");
               },
             },

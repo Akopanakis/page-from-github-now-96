@@ -272,7 +272,7 @@ const FinancialModels: React.FC = () => {
             legend: { display: false },
             tooltip: {
               callbacks: {
-                label: (context) =>
+                label: (context: any) =>
                   `NPV: €${context.parsed.y.toLocaleString("el-GR")}`,
               },
             },
@@ -284,7 +284,7 @@ const FinancialModels: React.FC = () => {
             y: {
               title: { display: true, text: "NPV (€)" },
               ticks: {
-                callback: function (value) {
+                callback: function (value: any) {
                   return "€" + Number(value).toLocaleString("el-GR");
                 },
               },
@@ -436,7 +436,7 @@ const FinancialModels: React.FC = () => {
             x: {
               title: { display: true, text: "Μεταβολή NPV (€)" },
               ticks: {
-                callback: function (value) {
+                callback: function (value: any) {
                   return "€" + Number(value).toLocaleString("el-GR");
                 },
               },
