@@ -111,7 +111,6 @@ import {
   UserCheck,
   UserPlus,
   UserMinus,
-  Users,
   Crown,
   Gift,
   Coins,
@@ -554,7 +553,7 @@ const ComprehensiveReportingSystem: React.FC<
     },
     {
       id: "supply-chain",
-      name: language === "el" ? "Εφοδιαστική Α��υσίδα" : "Supply Chain Report",
+      name: language === "el" ? "Εφοδιαστική Αλυσίδα" : "Supply Chain Report",
       description:
         language === "el"
           ? "Ανάλυση εφοδιαστικής αλυσίδας"
@@ -867,7 +866,7 @@ const ComprehensiveReportingSystem: React.FC<
         language === "el" ? "Κατάσταση Πιστοποιήσεων" : "Certification Status",
       description:
         language === "el"
-          ? "Παρακολούθηση πι��τοποιήσεων και ανανεώσεων"
+          ? "Παρακολούθηση πιστοποιήσεων και ανανεώσεων"
           : "Track certifications and renewals",
       category: "compliance",
       icon: <Award className="w-5 h-5" />,
@@ -1197,7 +1196,7 @@ const ComprehensiveReportingSystem: React.FC<
           </h1>
           <p className="text-gray-600 mt-2">
             {language === "el"
-              ? "Δημιουργία, προγρ��μματισμός και διαχείριση αναφορών"
+              ? "Δημιουργία, προγραμματισμός και διαχείριση αναφορών"
               : "Create, schedule and manage comprehensive reports"}
           </p>
         </div>
@@ -1719,7 +1718,7 @@ const ComprehensiveReportingSystem: React.FC<
                   <div>
                     <div className="font-medium">
                       {language === "el"
-                        ? "Email ειδο��οιήσεις"
+                        ? "Email ειδοποιήσεις"
                         : "Email notifications"}
                     </div>
                     <div className="text-sm text-gray-600">
