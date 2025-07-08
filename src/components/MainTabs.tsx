@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -96,8 +97,7 @@ const MainTabs: React.FC<MainTabsProps> = ({
         <TabsContent value="basics" className="mt-0">
           <ProductBasics 
             formData={formData} 
-            updateFormData={updateFormData} 
-            isPremium={isPremium}
+            updateFormData={updateFormData}
           />
         </TabsContent>
 
@@ -181,12 +181,12 @@ const MainTabs: React.FC<MainTabsProps> = ({
                   results={results} 
                 />
                 
-                <ScenarioAnalysis baseResults={results} formData={formData} />
+                <ScenarioAnalysis formData={formData} />
                 
                 <RevenueForecasting formData={formData} results={results} />
 
                 {results && (
-                  <AdvancedFinancialModels />
+                  <AdvancedFinancialModels formData={formData} results={results} />
                 )}
               </>
             )}
