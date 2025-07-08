@@ -441,7 +441,7 @@ const AuditTrailEnhanced: React.FC = () => {
                         color: "#fff",
                         boxShadow: "0 0 0 4px #f3f4f6",
                       }}
-                      icon={getSeverityIcon(log.severity)}
+                      icon="●"
                     >
                       <div className="space-y-3">
                         <div className="flex items-center gap-2 flex-wrap">
