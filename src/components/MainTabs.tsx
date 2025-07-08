@@ -181,7 +181,7 @@ const MainTabs: React.FC<MainTabsProps> = ({
                   results={results} 
                 />
                 
-                <ScenarioAnalysis formData={formData} />
+                <ScenarioAnalysis formData={formData} results={results} />
                 
                 <RevenueForecasting formData={formData} results={results} />
 
