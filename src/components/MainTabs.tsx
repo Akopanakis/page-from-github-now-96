@@ -26,9 +26,6 @@ import AdvancedFinancialModels from '@/components/AdvancedFinancialModels';
 import Dashboard from '@/components/Dashboard';
 import BatchManagement from '@/components/BatchManagement';
 import SeafoodProcessingFeatures from '@/components/SeafoodProcessingFeatures';
-import FleetManagement from '@/components/FleetManagement';
-import InventoryManagement from '@/components/InventoryManagement';
-import QualityCompliance from '@/components/QualityCompliance';
 
 interface MainTabsProps {
   activeTab: string;
@@ -117,18 +114,6 @@ const MainTabs: React.FC<MainTabsProps> = ({
             <TabsContent value="dashboard" className="mt-0">
               <Dashboard />
             </TabsContent>
-
-            <TabsContent value="fleet-management" className="mt-0">
-              <FleetManagement />
-            </TabsContent>
-
-            <TabsContent value="inventory-management" className="mt-0">
-              <InventoryManagement />
-            </TabsContent>
-
-            <TabsContent value="quality-compliance" className="mt-0">
-              <QualityCompliance />
-            </TabsContent>
           </>
         )}
 
@@ -182,8 +167,8 @@ const MainTabs: React.FC<MainTabsProps> = ({
                 />
                 
                 <ScenarioAnalysis 
+                  baseResults={results} 
                   formData={formData} 
-                  results={results} 
                 />
                 
                 <RevenueForecasting formData={formData} results={results} />
