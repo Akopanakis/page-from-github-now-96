@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -184,7 +185,10 @@ const EnhancedIndexClean = () => {
           <React.Suspense
             fallback={<div className="p-8 text-center">Loading...</div>}
           >
-            <ScenarioAnalysisEnhanced />
+            <ScenarioAnalysisEnhanced 
+              formData={formData}
+              results={results}
+            />
           </React.Suspense>
         );
       case "forecast-revenue":
