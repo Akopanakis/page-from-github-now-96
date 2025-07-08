@@ -47,16 +47,19 @@ const AdvancedTabsContent: React.FC<AdvancedTabsContentProps> = ({
               results={results} 
             />
             
-            {results && (
-              <ScenarioAnalysis 
-                formData={formData} 
-                results={results}
-              />
-            )}
+            <ScenarioAnalysis 
+              baseResults={results} 
+              formData={formData} 
+            />
             
             <RevenueForecasting formData={formData} results={results} />
 
-            <AdvancedFinancialModels />
+            {results && (
+              <AdvancedFinancialModels 
+                formData={formData} 
+                results={results} 
+              />
+            )}
           </>
         )}
       </div>
