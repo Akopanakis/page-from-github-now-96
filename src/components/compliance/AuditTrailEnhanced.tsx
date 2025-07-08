@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -430,12 +431,7 @@ const AuditTrailEnhanced: React.FC = () => {
                       contentArrowStyle={{
                         borderRight: "7px solid white",
                       }}
-                      date={
-                        <div className="text-sm font-medium text-gray-600">
-                          <div>{date}</div>
-                          <div>{time}</div>
-                        </div>
-                      }
+                      date={`${date} ${time}`}
                       iconStyle={{
                         background: getTimelineIconColor(log.severity),
                         color: "#fff",
