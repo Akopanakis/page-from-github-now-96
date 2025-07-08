@@ -1,4 +1,3 @@
-
 import React, { Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -7,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Route, Router } from "wouter";
 import Index from "./pages/Index";
 import EnhancedIndex from "./pages/EnhancedIndex";
-import CircularNavigationIndex from "./pages/CircularNavigationIndex";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
@@ -49,8 +47,7 @@ function App() {
               <Toaster />
               <Sonner />
               <Router>
-                <Route path="/" component={CircularNavigationIndex} />
-                <Route path="/enhanced" component={EnhancedIndex} />
+                <Route path="/" component={EnhancedIndex} />
                 <Route path="/classic" component={Index} />
                 <Route path="/test" component={TestEnhancedComponents} />
                 <Route path="/expenses" component={Expenses} />
