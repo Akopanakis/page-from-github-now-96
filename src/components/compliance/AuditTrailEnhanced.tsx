@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -442,7 +441,6 @@ const AuditTrailEnhanced: React.FC = () => {
                         color: "#fff",
                         boxShadow: "0 0 0 4px #f3f4f6",
                       }}
-                      icon={<div style={{fontSize: '12px', fontWeight: 'bold'}}>•</div>}
                     >
                       <div className="space-y-3">
                         <div className="flex items-center gap-2 flex-wrap">
