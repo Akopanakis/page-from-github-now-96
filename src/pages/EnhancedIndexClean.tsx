@@ -112,7 +112,6 @@ const createDefaultFormData = (): FormData => ({
   processingPhases: [],
   targetSellingPrice: 0,
   minimumMargin: 15,
-  storageTemperature: -18,
   shelfLife: 365,
   certifications: [],
   customerPrice: 0,
@@ -121,7 +120,6 @@ const createDefaultFormData = (): FormData => ({
 
 // Create default results to avoid null types
 const createDefaultResults = (): CalculationResults => ({
-  totalCost: 0,
   totalCostWithVat: 0,
   sellingPrice: 0,
   profitPerKg: 0,
@@ -306,12 +304,6 @@ const EnhancedIndexClean = () => {
             formData={formData}
             updateFormData={updateFormData}
             results={results}
-            onUpdateCost={() => {}}
-            onAddCost={() => {}}
-            onRemoveCost={() => {}}
-            onUpdateTransport={() => {}}
-            onAddTransport={() => {}}
-            onRemoveTransport={() => {}}
           />
         );
     }

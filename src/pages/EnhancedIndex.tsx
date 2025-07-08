@@ -113,7 +113,6 @@ const createDefaultFormData = (): FormData => ({
   processingPhases: [],
   targetSellingPrice: 0,
   minimumMargin: 15,
-  storageTemperature: -18,
   shelfLife: 365,
   certifications: [],
   customerPrice: 0,
@@ -122,7 +121,6 @@ const createDefaultFormData = (): FormData => ({
 
 // Create default results to avoid null types
 const createDefaultResults = (): CalculationResults => ({
-  totalCost: 0,
   totalCostWithVat: 0,
   sellingPrice: 0,
   profitPerKg: 0,
@@ -454,15 +452,57 @@ const EnhancedIndex = () => {
             formData={formData}
             updateFormData={updateFormData}
             results={results}
-            onUpdateCost={updateCostItem}
-            onAddCost={addCostItem}
-            onRemoveCost={removeCostItem}
-            onUpdateTransport={updateTransportLeg}
-            onAddTransport={addTransportLeg}
-            onRemoveTransport={removeTransportLeg}
           />
         );
     }
+  };
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.metaKey || e.ctrlKey) {
+      switch (e.key) {
+        case "k":
+          e.preventDefault();
+          setShowCommandPalette(true);
+          break;
+        case "d":
+          e.preventDefault();
+          setActiveTab("comprehensive-dashboard");
+          break;
+        case "c":
+          e.preventDefault();
+          setActiveTab("costs");
+          break;
+        case "h":
+          e.preventDefault();
+          setActiveTab("haccp-module");
+          break;
+        case "i":
+          e.preventDefault();
+          setActiveTab("iso-standards");
+          break;
+        case "b":
+          e.preventDefault();
+          setActiveTab("business-intelligence");
+          break;
+        case ",":
+          e.preventDefault();
+          setActiveTab("settings");
+          break;
+      }
+    }
+  };
+
+  const onCalculate = () => {
+    setActiveTab("costs");
+    calculate();
+  };
+
+  const onOpenHACCP = () => {
+    setActiveTab("haccp-module");
+  };
+
+  const onOpenCommandPalette = () => {
+    setShowCommandPalette(true);
   };
 
   return (
@@ -543,7 +583,7 @@ const EnhancedIndex = () => {
               <QuickActions
                 onCalculate={calculate}
                 onReset={resetForm}
-                onLoadExample={loadExampleData}
+                onLoadExample={() => setShowExampleData(true)}
                 isCalculating={isCalculating}
                 hasResults={!!rawResults}
                 isPremium={isPremium}
@@ -570,7 +610,7 @@ const EnhancedIndex = () => {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <FileUpload onFileUpload={handleFileUpload} />
+                    <FileUpload onFileUpload={() => setShowFileUpload(false)} />
                   </CardContent>
                 </Card>
               )}
@@ -622,7 +662,10 @@ const EnhancedIndex = () => {
                   />
 
                   <div data-tour="export" className="space-y-4">
-                    <CompanySettings onChange={handleCompanyChange} />
+                    <CompanySettings onChange={(info: CompanyInfo) => {
+                      setCompanyInfo(info);
+                      safeSetJSON("companyInfo", info);
+                    }} />
                     {rawResults && (
                       <>
                         <PDFExport
@@ -650,7 +693,7 @@ const EnhancedIndex = () => {
         {/* Modals */}
         <ExampleData
           isVisible={showExampleData}
-          onLoadExample={loadExampleData}
+          onLoadExample={() => setShowExampleData(false)}
           onClose={() => setShowExampleData(false)}
         />
 
