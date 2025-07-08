@@ -27,7 +27,6 @@ import FloatingHelpButton from "@/components/FloatingHelpButton";
 import Sidebar from "@/components/Sidebar";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import QuickActions from "@/components/QuickActions";
-import QuickAccessCard from "@/components/QuickAccessCard";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import ExecutiveDashboard from "@/components/ExecutiveDashboard";
 import FinancialRatios from "@/components/FinancialRatios";
@@ -44,7 +43,6 @@ import RealTimeOperationsCenter from "@/components/RealTimeOperationsCenter";
 import AdvancedFinancialAnalytics from "@/components/AdvancedFinancialAnalytics";
 import QualityComplianceCenter from "@/components/QualityComplianceCenter";
 import MarketIntelligenceSystemEnhanced from "@/components/MarketIntelligenceSystemEnhanced";
-import ScenarioAnalysisEnhanced from "@/components/ScenarioAnalysisEnhanced";
 import RevenueForecastingEnhanced from "@/components/RevenueForecastingEnhanced";
 import HACCPPage from "@/pages/compliance/HACCPPage";
 import ISOPage from "@/pages/compliance/ISOPage";
@@ -53,6 +51,7 @@ import CommandPalette from "@/components/layout/CommandPalette";
 import FloatingActionButton from "@/components/ui/FloatingActionButton";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import { CompanyInfo } from "@/types/company";
+import { FormData, CalculationResults } from "@/utils/calc";
 import { libraryLoader } from "@/utils/libraryLoader";
 import {
   safeGetJSON,
@@ -78,15 +77,93 @@ interface TransportLeg {
   type: string;
 }
 
+// Create default form data to avoid partial types
+const createDefaultFormData = (): FormData => ({
+  productName: "",
+  productType: "fish",
+  purchasePrice: 0,
+  quantity: 0,
+  waste: 0,
+  glazingPercent: 0,
+  vatPercent: 0,
+  workers: [],
+  boxCost: 0,
+  bagCost: 0,
+  distance: 0,
+  fuelCost: 0,
+  tolls: 0,
+  parkingCost: 0,
+  driverSalary: 0,
+  profitMargin: 0,
+  profitTarget: 0,
+  competitor1: 0,
+  competitor2: 0,
+  electricityCost: 0,
+  equipmentCost: 0,
+  insuranceCost: 0,
+  rentCost: 0,
+  communicationCost: 0,
+  otherCosts: 0,
+  originAddress: "",
+  destinationAddress: "",
+  routeCalculated: false,
+  estimatedDuration: "",
+  batchNumber: "",
+  supplierName: "",
+  processingPhases: [],
+  targetSellingPrice: 0,
+  minimumMargin: 15,
+  storageTemperature: -18,
+  shelfLife: 365,
+  certifications: [],
+  customerPrice: 0,
+  seasonalMultiplier: 1
+});
+
+// Create default results to avoid null types
+const createDefaultResults = (): CalculationResults => ({
+  totalCost: 0,
+  totalCostWithVat: 0,
+  sellingPrice: 0,
+  profitPerKg: 0,
+  profitMargin: 0,
+  netWeight: 0,
+  purchaseCost: 0,
+  laborCost: 0,
+  packagingCost: 0,
+  transportCost: 0,
+  additionalCosts: 0,
+  vatAmount: 0,
+  finalProcessedWeight: 0,
+  totalWastePercentage: 0,
+  costBreakdown: [],
+  recommendedSellingPrice: 0,
+  competitorAnalysis: {
+    ourPrice: 0,
+    competitor1Diff: 0,
+    competitor2Diff: 0,
+    marketPosition: 'competitive' as const
+  },
+  profitAnalysis: {
+    breakEvenPrice: 0,
+    marginAtCurrentPrice: 0,
+    recommendedMargin: 15
+  }
+});
+
 const EnhancedIndex = () => {
   const {
-    formData,
+    formData: rawFormData,
     updateFormData,
     calculate,
     resetForm,
-    results,
+    results: rawResults,
     isCalculating,
   } = useCalculation();
+
+  // Ensure we have complete data types
+  const formData = { ...createDefaultFormData(), ...rawFormData };
+  const results = rawResults || createDefaultResults();
 
   // Core state
   const [activeTab, setActiveTab] = useState("comprehensive-dashboard");
@@ -105,7 +182,7 @@ const EnhancedIndex = () => {
 
   const [indirectCosts, setIndirectCosts] = useState<CostItem[]>([
     { id: "1", name: "Γενικά Έξοδα", value: 0, category: "indirect" },
-    { id: "2", name: "Διοικητικ��", value: 0, category: "indirect" },
+    { id: "2", name: "Διοικητικά", value: 0, category: "indirect" },
   ]);
 
   const [transportLegs, setTransportLegs] = useState<TransportLeg[]>([]);
@@ -119,7 +196,6 @@ const EnhancedIndex = () => {
 
   const backToTopRef = useRef<HTMLButtonElement>(null);
 
-  // Initialize app
   useEffect(() => {
     initializeApp();
     setupScrollHandler();
@@ -129,12 +205,10 @@ const EnhancedIndex = () => {
     checkPWASupport();
   }, []);
 
-  // Update calculations when costs change
   useEffect(() => {
     updateCostCalculations();
   }, [directCosts, indirectCosts]);
 
-  // Update transport calculations
   useEffect(() => {
     updateTransportCalculations();
   }, [transportLegs]);
@@ -264,12 +338,10 @@ const EnhancedIndex = () => {
   };
 
   const loadExampleData = () => {
-    // Load example data logic
     setShowExampleData(false);
   };
 
   const handleFileUpload = (data: any) => {
-    // Handle file upload
     setShowFileUpload(false);
   };
 
@@ -315,7 +387,6 @@ const EnhancedIndex = () => {
   }, []);
 
   const renderMainContent = () => {
-    // Handle new comprehensive components
     switch (activeTab) {
       case "comprehensive-dashboard":
         return <ComprehensiveDashboard />;
@@ -360,15 +431,13 @@ const EnhancedIndex = () => {
       case "iso-standards":
         return <ISOPage />;
       case "executive-dashboard":
-        return <ExecutiveDashboard results={results || {}} formData={formData || {}} />;
+        return <ExecutiveDashboard results={results} formData={formData} />;
       case "financial-ratios":
         return <FinancialRatios results={results} formData={formData} />;
       case "market-trends":
         return <EconomicTrends productType={formData.productType} />;
       case "market-intelligence":
         return <MarketIntelligenceSystemEnhanced />;
-      case "scenario-analysis":
-        return <ScenarioAnalysisEnhanced />;
       case "forecast-revenue":
         return (
           <RevenueForecastingEnhanced formData={formData} results={results} />
@@ -385,9 +454,6 @@ const EnhancedIndex = () => {
             formData={formData}
             updateFormData={updateFormData}
             results={results}
-            directCosts={directCosts}
-            indirectCosts={indirectCosts}
-            transportLegs={transportLegs}
             onUpdateCost={updateCostItem}
             onAddCost={addCostItem}
             onRemoveCost={removeCostItem}
@@ -406,10 +472,9 @@ const EnhancedIndex = () => {
         <Header
           isPremium={isPremium}
           setIsPremium={setIsPremium}
-          onOpenFileUpload={() => setShowFileUpload(true)}
+          showFileUpload={showFileUpload}
           setShowFileUpload={setShowFileUpload}
           onShowGuide={() => setShowUserGuide(true)}
-          onOpenCommandPalette={() => setShowCommandPalette(true)}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
         />
@@ -480,16 +545,8 @@ const EnhancedIndex = () => {
                 onReset={resetForm}
                 onLoadExample={loadExampleData}
                 isCalculating={isCalculating}
-                hasResults={!!results}
+                hasResults={!!rawResults}
                 isPremium={isPremium}
-                className="mb-6"
-              />
-
-              {/* Quick Access to Expenses */}
-              <QuickAccessCard
-                title="Γρήγορη Πρόσβαση"
-                subtitle="Συχνά χρησιμοποιούμενες λειτουργίες"
-                onNavigate={(route) => setActiveTab(route)}
                 className="mb-6"
               />
 
@@ -557,7 +614,7 @@ const EnhancedIndex = () => {
                   data-tour="results"
                 >
                   <CompactResultsPanel
-                    results={results}
+                    results={rawResults}
                     formData={formData}
                     isCalculating={isCalculating}
                     onCalculate={calculate}
@@ -566,7 +623,7 @@ const EnhancedIndex = () => {
 
                   <div data-tour="export" className="space-y-4">
                     <CompanySettings onChange={handleCompanyChange} />
-                    {results && (
+                    {rawResults && (
                       <>
                         <PDFExport
                           formData={formData}

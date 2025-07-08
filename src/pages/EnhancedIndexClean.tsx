@@ -34,6 +34,7 @@ import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import CommandPalette from "@/components/layout/CommandPalette";
 import FloatingActionButton from "@/components/ui/FloatingActionButton";
 import { CompanyInfo } from "@/types/company";
+import { FormData, CalculationResults } from "@/utils/calc";
 import { libraryLoader } from "@/utils/libraryLoader";
 import {
   safeGetJSON,
@@ -75,15 +76,93 @@ interface TransportLeg {
   type: string;
 }
 
+// Create default form data to avoid partial types
+const createDefaultFormData = (): FormData => ({
+  productName: "",
+  productType: "fish",
+  purchasePrice: 0,
+  quantity: 0,
+  waste: 0,
+  glazingPercent: 0,
+  vatPercent: 0,
+  workers: [],
+  boxCost: 0,
+  bagCost: 0,
+  distance: 0,
+  fuelCost: 0,
+  tolls: 0,
+  parkingCost: 0,
+  driverSalary: 0,
+  profitMargin: 0,
+  profitTarget: 0,
+  competitor1: 0,
+  competitor2: 0,
+  electricityCost: 0,
+  equipmentCost: 0,
+  insuranceCost: 0,
+  rentCost: 0,
+  communicationCost: 0,
+  otherCosts: 0,
+  originAddress: "",
+  destinationAddress: "",
+  routeCalculated: false,
+  estimatedDuration: "",
+  batchNumber: "",
+  supplierName: "",
+  processingPhases: [],
+  targetSellingPrice: 0,
+  minimumMargin: 15,
+  storageTemperature: -18,
+  shelfLife: 365,
+  certifications: [],
+  customerPrice: 0,
+  seasonalMultiplier: 1
+});
+
+// Create default results to avoid null types
+const createDefaultResults = (): CalculationResults => ({
+  totalCost: 0,
+  totalCostWithVat: 0,
+  sellingPrice: 0,
+  profitPerKg: 0,
+  profitMargin: 0,
+  netWeight: 0,
+  purchaseCost: 0,
+  laborCost: 0,
+  packagingCost: 0,
+  transportCost: 0,
+  additionalCosts: 0,
+  vatAmount: 0,
+  finalProcessedWeight: 0,
+  totalWastePercentage: 0,
+  costBreakdown: [],
+  recommendedSellingPrice: 0,
+  competitorAnalysis: {
+    ourPrice: 0,
+    competitor1Diff: 0,
+    competitor2Diff: 0,
+    marketPosition: 'competitive' as const
+  },
+  profitAnalysis: {
+    breakEvenPrice: 0,
+    marginAtCurrentPrice: 0,
+    recommendedMargin: 15
+  }
+});
+
 const EnhancedIndexClean = () => {
   const {
-    formData,
+    formData: rawFormData,
     updateFormData,
     calculate,
     resetForm,
-    results,
+    results: rawResults,
     isCalculating,
   } = useCalculation();
+
+  // Ensure we have complete data types
+  const formData = { ...createDefaultFormData(), ...rawFormData };
+  const results = rawResults || createDefaultResults();
 
   // Core state
   const [activeTab, setActiveTab] = useState("comprehensive-dashboard");
@@ -160,12 +239,10 @@ const EnhancedIndexClean = () => {
   };
 
   const loadExampleData = () => {
-    // Example data loading logic
     setShowExampleData(false);
   };
 
   const handleFileUpload = (data: any) => {
-    // File upload logic
     setShowFileUpload(false);
   };
 
@@ -229,9 +306,6 @@ const EnhancedIndexClean = () => {
             formData={formData}
             updateFormData={updateFormData}
             results={results}
-            directCosts={directCosts}
-            indirectCosts={indirectCosts}
-            transportLegs={transportLegs}
             onUpdateCost={() => {}}
             onAddCost={() => {}}
             onRemoveCost={() => {}}
@@ -270,7 +344,7 @@ const EnhancedIndexClean = () => {
               onReset={resetForm}
               onLoadExample={loadExampleData}
               isCalculating={isCalculating}
-              hasResults={!!results}
+              hasResults={!!rawResults}
               isPremium={isPremium}
               className="mb-6"
             />
@@ -305,7 +379,7 @@ const EnhancedIndexClean = () => {
               <div className="space-y-6">
                 {/* Results Panel */}
                 <CompactResultsPanel
-                  results={results}
+                  results={rawResults}
                   formData={formData}
                   isCalculating={isCalculating}
                   onCalculate={calculate}
@@ -313,7 +387,7 @@ const EnhancedIndexClean = () => {
                 />
 
                 {/* Export Tools */}
-                {results && (
+                {rawResults && (
                   <div className="space-y-4">
                     <CompanySettings onChange={handleCompanyChange} />
                     <PDFExport
