@@ -5,7 +5,6 @@ import { Badge } from '@/components/ui/badge';
 import { Crown } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import AdvancedAnalysisTab from '@/components/AdvancedAnalysisTab';
-import ScenarioAnalysis from '@/components/ScenarioAnalysis';
 import RevenueForecasting from '@/components/RevenueForecasting';
 import AdvancedFinancialModels from '@/components/AdvancedFinancialModels';
 import PremiumUpgrade from './PremiumUpgrade';
@@ -46,13 +45,6 @@ const AdvancedTabsContent: React.FC<AdvancedTabsContentProps> = ({
               updateFormData={updateFormData} 
               results={results} 
             />
-            
-            {formData && results && (
-              <ScenarioAnalysis 
-                formData={formData} 
-                results={results} 
-              />
-            )}
             
             <RevenueForecasting formData={formData} results={results} />
 
