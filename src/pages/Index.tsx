@@ -21,6 +21,7 @@ import ExampleData from "@/components/ExampleData";
 import UserGuide from "@/components/UserGuide";
 import FloatingHelpButton from "@/components/FloatingHelpButton";
 import { CompanyInfo } from "@/types/company";
+import { FormData, CalculationResults } from "@/utils/calc";
 import { libraryLoader } from "@/utils/libraryLoader";
 import {
   safeGetJSON,
@@ -352,15 +353,15 @@ const Index = () => {
   const loadExampleData = () => {
     const exampleFormData = {
       // Basic Product Info
-      productName: "Θράψαλο Block ��ργεντίνης",
-      productType: "fish",
+      productName: "Θράψαλο Block Αργεντίνης",
+      productType: "fish" as const,
       weight: 10, // kg per piece
       quantity: 200, // pieces (2 tons total)
       purchasePrice: 4.5, // €/kg
       targetSellingPrice: 12.0, // €/kg
       origin: "Αργεντίνη",
       quality: "A",
-      notes: "Premium θράψα��ο block, κατάψυξη στη θάλασσα",
+      notes: "Premium θράψαλο block, κατάψυξη στη θάλασσα",
 
       // Pricing
       profitMargin: 25,
@@ -382,62 +383,50 @@ const Index = () => {
       glazingPercentage: 15, // από 8kg -> 9.2kg (15% επιπλέον)
       glazingType: "ice",
 
-      // Costs
-      directCosts: [
-        { id: "1", name: "Πρώτες Ύλες", value: 9000, category: "direct" }, // 2000kg * 4.5€
-        {
-          id: "2",
-          name: "Εργα��ικά Καθαρίσματος",
-          value: 600,
-          category: "direct",
-        }, // 2000kg * 0.30€
-        { id: "3", name: "Ενέργεια Κατάψυξης", value: 200, category: "direct" },
-      ],
-      indirectCosts: [
-        { id: "4", name: "Γενικά Έξοδα", value: 300, category: "indirect" },
-        { id: "5", name: "Απ��θήκευση", value: 150, category: "indirect" },
-        { id: "6", name: "Ασφάλιστρα", value: 100, category: "indirect" },
-      ],
-      transportLegs: [
-        {
-          id: "1",
-          from: "Αργεντίνη",
-          to: "Πειραιάς",
-          distance: 12000,
-          cost: 800,
-          type: "Να��τιλιακό",
-        },
-        {
-          id: "2",
-          from: "Πειραιάς",
-          to: "Κέντρο Διανομής",
-          distance: 25,
-          cost: 120,
-          type: "Οδικό",
-        },
-      ],
-
       // Additional info
       supplierName: "Κοπανάκης",
       batchNumber: "TH-ARG-2024-001",
     };
 
+    // Define properly typed costs
+    const typedDirectCosts: CostItem[] = [
+      { id: "1", name: "Πρώτες Ύλες", value: 9000, category: "direct" }, // 2000kg * 4.5€
+      { id: "2", name: "Εργατικά Καθαρίσματος", value: 600, category: "direct" }, // 2000kg * 0.30€
+      { id: "3", name: "Ενέργεια Κατάψυξης", value: 200, category: "direct" },
+    ];
+
+    const typedIndirectCosts: CostItem[] = [
+      { id: "4", name: "Γενικά Έξοδα", value: 300, category: "indirect" },
+      { id: "5", name: "Αποθήκευση", value: 150, category: "indirect" },
+      { id: "6", name: "Ασφάλιστρα", value: 100, category: "indirect" },
+    ];
+
+    const typedTransportLegs: TransportLeg[] = [
+      {
+        id: "1",
+        from: "Αργεντίνη",
+        to: "Πειραιάς",
+        distance: 12000,
+        cost: 800,
+        type: "Ναυτιλιακό",
+      },
+      {
+        id: "2",
+        from: "Πειραιάς",
+        to: "Κέντρο Διανομής",
+        distance: 25,
+        cost: 120,
+        type: "Οδικό",
+      },
+    ];
+
     // Update form data
-    updateFormData({
-      ...exampleFormData,
-      productType: exampleFormData.productType as "fish" | "shellfish" | "cephalopods" | "processed"
-    });
+    updateFormData(exampleFormData);
 
     // Update direct state
-    setDirectCosts(exampleFormData.directCosts.map(cost => ({
-      ...cost,
-      category: cost.category as "direct" | "indirect"
-    })));
-    setIndirectCosts(exampleFormData.indirectCosts.map(cost => ({
-      ...cost,
-      category: cost.category as "direct" | "indirect"
-    })));
-    setTransportLegs(exampleFormData.transportLegs);
+    setDirectCosts(typedDirectCosts);
+    setIndirectCosts(typedIndirectCosts);
+    setTransportLegs(typedTransportLegs);
 
     setShowExampleData(false);
     setHasLoadedExample(true);
@@ -516,7 +505,7 @@ const Index = () => {
                       Δοκιμάστε με Παράδειγμα
                     </h3>
                     <p className="text-green-600 text-sm">
-                      Φορτ��στε δεδομένα θράψαλου Αργεντίνης για να δείτε πως
+                      Φορτώστε δεδομένα θράψαλου Αργεντίνης για να δείτε πως
                       λειτουργεί η εφαρμογή
                     </p>
                   </div>
@@ -544,10 +533,10 @@ const Index = () => {
                   </div>
                   <div>
                     <h4 className="font-medium text-blue-800">
-                      Πα��άδειγμα Φορτωμένο
+                      Παράδειγμα Φορτωμένο
                     </h4>
                     <p className="text-blue-600 text-sm">
-                      Δεδομένα θ��άψαλου Αργεντίνης - 2 τόνοι
+                      Δεδομένα θράψαλου Αργεντίνης - 2 τόνοι
                     </p>
                   </div>
                 </div>
@@ -604,15 +593,6 @@ const Index = () => {
                   formData={formData}
                   updateFormData={updateFormData}
                   results={results}
-                  directCosts={directCosts}
-                  indirectCosts={indirectCosts}
-                  transportLegs={transportLegs}
-                  onUpdateCost={updateCostItem}
-                  onAddCost={addCostItem}
-                  onRemoveCost={removeCostItem}
-                  onUpdateTransport={updateTransportLeg}
-                  onAddTransport={addTransportLeg}
-                  onRemoveTransport={removeTransportLeg}
                 />
               </CardContent>
             </Card>
@@ -641,7 +621,10 @@ const Index = () => {
                     results={results}
                     companyInfo={companyInfo}
                   />
-                  <DataExport formData={formData} results={results} />
+                  <DataExport 
+                    formData={formData} 
+                    results={results} 
+                  />
                 </>
               )}
             </div>
@@ -677,7 +660,7 @@ const Index = () => {
           setHasLoadedExample(true);
           setShowExampleData(false);
 
-          toast.success("Τα δεδομένα παραδείγματος φορ��ώθηκαν!");
+          toast.success("Τα δεδομένα παραδείγματος φορτώθηκαν!");
         }}
         onClose={() => setShowExampleData(false)}
       />
