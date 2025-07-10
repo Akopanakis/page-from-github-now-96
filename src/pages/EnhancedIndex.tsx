@@ -9,6 +9,7 @@ import {
   X,
   Menu,
   LayoutGrid,
+  Package,
 } from "lucide-react";
 import { useCalculation } from "@/hooks/useCalculation";
 import Header from "@/components/Header";
@@ -24,32 +25,14 @@ import CompanySettings from "@/components/CompanySettings";
 import ExampleData from "@/components/ExampleData";
 import UserGuide from "@/components/UserGuide";
 import FloatingHelpButton from "@/components/FloatingHelpButton";
-import Sidebar from "@/components/Sidebar";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import QuickActions from "@/components/QuickActions";
+import QuickAccessCard from "@/components/QuickAccessCard";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import ExecutiveDashboard from "@/components/ExecutiveDashboard";
-import FinancialRatios from "@/components/FinancialRatios";
-import EconomicTrends from "@/components/EconomicTrends";
-import ComprehensiveDashboard from "@/components/ComprehensiveDashboard";
-import FleetManagement from "@/components/FleetManagement";
-import InventoryManagement from "@/components/InventoryManagement";
-import OrderManagement from "@/components/OrderManagement";
-import CustomerManagement from "@/components/CustomerManagement";
-import NavigationSystem from "@/components/NavigationSystem";
-import EnhancedNavigationSystem from "@/components/EnhancedNavigationSystem";
-import BusinessIntelligenceDashboard from "@/components/BusinessIntelligenceDashboard";
-import RealTimeOperationsCenter from "@/components/RealTimeOperationsCenter";
-import AdvancedFinancialAnalytics from "@/components/AdvancedFinancialAnalytics";
-import QualityComplianceCenter from "@/components/QualityComplianceCenter";
-import MarketIntelligenceSystemEnhanced from "@/components/MarketIntelligenceSystemEnhanced";
-import RevenueForecastingEnhanced from "@/components/RevenueForecastingEnhanced";
-import HACCPPage from "@/pages/compliance/HACCPPage";
-import ISOPage from "@/pages/compliance/ISOPage";
-import FinancialAnalyticsPage from "@/pages/analytics/FinancialAnalytics";
+import ResponsiveNavigation from "@/components/layout/ResponsiveNavigation";
+import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import CommandPalette from "@/components/layout/CommandPalette";
 import FloatingActionButton from "@/components/ui/FloatingActionButton";
-import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import { CompanyInfo } from "@/types/company";
 import { FormData, CalculationResults } from "@/utils/calc";
 import { libraryLoader } from "@/utils/libraryLoader";
@@ -59,7 +42,24 @@ import {
   safeGetItem,
   safeSetItem,
 } from "@/utils/safeStorage";
-import ComprehensiveReportingSystem from "@/components/reports/ComprehensiveReportingSystem";
+import { useLanguage } from "@/contexts/LanguageContext";
+
+// Lazy load heavy components
+const MarketIntelligenceSystemEnhanced = React.lazy(
+  () => import("@/components/MarketIntelligenceSystemEnhanced"),
+);
+const ScenarioAnalysisEnhanced = React.lazy(
+  () => import("@/components/ScenarioAnalysisEnhanced"),
+);
+const RevenueForecastingEnhanced = React.lazy(
+  () => import("@/components/RevenueForecastingEnhanced"),
+);
+const EnhancedNavigationSystem = React.lazy(
+  () => import("@/components/EnhancedNavigationSystem"),
+);
+const TestEnhancedComponents = React.lazy(
+  () => import("@/pages/TestEnhancedComponents"),
+);
 
 interface CostItem {
   id: string;
@@ -114,12 +114,15 @@ const createDefaultFormData = (): FormData => ({
   targetSellingPrice: 0,
   minimumMargin: 15,
   certifications: [],
-  seasonalMultiplier: 1
+  seasonalMultiplier: 1,
+  storageTemperature: 0,
+  shelfLife: 0,
+  customerPrice: 0
 });
 
 // Create default results to avoid null types
 const createDefaultResults = (): CalculationResults => ({
-  totalCost: 0,
+  totalCosts: 0,
   totalCostWithVat: 0,
   sellingPrice: 0,
   profitPerKg: 0,
@@ -157,6 +160,7 @@ const EnhancedIndex = () => {
     results: rawResults,
     isCalculating,
   } = useCalculation();
+  const { language } = useLanguage();
 
   // Ensure we have complete data types
   const formData = { ...createDefaultFormData(), ...rawFormData };
@@ -167,6 +171,8 @@ const EnhancedIndex = () => {
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
   const [showCommandPalette, setShowCommandPalette] = useState(false);
+  const [showExampleData, setShowExampleData] = useState(false);
+  const [showUserGuide, setShowUserGuide] = useState(false);
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo>(() => {
     return safeGetJSON("companyInfo", { logoUrl: "", name: "", address: "" });
   });
@@ -184,150 +190,50 @@ const EnhancedIndex = () => {
 
   const [transportLegs, setTransportLegs] = useState<TransportLeg[]>([]);
 
-  // UI state
-  const [hasScrolled, setHasScrolled] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [showExampleData, setShowExampleData] = useState(false);
-  const [showUserGuide, setShowUserGuide] = useState(false);
-
   const backToTopRef = useRef<HTMLButtonElement>(null);
 
+  // Load saved premium status
   useEffect(() => {
-    initializeApp();
-    setupScrollHandler();
-    setupResponsive();
-    setTimeout(setupTooltips, 500);
-    setupGuidedTour();
-    checkPWASupport();
-  }, []);
-
-  useEffect(() => {
-    updateCostCalculations();
-  }, [directCosts, indirectCosts]);
-
-  useEffect(() => {
-    updateTransportCalculations();
-  }, [transportLegs]);
-
-  const initializeApp = async () => {
-    await libraryLoader.loadAllLibraries();
-
-    if (backToTopRef.current) {
-      const backToTop = backToTopRef.current;
-      backToTop.addEventListener("click", () => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      });
-    }
-
     const savedPremium = safeGetItem("isPremium");
     if (savedPremium === "true") {
       setIsPremium(true);
     }
-  };
+  }, []);
 
-  const setupScrollHandler = () => {
+  // Back to top functionality
+  useEffect(() => {
     const handleScroll = () => {
-      const scrolled = window.scrollY > 300;
-      setHasScrolled(scrolled);
-
       if (backToTopRef.current) {
+        const scrolled = window.scrollY > 300;
         if (scrolled) {
-          backToTopRef.current.classList.add("visible");
+          backToTopRef.current.classList.add(
+            "opacity-100",
+            "translate-y-0",
+            "pointer-events-auto",
+          );
+          backToTopRef.current.classList.remove(
+            "opacity-0",
+            "translate-y-4",
+            "pointer-events-none",
+          );
         } else {
-          backToTopRef.current.classList.remove("visible");
+          backToTopRef.current.classList.remove(
+            "opacity-100",
+            "translate-y-0",
+            "pointer-events-auto",
+          );
+          backToTopRef.current.classList.add(
+            "opacity-0",
+            "translate-y-4",
+            "pointer-events-none",
+          );
         }
       }
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  };
-
-  const setupResponsive = () => {
-    const checkDevice = () => {
-      const width = window.innerWidth;
-      setIsMobile(width < 768);
-      setSidebarCollapsed(width < 1024);
-    };
-
-    checkDevice();
-    window.addEventListener("resize", checkDevice);
-    return () => window.removeEventListener("resize", checkDevice);
-  };
-
-  const setupTooltips = () => {
-    // Tooltip initialization
-  };
-
-  const setupGuidedTour = () => {
-    // Tour initialization
-  };
-
-  const checkPWASupport = () => {
-    // PWA support check
-  };
-
-  const updateCostCalculations = () => {
-    // Cost calculation updates
-  };
-
-  const updateTransportCalculations = () => {
-    // Transport calculation updates
-  };
-
-  // Cost management functions
-  const updateCostItem = (id: string, updates: Partial<CostItem>) => {
-    setDirectCosts((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, ...updates } : item)),
-    );
-    setIndirectCosts((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, ...updates } : item)),
-    );
-  };
-
-  const addCostItem = (category: "direct" | "indirect") => {
-    const newItem: CostItem = {
-      id: Date.now().toString(),
-      name: "Νέο Κόστος",
-      value: 0,
-      category,
-    };
-
-    if (category === "direct") {
-      setDirectCosts((prev) => [...prev, newItem]);
-    } else {
-      setIndirectCosts((prev) => [...prev, newItem]);
-    }
-  };
-
-  const removeCostItem = (id: string) => {
-    setDirectCosts((prev) => prev.filter((item) => item.id !== id));
-    setIndirectCosts((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  // Transport management functions
-  const updateTransportLeg = (id: string, updates: Partial<TransportLeg>) => {
-    setTransportLegs((prev) =>
-      prev.map((leg) => (leg.id === id ? { ...leg, ...updates } : leg)),
-    );
-  };
-
-  const addTransportLeg = () => {
-    const newLeg: TransportLeg = {
-      id: Date.now().toString(),
-      from: "",
-      to: "",
-      distance: 0,
-      cost: 0,
-      type: "road",
-    };
-    setTransportLegs((prev) => [...prev, newLeg]);
-  };
-
-  const removeTransportLeg = (id: string) => {
-    setTransportLegs((prev) => prev.filter((leg) => leg.id !== id));
-  };
+  }, []);
 
   const handleCompanyChange = (info: CompanyInfo) => {
     setCompanyInfo(info);
@@ -342,105 +248,56 @@ const EnhancedIndex = () => {
     setShowFileUpload(false);
   };
 
-  // Keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.metaKey || e.ctrlKey) {
-        switch (e.key) {
-          case "k":
-            e.preventDefault();
-            setShowCommandPalette(true);
-            break;
-          case "d":
-            e.preventDefault();
-            setActiveTab("comprehensive-dashboard");
-            break;
-          case "c":
-            e.preventDefault();
-            setActiveTab("costs");
-            break;
-          case "h":
-            e.preventDefault();
-            setActiveTab("haccp-module");
-            break;
-          case "i":
-            e.preventDefault();
-            setActiveTab("iso-standards");
-            break;
-          case "b":
-            e.preventDefault();
-            setActiveTab("business-intelligence");
-            break;
-          case ",":
-            e.preventDefault();
-            setActiveTab("settings");
-            break;
-        }
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, []);
-
+  // Render main content based on active tab
   const renderMainContent = () => {
     switch (activeTab) {
-      case "comprehensive-dashboard":
-        return <ComprehensiveDashboard />;
-      case "fleet-management":
-        return <FleetManagement />;
-      case "inventory-management":
-        return <InventoryManagement />;
-      case "order-management":
-        return <OrderManagement />;
-      case "customer-management":
-        return <CustomerManagement />;
-      case "navigation-system":
+      case "market-intelligence":
         return (
-          <NavigationSystem
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            isPremium={isPremium}
-          />
+          <React.Suspense
+            fallback={<div className="p-8 text-center">Loading...</div>}
+          >
+            <MarketIntelligenceSystemEnhanced />
+          </React.Suspense>
+        );
+      case "scenario-analysis":
+        return (
+          <React.Suspense
+            fallback={<div className="p-8 text-center">Loading...</div>}
+          >
+            <ScenarioAnalysisEnhanced 
+              formData={formData}
+              results={results}
+            />
+          </React.Suspense>
+        );
+      case "forecast-revenue":
+        return (
+          <React.Suspense
+            fallback={<div className="p-8 text-center">Loading...</div>}
+          >
+            <RevenueForecastingEnhanced formData={formData} results={results} />
+          </React.Suspense>
         );
       case "enhanced-navigation":
         return (
-          <EnhancedNavigationSystem
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            isPremium={isPremium}
-          />
+          <React.Suspense
+            fallback={<div className="p-8 text-center">Loading...</div>}
+          >
+            <EnhancedNavigationSystem
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              isPremium={isPremium}
+            />
+          </React.Suspense>
         );
       case "test":
-        return React.createElement(
-          React.lazy(() => import("../pages/TestEnhancedComponents")),
-        );
-      case "business-intelligence":
-        return <BusinessIntelligenceDashboard />;
-      case "operations-center":
-        return <RealTimeOperationsCenter />;
-      case "financial-analytics":
-        return <FinancialAnalyticsPage />;
-      case "quality-compliance":
-        return <QualityComplianceCenter />;
-      case "haccp-module":
-        return <HACCPPage />;
-      case "iso-standards":
-        return <ISOPage />;
-      case "executive-dashboard":
-        return <ExecutiveDashboard results={results} formData={formData} />;
-      case "financial-ratios":
-        return <FinancialRatios results={results} formData={formData} />;
-      case "market-trends":
-        return <EconomicTrends productType={formData.productType} />;
-      case "market-intelligence":
-        return <MarketIntelligenceSystemEnhanced />;
-      case "forecast-revenue":
         return (
-          <RevenueForecastingEnhanced formData={formData} results={results} />
+          <React.Suspense
+            fallback={<div className="p-8 text-center">Loading...</div>}
+          >
+            <TestEnhancedComponents />
+          </React.Suspense>
         );
-      case "reports-center":
-        return <ComprehensiveReportingSystem />;
       default:
         return (
           <MainTabs
@@ -456,243 +313,179 @@ const EnhancedIndex = () => {
     }
   };
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.metaKey || e.ctrlKey) {
-      switch (e.key) {
-        case "k":
-          e.preventDefault();
-          setShowCommandPalette(true);
-          break;
-        case "d":
-          e.preventDefault();
-          setActiveTab("comprehensive-dashboard");
-          break;
-        case "c":
-          e.preventDefault();
-          setActiveTab("costs");
-          break;
-        case "h":
-          e.preventDefault();
-          setActiveTab("haccp-module");
-          break;
-        case "i":
-          e.preventDefault();
-          setActiveTab("iso-standards");
-          break;
-        case "b":
-          e.preventDefault();
-          setActiveTab("business-intelligence");
-          break;
-        case ",":
-          e.preventDefault();
-          setActiveTab("settings");
-          break;
-      }
-    }
-  };
-
-  const onCalculate = () => {
-    setActiveTab("costs");
-    calculate();
-  };
-
-  const onOpenHACCP = () => {
-    setActiveTab("haccp-module");
-  };
-
-  const onOpenCommandPalette = () => {
-    setShowCommandPalette(true);
-  };
-
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
-        {/* Header */}
-        <Header
-          isPremium={isPremium}
-          setIsPremium={setIsPremium}
-          showFileUpload={showFileUpload}
-          setShowFileUpload={setShowFileUpload}
-          onShowGuide={() => setShowUserGuide(true)}
+      <div className="min-h-screen bg-gray-50">
+        {/* Responsive Navigation */}
+        <ResponsiveNavigation
           activeTab={activeTab}
           setActiveTab={setActiveTab}
+          isPremium={isPremium}
         />
 
-        <div id="start-tour">
-          <OnboardingTour />
-        </div>
-
-        {/* Main Layout */}
-        <div className="flex">
-          {/* Sidebar */}
-          <div
-            className={`transition-all duration-300 ${
-              isMobile ? "fixed inset-y-0 left-0 z-50" : "relative"
-            } ${
-              sidebarCollapsed
-                ? isMobile
-                  ? "-translate-x-full"
-                  : "w-16"
-                : isMobile
-                  ? "w-64"
-                  : "w-72"
-            }`}
-          >
-            <Sidebar
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-              isPremium={isPremium}
-              className="h-screen"
-            />
-          </div>
-
-          {/* Mobile sidebar backdrop */}
-          {isMobile && !sidebarCollapsed && (
-            <div
-              className="fixed inset-0 bg-black bg-opacity-50 z-40"
-              onClick={() => setSidebarCollapsed(true)}
-            />
-          )}
-
-          {/* Main Content */}
-          <div className="flex-1 min-h-screen">
-            <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-4 md:py-6 lg:py-8">
-              {/* Mobile sidebar toggle */}
-              {isMobile && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                  className="mb-4 md:hidden"
-                >
-                  <Menu className="w-4 h-4 mr-2" />
-                  Menu
-                </Button>
-              )}
-
-              {/* Breadcrumbs */}
-              <div className="mb-4">
-                <Breadcrumbs
-                  items={[{ id: activeTab, label: "", isActive: true }]}
-                  onNavigate={(path) => setActiveTab(path.replace("/", ""))}
-                />
-              </div>
-
-              {/* Quick Actions */}
-              <QuickActions
-                onCalculate={calculate}
-                onReset={resetForm}
-                onLoadExample={() => setShowExampleData(true)}
-                isCalculating={isCalculating}
-                hasResults={!!rawResults}
-                isPremium={isPremium}
-                className="mb-6"
+        {/* Main Content Container - Properly Centered */}
+        <div className="w-full">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            {/* Breadcrumbs */}
+            <div className="mb-6">
+              <Breadcrumbs
+                items={[{ id: activeTab, label: "", isActive: true }]}
+                onNavigate={(path) => setActiveTab(path.replace("/", ""))}
               />
+            </div>
 
-              {/* File Upload Section */}
-              {showFileUpload && (
-                <Card className="mb-8 border-2 border-dashed border-blue-300 bg-blue-50">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-blue-800 flex items-center">
-                        <Calculator className="w-5 h-5 mr-2" />
-                        Μεταφόρτωση Δεδομένων
-                      </CardTitle>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setShowFileUpload(false)}
-                      >
-                        <X className="w-4 h-4 mr-2" />
-                        Εκκαθάριση
-                      </Button>
-                    </div>
+            {/* Quick Actions */}
+            <QuickActions
+              onCalculate={calculate}
+              onReset={resetForm}
+              onLoadExample={loadExampleData}
+              isCalculating={isCalculating}
+              hasResults={!!rawResults}
+              isPremium={isPremium}
+              className="mb-6"
+            />
+
+            {/* File Upload Section */}
+            {showFileUpload && (
+              <div className="mb-8">
+                <FileUpload onFileUpload={handleFileUpload} />
+              </div>
+            )}
+
+            {/* Examples Section - Added to main page */}
+            <div className="mb-6">
+              <Card className="shadow-sm border-l-4 border-l-blue-500">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center text-lg">
+                    <Package className="w-5 h-5 mr-2 text-blue-600" />
+                    {language === 'el' ? 'Παραδείγματα Προϊόντων' : 'Product Examples'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Button
+                      variant="outline"
+                      className="h-auto p-4 flex flex-col items-start text-left"
+                      onClick={() => {
+                        updateFormData({
+                          productName: "Τσιπούρα Φρέσκια",
+                          productType: "fish",
+                          purchasePrice: 4.5,
+                          quantity: 100,
+                          waste: 15,
+                          targetSellingPrice: 8.0
+                        });
+                      }}
+                    >
+                      <div className="font-semibold mb-1">🐟 Τσιπούρα Φρέσκια</div>
+                      <div className="text-sm text-gray-600">
+                        Τιμή αγοράς: €4.50/kg | Στόχος: €8.00/kg
+                      </div>
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      className="h-auto p-4 flex flex-col items-start text-left"
+                      onClick={() => {
+                        updateFormData({
+                          productName: "Μύδια Καθαρισμένα",
+                          productType: "shellfish",
+                          purchasePrice: 2.8,
+                          quantity: 50,
+                          waste: 25,
+                          targetSellingPrice: 6.5
+                        });
+                      }}
+                    >
+                      <div className="font-semibold mb-1">🦪 Μύδια Καθαρισμένα</div>
+                      <div className="text-sm text-gray-600">
+                        Τιμή αγοράς: €2.80/kg | Στόχος: €6.50/kg
+                      </div>
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      className="h-auto p-4 flex flex-col items-start text-left"
+                      onClick={() => {
+                        updateFormData({
+                          productName: "Γαρίδες Βραστές",
+                          productType: "processed",
+                          purchasePrice: 12.0,
+                          quantity: 25,
+                          waste: 8,
+                          targetSellingPrice: 18.0
+                        });
+                      }}
+                    >
+                      <div className="font-semibold mb-1">🍤 Γαρίδες Βραστές</div>
+                      <div className="text-sm text-gray-600">
+                        Τιμή αγοράς: €12.00/kg | Στόχος: €18.00/kg
+                      </div>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+              {/* Left Column - Main Content */}
+              <div className="xl:col-span-2">
+                <Card className="shadow-lg border-0 overflow-hidden bg-white">
+                  <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                    <CardTitle className="flex items-center">
+                      <div className="p-2 bg-white/20 rounded-lg mr-3">
+                        <LayoutGrid className="w-6 h-6" />
+                      </div>
+                      <span>KostoPro - Ολοκληρωμένο Σύστημα Κοστολόγησης</span>
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <FileUpload onFileUpload={() => setShowFileUpload(false)} />
+                  <CardContent className="p-0">
+                    {renderMainContent()}
                   </CardContent>
                 </Card>
-              )}
+              </div>
 
-              {/* Main Content Grid */}
-              <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-1 gap-4 md:gap-6 lg:gap-8">
-                {/* Left Column - Form */}
-                <div
-                  className="xl:col-span-2 animate-in slide-in-from-left duration-500"
-                  data-tour="form"
-                >
-                  <Card className="shadow-lg md:shadow-2xl border-0 overflow-hidden bg-white/95 backdrop-blur-sm">
-                    <CardHeader className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white relative">
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 via-indigo-600/90 to-purple-600/90"></div>
-                      <CardTitle className="relative flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <div className="p-2 bg-white/20 rounded-lg">
-                            <LayoutGrid className="w-6 h-6" />
-                          </div>
-                          <span className="text-lg md:text-xl">
-                            KostoPro - Ολοκληρωμένο Σύστημα Κοστολόγησης
-                          </span>
-                        </div>
-                        {isPremium && (
-                          <Badge className="bg-yellow-500 text-yellow-900 hover:bg-yellow-400">
-                            Premium
-                          </Badge>
-                        )}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                      {renderMainContent()}
-                    </CardContent>
-                  </Card>
-                </div>
+              {/* Right Column - Results & Tools */}
+              <div className="space-y-6">
+                {/* Results Panel */}
+                <CompactResultsPanel
+                  results={rawResults}
+                  formData={formData}
+                  isCalculating={isCalculating}
+                  onCalculate={calculate}
+                  onReset={resetForm}
+                />
 
-                {/* Right Column - Results */}
-                <div
-                  className="space-y-6 animate-in slide-in-from-right duration-500"
-                  style={{ animationDelay: "200ms" }}
-                  data-tour="results"
-                >
-                  <CompactResultsPanel
-                    results={rawResults}
-                    formData={formData}
-                    isCalculating={isCalculating}
-                    onCalculate={calculate}
-                    onReset={resetForm}
-                  />
-
-                  <div data-tour="export" className="space-y-4">
-                    <CompanySettings onChange={(info: CompanyInfo) => {
-                      setCompanyInfo(info);
-                      safeSetJSON("companyInfo", info);
-                    }} />
-                    {rawResults && (
-                      <>
-                        <PDFExport
-                          formData={formData}
-                          results={results}
-                          companyInfo={companyInfo}
-                        />
-                        <DataExport formData={formData} results={results} />
-                      </>
-                    )}
+                {/* Export Tools */}
+                {rawResults && (
+                  <div className="space-y-4">
+                    <CompanySettings onChange={handleCompanyChange} />
+                    <PDFExport
+                      formData={formData}
+                      results={results}
+                      companyInfo={companyInfo}
+                    />
+                    <DataExport formData={formData} results={results} />
                   </div>
+                )}
 
-                  {/* Premium Info Card */}
-                  {!isPremium && (
-                    <PremiumInfoCard onUpgrade={() => setIsPremium(true)} />
-                  )}
-                </div>
+                {/* Premium Info */}
+                {!isPremium && (
+                  <PremiumInfoCard onUpgrade={() => setIsPremium(true)} />
+                )}
               </div>
             </div>
           </div>
         </div>
 
+        {/* Footer */}
         <Footer />
 
-        {/* Modals */}
+        {/* Modals and Overlays */}
         <ExampleData
           isVisible={showExampleData}
-          onLoadExample={() => setShowExampleData(false)}
+          onLoadExample={loadExampleData}
           onClose={() => setShowExampleData(false)}
         />
 
@@ -701,9 +494,6 @@ const EnhancedIndex = () => {
           onClose={() => setShowUserGuide(false)}
         />
 
-        <FloatingHelpButton onShowGuide={() => setShowUserGuide(true)} />
-
-        {/* Command Palette */}
         <CommandPalette
           isOpen={showCommandPalette}
           onClose={() => setShowCommandPalette(false)}
@@ -712,14 +502,9 @@ const EnhancedIndex = () => {
           isPremium={isPremium}
         />
 
-        {/* Mobile Bottom Navigation */}
-        <MobileBottomNav
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          isPremium={isPremium}
-        />
+        {/* Fixed Elements */}
+        <FloatingHelpButton onShowGuide={() => setShowUserGuide(true)} />
 
-        {/* Floating Action Button */}
         <FloatingActionButton
           onCalculate={() => {
             setActiveTab("costs");
@@ -730,15 +515,24 @@ const EnhancedIndex = () => {
           setActiveTab={setActiveTab}
         />
 
-        {/* Back to Top Button */}
+        <MobileBottomNav
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          isPremium={isPremium}
+        />
+
+        {/* Back to Top */}
         <button
           ref={backToTopRef}
-          id="back-to-top"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           className="fixed bottom-6 right-6 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 flex items-center justify-center opacity-0 translate-y-4 pointer-events-none"
           aria-label="Επιστροφή στην κορυφή"
         >
           <ChevronUp className="w-6 h-6" />
         </button>
+
+        {/* Onboarding Tour */}
+        <OnboardingTour />
       </div>
     </ErrorBoundary>
   );

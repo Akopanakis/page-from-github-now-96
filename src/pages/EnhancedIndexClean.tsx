@@ -112,12 +112,15 @@ const createDefaultFormData = (): FormData => ({
   targetSellingPrice: 0,
   minimumMargin: 15,
   certifications: [],
-  seasonalMultiplier: 1
+  seasonalMultiplier: 1,
+  storageTemperature: 0,
+  shelfLife: 0,
+  customerPrice: 0
 });
 
 // Create default results to avoid null types
 const createDefaultResults = (): CalculationResults => ({
-  totalCost: 0,
+  totalCosts: 0,
   totalCostWithVat: 0,
   sellingPrice: 0,
   profitPerKg: 0,

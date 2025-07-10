@@ -55,86 +55,113 @@ const FinancialAnalytics: React.FC = () => {
 
   // Generate realistic data
   const [allData] = useState(() => generateAllStubData());
+  
+  // Fixed KPI structure to match MetricCard expectations
   const [kpis] = useState(() => [
     {
       id: "revenue",
-      title: language === "el" ? "Συνολικά Έσοδα" : "Total Revenue",
-      value: "€850,000",
-      change: "+12.5%",
+      name: language === "el" ? "Συνολικά Έσοδα" : "Total Revenue",
+      value: 850000,
+      unit: "€",
+      variance: 12.5,
       trend: "up" as const,
-      icon: "euro",
-      color: "blue",
-      description: language === "el" ? "Μηνιαίος τζίρος" : "Monthly turnover",
+      target: 900000,
+      benchmark: 800000,
+      category: "financial",
+      period: "monthly"
     },
     {
       id: "costs",
-      title: language === "el" ? "Συνολικά Κόστη" : "Total Costs",
-      value: "€680,000",
-      change: "+8.2%",
+      name: language === "el" ? "Συνολικά Κόστη" : "Total Costs",
+      value: 680000,
+      unit: "€",
+      variance: 8.2,
       trend: "up" as const,
-      icon: "trending-down",
-      color: "red",
-      description:
-        language === "el" ? "Λειτουργικά έξοδα" : "Operating expenses",
+      target: 650000,
+      benchmark: 620000,
+      category: "operational",
+      period: "monthly"
     },
     {
       id: "profit",
-      title: language === "el" ? "Καθαρό Κέρδος" : "Net Profit",
-      value: "€170,000",
-      change: "+20.1%",
+      name: language === "el" ? "Καθαρό Κέρδος" : "Net Profit",
+      value: 170000,
+      unit: "€",
+      variance: 20.1,
       trend: "up" as const,
-      icon: "trending-up",
-      color: "green",
-      description: language === "el" ? "Μετά από φόρους" : "After taxes",
+      target: 150000,
+      benchmark: 140000,
+      category: "financial",
+      period: "monthly"
     },
     {
       id: "margin",
-      title: language === "el" ? "Περιθώριο Κέρδους" : "Profit Margin",
-      value: "20.0%",
-      change: "+2.1%",
+      name: language === "el" ? "Περιθώριο Κέρδους" : "Profit Margin",
+      value: 20.0,
+      unit: "%",
+      variance: 2.1,
       trend: "up" as const,
-      icon: "percent",
-      color: "purple",
-      description:
-        language === "el" ? "Ποσοστό κερδοφορίας" : "Profitability ratio",
+      target: 18.0,
+      benchmark: 17.5,
+      category: "quality",
+      period: "monthly"
     },
     {
       id: "customers",
-      title: language === "el" ? "Ενεργοί Πελάτες" : "Active Customers",
-      value: "245",
-      change: "+15.3%",
+      name: language === "el" ? "Ενεργοί Πελάτες" : "Active Customers",
+      value: 245,
+      unit: "",
+      variance: 15.3,
       trend: "up" as const,
-      icon: "users",
-      color: "cyan",
-      description: language === "el" ? "Μηνιαίοι πελάτες" : "Monthly customers",
+      target: 250,
+      benchmark: 220,
+      category: "operational",
+      period: "monthly"
     },
     {
       id: "orders",
-      title: language === "el" ? "Παραγγελίες" : "Orders",
-      value: "1,240",
-      change: "+18.7%",
+      name: language === "el" ? "Παραγγελίες" : "Orders",
+      value: 1240,
+      unit: "",
+      variance: 18.7,
       trend: "up" as const,
-      icon: "shopping-cart",
-      color: "orange",
-      description: language === "el" ? "Σύνολο παραγγελιών" : "Total orders",
+      target: 1300,
+      benchmark: 1100,
+      category: "operational",
+      period: "monthly"
     },
     {
       id: "volume",
-      title: language === "el" ? "Όγκος Πωλήσεων" : "Sales Volume",
-      value: "12.5 tons",
-      change: "+5.2%",
+      name: language === "el" ? "Όγκος Πωλήσεων" : "Sales Volume",
+      value: 12.5,
+      unit: "tons",
+      variance: 5.2,
       trend: "up" as const,
-      icon: "package",
-      color: "indigo",
-      description: language === "el" ? "Φυσικός όγκος" : "Physical volume",
+      target: 13.0,
+      benchmark: 11.8,
+      category: "operational",
+      period: "monthly"
     },
   ]);
-  const [expenses] = useState(() => allData.expenses);
+
+  const [expenses] = useState(() => allData.expenses.map(expense => ({
+    ...expense,
+    supplier: expense.supplier || "N/A"
+  })));
+  
   const [forecastData] = useState(() => allData.analytics);
+  
+  // Fixed chart data structure
   const [chartData] = useState(() => ({
     line: allData.analytics,
     bar: allData.analytics,
-    pie: allData.analytics,
+    pie: [
+      { name: "Πρώτες Ύλες", value: 45, color: "#3b82f6" },
+      { name: "Εργατικά", value: 25, color: "#10b981" },
+      { name: "Ενέργεια", value: 15, color: "#f59e0b" },
+      { name: "Μεταφορά", value: 10, color: "#ef4444" },
+      { name: "Άλλα", value: 5, color: "#8b5cf6" }
+    ],
     area: allData.analytics,
   }));
 
@@ -207,7 +234,7 @@ const FinancialAnalytics: React.FC = () => {
       }
       subtitle={
         language === "el"
-          ? "Προχωρημένη ανάλυση οικονομικών δεδομένων ��αι προβλέψεις"
+          ? "Προχωρημένη ανάλυση οικονομικών δεδομένων και προβλέψεις"
           : "Advanced financial data analysis and forecasting"
       }
       pageNavItems={pageNavItems}
@@ -290,8 +317,8 @@ const FinancialAnalytics: React.FC = () => {
                   : "Performance Overview"}
               </h2>
 
-              {/* KPI Cards Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              {/* Fixed KPI Cards Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                 {kpis.slice(0, 4).map((kpi) => (
                   <MetricCard
                     key={kpi.id}
@@ -326,7 +353,7 @@ const FinancialAnalytics: React.FC = () => {
                       <div>
                         <h4 className="font-semibold text-red-900">
                           {language === "el"
-                            ? "Απόκλιση από Στόχου��"
+                            ? "Απόκλιση από Στόχους"
                             : "Target Deviation"}
                         </h4>
                         <p className="text-sm text-red-700">
@@ -438,7 +465,7 @@ const FinancialAnalytics: React.FC = () => {
                 />
               </ChartGrid>
 
-              {/* Trend KPIs */}
+              {/* Fixed Trend KPIs */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {kpis.slice(4, 7).map((kpi) => (
                   <MetricCard
@@ -707,7 +734,7 @@ const FinancialAnalytics: React.FC = () => {
                     : `Showing 1-20 of ${filteredExpenses.length} transactions`}
                 </span>
                 <Button variant="outline" size="sm">
-                  {language === "el" ? "Φόρτωση περισσότερ��ν" : "Load more"}
+                  {language === "el" ? "Φόρτωση περισσότερων" : "Load more"}
                 </Button>
               </div>
             </div>
