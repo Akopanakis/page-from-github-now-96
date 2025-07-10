@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -99,7 +100,7 @@ const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
       label: language === "el" ? "Απόδοση" : "Efficiency",
       value: formatPercentage(
         results.totalWastePercentage > 0 ? 
-          ((results.quantity - (results.quantity * results.totalWastePercentage / 100)) / results.quantity) * 100 : 
+          ((results.netWeight - (results.netWeight * results.totalWastePercentage / 100)) / results.netWeight) * 100 : 
           100
       ),
       icon: Activity,
