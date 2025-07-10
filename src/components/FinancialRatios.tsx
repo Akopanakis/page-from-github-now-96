@@ -1,3 +1,4 @@
+
 import React, { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -63,12 +64,12 @@ const FinancialRatios: React.FC<FinancialRatiosProps> = ({
     if (!results || !formData) return [];
 
     const totalRevenue = (results.finalPrice || 0) * (formData.quantity || 1);
-    const totalCosts = results.totalCosts || 0;
+    const totalCost = results.totalCost || 0;
     const grossProfit = results.grossProfit || 0;
     const netProfit = grossProfit * 0.85; // Assuming 15% tax rate
-    const workingCapital = totalCosts * 0.2; // Assume 20% working capital
-    const assets = totalCosts * 1.5; // Assume asset turnover
-    const averageInventory = totalCosts * 0.15; // Assume 15% inventory
+    const workingCapital = totalCost * 0.2; // Assume 20% working capital
+    const assets = totalCost * 1.5; // Assume asset turnover
+    const averageInventory = totalCost * 0.15; // Assume 15% inventory
 
     return [
       // Profitability Ratios
@@ -125,7 +126,7 @@ const FinancialRatios: React.FC<FinancialRatiosProps> = ({
       {
         id: "roi",
         name: language === "el" ? "Απόδοση Επένδυσης" : "Return on Investment",
-        value: (netProfit / totalCosts) * 100 || 0,
+        value: (netProfit / totalCost) * 100 || 0,
         benchmark: 20,
         unit: "%",
         category: "profitability",
@@ -138,11 +139,11 @@ const FinancialRatios: React.FC<FinancialRatiosProps> = ({
             ? "(Καθαρό Κέρδος / Συνολικό Κόστος) × 100"
             : "(Net Profit / Total Cost) × 100",
         status:
-          ((netProfit / totalCosts) * 100 || 0) > 25
+          ((netProfit / totalCost) * 100 || 0) > 25
             ? "excellent"
-            : ((netProfit / totalCosts) * 100 || 0) > 15
+            : ((netProfit / totalCost) * 100 || 0) > 15
               ? "good"
-              : ((netProfit / totalCosts) * 100 || 0) > 8
+              : ((netProfit / totalCost) * 100 || 0) > 8
                 ? "average"
                 : "poor",
         trend: "up",
@@ -178,7 +179,7 @@ const FinancialRatios: React.FC<FinancialRatiosProps> = ({
         id: "processing_efficiency",
         name:
           language === "el" ? "Απόδοση Επεξεργασίας" : "Processing Efficiency",
-        value: (1 - (results.totalLossPercentage || 0) / 100) * 100,
+        value: (1 - (results.totalWastePercentage || 0) / 100) * 100,
         benchmark: 85,
         unit: "%",
         category: "efficiency",
@@ -191,11 +192,11 @@ const FinancialRatios: React.FC<FinancialRatiosProps> = ({
             ? "(1 - Ποσοστό Απωλειών / 100) × 100"
             : "(1 - Loss Percentage / 100) × 100",
         status:
-          (1 - (results.totalLossPercentage || 0) / 100) * 100 > 90
+          (1 - (results.totalWastePercentage || 0) / 100) * 100 > 90
             ? "excellent"
-            : (1 - (results.totalLossPercentage || 0) / 100) * 100 > 80
+            : (1 - (results.totalWastePercentage || 0) / 100) * 100 > 80
               ? "good"
-              : (1 - (results.totalLossPercentage || 0) / 100) * 100 > 70
+              : (1 - (results.totalWastePercentage || 0) / 100) * 100 > 70
                 ? "average"
                 : "poor",
         trend: "up",
@@ -231,7 +232,7 @@ const FinancialRatios: React.FC<FinancialRatiosProps> = ({
         id: "inventory_turnover",
         name:
           language === "el" ? "Κυκλοφορία Αποθέματος" : "Inventory Turnover",
-        value: totalCosts / averageInventory || 0,
+        value: totalCost / averageInventory || 0,
         benchmark: 8,
         unit: "x",
         category: "activity",
@@ -244,11 +245,11 @@ const FinancialRatios: React.FC<FinancialRatiosProps> = ({
             ? "Κόστος Πωληθέντων / Μέσο Απόθεμα"
             : "Cost of Goods Sold / Average Inventory",
         status:
-          (totalCosts / averageInventory || 0) > 10
+          (totalCost / averageInventory || 0) > 10
             ? "excellent"
-            : (totalCosts / averageInventory || 0) > 6
+            : (totalCost / averageInventory || 0) > 6
               ? "good"
-              : (totalCosts / averageInventory || 0) > 3
+              : (totalCost / averageInventory || 0) > 3
                 ? "average"
                 : "poor",
         trend: "up",
