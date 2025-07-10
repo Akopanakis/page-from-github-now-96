@@ -1,16 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import {
-  Calculator,
-  ChevronUp,
-  PlayCircle,
-  X,
-  Menu,
-  LayoutGrid,
-  Package,
-} from "lucide-react";
+import { Calculator, ChevronUp, PlayCircle, X } from "lucide-react";
+import { toast } from "sonner";
 import { useCalculation } from "@/hooks/useCalculation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -25,14 +20,6 @@ import CompanySettings from "@/components/CompanySettings";
 import ExampleData from "@/components/ExampleData";
 import UserGuide from "@/components/UserGuide";
 import FloatingHelpButton from "@/components/FloatingHelpButton";
-import Breadcrumbs from "@/components/ui/Breadcrumbs";
-import QuickActions from "@/components/QuickActions";
-import QuickAccessCard from "@/components/QuickAccessCard";
-import ErrorBoundary from "@/components/ErrorBoundary";
-import ResponsiveNavigation from "@/components/layout/ResponsiveNavigation";
-import MobileBottomNav from "@/components/layout/MobileBottomNav";
-import CommandPalette from "@/components/layout/CommandPalette";
-import FloatingActionButton from "@/components/ui/FloatingActionButton";
 import { CompanyInfo } from "@/types/company";
 import { FormData, CalculationResults } from "@/utils/calc";
 import { libraryLoader } from "@/utils/libraryLoader";
@@ -42,24 +29,6 @@ import {
   safeGetItem,
   safeSetItem,
 } from "@/utils/safeStorage";
-import { useLanguage } from "@/contexts/LanguageContext";
-
-// Lazy load heavy components
-const MarketIntelligenceSystemEnhanced = React.lazy(
-  () => import("@/components/MarketIntelligenceSystemEnhanced"),
-);
-const ScenarioAnalysisEnhanced = React.lazy(
-  () => import("@/components/ScenarioAnalysisEnhanced"),
-);
-const RevenueForecastingEnhanced = React.lazy(
-  () => import("@/components/RevenueForecastingEnhanced"),
-);
-const EnhancedNavigationSystem = React.lazy(
-  () => import("@/components/EnhancedNavigationSystem"),
-);
-const TestEnhancedComponents = React.lazy(
-  () => import("@/pages/TestEnhancedComponents"),
-);
 
 interface CostItem {
   id: string;
@@ -77,101 +46,20 @@ interface TransportLeg {
   type: string;
 }
 
-// Create default form data to avoid partial types
-const createDefaultFormData = (): FormData => ({
-  productName: "",
-  productType: "fish",
-  purchasePrice: 0,
-  quantity: 0,
-  waste: 0,
-  glazingPercent: 0,
-  vatPercent: 0,
-  workers: [],
-  boxCost: 0,
-  bagCost: 0,
-  distance: 0,
-  fuelCost: 0,
-  tolls: 0,
-  parkingCost: 0,
-  driverSalary: 0,
-  profitMargin: 0,
-  profitTarget: 0,
-  competitor1: 0,
-  competitor2: 0,
-  electricityCost: 0,
-  equipmentCost: 0,
-  insuranceCost: 0,
-  rentCost: 0,
-  communicationCost: 0,
-  otherCosts: 0,
-  originAddress: "",
-  destinationAddress: "",
-  routeCalculated: false,
-  estimatedDuration: "",
-  batchNumber: "",
-  supplierName: "",
-  processingPhases: [],
-  targetSellingPrice: 0,
-  minimumMargin: 15,
-  certifications: [],
-  seasonalMultiplier: 1,
-  storageTemperature: 0,
-  shelfLife: 0,
-  customerPrice: 0
-});
-
-// Create default results to avoid null types
-const createDefaultResults = (): CalculationResults => ({
-  totalCosts: 0,
-  totalCostWithVat: 0,
-  sellingPrice: 0,
-  profitPerKg: 0,
-  profitMargin: 0,
-  netWeight: 0,
-  purchaseCost: 0,
-  laborCost: 0,
-  packagingCost: 0,
-  transportCost: 0,
-  additionalCosts: 0,
-  vatAmount: 0,
-  finalProcessedWeight: 0,
-  totalWastePercentage: 0,
-  costBreakdown: [],
-  recommendedSellingPrice: 0,
-  competitorAnalysis: {
-    ourPrice: 0,
-    competitor1Diff: 0,
-    competitor2Diff: 0,
-    marketPosition: 'competitive'
-  },
-  profitAnalysis: {
-    breakEvenPrice: 0,
-    marginAtCurrentPrice: 0,
-    recommendedMargin: 0
-  }
-});
-
 const Index = () => {
   const {
-    formData: rawFormData,
+    formData,
     updateFormData,
     calculate,
     resetForm,
-    results: rawResults,
+    results,
     isCalculating,
   } = useCalculation();
-  const { language } = useLanguage();
 
-  // Ensure we have complete data types  
-  const formData = { ...createDefaultFormData(), ...rawFormData };
-  const results = rawResults || createDefaultResults();
-
-  const [activeTab, setActiveTab] = useState("comprehensive-dashboard");
+  // Core state
+  const [activeTab, setActiveTab] = useState("basics");
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
-  const [showCommandPalette, setShowCommandPalette] = useState(false);
-  const [showExampleData, setShowExampleData] = useState(false);
-  const [showUserGuide, setShowUserGuide] = useState(false);
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo>(() => {
     return safeGetJSON("companyInfo", { logoUrl: "", name: "", address: "" });
   });
@@ -181,359 +69,693 @@ const Index = () => {
     { id: "2", name: "Εργατικά", value: 0, category: "direct" },
     { id: "3", name: "Ενέργεια", value: 0, category: "direct" },
   ]);
-
   const [indirectCosts, setIndirectCosts] = useState<CostItem[]>([
-    { id: "1", name: "Γενικά Έξοδα", value: 0, category: "indirect" },
-    { id: "2", name: "Διοικητικά", value: 0, category: "indirect" },
+    { id: "4", name: "Γενικά Έξοδα", value: 0, category: "indirect" },
+    { id: "5", name: "Αποσβέσεις", value: 0, category: "indirect" },
+    { id: "6", name: "Ασφάλιστρα", value: 0, category: "indirect" },
+  ]);
+  const [transportLegs, setTransportLegs] = useState<TransportLeg[]>([
+    {
+      id: "1",
+      from: "Αθήνα",
+      to: "Θεσσαλονίκη",
+      distance: 500,
+      cost: 150,
+      type: "Οδικό",
+    },
   ]);
 
-  const [transportLegs, setTransportLegs] = useState<TransportLeg[]>([]);
+  // UI state
+  const [hasScrolled, setHasScrolled] = useState(false);
+  const [showTooltips, setShowTooltips] = useState(true);
+  const [showExampleData, setShowExampleData] = useState(false);
+  const [hasLoadedExample, setHasLoadedExample] = useState(false);
+  const [showUserGuide, setShowUserGuide] = useState(false);
 
+  // Refs
   const backToTopRef = useRef<HTMLButtonElement>(null);
 
-  // Load saved premium status
+  // Initialize libraries and setup
   useEffect(() => {
+    initializeApp();
+    setupScrollHandler();
+    setTimeout(setupTooltips, 500); // Delay to ensure DOM is ready
+    setupGuidedTour();
+    checkPWASupport();
+  }, []);
+
+  // Update calculations when costs change
+  useEffect(() => {
+    updateCostCalculations();
+  }, [directCosts, indirectCosts]);
+
+  // Update transport calculations
+  useEffect(() => {
+    updateTransportCalculations();
+  }, [transportLegs]);
+
+  const initializeApp = async () => {
+    // Load all required libraries
+    await libraryLoader.loadAllLibraries();
+
+    // Initialize back to top button
+    if (backToTopRef.current) {
+      const backToTop = backToTopRef.current;
+      backToTop.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    }
+
+    // Check for premium mode in localStorage
     const savedPremium = safeGetItem("isPremium");
     if (savedPremium === "true") {
       setIsPremium(true);
     }
-  }, []);
+  };
 
-  // Back to top functionality
-  useEffect(() => {
+  const setupScrollHandler = () => {
     const handleScroll = () => {
+      const scrolled = window.scrollY > 300;
+      setHasScrolled(scrolled);
+
       if (backToTopRef.current) {
-        const scrolled = window.scrollY > 300;
         if (scrolled) {
-          backToTopRef.current.classList.add(
-            "opacity-100",
-            "translate-y-0",
-            "pointer-events-auto",
-          );
-          backToTopRef.current.classList.remove(
-            "opacity-0",
-            "translate-y-4",
-            "pointer-events-none",
-          );
+          backToTopRef.current.classList.add("visible");
         } else {
-          backToTopRef.current.classList.remove(
-            "opacity-100",
-            "translate-y-0",
-            "pointer-events-auto",
-          );
-          backToTopRef.current.classList.add(
-            "opacity-0",
-            "translate-y-4",
-            "pointer-events-none",
-          );
+          backToTopRef.current.classList.remove("visible");
         }
       }
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const handleCompanyChange = (info: CompanyInfo) => {
-    setCompanyInfo(info);
-    safeSetJSON("companyInfo", info);
   };
 
-  const loadExampleData = () => {
-    setShowExampleData(false);
+  const setupTooltips = () => {
+    if (!showTooltips) return;
+
+    // Use native CSS tooltips instead of tippy.js
+    const elements = document.querySelectorAll("[data-tooltip]");
+    elements.forEach((element) => {
+      const tooltip = element.getAttribute("data-tooltip");
+      if (tooltip) {
+        element.setAttribute("title", tooltip);
+        // Add CSS class for enhanced styling
+        element.classList.add("has-tooltip");
+      }
+    });
   };
 
-  const handleFileUpload = (data: any) => {
-    setShowFileUpload(false);
-  };
+  const setupGuidedTour = async () => {
+    await libraryLoader.waitForLibrary("introjs");
 
-  // Render main content based on active tab
-  const renderMainContent = () => {
-    switch (activeTab) {
-      case "market-intelligence":
-        return (
-          <React.Suspense
-            fallback={<div className="p-8 text-center">Loading...</div>}
-          >
-            <MarketIntelligenceSystemEnhanced />
-          </React.Suspense>
-        );
-      case "scenario-analysis":
-        return (
-          <React.Suspense
-            fallback={<div className="p-8 text-center">Loading...</div>}
-          >
-            <ScenarioAnalysisEnhanced 
-              formData={formData}
-              results={results}
-            />
-          </React.Suspense>
-        );
-      case "forecast-revenue":
-        return (
-          <React.Suspense
-            fallback={<div className="p-8 text-center">Loading...</div>}
-          >
-            <RevenueForecastingEnhanced formData={formData} results={results} />
-          </React.Suspense>
-        );
-      case "enhanced-navigation":
-        return (
-          <React.Suspense
-            fallback={<div className="p-8 text-center">Loading...</div>}
-          >
-            <EnhancedNavigationSystem
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-              isPremium={isPremium}
-            />
-          </React.Suspense>
-        );
-      case "test":
-        return (
-          <React.Suspense
-            fallback={<div className="p-8 text-center">Loading...</div>}
-          >
-            <TestEnhancedComponents />
-          </React.Suspense>
-        );
-      default:
-        return (
-          <MainTabs
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            isPremium={isPremium}
-            setIsPremium={setIsPremium}
-            formData={formData}
-            updateFormData={updateFormData}
-            results={results}
-          />
-        );
+    // Check if tour has been shown before
+    const tourShown = safeGetItem("guidedTourShown");
+    if (!tourShown && window.introJs) {
+      // Auto-start tour after 2 seconds
+      setTimeout(() => {
+        startGuidedTour();
+      }, 2000);
     }
   };
 
-  return (
-    <ErrorBoundary>
-      <div className="min-h-screen bg-gray-50">
-        {/* Responsive Navigation */}
-        <ResponsiveNavigation
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          isPremium={isPremium}
-        />
+  const startGuidedTour = () => {
+    if (window.introJs) {
+      window.introJs().start();
+      safeSetItem("guidedTourShown", "true");
+    }
+  };
 
-        {/* Main Content Container - Properly Centered */}
-        <div className="w-full">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            {/* Breadcrumbs */}
-            <div className="mb-6">
-              <Breadcrumbs
-                items={[{ id: activeTab, label: "", isActive: true }]}
-                onNavigate={(path) => setActiveTab(path.replace("/", ""))}
-              />
-            </div>
+  const checkPWASupport = () => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then((registration) => {
+          console.log("SW registered:", registration);
+        })
+        .catch((error) => {
+          console.log("SW registration failed:", error);
+        });
+    }
+  };
 
-            {/* Quick Actions */}
-            <QuickActions
-              onCalculate={calculate}
-              onReset={resetForm}
-              onLoadExample={loadExampleData}
-              isCalculating={isCalculating}
-              hasResults={!!rawResults}
-              isPremium={isPremium}
-              className="mb-6"
-            />
+  const updateCostCalculations = () => {
+    const totalDirectCosts = directCosts.reduce(
+      (sum, cost) => sum + cost.value,
+      0,
+    );
+    const totalIndirectCosts = indirectCosts.reduce(
+      (sum, cost) => sum + cost.value,
+      0,
+    );
+    const totalCosts = totalDirectCosts + totalIndirectCosts;
 
-            {/* File Upload Section */}
-            {showFileUpload && (
-              <div className="mb-8">
-                <FileUpload onFileUpload={handleFileUpload} />
-              </div>
-            )}
+    // Update total cost display
+    const totalCostElement = document.getElementById("total-cost");
+    if (totalCostElement) {
+      totalCostElement.textContent = `€${totalCosts.toLocaleString("el-GR")}`;
+    }
 
-            {/* Examples Section - Added to main page */}
-            <div className="mb-6">
-              <Card className="shadow-sm border-l-4 border-l-blue-500">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center text-lg">
-                    <Package className="w-5 h-5 mr-2 text-blue-600" />
-                    {language === 'el' ? 'Παραδείγματα Προϊόντων' : 'Product Examples'}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <Button
-                      variant="outline"
-                      className="h-auto p-4 flex flex-col items-start text-left"
-                      onClick={() => {
-                        updateFormData({
-                          productName: "Τσιπούρα Φρέσκια",
-                          productType: "fish",
-                          purchasePrice: 4.5,
-                          quantity: 100,
-                          waste: 15,
-                          targetSellingPrice: 8.0
-                        });
-                      }}
-                    >
-                      <div className="font-semibold mb-1">🐟 Τσιπούρα Φρέσκια</div>
-                      <div className="text-sm text-gray-600">
-                        Τιμή αγοράς: €4.50/kg | Στόχος: €8.00/kg
-                      </div>
-                    </Button>
-                    
-                    <Button
-                      variant="outline"
-                      className="h-auto p-4 flex flex-col items-start text-left"
-                      onClick={() => {
-                        updateFormData({
-                          productName: "Μύδια Καθαρισμένα",
-                          productType: "shellfish",
-                          purchasePrice: 2.8,
-                          quantity: 50,
-                          waste: 25,
-                          targetSellingPrice: 6.5
-                        });
-                      }}
-                    >
-                      <div className="font-semibold mb-1">🦪 Μύδια Καθαρισμένα</div>
-                      <div className="text-sm text-gray-600">
-                        Τιμή αγοράς: €2.80/kg | Στόχος: €6.50/kg
-                      </div>
-                    </Button>
-                    
-                    <Button
-                      variant="outline"
-                      className="h-auto p-4 flex flex-col items-start text-left"
-                      onClick={() => {
-                        updateFormData({
-                          productName: "Γαρίδες Βραστές",
-                          productType: "processed",
-                          purchasePrice: 12.0,
-                          quantity: 25,
-                          waste: 8,
-                          targetSellingPrice: 18.0
-                        });
-                      }}
-                    >
-                      <div className="font-semibold mb-1">🍤 Γαρίδες Βραστές</div>
-                      <div className="text-sm text-gray-600">
-                        Τιμή αγοράς: €12.00/kg | Στόχος: €18.00/kg
-                      </div>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+    // Update cost per unit if quantity is available
+    const quantity = formData.quantity || 1;
+    const costPerUnit = quantity > 0 ? totalCosts / quantity : 0;
 
-            {/* Main Content Grid */}
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-              {/* Left Column - Main Content */}
-              <div className="xl:col-span-2">
-                <Card className="shadow-lg border-0 overflow-hidden bg-white">
-                  <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-                    <CardTitle className="flex items-center">
-                      <div className="p-2 bg-white/20 rounded-lg mr-3">
-                        <LayoutGrid className="w-6 h-6" />
-                      </div>
-                      <span>KostoPro - Ολοκληρωμένο Σύστημα Κοστολόγησης</span>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-0">
-                    {renderMainContent()}
-                  </CardContent>
-                </Card>
-              </div>
+    const costPerUnitElement = document.getElementById("cost-per-unit");
+    if (costPerUnitElement) {
+      costPerUnitElement.textContent = `€${costPerUnit.toLocaleString("el-GR")}`;
+    }
 
-              {/* Right Column - Results & Tools */}
-              <div className="space-y-6">
-                {/* Results Panel */}
-                <CompactResultsPanel
-                  results={rawResults}
-                  formData={formData}
-                  isCalculating={isCalculating}
-                  onCalculate={calculate}
-                  onReset={resetForm}
-                />
+    // Check cost thresholds and show alerts
+    checkCostThresholds(totalCosts);
+  };
 
-                {/* Export Tools */}
-                {rawResults && (
-                  <div className="space-y-4">
-                    <CompanySettings onChange={handleCompanyChange} />
-                    <PDFExport
-                      formData={formData}
-                      results={results}
-                      companyInfo={companyInfo}
-                    />
-                    <DataExport formData={formData} results={results} />
-                  </div>
-                )}
+  const updateTransportCalculations = () => {
+    const totalTransportCost = transportLegs.reduce(
+      (sum, leg) => sum + leg.cost,
+      0,
+    );
+    const totalDistance = transportLegs.reduce(
+      (sum, leg) => sum + leg.distance,
+      0,
+    );
 
-                {/* Premium Info */}
-                {!isPremium && (
-                  <PremiumInfoCard onUpgrade={() => setIsPremium(true)} />
-                )}
-              </div>
-            </div>
+    const transportSummaryElement =
+      document.getElementById("transport-summary");
+    if (transportSummaryElement) {
+      transportSummaryElement.innerHTML = `
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <span class="text-sm text-gray-600">Συνολικό Κόστος:</span>
+            <span class="font-bold">€${totalTransportCost.toLocaleString("el-GR")}</span>
+          </div>
+          <div>
+            <span class="text-sm text-gray-600">Συνολική Απόσταση:</span>
+            <span class="font-bold">${totalDistance.toLocaleString("el-GR")} km</span>
           </div>
         </div>
+      `;
+    }
+  };
 
-        {/* Footer */}
-        <Footer />
+  const checkCostThresholds = (totalCosts: number) => {
+    const alertsPanel = document.getElementById("cost-alerts");
+    if (!alertsPanel) return;
 
-        {/* Modals and Overlays */}
-        <ExampleData
-          isVisible={showExampleData}
-          onLoadExample={loadExampleData}
-          onClose={() => setShowExampleData(false)}
-        />
+    const alerts = [];
 
-        <UserGuide
-          isOpen={showUserGuide}
-          onClose={() => setShowUserGuide(false)}
-        />
+    if (totalCosts > 10000) {
+      alerts.push({
+        type: "warning",
+        message: "Το συνολικό κόστος υπερβαίνει τα €10,000",
+      });
+    }
 
-        <CommandPalette
-          isOpen={showCommandPalette}
-          onClose={() => setShowCommandPalette(false)}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          isPremium={isPremium}
-        />
+    if (totalCosts > 50000) {
+      alerts.push({
+        type: "error",
+        message: "Πολύ υψηλό κόστος! Εξετάστε τις επιλογές βελτιστοποίησης",
+      });
+    }
 
-        {/* Fixed Elements */}
-        <FloatingHelpButton onShowGuide={() => setShowUserGuide(true)} />
+    alertsPanel.innerHTML = alerts
+      .map(
+        (alert) => `
+      <div class="alert-item ${alert.type}">
+        ${alert.message}
+      </div>
+    `,
+      )
+      .join("");
+  };
 
-        <FloatingActionButton
-          onCalculate={() => {
-            setActiveTab("costs");
-            calculate();
-          }}
-          onOpenHACCP={() => setActiveTab("haccp-module")}
-          onOpenCommandPalette={() => setShowCommandPalette(true)}
-          setActiveTab={setActiveTab}
-        />
+  const addCostItem = (category: "direct" | "indirect") => {
+    const newItem: CostItem = {
+      id: Date.now().toString(),
+      name: "Νέο Κόστος",
+      value: 0,
+      category,
+    };
 
-        <MobileBottomNav
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          isPremium={isPremium}
-        />
+    if (category === "direct") {
+      setDirectCosts([...directCosts, newItem]);
+    } else {
+      setIndirectCosts([...indirectCosts, newItem]);
+    }
+  };
 
-        {/* Back to Top */}
-        <button
-          ref={backToTopRef}
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-6 right-6 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 flex items-center justify-center opacity-0 translate-y-4 pointer-events-none"
-          aria-label="Επιστροφή στην κορυφή"
-        >
-          <ChevronUp className="w-6 h-6" />
-        </button>
+  const updateCostItem = (
+    id: string,
+    field: keyof CostItem,
+    value: string | number,
+  ) => {
+    const updateCosts = (costs: CostItem[]) =>
+      costs.map((cost) =>
+        cost.id === id ? { ...cost, [field]: value } : cost,
+      );
 
-        {/* Onboarding Tour */}
+    setDirectCosts((prev) => updateCosts(prev));
+    setIndirectCosts((prev) => updateCosts(prev));
+  };
+
+  const removeCostItem = (id: string) => {
+    setDirectCosts((prev) => prev.filter((cost) => cost.id !== id));
+    setIndirectCosts((prev) => prev.filter((cost) => cost.id !== id));
+  };
+
+  const addTransportLeg = () => {
+    const newLeg: TransportLeg = {
+      id: Date.now().toString(),
+      from: "",
+      to: "",
+      distance: 0,
+      cost: 0,
+      type: "Οδικό",
+    };
+    setTransportLegs([...transportLegs, newLeg]);
+  };
+
+  const updateTransportLeg = (
+    id: string,
+    field: keyof TransportLeg,
+    value: string | number,
+  ) => {
+    setTransportLegs((prev) =>
+      prev.map((leg) => (leg.id === id ? { ...leg, [field]: value } : leg)),
+    );
+  };
+
+  const removeTransportLeg = (id: string) => {
+    if (transportLegs.length > 1) {
+      setTransportLegs((prev) => prev.filter((leg) => leg.id !== id));
+    }
+  };
+
+  const loadExampleData = () => {
+    const exampleFormData = {
+      // Basic Product Info
+      productName: "Θράψαλο Block Αργεντίνης",
+      productType: "fish" as const,
+      weight: 10, // kg per piece
+      quantity: 200, // pieces (2 tons total)
+      purchasePrice: 4.5, // €/kg
+      targetSellingPrice: 12.0, // €/kg
+      origin: "Αργεντίνη",
+      quality: "A",
+      notes: "Premium θράψαλο block, κατάψυξη στη θάλασσα",
+
+      // Pricing
+      profitMargin: 25,
+      vatRate: 0, // 0% VAT
+
+      // Processing phases with loss and glazing
+      processingPhases: [
+        {
+          id: "1",
+          name: "Καθάρισμα",
+          lossPercentage: 20, // από 10kg -> 8kg
+          costPerKg: 0.3,
+          duration: 0.5,
+          temperature: 4,
+          description: "Αφαίρεση κεφαλιού, εντόσθιων και πτερυγίων",
+        },
+      ],
+      totalLossPercentage: 0, // General losses (already included in phases)
+      glazingPercentage: 15, // από 8kg -> 9.2kg (15% επιπλέον)
+      glazingType: "ice",
+
+      // Additional info
+      supplierName: "Κοπανάκης",
+      batchNumber: "TH-ARG-2024-001",
+    };
+
+    // Define properly typed costs
+    const typedDirectCosts: CostItem[] = [
+      { id: "1", name: "Πρώτες Ύλες", value: 9000, category: "direct" }, // 2000kg * 4.5€
+      { id: "2", name: "Εργατικά Καθαρίσματος", value: 600, category: "direct" }, // 2000kg * 0.30€
+      { id: "3", name: "Ενέργεια Κατάψυξης", value: 200, category: "direct" },
+    ];
+
+    const typedIndirectCosts: CostItem[] = [
+      { id: "4", name: "Γενικά Έξοδα", value: 300, category: "indirect" },
+      { id: "5", name: "Αποθήκευση", value: 150, category: "indirect" },
+      { id: "6", name: "Ασφάλιστρα", value: 100, category: "indirect" },
+    ];
+
+    const typedTransportLegs: TransportLeg[] = [
+      {
+        id: "1",
+        from: "Αργεντίνη",
+        to: "Πειραιάς",
+        distance: 12000,
+        cost: 800,
+        type: "Ναυτιλιακό",
+      },
+      {
+        id: "2",
+        from: "Πειραιάς",
+        to: "Κέντρο Διανομής",
+        distance: 25,
+        cost: 120,
+        type: "Οδικό",
+      },
+    ];
+
+    // Update form data
+    updateFormData(exampleFormData);
+
+    // Update direct state
+    setDirectCosts(typedDirectCosts);
+    setIndirectCosts(typedIndirectCosts);
+    setTransportLegs(typedTransportLegs);
+
+    setShowExampleData(false);
+    setHasLoadedExample(true);
+
+    // Auto-calculate after loading
+    setTimeout(() => {
+      calculate();
+    }, 500);
+  };
+
+  const handleCompanyChange = React.useCallback((info: CompanyInfo) => {
+    setCompanyInfo(info);
+    safeSetJSON("companyInfo", info);
+  }, []);
+
+  const handleFileUpload = React.useCallback(
+    (data: any) => {
+      updateFormData(data);
+      setShowFileUpload(false);
+    },
+    [updateFormData],
+  );
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
+      {/* Enhanced Background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl animate-pulse"></div>
+        <div
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-indigo-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "1s" }}
+        ></div>
+        <div
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-green-400/10 to-blue-400/10 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "2s" }}
+        ></div>
+
+        {/* Floating particles */}
+        <div
+          className="absolute top-20 left-20 w-2 h-2 bg-blue-400/30 rounded-full animate-bounce"
+          style={{ animationDelay: "0.5s" }}
+        ></div>
+        <div
+          className="absolute top-40 right-32 w-1 h-1 bg-purple-400/40 rounded-full animate-bounce"
+          style={{ animationDelay: "1.2s" }}
+        ></div>
+        <div
+          className="absolute bottom-32 left-1/3 w-1.5 h-1.5 bg-indigo-400/35 rounded-full animate-bounce"
+          style={{ animationDelay: "2.1s" }}
+        ></div>
+      </div>
+      <Header
+        isPremium={isPremium}
+        setIsPremium={setIsPremium}
+        showFileUpload={showFileUpload}
+        setShowFileUpload={setShowFileUpload}
+        onShowGuide={() => setShowUserGuide(true)}
+      />
+
+      <div id="start-tour">
         <OnboardingTour />
       </div>
-    </ErrorBoundary>
+
+      <div className="relative max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 animate-in fade-in duration-700">
+        {/* Example Data Banner */}
+        {!hasLoadedExample && (
+          <Card className="mb-6 lg:mb-8 bg-gradient-to-r from-green-50 to-blue-50 border-green-200 shadow-lg">
+            <div className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-green-100 rounded-full">
+                    <PlayCircle className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-green-800">
+                      Δοκιμάστε με Παράδειγμα
+                    </h3>
+                    <p className="text-green-600 text-sm">
+                      Φορτώστε δεδομένα θράψαλου Αργεντίνης για να δείτε πως
+                      λειτουργεί η εφαρμογή
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => setShowExampleData(true)}
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                >
+                  <PlayCircle className="w-4 h-4 mr-2" />
+                  Προβολή Παραδείγματος
+                </Button>
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {/* Example Loaded Banner */}
+        {hasLoadedExample && (
+          <Card className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+            <div className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-100 rounded-full">
+                    <Calculator className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-blue-800">
+                      Παράδειγμα Φορτωμένο
+                    </h4>
+                    <p className="text-blue-600 text-sm">
+                      Δεδομένα θράψαλου Αργεντίνης - 2 τόνοι
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => {
+                    setHasLoadedExample(false);
+                    resetForm();
+                  }}
+                  variant="outline"
+                  size="sm"
+                  className="border-blue-300 text-blue-600 hover:bg-blue-50"
+                >
+                  <X className="w-4 h-4 mr-2" />
+                  Εκκαθάριση
+                </Button>
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {/* File Upload Section */}
+        {showFileUpload && (
+          <div className="mb-8">
+            <FileUpload onFileUpload={handleFileUpload} />
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-1 gap-6 lg:gap-8">
+          {/* Left Column - Form */}
+          <div
+            className="xl:col-span-2 animate-in slide-in-from-left duration-500"
+            data-tour="form"
+          >
+            <Card className="shadow-2xl border-0 overflow-hidden bg-white/95 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 via-indigo-600/90 to-purple-600/90"></div>
+                <CardTitle className="relative flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 bg-white/20 rounded-lg">
+                      <Calculator className="w-6 h-6" />
+                    </div>
+                    <span className="text-xl font-semibold">
+                      Στοιχεία Κοστολόγησης
+                    </span>
+                  </div>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <MainTabs
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                  isPremium={isPremium}
+                  setIsPremium={setIsPremium}
+                  formData={formData}
+                  updateFormData={updateFormData}
+                  results={results}
+                />
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Column - Results */}
+          <div
+            className="space-y-6 animate-in slide-in-from-right duration-500"
+            style={{ animationDelay: "200ms" }}
+            data-tour="results"
+          >
+            <CompactResultsPanel
+              results={results}
+              formData={formData}
+              isCalculating={isCalculating}
+              onCalculate={calculate}
+              onReset={resetForm}
+            />
+
+            <div data-tour="export" className="space-y-4">
+              <CompanySettings onChange={handleCompanyChange} />
+              {results && (
+                <>
+                  <PDFExport
+                    formData={formData}
+                    results={results}
+                    companyInfo={companyInfo}
+                  />
+                  <DataExport 
+                    formData={formData} 
+                    results={results} 
+                  />
+                </>
+              )}
+            </div>
+
+            {/* Premium Info Card */}
+            {!isPremium && (
+              <PremiumInfoCard onUpgrade={() => setIsPremium(true)} />
+            )}
+          </div>
+        </div>
+      </div>
+
+      <Footer />
+
+      {/* Example Data Modal */}
+      <ExampleData
+        isVisible={showExampleData}
+        onLoadExample={(data) => {
+          // Update form data
+          updateFormData(data);
+
+          // Update costs if provided
+          if (data.directCosts) {
+            setDirectCosts(data.directCosts);
+          }
+          if (data.indirectCosts) {
+            setIndirectCosts(data.indirectCosts);
+          }
+          if (data.transportLegs) {
+            setTransportLegs(data.transportLegs);
+          }
+
+          setHasLoadedExample(true);
+          setShowExampleData(false);
+
+          toast.success("Τα δεδομένα παραδείγματος φορτώθηκαν!");
+        }}
+        onClose={() => setShowExampleData(false)}
+      />
+
+      {/* User Guide Modal */}
+      <UserGuide
+        isOpen={showUserGuide}
+        onClose={() => setShowUserGuide(false)}
+      />
+
+      {/* Floating Help Button */}
+      <FloatingHelpButton onShowGuide={() => setShowUserGuide(true)} />
+
+      {/* Back to Top Button */}
+      <button
+        ref={backToTopRef}
+        id="back-to-top"
+        className="fixed bottom-6 right-6 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 flex items-center justify-center opacity-0 translate-y-4 pointer-events-none"
+        aria-label="Επιστροφή στην κορυφή"
+      >
+        <ChevronUp className="w-6 h-6" />
+      </button>
+
+      {/* Theme Toggle Button */}
+      <button
+        id="theme-toggle"
+        className="fixed bottom-6 left-6 w-12 h-12 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 flex items-center justify-center"
+        onClick={() => {
+          document.body.classList.toggle("dark");
+          const isDark = document.body.classList.contains("dark");
+          safeSetItem("theme", isDark ? "dark" : "light");
+        }}
+        aria-label="Εναλλαγή θέματος"
+      >
+        🌙
+      </button>
+
+      {/* Service Worker Registration and PWA Support */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            // Initialize libraries and features when DOM is ready
+            document.addEventListener('DOMContentLoaded', function() {
+              // Auto-animate counters
+              const counters = document.querySelectorAll('.counter');
+              const animateCounter = (element) => {
+                const target = parseInt(element.textContent) || 0;
+                const duration = 1000;
+                const step = target / (duration / 16);
+                let current = 0;
+
+                const timer = setInterval(() => {
+                  current += step;
+                  if (current >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                  } else {
+                    element.textContent = Math.floor(current);
+                  }
+                }, 16);
+              };
+
+              // Intersection Observer for lazy loading
+              const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                  if (entry.isIntersecting) {
+                    if (entry.target.classList.contains('counter')) {
+                      animateCounter(entry.target);
+                    }
+                    if (entry.target.classList.contains('builder-chart')) {
+                      // Trigger chart animation
+                      entry.target.style.opacity = '1';
+                      entry.target.style.transform = 'translateY(0)';
+                    }
+                    observer.unobserve(entry.target);
+                  }
+                });
+              });
+
+              // Observe elements
+              document.querySelectorAll('.counter, .builder-chart').forEach(el => {
+                observer.observe(el);
+              });
+
+              // Initialize skeleton loaders
+              document.querySelectorAll('.skeleton').forEach(el => {
+                setTimeout(() => {
+                  el.classList.remove('skeleton');
+                }, Math.random() * 2000 + 500);
+              });
+            });
+          `,
+        }}
+      />
+    </div>
   );
 };
 

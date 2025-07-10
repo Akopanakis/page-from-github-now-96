@@ -1,23 +1,63 @@
-import { Worker } from "@/types/worker";
+export interface Worker {
+  id: string;
+  hourlyRate: number;
+  hours: number;
+}
 
 export interface ProcessingPhase {
   id: string;
   name: string;
+  lossPercentage: number;
+  costPerKg: number;
   duration: number;
-  costPerHour: number;
-  personnelRequired: number;
+  temperature: number;
+  description: string;
 }
 
-export interface CostBreakdownItem {
+export interface CostItem {
+  id: string;
   name: string;
+  value: number;
+  category: "direct" | "indirect";
+}
+
+export interface TransportLeg {
+  id: string;
+  from: string;
+  to: string;
+  distance: number;
   cost: number;
+  type: string;
 }
 
 export interface FormData {
+  // Basic Product Info
   productName: string;
   productType: "fish" | "shellfish" | "cephalopods" | "processed";
-  purchasePrice: number;
+  weight: number;
   quantity: number;
+  origin: string;
+  quality: string;
+  notes: string;
+
+  // Pricing
+  purchasePrice: number;
+  targetSellingPrice: number;
+  profitMargin: number;
+  vatRate: number; // VAT percentage (0, 6, 13, 24)
+
+  // Processing
+  processingPhases: ProcessingPhase[];
+  totalLossPercentage: number; // General losses
+  glazingPercentage: number;
+  glazingType: string;
+
+  // Costs
+  directCosts: CostItem[];
+  indirectCosts: CostItem[];
+  transportLegs: TransportLeg[];
+
+  // Legacy fields for compatibility
   waste: number;
   glazingPercent: number;
   vatPercent: number;
@@ -29,7 +69,6 @@ export interface FormData {
   tolls: number;
   parkingCost: number;
   driverSalary: number;
-  profitMargin: number;
   profitTarget: number;
   competitor1: number;
   competitor2: number;
@@ -45,57 +84,43 @@ export interface FormData {
   estimatedDuration: string;
   batchNumber: string;
   supplierName: string;
-  processingPhases: ProcessingPhase[];
-  targetSellingPrice: number;
   minimumMargin: number;
-  certifications: string[];
-  seasonalMultiplier: number;
-  storageTemperature: number;
-  shelfLife: number;
-  customerPrice: number;
 }
 
 export interface CalculationResults {
-  totalCost: number;
-  totalCostWithVat: number;
-  sellingPrice: number;
-  profitPerKg: number;
-  profitMargin: number;
-  netWeight: number;
-  purchaseCost: number;
-  laborCost: number;
-  packagingCost: number;
-  transportCost: number;
-  additionalCosts: number;
-  vatAmount: number;
-  finalProcessedWeight: number;
-  totalWastePercentage: number;
-  costBreakdown: Array<{
-    category: string;
-    amount: number;
-    percentage: number;
-  }>;
-  recommendedSellingPrice: number;
-  competitorAnalysis: {
-    ourPrice: number;
-    competitor1Diff: number;
-    competitor2Diff: number;
-    marketPosition: 'competitive' | 'expensive' | 'cheap';
-  };
-  profitAnalysis: {
-    breakEvenPrice: number;
-    marginAtCurrentPrice: number;
-    recommendedMargin: number;
-  };
-  // Additional properties needed by components
-  finalPrice: number;
+  // Raw calculations
+  rawWeight: number;
+  netWeight: number; // After losses and glazing
+  totalDirectCosts: number;
+  totalIndirectCosts: number;
+  totalTransportCosts: number;
+  totalProcessingCosts: number;
+
+  // Price calculations
+  totalCosts: number;
   costPerKg: number;
+  costPerUnit: number;
+
+  // VAT calculations
+  netPrice: number; // Price without VAT
+  vatAmount: number; // VAT amount
+  finalPrice: number; // Price including VAT
+
+  // Profit calculations
   grossProfit: number;
+  netProfit: number;
+  profitMargin: number;
+
+  // Analysis
   breakEvenPrice: number;
   recommendedPrice: number;
-  rawWeight: number;
+  competitivePosition: string;
+
+  // Efficiency metrics
+  totalLossPercentage: number;
   efficiencyScore: number;
-  costPerUnit: number;
+
+  // Detailed breakdown
   breakdown: {
     materials: number;
     labor: number;
@@ -106,239 +131,238 @@ export interface CalculationResults {
   };
 }
 
-export const calculateTotalCost = (formData: FormData): number => {
-  const purchaseCost = formData.purchasePrice * formData.quantity;
-  const laborCost = formData.workers.reduce((sum, worker) => sum + worker.hourlyRate * worker.hours, 0);
-  const packagingCost = formData.boxCost + formData.bagCost;
-  const transportCost = formData.distance * formData.fuelCost + formData.tolls + formData.parkingCost + formData.driverSalary;
-  const additionalCosts = formData.electricityCost + formData.equipmentCost + formData.insuranceCost + formData.rentCost + formData.communicationCost + formData.otherCosts;
+export function calculateCosts(formData: FormData): CalculationResults {
+  // Input validation and defaults - prevent NaN
+  const weight = parseFloat(String(formData.weight)) || 0;
+  const quantity = parseFloat(String(formData.quantity)) || 1;
+  const purchasePrice = parseFloat(String(formData.purchasePrice)) || 0;
+  const targetSellingPrice =
+    parseFloat(String(formData.targetSellingPrice)) || 0;
+  const vatRate = parseFloat(String(formData.vatRate)) || 0;
 
-  return purchaseCost + laborCost + packagingCost + transportCost + additionalCosts;
-};
+  // Calculate processing losses
+  const processingPhases = formData.processingPhases || [];
+  const processingLossPercentage = processingPhases.reduce(
+    (total, phase) => total + (phase.lossPercentage || 0),
+    0,
+  );
+  const generalLossPercentage = formData.totalLossPercentage || 0;
+  const totalLossPercentage = processingLossPercentage + generalLossPercentage;
 
-export const calculateSellingPrice = (totalCost: number, profitMargin: number): number => {
-  return totalCost * (1 + profitMargin / 100);
-};
+  // Calculate glazing effect
+  const glazingPercentage = formData.glazingPercentage || 0;
 
-const calculatePhaseResult = (inputWeight: number, lossPct: number, addPct: number): number => {
-  const afterLoss = inputWeight * (1 - lossPct / 100);
-  return afterLoss + afterLoss * (addPct / 100);
-};
+  // Weight calculations
+  const rawWeight = weight * quantity;
+  const weightAfterLosses = rawWeight * (1 - totalLossPercentage / 100);
+  const netWeight = weightAfterLosses * (1 - glazingPercentage / 100);
 
-// Helper function to sanitize form data and ensure all values are valid numbers
-const sanitizeFormData = (data: Partial<FormData>): FormData => {
-  const defaultWorker = { id: '1', hourlyRate: 0, hours: 0 };
-  const defaultPhase = { id: '1', name: 'Default', duration: 0, costPerHour: 0, personnelRequired: 1 };
-  
-  return {
-    productName: data.productName || '',
-    productType: data.productType || 'fish',
-    purchasePrice: Number(data.purchasePrice) || 0,
-    quantity: Number(data.quantity) || 0,
-    waste: Number(data.waste) || 0,
-    glazingPercent: Number(data.glazingPercent) || 0,
-    vatPercent: Number(data.vatPercent) || 0,
-    workers: Array.isArray(data.workers) && data.workers.length > 0 ? 
-      data.workers.map(w => ({
-        id: w?.id || '1',
-        hourlyRate: Number(w?.hourlyRate) || 0,
-        hours: Number(w?.hours) || 0
-      })) : [defaultWorker],
-    boxCost: Number(data.boxCost) || 0,
-    bagCost: Number(data.bagCost) || 0,
-    distance: Number(data.distance) || 0,
-    fuelCost: Number(data.fuelCost) || 0,
-    tolls: Number(data.tolls) || 0,
-    parkingCost: Number(data.parkingCost) || 0,
-    driverSalary: Number(data.driverSalary) || 0,
-    profitMargin: Number(data.profitMargin) || 0,
-    profitTarget: Number(data.profitTarget) || 0,
-    competitor1: Number(data.competitor1) || 0,
-    competitor2: Number(data.competitor2) || 0,
-    electricityCost: Number(data.electricityCost) || 0,
-    equipmentCost: Number(data.equipmentCost) || 0,
-    insuranceCost: Number(data.insuranceCost) || 0,
-    rentCost: Number(data.rentCost) || 0,
-    communicationCost: Number(data.communicationCost) || 0,
-    otherCosts: Number(data.otherCosts) || 0,
-    originAddress: data.originAddress || '',
-    destinationAddress: data.destinationAddress || '',
-    routeCalculated: Boolean(data.routeCalculated),
-    estimatedDuration: data.estimatedDuration || '',
-    batchNumber: data.batchNumber || '',
-    supplierName: data.supplierName || '',
-    processingPhases: Array.isArray(data.processingPhases) && data.processingPhases.length > 0 ?
-      data.processingPhases.map(p => ({
-        id: p?.id || '1',
-        name: p?.name || 'Default',
-        duration: Number(p?.duration) || 0,
-        costPerHour: Number(p?.costPerHour) || 0,
-        personnelRequired: Number(p?.personnelRequired) || 1
-      })) : [defaultPhase],
-    targetSellingPrice: Number(data.targetSellingPrice) || 0,
-    minimumMargin: Number(data.minimumMargin) || 15,
-    storageTemperature: Number(data.storageTemperature) || -18,
-    shelfLife: Number(data.shelfLife) || 365,
-    certifications: Array.isArray(data.certifications) ? data.certifications : [],
-    customerPrice: Number(data.customerPrice) || 0,
-    seasonalMultiplier: Number(data.seasonalMultiplier) || 1
-  };
-};
+  // Cost calculations
+  const directCosts = formData.directCosts || [];
+  const indirectCosts = formData.indirectCosts || [];
+  const transportLegs = formData.transportLegs || [];
 
-export const calculateResults = (inputData: Partial<FormData>): CalculationResults => {
-  // Sanitize input data to ensure all values are valid
-  const formData = sanitizeFormData(inputData);
-  let currentWeight = Math.max(formData.quantity, 0.1); // Ensure minimum weight
-  let totalWastePercentage = 0;
-
-  if (formData.processingPhases && formData.processingPhases.length > 0) {
-    formData.processingPhases.forEach((phase) => {
-      // Processing phases affect weight and add costs
-      const processingLoss = currentWeight * 0.05; // 5% loss per phase
-      currentWeight = Math.max(currentWeight - processingLoss, 0.1);
-      totalWastePercentage += 5;
-    });
-  } else {
-    const netWeight = currentWeight * (1 - Math.min(formData.waste || 0, 99) / 100);
-    currentWeight = netWeight * (1 + (formData.glazingPercent || 0) / 100);
-    currentWeight = Math.max(currentWeight, 0.1);
-    totalWastePercentage = formData.waste || 0;
-  }
-
-  const finalProcessedWeight = Math.max(currentWeight, 0.1);
-  const rawWeight = formData.quantity || 0.1;
-
-  const purchaseCost = (formData.purchasePrice || 0) * (formData.quantity || 0);
-
-  const laborCost = (formData.workers || []).reduce(
-    (sum, worker) => sum + worker.hourlyRate * worker.hours,
-    0
+  const totalDirectCosts = directCosts.reduce(
+    (sum, cost) => sum + (cost.value || 0),
+    0,
+  );
+  const totalIndirectCosts = indirectCosts.reduce(
+    (sum, cost) => sum + (cost.value || 0),
+    0,
+  );
+  const totalTransportCosts = transportLegs.reduce(
+    (sum, leg) => sum + (leg.cost || 0),
+    0,
   );
 
-  const packagingCost = (formData.boxCost || 0) + (formData.bagCost || 0);
-  const transportCost =
-    (formData.distance || 0) * (formData.fuelCost || 0) +
-    (formData.tolls || 0) +
-    (formData.parkingCost || 0) +
-    (formData.driverSalary || 0);
+  // Processing costs
+  const totalProcessingCosts = processingPhases.reduce(
+    (sum, phase) => sum + (phase.costPerKg || 0) * rawWeight,
+    0,
+  );
 
-  const additionalCosts =
-    (formData.electricityCost || 0) +
-    (formData.equipmentCost || 0) +
-    (formData.insuranceCost || 0) +
-    (formData.rentCost || 0) +
-    (formData.communicationCost || 0) +
-    (formData.otherCosts || 0);
+  // Material costs
+  const materialCosts = purchasePrice * rawWeight;
 
-  const totalCost = purchaseCost + laborCost + packagingCost + transportCost + additionalCosts;
+  // Total costs
+  const totalCosts =
+    materialCosts +
+    totalDirectCosts +
+    totalIndirectCosts +
+    totalTransportCosts +
+    totalProcessingCosts;
 
-  const vatAmount = totalCost * ((formData.vatPercent || 0) / 100);
-  const totalCostWithVat = totalCost + vatAmount;
+  // Cost per unit calculations - prevent division by zero
+  const costPerKg = netWeight > 0 ? totalCosts / netWeight : 0;
+  const costPerUnit = quantity > 0 ? totalCosts / quantity : 0;
 
-  const seasonalAdjustment = formData.seasonalMultiplier || 1;
-  const adjustedCost = totalCostWithVat * seasonalAdjustment;
+  // VAT calculations - proper logic with safety checks
+  let netPrice = parseFloat(String(targetSellingPrice)) || 0;
+  let vatAmount = 0;
+  let finalPrice = parseFloat(String(targetSellingPrice)) || 0;
 
-  const sellingPrice = adjustedCost * (1 + Math.max(formData.profitMargin || 0, 0) / 100);
-  const sellingPricePerKg = sellingPrice / finalProcessedWeight;
-  const costPerKg = adjustedCost / finalProcessedWeight;
-
-  const profitPerKg = sellingPricePerKg - costPerKg;
-  const grossProfit = sellingPrice - adjustedCost;
-
-  const costBreakdown = [
-    { category: 'Αγορά', amount: purchaseCost, percentage: (purchaseCost / totalCost) * 100 },
-    { category: 'Εργασία', amount: laborCost, percentage: (laborCost / totalCost) * 100 },
-    { category: 'Συσκευασία', amount: packagingCost, percentage: (packagingCost / totalCost) * 100 },
-    { category: 'Μεταφορά', amount: transportCost, percentage: (transportCost / totalCost) * 100 },
-    { category: 'Λοιπά', amount: additionalCosts, percentage: (additionalCosts / totalCost) * 100 },
-  ].filter((item) => item.amount > 0);
-
-  const competitor1Diff = (formData.competitor1 || 0) - sellingPricePerKg;
-  const competitor2Diff = (formData.competitor2 || 0) - sellingPricePerKg;
-  let marketPosition: 'competitive' | 'expensive' | 'cheap' = 'competitive';
-
-  if (competitor1Diff > 0.5 || competitor2Diff > 0.5) {
-    marketPosition = 'cheap';
-  } else if (competitor1Diff < -0.5 || competitor2Diff < -0.5) {
-    marketPosition = 'expensive';
+  if (vatRate > 0 && targetSellingPrice > 0) {
+    // If target price includes VAT, calculate net price
+    netPrice = targetSellingPrice / (1 + vatRate / 100);
+    vatAmount = targetSellingPrice - netPrice;
+    finalPrice = targetSellingPrice;
+  } else {
+    // If no VAT or target price is net, VAT is additional
+    netPrice = targetSellingPrice;
+    vatAmount = 0;
+    finalPrice = targetSellingPrice;
   }
 
-  const breakEvenPrice = adjustedCost / finalProcessedWeight;
-  const marginAtCurrentPrice = sellingPricePerKg > 0 ? ((sellingPricePerKg - breakEvenPrice) / sellingPricePerKg) * 100 : 0;
-  const recommendedMargin = Math.max(formData.minimumMargin || 15, 20);
+  // Ensure values are finite numbers
+  netPrice = isFinite(netPrice) ? netPrice : 0;
+  vatAmount = isFinite(vatAmount) ? vatAmount : 0;
+  finalPrice = isFinite(finalPrice) ? finalPrice : 0;
 
-  const recommendedSellingPrice = breakEvenPrice * (1 + recommendedMargin / 100);
-  
-  // Calculate efficiency score
-  const efficiencyScore = rawWeight > 0 ? (finalProcessedWeight / rawWeight) * 100 : 0;
-  
-  // Calculate cost per unit
-  const costPerUnit = finalProcessedWeight > 0 ? totalCost / finalProcessedWeight : 0;
+  // Profit calculations with safety checks
+  const revenueTotal = netPrice * netWeight;
+  const grossProfit =
+    isFinite(revenueTotal) && isFinite(totalCosts)
+      ? revenueTotal - totalCosts
+      : 0;
+  const netProfit = grossProfit; // Simplified, could include tax calculations
+  const profitMargin =
+    revenueTotal > 0 && isFinite(grossProfit)
+      ? (grossProfit / revenueTotal) * 100
+      : 0;
 
-  return {
-    totalCost,
-    totalCostWithVat: adjustedCost,
-    sellingPrice: sellingPricePerKg,
-    profitPerKg,
-    profitMargin: formData.profitMargin || 0,
-    netWeight: finalProcessedWeight,
-    purchaseCost,
-    laborCost,
-    packagingCost,
-    transportCost,
-    additionalCosts,
-    vatAmount,
-    finalProcessedWeight,
-    totalWastePercentage,
-    costBreakdown,
-    recommendedSellingPrice,
-    competitorAnalysis: {
-      ourPrice: sellingPricePerKg,
-      competitor1Diff,
-      competitor2Diff,
-      marketPosition,
-    },
-    profitAnalysis: {
-      breakEvenPrice,
-      marginAtCurrentPrice,
-      recommendedMargin,
-    },
-    // Additional calculated properties
-    finalPrice: sellingPricePerKg,
-    costPerKg,
-    grossProfit,
-    breakEvenPrice,
-    recommendedPrice: recommendedSellingPrice,
-    rawWeight,
-    efficiencyScore,
-    costPerUnit,
+  // Break-even and recommendations
+  const breakEvenPrice = netWeight > 0 ? totalCosts / netWeight : 0;
+  const recommendedPrice =
+    breakEvenPrice * (1 + (formData.profitMargin || 20) / 100);
+
+  // Efficiency score
+  const efficiencyScore = Math.max(0, Math.min(100, 100 - totalLossPercentage));
+
+  // Competitive position
+  let competitivePosition = "Average";
+  if (finalPrice < breakEvenPrice * 1.1) {
+    competitivePosition = "Competitive";
+  } else if (finalPrice > breakEvenPrice * 1.5) {
+    competitivePosition = "Premium";
+  }
+
+  // Detailed breakdown
+  const breakdown = {
+    materials: materialCosts,
+    labor: totalDirectCosts * 0.4, // Estimate
+    processing: totalProcessingCosts,
+    transport: totalTransportCosts,
+    overhead: totalIndirectCosts,
+    packaging: totalDirectCosts * 0.1, // Estimate
+  };
+
+  // Ensure all returned values are finite numbers
+  const safeResults = {
+    rawWeight: isFinite(rawWeight) ? rawWeight : 0,
+    netWeight: isFinite(netWeight) ? netWeight : 0,
+    totalDirectCosts: isFinite(totalDirectCosts) ? totalDirectCosts : 0,
+    totalIndirectCosts: isFinite(totalIndirectCosts) ? totalIndirectCosts : 0,
+    totalTransportCosts: isFinite(totalTransportCosts)
+      ? totalTransportCosts
+      : 0,
+    totalProcessingCosts: isFinite(totalProcessingCosts)
+      ? totalProcessingCosts
+      : 0,
+    totalCosts: isFinite(totalCosts) ? totalCosts : 0,
+    costPerKg: isFinite(costPerKg) ? costPerKg : 0,
+    costPerUnit: isFinite(costPerUnit) ? costPerUnit : 0,
+    netPrice: isFinite(netPrice) ? netPrice : 0,
+    vatAmount: isFinite(vatAmount) ? vatAmount : 0,
+    finalPrice: isFinite(finalPrice) ? finalPrice : 0,
+    grossProfit: isFinite(grossProfit) ? grossProfit : 0,
+    netProfit: isFinite(netProfit) ? netProfit : 0,
+    profitMargin: isFinite(profitMargin) ? profitMargin : 0,
+    breakEvenPrice: isFinite(breakEvenPrice) ? breakEvenPrice : 0,
+    recommendedPrice: isFinite(recommendedPrice) ? recommendedPrice : 0,
+    competitivePosition,
+    totalLossPercentage: isFinite(totalLossPercentage)
+      ? totalLossPercentage
+      : 0,
+    efficiencyScore: isFinite(efficiencyScore) ? efficiencyScore : 0,
     breakdown: {
-      materials: purchaseCost,
-      labor: laborCost,
-      processing: 0, // Could be calculated from processing phases if needed
-      transport: transportCost,
-      overhead: additionalCosts,
-      packaging: packagingCost,
+      materials: isFinite(breakdown.materials) ? breakdown.materials : 0,
+      labor: isFinite(breakdown.labor) ? breakdown.labor : 0,
+      processing: isFinite(breakdown.processing) ? breakdown.processing : 0,
+      transport: isFinite(breakdown.transport) ? breakdown.transport : 0,
+      overhead: isFinite(breakdown.overhead) ? breakdown.overhead : 0,
+      packaging: isFinite(breakdown.packaging) ? breakdown.packaging : 0,
     },
   };
-};
 
-// Export aliases for compatibility
-export const calculateCosts = calculateResults;
-export const validateFormData = (data: FormData): string[] => {
+  return safeResults;
+}
+
+// Utility functions with NaN protection
+export function formatCurrency(amount: number, currency = "€"): string {
+  const safeAmount = isFinite(amount) ? amount : 0;
+  return `${currency}${safeAmount.toLocaleString("el-GR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+}
+
+export function formatPercentage(value: number): string {
+  const safeValue = isFinite(value) ? value : 0;
+  return `${safeValue.toFixed(1)}%`;
+}
+
+export function calculateEfficiency(losses: ProcessingPhase[]): number {
+  const totalLoss = losses.reduce(
+    (sum, phase) => sum + phase.lossPercentage,
+    0,
+  );
+  return Math.max(0, 100 - totalLoss);
+}
+
+export function calculateROI(profit: number, investment: number): number {
+  return investment > 0 ? (profit / investment) * 100 : 0;
+}
+
+export function validateFormData(formData: FormData): string[] {
   const errors: string[] = [];
-  
-  if (!data.productName?.trim()) {
-    errors.push('Product name is required');
+
+  if (!formData.productName || formData.productName.trim() === "") {
+    errors.push("Το όνομα προϊόντος είναι υποχρεωτικό");
   }
-  
-  if (!data.purchasePrice || data.purchasePrice <= 0) {
-    errors.push('Purchase price must be greater than 0');
+
+  if (!formData.weight || formData.weight <= 0) {
+    errors.push("Το βάρος πρέπει να είναι μεγαλύτερο από 0");
   }
-  
-  if (!data.quantity || data.quantity <= 0) {
-    errors.push('Quantity must be greater than 0');
+
+  if (!formData.purchasePrice || formData.purchasePrice <= 0) {
+    errors.push("Η τιμή αγοράς πρέπει να είναι μεγαλύτερη από 0");
   }
-  
+
+  if (formData.vatRate < 0 || formData.vatRate > 30) {
+    errors.push("Ο συντελεστής ΦΠΑ πρέπει να είναι μεταξύ 0% και 30%");
+  }
+
+  const totalLoss =
+    (formData.processingPhases || []).reduce(
+      (sum, phase) => sum + (phase.lossPercentage || 0),
+      0,
+    ) + (formData.totalLossPercentage || 0);
+
+  if (totalLoss >= 100) {
+    errors.push(
+      "Οι συνολικές απώλειες δεν μπορούν να είναι 100% ή περισσότερο",
+    );
+  }
+
   return errors;
+}
+
+// Export default for compatibility
+export default {
+  calculateCosts,
+  formatCurrency,
+  formatPercentage,
+  calculateEfficiency,
+  calculateROI,
+  validateFormData,
 };

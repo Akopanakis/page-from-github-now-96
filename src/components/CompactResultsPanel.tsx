@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -73,10 +72,10 @@ const CompactResultsPanel: React.FC<CompactResultsPanelProps> = ({
   const keyMetrics = [
     {
       label: t("results.total.cost"),
-      value: formatCurrency(results?.totalCost || 0),
+      value: formatCurrency(results?.totalCosts || 0),
       icon: Calculator,
       color: "blue",
-      trend: (results?.totalCost || 0) > 5000 ? "high" : "normal",
+      trend: (results?.totalCosts || 0) > 5000 ? "high" : "normal",
       description:
         language === "el"
           ? "Συνολικά έξοδα παραγωγής"
@@ -206,8 +205,8 @@ const CompactResultsPanel: React.FC<CompactResultsPanelProps> = ({
       label: language === "el" ? "Υλικά" : "Materials",
       value: results?.breakdown?.materials || 0,
       percentage:
-        results?.totalCost > 0
-          ? ((results?.breakdown?.materials || 0) / results.totalCost) * 100
+        results?.totalCosts > 0
+          ? ((results?.breakdown?.materials || 0) / results.totalCosts) * 100
           : 0,
       color: "blue",
     },
@@ -215,8 +214,8 @@ const CompactResultsPanel: React.FC<CompactResultsPanelProps> = ({
       label: language === "el" ? "Επεξεργασία" : "Processing",
       value: results?.breakdown?.processing || 0,
       percentage:
-        results?.totalCost > 0
-          ? ((results?.breakdown?.processing || 0) / results.totalCost) * 100
+        results?.totalCosts > 0
+          ? ((results?.breakdown?.processing || 0) / results.totalCosts) * 100
           : 0,
       color: "green",
     },
@@ -224,8 +223,8 @@ const CompactResultsPanel: React.FC<CompactResultsPanelProps> = ({
       label: language === "el" ? "Μεταφορά" : "Transport",
       value: results?.breakdown?.transport || 0,
       percentage:
-        results?.totalCost > 0
-          ? ((results?.breakdown?.transport || 0) / results.totalCost) * 100
+        results?.totalCosts > 0
+          ? ((results?.breakdown?.transport || 0) / results.totalCosts) * 100
           : 0,
       color: "orange",
     },
@@ -235,11 +234,11 @@ const CompactResultsPanel: React.FC<CompactResultsPanelProps> = ({
         (results?.breakdown?.overhead || 0) +
         (results?.breakdown?.packaging || 0),
       percentage:
-        results?.totalCost > 0
+        results?.totalCosts > 0
           ? (
               ((results?.breakdown?.overhead || 0) +
                 (results?.breakdown?.packaging || 0)) /
-              results.totalCost
+              results.totalCosts
             ) * 100
           : 0,
       color: "purple",

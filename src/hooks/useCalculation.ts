@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import type { FormData, CalculationResults } from "@/utils/calc";
-import { calculateResults, validateFormData } from "@/utils/calc";
+import { calculateCosts, validateFormData } from "@/utils/calc";
 import { toast } from "@/components/ui/sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { safeGetJSON, safeSetJSON, safeRemoveItem } from "@/utils/safeStorage";
@@ -12,18 +12,50 @@ export const useCalculation = () => {
     // Basic Product Info
     productName: "",
     productType: "fish",
+    weight: 0,
     quantity: 1,
+    origin: "",
+    quality: "A",
+    notes: "",
+
+    // Pricing (VAT default to 0%)
     purchasePrice: 0,
     targetSellingPrice: 0,
     profitMargin: 20,
-    vatPercent: 0, // Default 0% VAT
+    vatRate: 0, // Default 0% VAT
 
-    // Processing
-    waste: 0,
-    glazingPercent: 0,
+    // Processing - will be initialized by ProcessingPhases component
     processingPhases: [],
+    totalLossPercentage: 5, // General losses default
+    glazingPercentage: 0,
+    glazingType: "none",
 
     // Costs
+    directCosts: [
+      { id: "1", name: "Πρώτες Ύλες", value: 0, category: "direct" },
+      { id: "2", name: "Εργατικά", value: 0, category: "direct" },
+      { id: "3", name: "Ενέργεια", value: 0, category: "direct" },
+    ],
+    indirectCosts: [
+      { id: "4", name: "Γενικά Έξοδα", value: 0, category: "indirect" },
+      { id: "5", name: "Αποσβέσεις", value: 0, category: "indirect" },
+      { id: "6", name: "Ασφάλιστρα", value: 0, category: "indirect" },
+    ],
+    transportLegs: [
+      {
+        id: "1",
+        from: "Αθήνα",
+        to: "Θεσσαλονίκη",
+        distance: 500,
+        cost: 150,
+        type: "Οδικό",
+      },
+    ],
+
+    // Legacy compatibility fields
+    waste: 0,
+    glazingPercent: 0,
+    vatPercent: 0, // Legacy, replaced by vatRate
     workers: [{ id: "1", hourlyRate: 4.5, hours: 1 }],
     boxCost: 0,
     bagCost: 0,
@@ -32,17 +64,15 @@ export const useCalculation = () => {
     tolls: 0,
     parkingCost: 0,
     driverSalary: 0,
+    profitTarget: 0,
+    competitor1: 0,
+    competitor2: 0,
     electricityCost: 0,
     equipmentCost: 0,
     insuranceCost: 0,
     rentCost: 0,
     communicationCost: 0,
     otherCosts: 0,
-
-    // Legacy compatibility fields
-    profitTarget: 0,
-    competitor1: 0,
-    competitor2: 0,
     originAddress: "",
     destinationAddress: "",
     routeCalculated: false,
@@ -50,11 +80,6 @@ export const useCalculation = () => {
     batchNumber: "",
     supplierName: "",
     minimumMargin: 10,
-    storageTemperature: -18,
-    shelfLife: 365,
-    certifications: [],
-    customerPrice: 0,
-    seasonalMultiplier: 1,
   });
 
   const [results, setResults] = useState<CalculationResults | null>(null);
@@ -64,20 +89,24 @@ export const useCalculation = () => {
   // Auto-calculate when significant fields change
   useEffect(() => {
     if (
-      formData.quantity &&
+      formData.weight &&
       formData.purchasePrice &&
       formData.targetSellingPrice
     ) {
       calculate();
     }
   }, [
+    formData.weight,
     formData.quantity,
     formData.purchasePrice,
     formData.targetSellingPrice,
-    formData.vatPercent,
+    formData.vatRate,
     formData.processingPhases,
-    formData.waste,
-    formData.glazingPercent,
+    formData.totalLossPercentage,
+    formData.glazingPercentage,
+    formData.directCosts,
+    formData.indirectCosts,
+    formData.transportLegs,
   ]);
 
   const updateFormData = useCallback(
@@ -97,10 +126,10 @@ export const useCalculation = () => {
   );
 
   const calculate = useCallback(async () => {
-    if (!formData.quantity || !formData.purchasePrice) {
+    if (!formData.weight || !formData.purchasePrice) {
       const missingFields = [];
-      if (!formData.quantity)
-        missingFields.push(language === "el" ? "Ποσότητα" : "Quantity");
+      if (!formData.weight)
+        missingFields.push(language === "el" ? "Βάρος" : "Weight");
       if (!formData.purchasePrice)
         missingFields.push(
           language === "el" ? "Τιμή Αγοράς" : "Purchase Price",
@@ -122,14 +151,14 @@ export const useCalculation = () => {
       const validationErrors = validateFormData(formData as FormData);
       if (validationErrors.length > 0) {
         setErrors(validationErrors);
-        validationErrors.forEach((error: any) => {
+        validationErrors.forEach((error) => {
           toast.error(error);
         });
         return;
       }
 
       // Perform calculation
-      const calculationResults = calculateResults(formData as FormData);
+      const calculationResults = calculateCosts(formData as FormData);
       setResults(calculationResults);
 
       // Success feedback
@@ -160,28 +189,32 @@ export const useCalculation = () => {
     const defaultData: Partial<FormData> = {
       productName: "",
       productType: "fish",
+      weight: 0,
       quantity: 1,
       purchasePrice: 0,
       targetSellingPrice: 0,
       profitMargin: 20,
-      vatPercent: 0,
-      waste: 0,
-      glazingPercent: 0,
+      vatRate: 0,
+      origin: "",
+      quality: "A",
+      notes: "",
       processingPhases: [],
-      workers: [{ id: "1", hourlyRate: 4.5, hours: 1 }],
-      boxCost: 0,
-      bagCost: 0,
-      distance: 0,
-      fuelCost: 0,
-      tolls: 0,
-      parkingCost: 0,
-      driverSalary: 0,
-      electricityCost: 0,
-      equipmentCost: 0,
-      insuranceCost: 0,
-      rentCost: 0,
-      communicationCost: 0,
-      otherCosts: 0,
+      totalLossPercentage: 5,
+      glazingPercentage: 0,
+      glazingType: "none",
+      directCosts: [
+        { id: "1", name: "Πρώτες Ύλες", value: 0, category: "direct" },
+        { id: "2", name: "Εργατικά", value: 0, category: "direct" },
+        { id: "3", name: "Ενέργεια", value: 0, category: "direct" },
+      ],
+      indirectCosts: [
+        { id: "4", name: "Γενικά Έξοδα", value: 0, category: "indirect" },
+        { id: "5", name: "Αποσβέσεις", value: 0, category: "indirect" },
+        { id: "6", name: "Ασφάλιστρα", value: 0, category: "indirect" },
+      ],
+      transportLegs: [
+        { id: "1", from: "", to: "", distance: 0, cost: 0, type: "Οδικό" },
+      ],
     };
 
     setFormData(defaultData);

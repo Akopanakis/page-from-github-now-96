@@ -71,7 +71,7 @@ const ProfitabilityAnalysis: React.FC<ProfitabilityAnalysisProps> = ({
   const scenarioResults = scenarios.map((scenario) => {
     const adjustedPrice = (results.finalPrice || 0) * scenario.multiplier;
     const revenue = adjustedPrice * (results.netWeight || 0);
-    const profit = revenue - (results.totalCost || 0);
+    const profit = revenue - (results.totalCosts || 0);
     const margin = revenue > 0 ? (profit / revenue) * 100 : 0;
 
     return {
@@ -107,23 +107,23 @@ const ProfitabilityAnalysis: React.FC<ProfitabilityAnalysisProps> = ({
     {
       label: language === "el" ? "ROI" : "ROI",
       value: formatPercentage(
-        results.totalCost > 0
-          ? ((results.grossProfit || 0) / results.totalCost) * 100
+        results.totalCosts > 0
+          ? ((results.grossProfit || 0) / results.totalCosts) * 100
           : 0,
       ),
       percentage:
-        results.totalCost > 0
-          ? ((results.grossProfit || 0) / results.totalCost) * 100
+        results.totalCosts > 0
+          ? ((results.grossProfit || 0) / results.totalCosts) * 100
           : 0,
       icon: TrendingUp,
       good:
-        results.totalCost > 0
-          ? ((results.grossProfit || 0) / results.totalCost) * 100 > 20
+        results.totalCosts > 0
+          ? ((results.grossProfit || 0) / results.totalCosts) * 100 > 20
           : false,
     },
     {
       label: language === "el" ? "Break-even Volume" : "Break-even Volume",
-      value: `${((results.totalCost || 0) / (results.costPerKg || 1)).toFixed(0)} kg`,
+      value: `${((results.totalCosts || 0) / (results.costPerKg || 1)).toFixed(0)} kg`,
       percentage: 0,
       icon: Calculator,
       good: true,
@@ -154,7 +154,7 @@ const ProfitabilityAnalysis: React.FC<ProfitabilityAnalysisProps> = ({
       price: breakEvenPrice,
       status: "neutral",
       description:
-        language === "el" ? "Ισοσκελιστική τιμ" : "No profit/loss price",
+        language === "el" ? "Ισοσκελιστική τιμ��" : "No profit/loss price",
     },
     {
       label: language === "el" ? "Συνιστώμενη Τιμή" : "Recommended Price",
