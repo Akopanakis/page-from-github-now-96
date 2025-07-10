@@ -87,7 +87,7 @@ const EnhancedCostAnalysis: React.FC<EnhancedCostAnalysisProps> = ({
     },
   ];
 
-  const totalCosts = results.totalCosts || 0;
+  const totalCosts = results.totalCost || 0;
 
   // Key performance indicators
   const kpis = [
@@ -166,7 +166,7 @@ const EnhancedCostAnalysis: React.FC<EnhancedCostAnalysisProps> = ({
           <CardTitle className="flex items-center gap-2">
             <BarChart3 className="w-5 h-5 text-blue-600" />
             {language === "el"
-              ? "Βασικοί Δείκ��ες Απόδοσης"
+              ? "Βασικοί Δείκες Απόδοσης"
               : "Key Performance Indicators"}
           </CardTitle>
         </CardHeader>
@@ -306,7 +306,7 @@ const EnhancedCostAnalysis: React.FC<EnhancedCostAnalysisProps> = ({
                       : "Processing Losses"}
                   </span>
                   <span className="font-medium">
-                    {formatPercentage(results.totalLossPercentage || 0)}
+                    {formatPercentage(results.totalWastePercentage || 0)}
                   </span>
                 </div>
                 <div className="flex justify-between">

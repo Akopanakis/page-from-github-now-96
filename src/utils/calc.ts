@@ -128,7 +128,7 @@ const calculatePhaseResult = (inputWeight: number, lossPct: number, addPct: numb
 // Helper function to sanitize form data and ensure all values are valid numbers
 const sanitizeFormData = (data: Partial<FormData>): FormData => {
   const defaultWorker = { id: '1', hourlyRate: 0, hours: 0 };
-  const defaultPhase = { id: '1', name: 'Default', wastePercentage: 0, addedWeight: 0, description: '' };
+  const defaultPhase = { id: '1', name: 'Default', duration: 0, costPerHour: 0, personnelRequired: 1 };
   
   return {
     productName: data.productName || '',
@@ -171,9 +171,9 @@ const sanitizeFormData = (data: Partial<FormData>): FormData => {
       data.processingPhases.map(p => ({
         id: p?.id || '1',
         name: p?.name || 'Default',
-        wastePercentage: Number(p?.wastePercentage) || 0,
-        addedWeight: Number(p?.addedWeight) || 0,
-        description: p?.description || ''
+        duration: Number(p?.duration) || 0,
+        costPerHour: Number(p?.costPerHour) || 0,
+        personnelRequired: Number(p?.personnelRequired) || 1
       })) : [defaultPhase],
     targetSellingPrice: Number(data.targetSellingPrice) || 0,
     minimumMargin: Number(data.minimumMargin) || 15,
@@ -193,18 +193,15 @@ export const calculateResults = (inputData: Partial<FormData>): CalculationResul
 
   if (formData.processingPhases && formData.processingPhases.length > 0) {
     formData.processingPhases.forEach((phase) => {
-      if (phase.wastePercentage > 0 || phase.addedWeight !== 0) {
-        currentWeight = calculatePhaseResult(currentWeight, phase.wastePercentage, phase.addedWeight);
-        currentWeight = Math.max(currentWeight, 0.1); // Ensure minimum weight after each phase
-        if (phase.wastePercentage > 0) {
-          totalWastePercentage += phase.wastePercentage;
-        }
-      }
+      // Processing phases affect weight and add costs
+      const processingLoss = currentWeight * 0.05; // 5% loss per phase
+      currentWeight = Math.max(currentWeight - processingLoss, 0.1);
+      totalWastePercentage += 5;
     });
   } else {
     const netWeight = currentWeight * (1 - Math.min(formData.waste || 0, 99) / 100);
     currentWeight = netWeight * (1 + (formData.glazingPercent || 0) / 100);
-    currentWeight = Math.max(currentWeight, 0.1); // Ensure minimum weight
+    currentWeight = Math.max(currentWeight, 0.1);
     totalWastePercentage = formData.waste || 0;
   }
 
@@ -324,4 +321,24 @@ export const calculateResults = (inputData: Partial<FormData>): CalculationResul
       packaging: packagingCost,
     },
   };
+};
+
+// Export aliases for compatibility
+export const calculateCosts = calculateResults;
+export const validateFormData = (data: FormData): string[] => {
+  const errors: string[] = [];
+  
+  if (!data.productName?.trim()) {
+    errors.push('Product name is required');
+  }
+  
+  if (!data.purchasePrice || data.purchasePrice <= 0) {
+    errors.push('Purchase price must be greater than 0');
+  }
+  
+  if (!data.quantity || data.quantity <= 0) {
+    errors.push('Quantity must be greater than 0');
+  }
+  
+  return errors;
 };

@@ -72,10 +72,10 @@ const CompactResultsPanel: React.FC<CompactResultsPanelProps> = ({
   const keyMetrics = [
     {
       label: t("results.total.cost"),
-      value: formatCurrency(results?.totalCosts || 0),
+      value: formatCurrency(results?.totalCost || 0),
       icon: Calculator,
       color: "blue",
-      trend: (results?.totalCosts || 0) > 5000 ? "high" : "normal",
+      trend: (results?.totalCost || 0) > 5000 ? "high" : "normal",
       description:
         language === "el"
           ? "Συνολικά έξοδα παραγωγής"
@@ -205,8 +205,8 @@ const CompactResultsPanel: React.FC<CompactResultsPanelProps> = ({
       label: language === "el" ? "Υλικά" : "Materials",
       value: results?.breakdown?.materials || 0,
       percentage:
-        results?.totalCosts > 0
-          ? ((results?.breakdown?.materials || 0) / results.totalCosts) * 100
+        results?.totalCost > 0
+          ? ((results?.breakdown?.materials || 0) / results.totalCost) * 100
           : 0,
       color: "blue",
     },
@@ -214,8 +214,8 @@ const CompactResultsPanel: React.FC<CompactResultsPanelProps> = ({
       label: language === "el" ? "Επεξεργασία" : "Processing",
       value: results?.breakdown?.processing || 0,
       percentage:
-        results?.totalCosts > 0
-          ? ((results?.breakdown?.processing || 0) / results.totalCosts) * 100
+        results?.totalCost > 0
+          ? ((results?.breakdown?.processing || 0) / results.totalCost) * 100
           : 0,
       color: "green",
     },
@@ -223,8 +223,8 @@ const CompactResultsPanel: React.FC<CompactResultsPanelProps> = ({
       label: language === "el" ? "Μεταφορά" : "Transport",
       value: results?.breakdown?.transport || 0,
       percentage:
-        results?.totalCosts > 0
-          ? ((results?.breakdown?.transport || 0) / results.totalCosts) * 100
+        results?.totalCost > 0
+          ? ((results?.breakdown?.transport || 0) / results.totalCost) * 100
           : 0,
       color: "orange",
     },
@@ -234,11 +234,11 @@ const CompactResultsPanel: React.FC<CompactResultsPanelProps> = ({
         (results?.breakdown?.overhead || 0) +
         (results?.breakdown?.packaging || 0),
       percentage:
-        results?.totalCosts > 0
+        results?.totalCost > 0
           ? (
               ((results?.breakdown?.overhead || 0) +
                 (results?.breakdown?.packaging || 0)) /
-              results.totalCosts
+              results.totalCost
             ) * 100
           : 0,
       color: "purple",
@@ -331,11 +331,10 @@ const CompactResultsPanel: React.FC<CompactResultsPanelProps> = ({
                 ) : (
                   <>
                     <Calculator className="w-4 h-4 mr-2" />
-                    {t("action.calculate")}
-                  </>
-                )}
-              </Button>
-            </div>
+                  {t("action.calculate")}
+                </>
+              )}
+            </Button>
           </div>
         </CardHeader>
 
