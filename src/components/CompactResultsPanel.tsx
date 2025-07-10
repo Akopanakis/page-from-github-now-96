@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -331,10 +332,11 @@ const CompactResultsPanel: React.FC<CompactResultsPanelProps> = ({
                 ) : (
                   <>
                     <Calculator className="w-4 h-4 mr-2" />
-                  {t("action.calculate")}
-                </>
-              )}
-            </Button>
+                    {t("action.calculate")}
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </CardHeader>
 
