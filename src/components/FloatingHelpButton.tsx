@@ -1,6 +1,7 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { HelpCircle, MessageCircle, Book, X } from "lucide-react";
+import { HelpCircle, MessageCircle, Book, X, Phone } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface FloatingHelpButtonProps {
@@ -17,17 +18,85 @@ const FloatingHelpButton: React.FC<FloatingHelpButtonProps> = ({
     {
       icon: Book,
       label: language === "el" ? "Οδηγός Χρήσης" : "User Guide",
-      description: language === "el" ? "Πλήρης οδηγός" : "Complete guide",
-      onClick: onShowGuide,
+      description: language === "el" ? "Πλήρης οδηγός εφαρμογής" : "Complete application guide",
+      onClick: () => {
+        onShowGuide();
+        setIsExpanded(false);
+      },
       color: "bg-blue-500 hover:bg-blue-600",
     },
     {
       icon: MessageCircle,
-      label: language === "el" ? "Γρήγορη Βοήθεια" : "Quick Help",
-      description: language === "el" ? "Συχνές ερωτήσεις" : "FAQ",
-      onClick: () =>
-        alert(language === "el" ? "Σύντομα διαθέσιμο!" : "Coming soon!"),
+      label: language === "el" ? "Συχνές Ερωτήσεις" : "FAQ",
+      description: language === "el" ? "Απαντήσεις σε κοινές ερωτήσεις" : "Answers to common questions",
+      onClick: () => {
+        // Create FAQ modal content
+        const faqContent = language === "el" ? `
+🔷 ΣΥΧΝΕΣ ΕΡΩΤΗΣΕΙΣ - KostoPro
+
+❓ Πώς υπολογίζω το κόστος ανά κιλό;
+✅ Εισάγετε τα βασικά στοιχεία (τιμή αγοράς, ποσότητα, απώλειες) και πατήστε "Υπολογισμός"
+
+❓ Τι είναι οι απώλειες επεξεργασίας;
+✅ Είναι το ποσοστό βάρους που χάνεται κατά την επεξεργασία (π.χ. καθάρισμα ψαριού)
+
+❓ Πώς προσθέτω εργατικό κόστος;
+✅ Στην καρτέλα "Κόστη" μπορείτε να προσθέσετε εργάτες με ωριαίο μισθό
+
+❓ Τι είναι το glazing;
+✅ Είναι το πάγωμα που προστίθεται σε κατεψυγμένα προϊόντα (συνήθως 10-20%)
+
+❓ Πώς εξάγω αναφορά PDF;
+✅ Μετά τον υπολογισμό, χρησιμοποιήστε το κουμπί "Εξαγωγή PDF" στα δεξιά
+
+❓ Μπορώ να αποθηκεύσω τα δεδομένα μου;
+✅ Ναι, χρησιμοποιήστε "Εξαγωγή Δεδομένων" για αποθήκευση σε Excel
+
+❓ Τι είναι η Premium έκδοση;
+✅ Περιλαμβάνει προχωρημένες αναλύσεις, batch management και περισσότερα εργαλεία
+        ` : `
+🔷 FREQUENTLY ASKED QUESTIONS - KostoPro
+
+❓ How do I calculate cost per kg?
+✅ Enter basic data (purchase price, quantity, waste) and click "Calculate"
+
+❓ What are processing losses?
+✅ The percentage of weight lost during processing (e.g. fish cleaning)
+
+❓ How do I add labor costs?
+✅ In the "Costs" tab you can add workers with hourly rates
+
+❓ What is glazing?
+✅ Ice coating added to frozen products (usually 10-20%)
+
+❓ How do I export a PDF report?
+✅ After calculation, use the "Export PDF" button on the right
+
+❓ Can I save my data?
+✅ Yes, use "Export Data" to save to Excel
+
+❓ What is the Premium version?
+✅ Includes advanced analytics, batch management and more tools
+        `;
+        
+        alert(faqContent);
+        setIsExpanded(false);
+      },
       color: "bg-green-500 hover:bg-green-600",
+    },
+    {
+      icon: Phone,
+      label: language === "el" ? "Επικοινωνία" : "Contact",
+      description: language === "el" ? "Βοήθεια και υποστήριξη" : "Help and support",
+      onClick: () => {
+        const contactInfo = language === "el" ? 
+          "📞 Επικοινωνία - KostoPro\n\n📧 Email: support@kostopro.gr\n📱 Τηλ: +30 210 1234567\n🌐 Web: www.kostopro.gr\n\n⏰ Ώρες Υποστήριξης:\nΔευτέρα - Παρασκευή: 09:00 - 17:00" :
+          "📞 Contact - KostoPro\n\n📧 Email: support@kostopro.com\n📱 Phone: +30 210 1234567\n🌐 Web: www.kostopro.com\n\n⏰ Support Hours:\nMonday - Friday: 09:00 - 17:00";
+        
+        alert(contactInfo);
+        setIsExpanded(false);
+      },
+      color: "bg-purple-500 hover:bg-purple-600",
     },
   ];
 
@@ -40,7 +109,7 @@ const FloatingHelpButton: React.FC<FloatingHelpButtonProps> = ({
             const Icon = option.icon;
             return (
               <div key={index} className="flex items-center gap-3 group">
-                <div className="bg-white dark:bg-gray-800 rounded-lg px-3 py-2 shadow-lg border border-gray-200 dark:border-gray-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                <div className="bg-white dark:bg-gray-800 rounded-lg px-3 py-2 shadow-lg border border-gray-200 dark:border-gray-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     {option.label}
                   </div>

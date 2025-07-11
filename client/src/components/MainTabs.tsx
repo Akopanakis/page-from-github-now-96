@@ -8,7 +8,8 @@ import {
   Database, 
   BarChart3, 
   Crown, 
-  Sparkles 
+  Sparkles,
+  Leaf
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import ProductBasics from '@/components/ProductBasics';
@@ -25,6 +26,7 @@ import AdvancedFinancialModels from '@/components/AdvancedFinancialModels';
 import Dashboard from '@/components/Dashboard';
 import BatchManagement from '@/components/BatchManagement';
 import SeafoodProcessingFeatures from '@/components/SeafoodProcessingFeatures';
+import SustainabilitySection from '@/components/SustainabilitySection';
 
 interface MainTabsProps {
   activeTab: string;
@@ -49,7 +51,7 @@ const MainTabs: React.FC<MainTabsProps> = ({
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-8 bg-gray-50 border-b">
+      <TabsList className="grid w-full grid-cols-9 bg-gray-50 border-b">
         <TabsTrigger value="basics" className="text-xs sm:text-sm flex items-center space-x-1">
           <Fish className="w-3 h-3" />
           <span>{language === 'el' ? 'Προϊόν' : 'Product'}</span>
@@ -78,6 +80,10 @@ const MainTabs: React.FC<MainTabsProps> = ({
         </TabsTrigger>
         <TabsTrigger value="analysis" className="text-xs sm:text-sm">
           {language === 'el' ? 'Ανάλυση' : 'Analysis'}
+        </TabsTrigger>
+        <TabsTrigger value="sustainability" className="text-xs sm:text-sm flex items-center space-x-1">
+          <Leaf className="w-3 h-3" />
+          <span>{language === 'el' ? 'Βιωσιμότητα' : 'Sustainability'}</span>
         </TabsTrigger>
         <TabsTrigger value="advanced" className="text-xs sm:text-sm flex items-center space-x-1">
           <Crown className="w-3 h-3" />
@@ -127,6 +133,10 @@ const MainTabs: React.FC<MainTabsProps> = ({
 
         <TabsContent value="analysis" className="mt-0">
           <AnalysisTab formData={formData} updateFormData={updateFormData} />
+        </TabsContent>
+
+        <TabsContent value="sustainability" className="mt-0">
+          <SustainabilitySection formData={formData} results={results} />
         </TabsContent>
 
         <TabsContent value="advanced" className="mt-0">
