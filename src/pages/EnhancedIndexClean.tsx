@@ -75,16 +75,57 @@ interface TransportLeg {
   type: string;
 }
 
-// Create default form data to avoid partial types
+// Create complete default form data with all required properties
 const createDefaultFormData = (): FormData => ({
+  // Basic Product Info
   productName: "",
   productType: "fish",
+  weight: 0,
+  quantity: 1,
+  origin: "",
+  quality: "A",
+  notes: "",
+  certifications: [],
+
+  // Pricing
   purchasePrice: 0,
-  quantity: 0,
+  targetSellingPrice: 0,
+  profitMargin: 20,
+  vatRate: 0,
+
+  // Processing
+  processingPhases: [],
+  totalLossPercentage: 5,
+  glazingPercentage: 0,
+  glazingType: "none",
+
+  // Costs
+  directCosts: [
+    { id: "1", name: "Πρώτες Ύλες", value: 0, category: "direct" },
+    { id: "2", name: "Εργατικά", value: 0, category: "direct" },
+    { id: "3", name: "Ενέργεια", value: 0, category: "direct" },
+  ],
+  indirectCosts: [
+    { id: "4", name: "Γενικά Έξοδα", value: 0, category: "indirect" },
+    { id: "5", name: "Αποσβέσεις", value: 0, category: "indirect" },
+    { id: "6", name: "Ασφάλιστρα", value: 0, category: "indirect" },
+  ],
+  transportLegs: [
+    {
+      id: "1",
+      from: "Αθήνα",
+      to: "Θεσσαλονίκη",
+      distance: 500,
+      cost: 150,
+      type: "Οδικό",
+    },
+  ],
+
+  // Legacy compatibility fields
   waste: 0,
   glazingPercent: 0,
   vatPercent: 0,
-  workers: [],
+  workers: [{ id: "1", hourlyRate: 4.5, hours: 1 }],
   boxCost: 0,
   bagCost: 0,
   distance: 0,
@@ -92,7 +133,6 @@ const createDefaultFormData = (): FormData => ({
   tolls: 0,
   parkingCost: 0,
   driverSalary: 0,
-  profitMargin: 0,
   profitTarget: 0,
   competitor1: 0,
   competitor2: 0,
@@ -108,42 +148,82 @@ const createDefaultFormData = (): FormData => ({
   estimatedDuration: "",
   batchNumber: "",
   supplierName: "",
-  processingPhases: [],
-  targetSellingPrice: 0,
   minimumMargin: 15,
-  certifications: [],
+  storageTemperature: -18,
+  shelfLife: 365,
+  customerPrice: 0,
   seasonalMultiplier: 1
 });
 
-// Create default results to avoid null types
+// Create complete default results with all required properties
 const createDefaultResults = (): CalculationResults => ({
-  totalCost: 0,
-  totalCostWithVat: 0,
-  sellingPrice: 0,
-  profitPerKg: 0,
-  profitMargin: 0,
+  // Raw calculations
+  rawWeight: 0,
   netWeight: 0,
-  purchaseCost: 0,
-  laborCost: 0,
-  packagingCost: 0,
-  transportCost: 0,
-  additionalCosts: 0,
-  vatAmount: 0,
+  totalDirectCosts: 0,
+  totalIndirectCosts: 0,
+  totalTransportCosts: 0,
+  totalProcessingCosts: 0,
   finalProcessedWeight: 0,
   totalWastePercentage: 0,
-  costBreakdown: [],
+
+  // Price calculations
+  totalCost: 0,
+  totalCostWithVat: 0,
+  costPerKg: 0,
+  costPerUnit: 0,
+
+  // VAT calculations
+  netPrice: 0,
+  vatAmount: 0,
+  finalPrice: 0,
+
+  // Profit calculations
+  grossProfit: 0,
+  netProfit: 0,
+  profitMargin: 0,
+  profitPerKg: 0,
+  sellingPrice: 0,
+
+  // Analysis
+  breakEvenPrice: 0,
   recommendedSellingPrice: 0,
+  competitivePosition: "Average",
+
+  // Efficiency metrics
+  efficiencyScore: 0,
+
+  // Detailed breakdown
+  breakdown: {
+    materials: 0,
+    labor: 0,
+    processing: 0,
+    transport: 0,
+    overhead: 0,
+    packaging: 0,
+  },
+
+  costBreakdown: [],
+
   competitorAnalysis: {
     ourPrice: 0,
     competitor1Diff: 0,
     competitor2Diff: 0,
     marketPosition: 'competitive'
   },
+
   profitAnalysis: {
     breakEvenPrice: 0,
     marginAtCurrentPrice: 0,
     recommendedMargin: 0
-  }
+  },
+
+  // Legacy fields for compatibility
+  purchaseCost: 0,
+  laborCost: 0,
+  packagingCost: 0,
+  transportCost: 0,
+  additionalCosts: 0,
 });
 
 const EnhancedIndexClean = () => {

@@ -48,13 +48,137 @@ interface TransportLeg {
 
 const Index = () => {
   const {
-    formData,
+    formData: rawFormData,
     updateFormData,
     calculate,
     resetForm,
-    results,
+    results: rawResults,
     isCalculating,
   } = useCalculation();
+
+  // Create safe defaults
+  const formData: FormData = {
+    productName: rawFormData?.productName || "",
+    productType: rawFormData?.productType || "fish",
+    weight: rawFormData?.weight || 0,
+    quantity: rawFormData?.quantity || 1,
+    origin: rawFormData?.origin || "",
+    quality: rawFormData?.quality || "A", 
+    notes: rawFormData?.notes || "",
+    certifications: rawFormData?.certifications || [],
+    purchasePrice: rawFormData?.purchasePrice || 0,
+    targetSellingPrice: rawFormData?.targetSellingPrice || 0,
+    profitMargin: rawFormData?.profitMargin || 20,
+    vatRate: rawFormData?.vatRate || 0,
+    processingPhases: rawFormData?.processingPhases || [],
+    totalLossPercentage: rawFormData?.totalLossPercentage || 5,
+    glazingPercentage: rawFormData?.glazingPercentage || 0,
+    glazingType: rawFormData?.glazingType || "none",
+    directCosts: rawFormData?.directCosts || [
+      { id: "1", name: "Πρώτες Ύλες", value: 0, category: "direct" },
+      { id: "2", name: "Εργατικά", value: 0, category: "direct" },
+      { id: "3", name: "Ενέργεια", value: 0, category: "direct" },
+    ],
+    indirectCosts: rawFormData?.indirectCosts || [
+      { id: "4", name: "Γενικά Έξοδα", value: 0, category: "indirect" },
+      { id: "5", name: "Αποσβέσεις", value: 0, category: "indirect" }, 
+      { id: "6", name: "Ασφάλιστρα", value: 0, category: "indirect" },
+    ],
+    transportLegs: rawFormData?.transportLegs || [
+      {
+        id: "1",
+        from: "Αθήνα",
+        to: "Θεσσαλονίκη", 
+        distance: 500,
+        cost: 150,
+        type: "Οδικό",
+      },
+    ],
+    // Legacy fields
+    waste: rawFormData?.waste || 0,
+    glazingPercent: rawFormData?.glazingPercent || 0,
+    vatPercent: rawFormData?.vatPercent || 0,
+    workers: rawFormData?.workers || [{ id: "1", hourlyRate: 4.5, hours: 1 }],
+    boxCost: rawFormData?.boxCost || 0,
+    bagCost: rawFormData?.bagCost || 0,
+    distance: rawFormData?.distance || 0,
+    fuelCost: rawFormData?.fuelCost || 0,
+    tolls: rawFormData?.tolls || 0,
+    parkingCost: rawFormData?.parkingCost || 0,
+    driverSalary: rawFormData?.driverSalary || 0,
+    profitTarget: rawFormData?.profitTarget || 0,
+    competitor1: rawFormData?.competitor1 || 0,
+    competitor2: rawFormData?.competitor2 || 0,
+    electricityCost: rawFormData?.electricityCost || 0,
+    equipmentCost: rawFormData?.equipmentCost || 0,
+    insuranceCost: rawFormData?.insuranceCost || 0,
+    rentCost: rawFormData?.rentCost || 0,
+    communicationCost: rawFormData?.communicationCost || 0,
+    otherCosts: rawFormData?.otherCosts || 0,
+    originAddress: rawFormData?.originAddress || "",
+    destinationAddress: rawFormData?.destinationAddress || "",
+    routeCalculated: rawFormData?.routeCalculated || false,
+    estimatedDuration: rawFormData?.estimatedDuration || "",
+    batchNumber: rawFormData?.batchNumber || "",
+    supplierName: rawFormData?.supplierName || "",
+    minimumMargin: rawFormData?.minimumMargin || 15,
+    storageTemperature: rawFormData?.storageTemperature || -18,
+    shelfLife: rawFormData?.shelfLife || 365,
+    customerPrice: rawFormData?.customerPrice || 0,
+    seasonalMultiplier: rawFormData?.seasonalMultiplier || 1
+  };
+
+  const results: CalculationResults = rawResults || {
+    rawWeight: 0,
+    netWeight: 0,
+    totalDirectCosts: 0,
+    totalIndirectCosts: 0,
+    totalTransportCosts: 0,
+    totalProcessingCosts: 0,
+    finalProcessedWeight: 0,
+    totalWastePercentage: 0,
+    totalCost: 0,
+    totalCostWithVat: 0,
+    costPerKg: 0,
+    costPerUnit: 0,
+    netPrice: 0,
+    vatAmount: 0,
+    finalPrice: 0,
+    grossProfit: 0,
+    netProfit: 0,
+    profitMargin: 0,
+    profitPerKg: 0,
+    sellingPrice: 0,
+    breakEvenPrice: 0,
+    recommendedSellingPrice: 0,
+    competitivePosition: "Average",
+    efficiencyScore: 0,
+    breakdown: {
+      materials: 0,
+      labor: 0,
+      processing: 0,
+      transport: 0,
+      overhead: 0,
+      packaging: 0,
+    },
+    costBreakdown: [],
+    competitorAnalysis: {
+      ourPrice: 0,
+      competitor1Diff: 0,
+      competitor2Diff: 0,
+      marketPosition: 'competitive'
+    },
+    profitAnalysis: {
+      breakEvenPrice: 0,
+      marginAtCurrentPrice: 0,
+      recommendedMargin: 0
+    },
+    purchaseCost: 0,
+    laborCost: 0,
+    packagingCost: 0,
+    transportCost: 0,
+    additionalCosts: 0,
+  };
 
   // Core state
   const [activeTab, setActiveTab] = useState("basics");
@@ -532,25 +656,18 @@ const Index = () => {
                     <Calculator className="w-5 h-5 text-blue-600" />
                   </div>
                   <div>
-                    <h4 className="font-medium text-blue-800">
-                      Παράδειγμα Φορτωμένο
-                    </h4>
+                    <h4 className="font-medium text-blue-800">Παράδειγμα Φορτώθηκε</h4>
                     <p className="text-blue-600 text-sm">
-                      Δεδομένα θράψαλου Αργεντίνης - 2 τόνοι
+                      Δεδομένα θράψαλου Αργεντίνης - Μπορείτε να τα επεξεργαστείτε
                     </p>
                   </div>
                 </div>
                 <Button
-                  onClick={() => {
-                    setHasLoadedExample(false);
-                    resetForm();
-                  }}
-                  variant="outline"
+                  onClick={() => setHasLoadedExample(false)}
+                  variant="ghost"
                   size="sm"
-                  className="border-blue-300 text-blue-600 hover:bg-blue-50"
                 >
-                  <X className="w-4 h-4 mr-2" />
-                  Εκκαθάριση
+                  <X className="w-4 h-4" />
                 </Button>
               </div>
             </div>
@@ -559,26 +676,38 @@ const Index = () => {
 
         {/* File Upload Section */}
         {showFileUpload && (
-          <div className="mb-8">
-            <FileUpload onFileUpload={handleFileUpload} />
-          </div>
+          <Card className="mb-8 border-2 border-dashed border-blue-300 bg-blue-50">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-blue-800 flex items-center">
+                  <Calculator className="w-5 h-5 mr-2" />
+                  Μεταφόρτωση Δεδομένων
+                </CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowFileUpload(false)}
+                >
+                  <X className="w-4 h-4 mr-2" />
+                  Εκκαθάριση
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <FileUpload onFileUpload={handleFileUpload} />
+            </CardContent>
+          </Card>
         )}
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-1 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {/* Left Column - Form */}
-          <div
-            className="xl:col-span-2 animate-in slide-in-from-left duration-500"
-            data-tour="form"
-          >
-            <Card className="shadow-2xl border-0 overflow-hidden bg-white/95 backdrop-blur-sm">
-              <CardHeader className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 via-indigo-600/90 to-purple-600/90"></div>
-                <CardTitle className="relative flex items-center justify-between">
+          <div className="lg:col-span-2" data-tour="form">
+            <Card className="shadow-xl border-0 overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white">
+                <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-white/20 rounded-lg">
-                      <Calculator className="w-6 h-6" />
-                    </div>
-                    <span className="text-xl font-semibold">
+                    <Calculator className="w-6 h-6" />
+                    <span className="text-xl">
                       Στοιχεία Κοστολόγησης
                     </span>
                   </div>
@@ -599,32 +728,21 @@ const Index = () => {
           </div>
 
           {/* Right Column - Results */}
-          <div
-            className="space-y-6 animate-in slide-in-from-right duration-500"
-            style={{ animationDelay: "200ms" }}
-            data-tour="results"
-          >
+          <div className="space-y-6" data-tour="results">
             <CompactResultsPanel
-              results={results}
+              results={rawResults}
               formData={formData}
-              isCalculating={isCalculating}
+              isCalculating={isCalculating} 
               onCalculate={calculate}
               onReset={resetForm}
             />
 
             <div data-tour="export" className="space-y-4">
               <CompanySettings onChange={handleCompanyChange} />
-              {results && (
+              {rawResults && (
                 <>
-                  <PDFExport
-                    formData={formData}
-                    results={results}
-                    companyInfo={companyInfo}
-                  />
-                  <DataExport 
-                    formData={formData} 
-                    results={results} 
-                  />
+                  <PDFExport formData={formData} results={results} companyInfo={companyInfo} />
+                  <DataExport formData={formData} results={results} />
                 </>
               )}
             </div>
@@ -635,126 +753,33 @@ const Index = () => {
             )}
           </div>
         </div>
+
+        {/* Modals */}
+        <ExampleData
+          isVisible={showExampleData}
+          onLoadExample={loadExampleData}
+          onClose={() => setShowExampleData(false)}
+        />
+
+        <UserGuide
+          isOpen={showUserGuide}
+          onClose={() => setShowUserGuide(false)}
+        />
+
+        <FloatingHelpButton onShowGuide={() => setShowUserGuide(true)} />
+
+        {/* Back to Top Button */}
+        <button
+          ref={backToTopRef}
+          id="back-to-top"
+          className="fixed bottom-6 right-6 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 flex items-center justify-center opacity-0 translate-y-4 pointer-events-none"
+          aria-label="Επιστροφή στην κορυφή"
+        >
+          <ChevronUp className="w-6 h-6" />
+        </button>
       </div>
 
       <Footer />
-
-      {/* Example Data Modal */}
-      <ExampleData
-        isVisible={showExampleData}
-        onLoadExample={(data) => {
-          // Update form data
-          updateFormData(data);
-
-          // Update costs if provided
-          if (data.directCosts) {
-            setDirectCosts(data.directCosts);
-          }
-          if (data.indirectCosts) {
-            setIndirectCosts(data.indirectCosts);
-          }
-          if (data.transportLegs) {
-            setTransportLegs(data.transportLegs);
-          }
-
-          setHasLoadedExample(true);
-          setShowExampleData(false);
-
-          toast.success("Τα δεδομένα παραδείγματος φορτώθηκαν!");
-        }}
-        onClose={() => setShowExampleData(false)}
-      />
-
-      {/* User Guide Modal */}
-      <UserGuide
-        isOpen={showUserGuide}
-        onClose={() => setShowUserGuide(false)}
-      />
-
-      {/* Floating Help Button */}
-      <FloatingHelpButton onShowGuide={() => setShowUserGuide(true)} />
-
-      {/* Back to Top Button */}
-      <button
-        ref={backToTopRef}
-        id="back-to-top"
-        className="fixed bottom-6 right-6 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 flex items-center justify-center opacity-0 translate-y-4 pointer-events-none"
-        aria-label="Επιστροφή στην κορυφή"
-      >
-        <ChevronUp className="w-6 h-6" />
-      </button>
-
-      {/* Theme Toggle Button */}
-      <button
-        id="theme-toggle"
-        className="fixed bottom-6 left-6 w-12 h-12 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 flex items-center justify-center"
-        onClick={() => {
-          document.body.classList.toggle("dark");
-          const isDark = document.body.classList.contains("dark");
-          safeSetItem("theme", isDark ? "dark" : "light");
-        }}
-        aria-label="Εναλλαγή θέματος"
-      >
-        🌙
-      </button>
-
-      {/* Service Worker Registration and PWA Support */}
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            // Initialize libraries and features when DOM is ready
-            document.addEventListener('DOMContentLoaded', function() {
-              // Auto-animate counters
-              const counters = document.querySelectorAll('.counter');
-              const animateCounter = (element) => {
-                const target = parseInt(element.textContent) || 0;
-                const duration = 1000;
-                const step = target / (duration / 16);
-                let current = 0;
-
-                const timer = setInterval(() => {
-                  current += step;
-                  if (current >= target) {
-                    element.textContent = target;
-                    clearInterval(timer);
-                  } else {
-                    element.textContent = Math.floor(current);
-                  }
-                }, 16);
-              };
-
-              // Intersection Observer for lazy loading
-              const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                  if (entry.isIntersecting) {
-                    if (entry.target.classList.contains('counter')) {
-                      animateCounter(entry.target);
-                    }
-                    if (entry.target.classList.contains('builder-chart')) {
-                      // Trigger chart animation
-                      entry.target.style.opacity = '1';
-                      entry.target.style.transform = 'translateY(0)';
-                    }
-                    observer.unobserve(entry.target);
-                  }
-                });
-              });
-
-              // Observe elements
-              document.querySelectorAll('.counter, .builder-chart').forEach(el => {
-                observer.observe(el);
-              });
-
-              // Initialize skeleton loaders
-              document.querySelectorAll('.skeleton').forEach(el => {
-                setTimeout(() => {
-                  el.classList.remove('skeleton');
-                }, Math.random() * 2000 + 500);
-              });
-            });
-          `,
-        }}
-      />
     </div>
   );
 };
