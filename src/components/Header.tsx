@@ -24,6 +24,9 @@ interface HeaderProps {
   setIsPremium: (value: boolean) => void;
   showFileUpload: boolean;
   setShowFileUpload: (value: boolean) => void;
+  showExamples?: boolean;
+  setShowExamples?: (value: boolean) => void;
+  onShowGuide?: () => void;
   onShowGuide?: () => void;
   onOpenCommandPalette?: () => void;
   activeTab?: string;

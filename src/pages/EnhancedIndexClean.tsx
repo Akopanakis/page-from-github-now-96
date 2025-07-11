@@ -449,11 +449,8 @@ const EnhancedIndexClean = () => {
               <div className="space-y-6">
                 {/* Results Panel */}
                 <CompactResultsPanel
-                  results={rawResults}
+                  results={rawResults || results}
                   formData={formData}
-                  isCalculating={isCalculating}
-                  onCalculate={calculate}
-                  onReset={resetForm}
                 />
 
                 {/* Export Tools */}

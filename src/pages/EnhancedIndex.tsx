@@ -685,11 +685,8 @@ const EnhancedIndex = () => {
                   data-tour="results"
                 >
                   <CompactResultsPanel
-                    results={rawResults}
+                    results={rawResults || results}
                     formData={formData}
-                    isCalculating={isCalculating}
-                    onCalculate={calculate}
-                    onReset={resetForm}
                   />
 
                   <div data-tour="export" className="space-y-4">

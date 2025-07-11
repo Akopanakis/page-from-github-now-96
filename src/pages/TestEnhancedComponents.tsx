@@ -124,7 +124,6 @@ const mockResults: CalculationResults = {
   packagingCost: 7,
   transportCost: 165,
   additionalCosts: 90,
-  vatAmount: 66,
 };
 
 const TestEnhancedComponents = () => {

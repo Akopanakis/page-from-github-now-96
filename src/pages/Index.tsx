@@ -603,10 +603,10 @@ const Index = () => {
         ></div>
       </div>
       <Header
-        isPremium={isPremium}
-        setIsPremium={setIsPremium}
-        showFileUpload={showFileUpload}
-        setShowFileUpload={setShowFileUpload}
+            isPremium={isPremium}
+            setIsPremium={setIsPremium}
+            showFileUpload={showFileUpload}
+            setShowFileUpload={setShowFileUpload}
         onShowGuide={() => setShowUserGuide(true)}
       />
 
@@ -730,11 +730,8 @@ const Index = () => {
           {/* Right Column - Results */}
           <div className="space-y-6" data-tour="results">
             <CompactResultsPanel
-              results={rawResults}
+              results={rawResults || results}
               formData={formData}
-              isCalculating={isCalculating} 
-              onCalculate={calculate}
-              onReset={resetForm}
             />
 
             <div data-tour="export" className="space-y-4">
