@@ -63,7 +63,7 @@ const FinancialRatios: React.FC<FinancialRatiosProps> = ({
     if (!results || !formData) return [];
 
     const totalRevenue = (results.finalPrice || 0) * (formData.quantity || 1);
-    const totalCosts = results.totalCosts || 0;
+    const totalCosts = results.totalCost || 0;
     const grossProfit = results.grossProfit || 0;
     const netProfit = grossProfit * 0.85; // Assuming 15% tax rate
     const workingCapital = totalCosts * 0.2; // Assume 20% working capital
@@ -178,7 +178,7 @@ const FinancialRatios: React.FC<FinancialRatiosProps> = ({
         id: "processing_efficiency",
         name:
           language === "el" ? "Απόδοση Επεξεργασίας" : "Processing Efficiency",
-        value: (1 - (results.totalLossPercentage || 0) / 100) * 100,
+        value: (1 - (results.totalWastePercentage || 0) / 100) * 100,
         benchmark: 85,
         unit: "%",
         category: "efficiency",
@@ -191,11 +191,11 @@ const FinancialRatios: React.FC<FinancialRatiosProps> = ({
             ? "(1 - Ποσοστό Απωλειών / 100) × 100"
             : "(1 - Loss Percentage / 100) × 100",
         status:
-          (1 - (results.totalLossPercentage || 0) / 100) * 100 > 90
+          (1 - (results.totalWastePercentage || 0) / 100) * 100 > 90
             ? "excellent"
-            : (1 - (results.totalLossPercentage || 0) / 100) * 100 > 80
+            : (1 - (results.totalWastePercentage || 0) / 100) * 100 > 80
               ? "good"
-              : (1 - (results.totalLossPercentage || 0) / 100) * 100 > 70
+              : (1 - (results.totalWastePercentage || 0) / 100) * 100 > 70
                 ? "average"
                 : "poor",
         trend: "up",
@@ -434,7 +434,7 @@ const FinancialRatios: React.FC<FinancialRatiosProps> = ({
           <Calculator className="w-12 h-12 text-gray-400 mx-auto mb-4" />
           <p className="text-gray-600">
             {language === "el"
-              ? "Πραγματ��ποιήστε υπολογισμό για να δείτε τους χρηματοοικονομικούς δείκτες"
+              ? "Πραγματοποιήστε υπολογισμό για να δείτε τους χρηματοοικονομικούς δείκτες"
               : "Perform calculation to view financial ratios"}
           </p>
         </CardContent>

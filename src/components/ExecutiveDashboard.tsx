@@ -71,7 +71,7 @@ const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
 
     const totalRevenue = (results.finalPrice || 0) * (formData.quantity || 1);
     const profitMargin = results.profitMargin || 0;
-    const efficiency = (1 - (results.totalLossPercentage || 0) / 100) * 100;
+    const efficiency = (1 - (results.totalWastePercentage || 0) / 100) * 100;
     const costPerKg = results.costPerKg || 0;
 
     return [

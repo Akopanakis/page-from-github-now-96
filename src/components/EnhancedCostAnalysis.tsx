@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -45,49 +46,49 @@ const EnhancedCostAnalysis: React.FC<EnhancedCostAnalysisProps> = ({
   const costCategories = [
     {
       name: language === "el" ? "Πρώτες Ύλες" : "Materials",
-      amount: results.breakdown.materials || 0,
+      amount: results.breakdown?.materials || 0,
       color: "bg-blue-500",
       lightColor: "bg-blue-50",
       textColor: "text-blue-700",
     },
     {
       name: language === "el" ? "Εργατικά" : "Labor",
-      amount: results.breakdown.labor || 0,
+      amount: results.breakdown?.labor || 0,
       color: "bg-green-500",
       lightColor: "bg-green-50",
       textColor: "text-green-700",
     },
     {
       name: language === "el" ? "Επεξεργασία" : "Processing",
-      amount: results.breakdown.processing || 0,
+      amount: results.breakdown?.processing || 0,
       color: "bg-purple-500",
       lightColor: "bg-purple-50",
       textColor: "text-purple-700",
     },
     {
       name: language === "el" ? "Μεταφορά" : "Transport",
-      amount: results.breakdown.transport || 0,
+      amount: results.breakdown?.transport || 0,
       color: "bg-orange-500",
       lightColor: "bg-orange-50",
       textColor: "text-orange-700",
     },
     {
       name: language === "el" ? "Γενικά Έξοδα" : "Overhead",
-      amount: results.breakdown.overhead || 0,
+      amount: results.breakdown?.overhead || 0,
       color: "bg-red-500",
       lightColor: "bg-red-50",
       textColor: "text-red-700",
     },
     {
       name: language === "el" ? "Συσκευασία" : "Packaging",
-      amount: results.breakdown.packaging || 0,
+      amount: results.breakdown?.packaging || 0,
       color: "bg-indigo-500",
       lightColor: "bg-indigo-50",
       textColor: "text-indigo-700",
     },
   ];
 
-  const totalCosts = results.totalCosts || 0;
+  const totalCosts = results.totalCost || 0;
 
   // Key performance indicators
   const kpis = [
@@ -166,7 +167,7 @@ const EnhancedCostAnalysis: React.FC<EnhancedCostAnalysisProps> = ({
           <CardTitle className="flex items-center gap-2">
             <BarChart3 className="w-5 h-5 text-blue-600" />
             {language === "el"
-              ? "Βασικοί Δείκ��ες Απόδοσης"
+              ? "Βασικοί Δείκτες Απόδοσης"
               : "Key Performance Indicators"}
           </CardTitle>
         </CardHeader>
@@ -306,7 +307,7 @@ const EnhancedCostAnalysis: React.FC<EnhancedCostAnalysisProps> = ({
                       : "Processing Losses"}
                   </span>
                   <span className="font-medium">
-                    {formatPercentage(results.totalLossPercentage || 0)}
+                    {formatPercentage(results.totalWastePercentage || 0)}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -356,7 +357,7 @@ const EnhancedCostAnalysis: React.FC<EnhancedCostAnalysisProps> = ({
                       : "Recommended Price"}
                   </span>
                   <span className="font-medium">
-                    {formatCurrency(results.recommendedPrice || 0)}
+                    {formatCurrency(results.recommendedSellingPrice || 0)}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -368,7 +369,7 @@ const EnhancedCostAnalysis: React.FC<EnhancedCostAnalysisProps> = ({
                   <span className="font-medium">
                     {results.costPerKg > 0
                       ? (
-                          (results.recommendedPrice || 0) / results.costPerKg
+                          (results.recommendedSellingPrice || 0) / results.costPerKg
                         ).toFixed(2)
                       : "0.00"}
                     x
