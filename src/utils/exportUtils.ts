@@ -1,151 +1,67 @@
-import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
-import { useLanguage } from "@/contexts/LanguageContext";
-import React from "react";
-import { jsPDF } from "jspdf";
-import QRCode from "qrcode";
+import * as XLSX from 'xlsx';
+import { CalculationResults, FormData } from './calc';
 
-export interface ExportData {
-  [key: string]: any;
-}
-
-export const exportToCSV = (
-  data: ExportData | ExportData[],
-  filename: string = "export",
-) => {
-  const rows = Array.isArray(data) ? data : [data];
-  const ws = XLSX.utils.json_to_sheet(rows);
-  const csv = XLSX.utils.sheet_to_csv(ws);
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  saveAs(blob, `${filename}.csv`);
-};
-
-export const exportToXLSX = (
-  data: ExportData | ExportData[],
-  filename: string = "export",
-) => {
-  const rows = Array.isArray(data) ? data : [data];
-  const ws = XLSX.utils.json_to_sheet(rows);
+// Function to generate Excel file from form data and calculation results
+export const generateExcel = (formData: FormData, results: CalculationResults): Blob => {
+  // Create a new workbook
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-  XLSX.writeFile(wb, `${filename}.xlsx`);
-};
 
-export interface PDFSectionOptions {
-  charts?: boolean;
-  tables?: boolean;
-  comments?: boolean;
-}
+  // Function to add a worksheet with key-value pairs
+  const addWorksheet = (data: { [key: string]: any }, sheetName: string) => {
+    const header = Object.keys(data);
+    const rows = [header, Object.values(data)];
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+  };
 
-export interface PDFExportOptions {
-  sections: PDFSectionOptions;
-  theme?: "light" | "dark";
-  qrUrl?: string;
-}
+  // Flatten the form data and results into simple key-value objects
+  const flatFormData = flattenObject(formData);
+  const flatResults = flattenObject(results);
 
-export const generatePDFBlob = async (
-  html: string,
-  options: PDFExportOptions,
-): Promise<Blob> => {
-  const container = document.createElement("div");
-  container.style.width = "800px";
-  container.innerHTML = html;
+  // Add form data worksheet
+  addWorksheet(flatFormData, 'Form Data');
 
-  if (options.theme === "dark") {
-    container.classList.add("dark");
-  }
+  // Add results worksheet
+  addWorksheet(flatResults, 'Calculation Results');
 
-  if (!options.sections.charts) {
-    container.querySelectorAll(".chart-section").forEach((el) => el.remove());
-  }
-  if (!options.sections.tables) {
-    container.querySelectorAll(".table-section").forEach((el) => el.remove());
-  }
-  if (!options.sections.comments) {
-    container
-      .querySelectorAll(".comments-section")
-      .forEach((el) => el.remove());
-  }
+  // Convert the workbook to a binary Excel file
+  const wopts: XLSX.WritingOptions = { bookType: 'xlsx', type: 'array' };
+  const wbout = XLSX.write(wb, wopts);
 
-  document.body.appendChild(container);
-
-  const doc = new jsPDF("p", "pt", "a4");
-
-  await doc.html(container, {
-    html2canvas: { scale: 0.7 },
-  });
-
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-
-  doc.setPage(doc.getNumberOfPages());
-  doc.setFontSize(12);
-  doc.text("Signature:", 40, pageHeight - 60);
-  doc.line(110, pageHeight - 60, pageWidth - 40, pageHeight - 60);
-
-  if (options.qrUrl) {
-    const qrData = await QRCode.toDataURL(options.qrUrl);
-    const size = 80;
-    doc.addImage(
-      qrData,
-      "PNG",
-      pageWidth - size - 40,
-      pageHeight - size - 40,
-      size,
-      size,
-    );
-  }
-
-  const blob = doc.output("blob");
-  document.body.removeChild(container);
+  // Convert the binary data to a Blob
+  const blob = new Blob([new Uint8Array(wbout)], { type: 'application/octet-stream' });
 
   return blob;
 };
 
-/**
- * Generate a PDF from an HTML string using jsPDF. The HTML may contain anchor
- * links which become clickable in the resulting PDF.
- */
-export const exportToPDF = async (
-  html: string,
-  filename: string = "export",
-  options: PDFExportOptions,
-) => {
-  const blob = await generatePDFBlob(html, options);
-  saveAs(blob, `${filename}.pdf`);
+// Helper function to flatten a nested object
+const flattenObject = (obj: any, prefix: string = ''): { [key: string]: any } => {
+  return Object.keys(obj).reduce((acc: { [key: string]: any }, k: string) => {
+    const pre = prefix ? prefix + '.' : '';
+    if (typeof obj[k] === 'object' && obj[k] !== null && !Array.isArray(obj[k])) {
+      Object.assign(acc, flattenObject(obj[k], pre + k));
+    } else if (Array.isArray(obj[k])) {
+      obj[k].forEach((item: any, index: number) => {
+        if (typeof item === 'object' && item !== null) {
+          Object.assign(acc, flattenObject(item, pre + k + `[${index}]`));
+        } else {
+          acc[pre + k + `[${index}]`] = item;
+        }
+      });
+    } else {
+      acc[pre + k] = obj[k];
+    }
+    return acc;
+  }, {});
 };
 
-export const exportElementToPNG = async (
-  elementId: string,
-  filename: string = "snapshot",
-) => {
-  const html2canvas = (await import("html2canvas")).default;
-  const element = document.getElementById(elementId);
-  if (!element) {
-    console.error("Element not found:", elementId);
-    return;
-  }
-  const canvas = await html2canvas(element as HTMLElement);
-  canvas.toBlob((blob) => {
-    if (blob) saveAs(blob, `${filename}.png`);
-  });
-};
-
-/**
- * Returns a formatter that uses the active locale and currency from LanguageContext.
- */
-export function useFormatCurrency() {
-  const { locale, currency } = useLanguage();
-
-  return React.useCallback(
-    (amount: number): string =>
-      new Intl.NumberFormat(locale, { style: "currency", currency }).format(
-        amount,
-      ),
-    [locale, currency],
-  );
-}
-
-export const formatPercentage = (value: number): string => {
-  return `${(value * 100).toFixed(2)}%`;
+export const downloadBlob = (blob: Blob, filename: string) => {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 };
