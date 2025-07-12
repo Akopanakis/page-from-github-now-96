@@ -3,29 +3,27 @@ import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Leaf, 
-  Recycle, 
   Droplets, 
   Zap, 
-  Truck, 
-  Factory, 
-  TreePine,
+  Recycle, 
   Fish,
+  Truck,
+  Factory,
   Award,
-  Globe,
-  BarChart3,
   Target,
+  TrendingUp,
   AlertTriangle,
   CheckCircle,
-  Info,
-  TrendingUp,
+  Globe,
   Users,
   Heart
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from "recharts";
 
 interface SustainabilitySectionProps {
   formData?: any;
@@ -37,485 +35,554 @@ const SustainabilitySection: React.FC<SustainabilitySectionProps> = ({
   results = {}
 }) => {
   const { language } = useLanguage();
-  const [activeTab, setActiveTab] = useState("carbon");
+  const [activeTab, setActiveTab] = useState("overview");
 
-  // Calculate sustainability metrics
-  const calculateCarbonFootprint = () => {
-    const transportDistance = formData.distance || 0;
-    const quantity = formData.quantity || 1;
-    const energyCost = formData.electricityCost || 0;
-    
-    // Carbon emissions calculations (kg CO2)
-    const transportEmissions = (transportDistance * 0.12) / 100; // 0.12 kg CO2 per km per 100kg
-    const energyEmissions = energyCost * 0.5; // 0.5 kg CO2 per € of energy
-    const processingEmissions = quantity * 0.8; // 0.8 kg CO2 per kg processed
-    const packagingEmissions = ((formData.boxCost || 0) + (formData.bagCost || 0)) * quantity * 2;
-    
-    const totalEmissions = transportEmissions + energyEmissions + processingEmissions + packagingEmissions;
-    const emissionsPerKg = quantity > 0 ? totalEmissions / quantity : 0;
-    
-    return {
-      total: totalEmissions,
-      perKg: emissionsPerKg,
-      transport: transportEmissions,
-      energy: energyEmissions,
-      processing: processingEmissions,
-      packaging: packagingEmissions
-    };
+  // Sustainability metrics calculations
+  const sustainabilityMetrics = {
+    carbonFootprint: {
+      total: 2.4, // kg CO2e per kg product
+      transport: 0.8,
+      processing: 0.6,
+      packaging: 0.4,
+      storage: 0.6
+    },
+    waterUsage: {
+      total: 12.5, // liters per kg
+      processing: 8.0,
+      cleaning: 3.5,
+      cooling: 1.0
+    },
+    energyConsumption: {
+      total: 3.2, // kWh per kg
+      freezing: 1.5,
+      processing: 1.0,
+      transport: 0.7
+    },
+    wasteReduction: {
+      current: 12, // percentage
+      target: 8,
+      improvement: 33
+    },
+    certifications: [
+      { name: "MSC", status: "certified", score: 85 },
+      { name: "ASC", status: "pending", score: 72 },
+      { name: "ISO 14001", status: "certified", score: 91 },
+      { name: "BRC", status: "certified", score: 88 }
+    ]
   };
 
-  const calculateWaterUsage = () => {
-    const quantity = formData.quantity || 1;
-    const processingWater = quantity * 15; // 15L per kg for seafood processing
-    const cleaningWater = quantity * 8; // 8L per kg for cleaning
-    const coolingWater = quantity * 12; // 12L per kg for cooling
-    
-    return {
-      total: processingWater + cleaningWater + coolingWater,
-      processing: processingWater,
-      cleaning: cleaningWater,
-      cooling: coolingWater,
-      perKg: (processingWater + cleaningWater + coolingWater) / quantity
-    };
+  const carbonData = [
+    { category: language === 'el' ? 'Μεταφορά' : 'Transport', value: 0.8, color: '#8884d8' },
+    { category: language === 'el' ? 'Επεξεργασία' : 'Processing', value: 0.6, color: '#82ca9d' },
+    { category: language === 'el' ? 'Συσκευασία' : 'Packaging', value: 0.4, color: '#ffc658' },
+    { category: language === 'el' ? 'Αποθήκευση' : 'Storage', value: 0.6, color: '#ff7300' }
+  ];
+
+  const monthlyTrends = [
+    { month: 'Ιαν', carbon: 2.8, water: 14.2, energy: 3.8 },
+    { month: 'Φεβ', carbon: 2.6, water: 13.1, energy: 3.5 },
+    { month: 'Μαρ', carbon: 2.4, water: 12.8, energy: 3.2 },
+    { month: 'Απρ', carbon: 2.2, water: 12.0, energy: 2.9 },
+    { month: 'Μαΐ', carbon: 2.1, water: 11.5, energy: 2.8 },
+    { month: 'Ιουν', carbon: 2.4, water: 12.5, energy: 3.2 }
+  ];
+
+  const radarData = [
+    { subject: language === 'el' ? 'Άνθρακας' : 'Carbon', A: 85, fullMark: 100 },
+    { subject: language === 'el' ? 'Νερό' : 'Water', A: 78, fullMark: 100 },
+    { subject: language === 'el' ? 'Ενέργεια' : 'Energy', A: 82, fullMark: 100 },
+    { subject: language === 'el' ? 'Απόβλητα' : 'Waste', A: 67, fullMark: 100 },
+    { subject: language === 'el' ? 'Πιστοποιήσεις' : 'Certifications', A: 84, fullMark: 100 },
+    { subject: language === 'el' ? 'Κοινωνικό' : 'Social', A: 76, fullMark: 100 }
+  ];
+
+  const sustainabilityActions = [
+    {
+      title: language === 'el' ? 'Μείωση Συσκευασίας' : 'Reduce Packaging',
+      description: language === 'el' ? 'Χρήση βιοδιασπώμενων υλικών' : 'Use biodegradable materials',
+      impact: 'high',
+      cost: 'medium',
+      timeframe: '3-6 months',
+      co2Reduction: 0.3
+    },
+    {
+      title: language === 'el' ? 'Ανανεώσιμη Ενέργεια' : 'Renewable Energy',
+      description: language === 'el' ? 'Εγκατάσταση ηλιακών πάνελ' : 'Install solar panels',
+      impact: 'high',
+      cost: 'high',
+      timeframe: '6-12 months',
+      co2Reduction: 0.8
+    },
+    {
+      title: language === 'el' ? 'Βελτίωση Logistics' : 'Optimize Logistics',
+      description: language === 'el' ? 'Βελτιστοποίηση διαδρομών' : 'Route optimization',
+      impact: 'medium',
+      cost: 'low',
+      timeframe: '1-3 months',
+      co2Reduction: 0.2
+    },
+    {
+      title: language === 'el' ? 'Τοπική Προμήθεια' : 'Local Sourcing',
+      description: language === 'el' ? 'Προμήθεια από τοπικούς προμηθευτές' : 'Source from local suppliers',
+      impact: 'high',
+      cost: 'medium',
+      timeframe: '3-6 months',
+      co2Reduction: 0.5
+    }
+  ];
+
+  const getImpactColor = (impact: string) => {
+    switch (impact) {
+      case 'high': return 'bg-green-500';
+      case 'medium': return 'bg-yellow-500';
+      case 'low': return 'bg-red-500';
+      default: return 'bg-gray-500';
+    }
   };
 
-  const getWasteReductionTips = () => {
-    return [
-      {
-        title: language === 'el' ? "Βελτιστοποίηση Επεξεργασίας" : "Processing Optimization",
-        description: language === 'el' 
-          ? "Χρησιμοποιήστε προχωρημένες τεχνικές κοπής για μείωση απωλειών κατά 15-20%"
-          : "Use advanced cutting techniques to reduce losses by 15-20%",
-        impact: "20%",
-        difficulty: language === 'el' ? "Μέτρια" : "Medium"
-      },
-      {
-        title: language === 'el' ? "Αξιοποίηση Υποπροϊόντων" : "By-product Utilization",
-        description: language === 'el'
-          ? "Μετατρέψτε κεφάλια και οστά σε ζωμό ή λίπασμα"
-          : "Convert heads and bones into broth or fertilizer",
-        impact: "30%",
-        difficulty: language === 'el' ? "Εύκολη" : "Easy"
-      },
-      {
-        title: language === 'el' ? "Ψυκτική Αλυσίδα" : "Cold Chain Management",
-        description: language === 'el'
-          ? "Διατηρήστε σταθερή θερμοκρασία για μείωση φθοράς"
-          : "Maintain consistent temperature to reduce spoilage",
-        impact: "25%",
-        difficulty: language === 'el' ? "Μέτρια" : "Medium"
-      }
-    ];
+  const getCostColor = (cost: string) => {
+    switch (cost) {
+      case 'low': return 'text-green-600';
+      case 'medium': return 'text-yellow-600';
+      case 'high': return 'text-red-600';
+      default: return 'text-gray-600';
+    }
   };
-
-  const getSustainablePractices = () => {
-    return [
-      {
-        category: language === 'el' ? "Αλιεία & Προμήθειες" : "Fishing & Sourcing",
-        practices: [
-          language === 'el' ? "Επιλογή πιστοποιημένων προμηθευτών (MSC, ASC)" : "Choose certified suppliers (MSC, ASC)",
-          language === 'el' ? "Προτίμηση τοπικών αλιευμάτων όταν είναι εφικτό" : "Prefer local catches when feasible",
-          language === 'el' ? "Αποφυγή υπεραλιευμένων αποθεμάτων" : "Avoid overfished stocks",
-          language === 'el' ? "Υποστήριξη μικρής κλίμακας αλιέων" : "Support small-scale fishermen"
-        ]
-      },
-      {
-        category: language === 'el' ? "Επεξεργασία & Παραγωγή" : "Processing & Production",
-        practices: [
-          language === 'el' ? "Χρήση ανανεώσιμων πηγών ενέργειας" : "Use renewable energy sources",
-          language === 'el' ? "Ανακύκλωση νερού στην παραγωγή" : "Water recycling in production",
-          language === 'el' ? "Μείωση χρήσης χημικών" : "Reduce chemical usage",
-          language === 'el' ? "Βιοδιασπώμενες συσκευασίες" : "Biodegradable packaging"
-        ]
-      },
-      {
-        category: language === 'el' ? "Διανομή & Logistics" : "Distribution & Logistics",
-        practices: [
-          language === 'el' ? "Βελτιστοποίηση διαδρομών μεταφοράς" : "Optimize transport routes",
-          language === 'el' ? "Χρήση ηλεκτρικών οχημάτων όπου εφικτό" : "Use electric vehicles where feasible",
-          language === 'el' ? "Συμπλήρωση φορτίων για μείωση εκπομπών" : "Load consolidation to reduce emissions",
-          language === 'el' ? "Τοπικά κέντρα διανομής" : "Local distribution centers"
-        ]
-      }
-    ];
-  };
-
-  const carbonFootprint = calculateCarbonFootprint();
-  const waterUsage = calculateWaterUsage();
-  const wasteReductionTips = getWasteReductionTips();
-  const sustainablePractices = getSustainablePractices();
 
   return (
-    <Card className="shadow-lg">
-      <CardHeader className="bg-gradient-to-r from-green-50 to-blue-50 border-b">
-        <CardTitle className="flex items-center space-x-2 text-slate-800">
-          <Leaf className="w-5 h-5 text-green-600" />
-          <span>
-            {language === 'el' ? 'Βιωσιμότητα & Περιβαλλοντική Επίδραση' : 'Sustainability & Environmental Impact'}
-          </span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="carbon" className="flex items-center space-x-1 text-xs">
-              <Globe className="w-3 h-3" />
-              <span>{language === 'el' ? 'Άνθρακας' : 'Carbon'}</span>
-            </TabsTrigger>
-            <TabsTrigger value="water" className="flex items-center space-x-1 text-xs">
-              <Droplets className="w-3 h-3" />
-              <span>{language === 'el' ? 'Νερό' : 'Water'}</span>
-            </TabsTrigger>
-            <TabsTrigger value="waste" className="flex items-center space-x-1 text-xs">
-              <Recycle className="w-3 h-3" />
-              <span>{language === 'el' ? 'Απόβλητα' : 'Waste'}</span>
-            </TabsTrigger>
-            <TabsTrigger value="practices" className="flex items-center space-x-1 text-xs">
-              <Award className="w-3 h-3" />
-              <span>{language === 'el' ? 'Πρακτικές' : 'Practices'}</span>
-            </TabsTrigger>
-          </TabsList>
+    <div className="space-y-6">
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center justify-center">
+          <Leaf className="w-8 h-8 text-green-600 mr-3" />
+          {language === 'el' ? 'Βιωσιμότητα & Περιβαλλοντική Επίδραση' : 'Sustainability & Environmental Impact'}
+        </h2>
+        <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          {language === 'el' 
+            ? 'Παρακολουθήστε και βελτιώστε την περιβαλλοντική επίδραση της επιχείρησής σας με προχωρημένες μετρικές και actionable insights.'
+            : 'Monitor and improve your business environmental impact with advanced metrics and actionable insights.'
+          }
+        </p>
+      </div>
 
-          <TabsContent value="carbon" className="mt-6">
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 bg-red-50 rounded-lg border border-red-200">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Globe className="w-4 h-4 text-red-600" />
-                    <h4 className="font-semibold text-red-800">
-                      {language === 'el' ? 'Συνολικές Εκπομπές CO₂' : 'Total CO₂ Emissions'}
-                    </h4>
-                  </div>
-                  <p className="text-2xl font-bold text-red-600">{carbonFootprint.total.toFixed(1)} kg</p>
-                  <p className="text-sm text-red-600">
-                    {carbonFootprint.perKg.toFixed(2)} kg CO₂ {language === 'el' ? 'ανά κιλό' : 'per kg'}
-                  </p>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="overview" className="flex items-center space-x-2">
+            <Globe className="w-4 h-4" />
+            <span>{language === 'el' ? 'Επισκόπηση' : 'Overview'}</span>
+          </TabsTrigger>
+          <TabsTrigger value="metrics" className="flex items-center space-x-2">
+            <TrendingUp className="w-4 h-4" />
+            <span>{language === 'el' ? 'Μετρικές' : 'Metrics'}</span>
+          </TabsTrigger>
+          <TabsTrigger value="certifications" className="flex items-center space-x-2">
+            <Award className="w-4 h-4" />
+            <span>{language === 'el' ? 'Πιστοποιήσεις' : 'Certifications'}</span>
+          </TabsTrigger>
+          <TabsTrigger value="actions" className="flex items-center space-x-2">
+            <Target className="w-4 h-4" />
+            <span>{language === 'el' ? 'Δράσεις' : 'Actions'}</span>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-6">
+          {/* Key Metrics Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card className="border-green-200 bg-green-50">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-green-800 flex items-center text-sm">
+                  <Leaf className="w-4 h-4 mr-2" />
+                  {language === 'el' ? 'Αποτύπωμα Άνθρακα' : 'Carbon Footprint'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-green-900">
+                  {sustainabilityMetrics.carbonFootprint.total} kg
                 </div>
-
-                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <BarChart3 className="w-4 h-4 text-blue-600" />
-                    <h4 className="font-semibold text-blue-800">
-                      {language === 'el' ? 'Κατανομή Εκπομπών' : 'Emissions Breakdown'}
-                    </h4>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>{language === 'el' ? 'Μεταφορά:' : 'Transport:'}</span>
-                      <span>{carbonFootprint.transport.toFixed(1)} kg</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span>{language === 'el' ? 'Επεξεργασία:' : 'Processing:'}</span>
-                      <span>{carbonFootprint.processing.toFixed(1)} kg</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span>{language === 'el' ? 'Ενέργεια:' : 'Energy:'}</span>
-                      <span>{carbonFootprint.energy.toFixed(1)} kg</span>
-                    </div>
-                  </div>
+                <p className="text-sm text-green-600">CO2e {language === 'el' ? 'ανά κιλό' : 'per kg'}</p>
+                <div className="mt-2">
+                  <Badge variant="outline" className="text-green-700 border-green-300">
+                    {language === 'el' ? '15% καλύτερα από μέσο όρο' : '15% better than average'}
+                  </Badge>
                 </div>
-              </div>
+              </CardContent>
+            </Card>
 
-              <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                <h4 className="font-semibold text-green-800 mb-3 flex items-center">
-                  <Target className="w-4 h-4 mr-2" />
-                  {language === 'el' ? 'Στόχοι Βιωσιμότητας' : 'Sustainability Targets'}
-                </h4>
-                <div className="space-y-3">
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>{language === 'el' ? 'Μείωση εκπομπών CO₂' : 'CO₂ emission reduction'}</span>
-                      <span>65%</span>
-                    </div>
-                    <Progress value={65} className="h-2" />
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>{language === 'el' ? 'Χρήση ανανεώσιμων' : 'Renewable energy use'}</span>
-                      <span>45%</span>
-                    </div>
-                    <Progress value={45} className="h-2" />
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>{language === 'el' ? 'Μείωση συσκευασίας' : 'Packaging reduction'}</span>
-                      <span>80%</span>
-                    </div>
-                    <Progress value={80} className="h-2" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="water" className="mt-6">
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Droplets className="w-4 h-4 text-blue-600" />
-                    <h4 className="font-semibold text-blue-800">
-                      {language === 'el' ? 'Συνολική Χρήση' : 'Total Usage'}
-                    </h4>
-                  </div>
-                  <p className="text-2xl font-bold text-blue-600">{waterUsage.total.toFixed(0)} L</p>
-                  <p className="text-sm text-blue-600">
-                    {waterUsage.perKg.toFixed(1)} L {language === 'el' ? 'ανά κιλό' : 'per kg'}
-                  </p>
-                </div>
-
-                <div className="p-4 bg-cyan-50 rounded-lg border border-cyan-200">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Factory className="w-4 h-4 text-cyan-600" />
-                    <h4 className="font-semibold text-cyan-800">
-                      {language === 'el' ? 'Επεξεργασία' : 'Processing'}
-                    </h4>
-                  </div>
-                  <p className="text-xl font-bold text-cyan-600">{waterUsage.processing.toFixed(0)} L</p>
-                  <p className="text-sm text-cyan-600">
-                    {((waterUsage.processing / waterUsage.total) * 100).toFixed(0)}% {language === 'el' ? 'του συνόλου' : 'of total'}
-                  </p>
-                </div>
-
-                <div className="p-4 bg-teal-50 rounded-lg border border-teal-200">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Recycle className="w-4 h-4 text-teal-600" />
-                    <h4 className="font-semibold text-teal-800">
-                      {language === 'el' ? 'Δυνατότητα Ανακύκλωσης' : 'Recyclable Potential'}
-                    </h4>
-                  </div>
-                  <p className="text-xl font-bold text-teal-600">70%</p>
-                  <p className="text-sm text-teal-600">
-                    {(waterUsage.total * 0.7).toFixed(0)} L {language === 'el' ? 'εξοικονόμηση' : 'savings'}
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-4 bg-blue-50 rounded-lg">
-                <h4 className="font-semibold text-blue-800 mb-3 flex items-center">
+            <Card className="border-blue-200 bg-blue-50">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-blue-800 flex items-center text-sm">
                   <Droplets className="w-4 h-4 mr-2" />
-                  {language === 'el' ? 'Στρατηγικές Εξοικονόμησης Νερού' : 'Water Conservation Strategies'}
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div className="flex items-start space-x-2 p-3 bg-white rounded border">
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
-                    <div>
-                      <p className="font-medium text-sm">
-                        {language === 'el' ? 'Κλειστό Κύκλωμα Ψύξης' : 'Closed-Loop Cooling'}
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        {language === 'el' ? 'Εξοικονόμηση 40% νερού' : '40% water savings'}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start space-x-2 p-3 bg-white rounded border">
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
-                    <div>
-                      <p className="font-medium text-sm">
-                        {language === 'el' ? 'Επαναχρησιμοποίηση Νερού Πλύσης' : 'Wash Water Reuse'}
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        {language === 'el' ? 'Εξοικονόμηση 25% νερού' : '25% water savings'}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start space-x-2 p-3 bg-white rounded border">
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
-                    <div>
-                      <p className="font-medium text-sm">
-                        {language === 'el' ? 'Αισθητήρες Ροής' : 'Flow Sensors'}
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        {language === 'el' ? 'Εξοικονόμηση 15% νερού' : '15% water savings'}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start space-x-2 p-3 bg-white rounded border">
-                    <Info className="w-4 h-4 text-blue-500 mt-0.5" />
-                    <div>
-                      <p className="font-medium text-sm">
-                        {language === 'el' ? 'Συλλογή Βρόχινου Νερού' : 'Rainwater Collection'}
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        {language === 'el' ? 'Δωρεάν πηγή νερού' : 'Free water source'}
-                      </p>
-                    </div>
-                  </div>
+                  {language === 'el' ? 'Κατανάλωση Νερού' : 'Water Usage'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-blue-900">
+                  {sustainabilityMetrics.waterUsage.total} L
                 </div>
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="waste" className="mt-6">
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <AlertTriangle className="w-4 h-4 text-orange-600" />
-                    <h4 className="font-semibold text-orange-800">
-                      {language === 'el' ? 'Τρέχουσες Απώλειες' : 'Current Waste'}
-                    </h4>
-                  </div>
-                  <p className="text-2xl font-bold text-orange-600">{formData.waste || 0}%</p>
-                  <p className="text-sm text-orange-600">
-                    {((formData.quantity || 0) * (formData.waste || 0) / 100).toFixed(1)} kg {language === 'el' ? 'απώλειες' : 'waste'}
-                  </p>
+                <p className="text-sm text-blue-600">{language === 'el' ? 'ανά κιλό προϊόντος' : 'per kg product'}</p>
+                <div className="mt-2">
+                  <Badge variant="outline" className="text-blue-700 border-blue-300">
+                    {language === 'el' ? '8% μείωση φέτος' : '8% reduction this year'}
+                  </Badge>
                 </div>
+              </CardContent>
+            </Card>
 
-                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Target className="w-4 h-4 text-green-600" />
-                    <h4 className="font-semibold text-green-800">
-                      {language === 'el' ? 'Στόχος Μείωσης' : 'Reduction Target'}
-                    </h4>
-                  </div>
-                  <p className="text-2xl font-bold text-green-600">{Math.max(0, (formData.waste || 0) - 5)}%</p>
-                  <p className="text-sm text-green-600">
-                    -5% {language === 'el' ? 'μείωση στόχος' : 'reduction target'}
-                  </p>
+            <Card className="border-yellow-200 bg-yellow-50">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-yellow-800 flex items-center text-sm">
+                  <Zap className="w-4 h-4 mr-2" />
+                  {language === 'el' ? 'Ενέργεια' : 'Energy'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-yellow-900">
+                  {sustainabilityMetrics.energyConsumption.total} kWh
                 </div>
-              </div>
+                <p className="text-sm text-yellow-600">{language === 'el' ? 'ανά κιλό' : 'per kg'}</p>
+                <div className="mt-2">
+                  <Badge variant="outline" className="text-yellow-700 border-yellow-300">
+                    {language === 'el' ? '22% ανανεώσιμη' : '22% renewable'}
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
 
-              <div className="space-y-4">
-                <h4 className="font-semibold text-gray-800 flex items-center">
-                  <TrendingUp className="w-4 h-4 mr-2" />
-                  {language === 'el' ? 'Τρόποι Μείωσης Απωλειών' : 'Waste Reduction Methods'}
-                </h4>
-                
-                {wasteReductionTips.map((tip, index) => (
-                  <div key={index} className="p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                    <div className="flex justify-between items-start mb-2">
-                      <h5 className="font-medium text-gray-800">{tip.title}</h5>
-                      <div className="flex items-center space-x-2">
-                        <Badge variant={tip.difficulty === 'Easy' || tip.difficulty === 'Εύκολη' ? 'default' : 'secondary'}>
-                          {tip.difficulty}
-                        </Badge>
-                        <Badge variant="outline" className="text-green-600 border-green-600">
-                          -{tip.impact}
-                        </Badge>
-                      </div>
-                    </div>
-                    <p className="text-sm text-gray-600">{tip.description}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
-                <h4 className="font-semibold text-purple-800 mb-3 flex items-center">
+            <Card className="border-purple-200 bg-purple-50">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-purple-800 flex items-center text-sm">
                   <Recycle className="w-4 h-4 mr-2" />
-                  {language === 'el' ? 'Κυκλική Οικονομία' : 'Circular Economy'}
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div className="text-center p-3 bg-white rounded">
-                    <Fish className="w-8 h-8 mx-auto text-purple-600 mb-2" />
-                    <p className="text-sm font-medium">{language === 'el' ? 'Αξιοποίηση Υπολειμμάτων' : 'Waste Utilization'}</p>
-                    <p className="text-xs text-gray-600 mt-1">
-                      {language === 'el' ? 'Ζωμοί, λιπάσματα, τροφές ζώων' : 'Broths, fertilizers, animal feed'}
-                    </p>
-                  </div>
-                  <div className="text-center p-3 bg-white rounded">
-                    <Droplets className="w-8 h-8 mx-auto text-blue-600 mb-2" />
-                    <p className="text-sm font-medium">{language === 'el' ? 'Ανακύκλωση Νερού' : 'Water Recycling'}</p>
-                    <p className="text-xs text-gray-600 mt-1">
-                      {language === 'el' ? 'Φιλτράρισμα και επαναχρήση' : 'Filtering and reuse'}
-                    </p>
-                  </div>
-                  <div className="text-center p-3 bg-white rounded">
-                    <TreePine className="w-8 h-8 mx-auto text-green-600 mb-2" />
-                    <p className="text-sm font-medium">{language === 'el' ? 'Βιο-αποσύνθεση' : 'Bio-decomposition'}</p>
-                    <p className="text-xs text-gray-600 mt-1">
-                      {language === 'el' ? 'Κομποστοποίηση οργανικών' : 'Organic composting'}
-                    </p>
-                  </div>
+                  {language === 'el' ? 'Μείωση Αποβλήτων' : 'Waste Reduction'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-purple-900">
+                  {sustainabilityMetrics.wasteReduction.current}%
                 </div>
-              </div>
-            </div>
-          </TabsContent>
+                <p className="text-sm text-purple-600">{language === 'el' ? 'τρέχον ποσοστό' : 'current rate'}</p>
+                <div className="mt-2">
+                  <Progress value={sustainabilityMetrics.wasteReduction.improvement} className="h-2" />
+                  <p className="text-xs text-purple-600 mt-1">
+                    {language === 'el' ? 'Στόχος: 8%' : 'Target: 8%'}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
-          <TabsContent value="practices" className="mt-6">
-            <div className="space-y-6">
-              {sustainablePractices.map((section, index) => (
-                <div key={index} className="p-4 bg-white rounded-lg border border-gray-200">
-                  <h4 className="font-semibold text-gray-800 mb-3 flex items-center">
-                    <Award className="w-4 h-4 mr-2" />
-                    {section.category}
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {section.practices.map((practice, practiceIndex) => (
-                      <div key={practiceIndex} className="flex items-start space-x-2 p-2">
-                        <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">{practice}</p>
+          {/* Sustainability Score Radar */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Target className="w-5 h-5 mr-2 text-green-600" />
+                {language === 'el' ? 'Βαθμολογία Βιωσιμότητας' : 'Sustainability Score'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart data={radarData}>
+                    <PolarGrid />
+                    <PolarAngleAxis dataKey="subject" />
+                    <PolarRadiusAxis domain={[0, 100]} />
+                    <Radar name="Score" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="metrics" className="space-y-6">
+          {/* Carbon Footprint Breakdown */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Leaf className="w-5 h-5 mr-2 text-green-600" />
+                  {language === 'el' ? 'Κατανομή Αποτυπώματος Άνθρακα' : 'Carbon Footprint Breakdown'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={carbonData}
+                        dataKey="value"
+                        nameKey="category"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={80}
+                        fill="#8884d8"
+                      >
+                        {carbonData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <TrendingUp className="w-5 h-5 mr-2 text-blue-600" />
+                  {language === 'el' ? 'Μηνιαίες Τάσεις' : 'Monthly Trends'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={monthlyTrends}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis />
+                      <Tooltip />
+                      <Line type="monotone" dataKey="carbon" stroke="#8884d8" name="CO2 (kg)" />
+                      <Line type="monotone" dataKey="water" stroke="#82ca9d" name="Water (L)" />
+                      <Line type="monotone" dataKey="energy" stroke="#ffc658" name="Energy (kWh)" />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Detailed Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-green-700 flex items-center">
+                  <Truck className="w-5 h-5 mr-2" />
+                  {language === 'el' ? 'Μεταφορές' : 'Transportation'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-sm">{language === 'el' ? 'Απόσταση μέσου όρου' : 'Average distance'}:</span>
+                  <span className="font-semibold">285 km</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm">{language === 'el' ? 'Εκπομπές CO2' : 'CO2 emissions'}:</span>
+                  <span className="font-semibold">0.8 kg</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm">{language === 'el' ? 'Καύσιμο/100km' : 'Fuel/100km'}:</span>
+                  <span className="font-semibold">28L</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-blue-700 flex items-center">
+                  <Factory className="w-5 h-5 mr-2" />
+                  {language === 'el' ? 'Επεξεργασία' : 'Processing'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-sm">{language === 'el' ? 'Ενέργεια/kg' : 'Energy/kg'}:</span>
+                  <span className="font-semibold">1.0 kWh</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm">{language === 'el' ? 'Νερό/kg' : 'Water/kg'}:</span>
+                  <span className="font-semibold">8.0 L</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm">{language === 'el' ? 'Απόβλητα/kg' : 'Waste/kg'}:</span>
+                  <span className="font-semibold">0.12 kg</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-purple-700 flex items-center">
+                  <Users className="w-5 h-5 mr-2" />
+                  {language === 'el' ? 'Κοινωνική Επίδραση' : 'Social Impact'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-sm">{language === 'el' ? 'Τοπικές θέσεις εργασίας' : 'Local jobs'}:</span>
+                  <span className="font-semibold">45</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm">{language === 'el' ? 'Προμηθευτές' : 'Suppliers'}:</span>
+                  <span className="font-semibold">12</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm">{language === 'el' ? 'Κοινότητες' : 'Communities'}:</span>
+                  <span className="font-semibold">8</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="certifications" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {sustainabilityMetrics.certifications.map((cert, index) => (
+              <Card key={index} className={cert.status === 'certified' ? 'border-green-200 bg-green-50' : 'border-yellow-200 bg-yellow-50'}>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Award className={`w-5 h-5 mr-2 ${cert.status === 'certified' ? 'text-green-600' : 'text-yellow-600'}`} />
+                      {cert.name}
+                    </div>
+                    {cert.status === 'certified' ? (
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    ) : (
+                      <AlertTriangle className="w-5 h-5 text-yellow-600" />
+                    )}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div>
+                      <div className="flex justify-between mb-1">
+                        <span className="text-sm font-medium">{language === 'el' ? 'Βαθμολογία' : 'Score'}</span>
+                        <span className="text-sm font-medium">{cert.score}/100</span>
                       </div>
-                    ))}
+                      <Progress value={cert.score} className="h-2" />
+                    </div>
+                    <Badge variant={cert.status === 'certified' ? 'default' : 'secondary'}>
+                      {cert.status === 'certified' 
+                        ? (language === 'el' ? 'Πιστοποιημένο' : 'Certified')
+                        : (language === 'el' ? 'Σε εξέλιξη' : 'Pending')
+                      }
+                    </Badge>
                   </div>
-                </div>
-              ))}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                  <div className="flex items-center space-x-2 mb-3">
-                    <Users className="w-4 h-4 text-green-600" />
-                    <h4 className="font-semibold text-green-800">
-                      {language === 'el' ? 'Κοινωνική Ευθύνη' : 'Social Responsibility'}
-                    </h4>
-                  </div>
-                  <ul className="space-y-2 text-sm text-green-700">
-                    <li>• {language === 'el' ? 'Δίκαιες συνθήκες εργασίας' : 'Fair working conditions'}</li>
-                    <li>• {language === 'el' ? 'Υποστήριξη τοπικών κοινοτήτων' : 'Support local communities'}</li>
-                    <li>• {language === 'el' ? 'Εκπαίδευση εργαζομένων' : 'Employee training'}</li>
-                    <li>• {language === 'el' ? 'Διαφάνεια στην εφοδιαστική αλυσίδα' : 'Supply chain transparency'}</li>
-                  </ul>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Fish className="w-5 h-5 mr-2 text-blue-600" />
+                {language === 'el' ? 'Πιστοποιήσεις Αλιείας' : 'Fishing Certifications'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="p-4 border rounded-lg">
+                  <h4 className="font-semibold text-blue-700">MSC (Marine Stewardship Council)</h4>
+                  <p className="text-sm text-gray-600 mt-2">
+                    {language === 'el' 
+                      ? 'Πιστοποίηση βιώσιμης αλιείας για την προστασία των θαλάσσιων οικοσυστημάτων.'
+                      : 'Sustainable fishing certification for marine ecosystem protection.'
+                    }
+                  </p>
                 </div>
-
-                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <div className="flex items-center space-x-2 mb-3">
-                    <Heart className="w-4 h-4 text-blue-600" />
-                    <h4 className="font-semibold text-blue-800">
-                      {language === 'el' ? 'Πιστοποιήσεις' : 'Certifications'}
-                    </h4>
-                  </div>
-                  <ul className="space-y-2 text-sm text-blue-700">
-                    <li>• MSC (Marine Stewardship Council)</li>
-                    <li>• ASC (Aquaculture Stewardship Council)</li>
-                    <li>• ISO 14001 (Environmental Management)</li>
-                    <li>• HACCP (Food Safety)</li>
-                  </ul>
+                <div className="p-4 border rounded-lg">
+                  <h4 className="font-semibold text-green-700">ASC (Aquaculture Stewardship Council)</h4>
+                  <p className="text-sm text-gray-600 mt-2">
+                    {language === 'el' 
+                      ? 'Υπεύθυνη υδατοκαλλιέργεια με περιβαλλοντική και κοινωνική ευθύνη.'
+                      : 'Responsible aquaculture with environmental and social responsibility.'
+                    }
+                  </p>
+                </div>
+                <div className="p-4 border rounded-lg">
+                  <h4 className="font-semibold text-purple-700">Friend of the Sea</h4>
+                  <p className="text-sm text-gray-600 mt-2">
+                    {language === 'el' 
+                      ? 'Πιστοποίηση για προϊόντα θάλασσας που σέβονται το περιβάλλον.'
+                      : 'Certification for sea products that respect the environment.'
+                    }
+                  </p>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-              <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                <div className="flex items-center space-x-2 mb-3">
-                  <Info className="w-4 h-4 text-yellow-600" />
-                  <h4 className="font-semibold text-yellow-800">
-                    {language === 'el' ? 'Οικονομικά Οφέλη Βιωσιμότητας' : 'Economic Benefits of Sustainability'}
-                  </h4>
+        <TabsContent value="actions" className="space-y-6">
+          <div className="grid gap-6">
+            {sustainabilityActions.map((action, index) => (
+              <Card key={index} className="hover:shadow-lg transition-shadow">
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <CardTitle className="text-lg">{action.title}</CardTitle>
+                      <p className="text-sm text-gray-600 mt-1">{action.description}</p>
+                    </div>
+                    <div className="flex flex-col items-end space-y-2">
+                      <Badge className={`${getImpactColor(action.impact)} text-white`}>
+                        {language === 'el' 
+                          ? `${action.impact === 'high' ? 'Υψηλή' : action.impact === 'medium' ? 'Μέτρια' : 'Χαμηλή'} Επίδραση`
+                          : `${action.impact} Impact`
+                        }
+                      </Badge>
+                      <span className={`text-sm font-medium ${getCostColor(action.cost)}`}>
+                        {language === 'el' 
+                          ? `${action.cost === 'high' ? 'Υψηλό' : action.cost === 'medium' ? 'Μέτριο' : 'Χαμηλό'} Κόστος`
+                          : `${action.cost} Cost`
+                        }
+                      </span>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="flex items-center space-x-2">
+                      <Heart className="w-4 h-4 text-red-500" />
+                      <div>
+                        <p className="text-sm font-medium">{language === 'el' ? 'Μείωση CO2' : 'CO2 Reduction'}</p>
+                        <p className="text-lg font-bold text-green-600">-{action.co2Reduction} kg</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Target className="w-4 h-4 text-blue-500" />
+                      <div>
+                        <p className="text-sm font-medium">{language === 'el' ? 'Χρονοδιάγραμμα' : 'Timeframe'}</p>
+                        <p className="text-sm font-semibold">{action.timeframe}</p>
+                      </div>
+                    </div>
+                    <div>
+                      <Button size="sm" className="w-full">
+                        {language === 'el' ? 'Εφαρμογή Δράσης' : 'Implement Action'}
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <Card className="bg-green-50 border-green-200">
+            <CardHeader>
+              <CardTitle className="text-green-800 flex items-center">
+                <TrendingUp className="w-5 h-5 mr-2" />
+                {language === 'el' ? 'Προβλεπόμενα Αποτελέσματα' : 'Projected Results'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-green-700">-1.8kg</div>
+                  <p className="text-sm text-green-600">{language === 'el' ? 'Συνολική μείωση CO2' : 'Total CO2 reduction'}</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-yellow-700">15-25%</p>
-                    <p className="text-sm text-yellow-600">
-                      {language === 'el' ? 'Μείωση κόστους' : 'Cost reduction'}
-                    </p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-yellow-700">30%</p>
-                    <p className="text-sm text-yellow-600">
-                      {language === 'el' ? 'Αύξηση πωλήσεων' : 'Sales increase'}
-                    </p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-yellow-700">20%</p>
-                    <p className="text-sm text-yellow-600">
-                      {language === 'el' ? 'Premium τιμή' : 'Premium pricing'}
-                    </p>
-                  </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-blue-700">€12,500</div>
+                  <p className="text-sm text-blue-600">{language === 'el' ? 'Ετήσια εξοικονόμηση' : 'Annual savings'}</p>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-purple-700">75%</div>
+                  <p className="text-sm text-purple-600">{language === 'el' ? 'Βελτίωση βαθμολογίας' : 'Score improvement'}</p>
                 </div>
               </div>
-            </div>
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 };
 

@@ -1,41 +1,39 @@
 
-import React from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { 
-  Fish, 
-  Target, 
-  Database, 
-  BarChart3, 
-  Crown, 
-  Sparkles,
-  Leaf
-} from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
-import ProductBasics from '@/components/ProductBasics';
-import ProcessingPhases from '@/components/ProcessingPhases';
-import CostsTab from '@/components/CostsTab';
-import TransportTab from '@/components/TransportTab';
-import AnalysisTab from '@/components/AnalysisTab';
-import AdvancedAnalysisTab from '@/components/AdvancedAnalysisTab';
-import ScenarioAnalysis from '@/components/ScenarioAnalysis';
-import RevenueForecasting from '@/components/RevenueForecasting';
-import FinancialGlossary from '@/components/FinancialGlossary';
-import StatisticalModels from '@/components/StatisticalModels';
-import AdvancedFinancialModels from '@/components/AdvancedFinancialModels';
-import Dashboard from '@/components/Dashboard';
-import BatchManagement from '@/components/BatchManagement';
-import SeafoodProcessingFeatures from '@/components/SeafoodProcessingFeatures';
-import SustainabilitySection from '@/components/SustainabilitySection';
+import React from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import {
+  Calculator,
+  TrendingUp,
+  Truck,
+  Users,
+  FileText,
+  Settings,
+  Leaf,
+  BarChart3,
+  Target,
+  Award,
+  Crown,
+} from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import BasicInfoTab from "@/components/BasicInfoTab";
+import CostsTab from "@/components/CostsTab";
+import AnalysisTab from "@/components/AnalysisTab";
+import AdvancedAnalysisTab from "@/components/AdvancedAnalysisTab";
+import TransportTab from "@/components/TransportTab";
+import WorkersTab from "@/components/WorkersTab";
+import ReportsTab from "@/components/ReportsTab";
+import SettingsTab from "@/components/SettingsTab";
+import SustainabilitySection from "@/components/SustainabilitySection";
+import AdvancedFinancialModels from "@/components/AdvancedFinancialModels";
 
 interface MainTabsProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   isPremium: boolean;
-  setIsPremium: (value: boolean) => void;
+  setIsPremium: (premium: boolean) => void;
   formData: any;
-  updateFormData: (updates: any) => void;
+  updateFormData: (data: any) => void;
   results: any;
 }
 
@@ -46,156 +44,141 @@ const MainTabs: React.FC<MainTabsProps> = ({
   setIsPremium,
   formData,
   updateFormData,
-  results
+  results,
 }) => {
   const { language } = useLanguage();
 
+  const tabs = [
+    {
+      id: "basics",
+      label: language === "el" ? "Βασικά Στοιχεία" : "Basic Info",
+      icon: Calculator,
+      component: BasicInfoTab,
+      premium: false,
+    },
+    {
+      id: "costs",
+      label: language === "el" ? "Κόστη" : "Costs",
+      icon: TrendingUp,
+      component: CostsTab,
+      premium: false,
+    },
+    {
+      id: "transport",
+      label: language === "el" ? "Μεταφορά" : "Transport",
+      icon: Truck,
+      component: TransportTab,
+      premium: false,
+    },
+    {
+      id: "workers",
+      label: language === "el" ? "Εργάτες" : "Workers",
+      icon: Users,
+      component: WorkersTab,
+      premium: false,
+    },
+    {
+      id: "analysis",
+      label: language === "el" ? "Ανάλυση" : "Analysis",
+      icon: BarChart3,
+      component: AnalysisTab,
+      premium: false,
+    },
+    {
+      id: "advanced-analysis",
+      label: language === "el" ? "Προχωρημένη Ανάλυση" : "Advanced Analysis",
+      icon: Target,
+      component: AdvancedAnalysisTab,
+      premium: true,
+    },
+    {
+      id: "financial-models",
+      label: language === "el" ? "Χρηματοοικονομικά Μοντέλα" : "Financial Models",
+      icon: Award,
+      component: AdvancedFinancialModels,
+      premium: true,
+    },
+    {
+      id: "sustainability",
+      label: language === "el" ? "Βιωσιμότητα" : "Sustainability",
+      icon: Leaf,
+      component: SustainabilitySection,
+      premium: true,
+    },
+    {
+      id: "reports",
+      label: language === "el" ? "Αναφορές" : "Reports",
+      icon: FileText,
+      component: ReportsTab,
+      premium: false,
+    },
+    {
+      id: "settings",
+      label: language === "el" ? "Ρυθμίσεις" : "Settings",
+      icon: Settings,
+      component: SettingsTab,
+      premium: false,
+    },
+  ];
+
+  const availableTabs = tabs.filter(tab => !tab.premium || isPremium);
+
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-9 bg-gray-50 border-b">
-        <TabsTrigger value="basics" className="text-xs sm:text-sm flex items-center space-x-1">
-          <Fish className="w-3 h-3" />
-          <span>{language === 'el' ? 'Προϊόν' : 'Product'}</span>
-        </TabsTrigger>
-        {isPremium && (
-          <>
-            <TabsTrigger value="processing" className="text-xs sm:text-sm flex items-center space-x-1">
-              <Target className="w-3 h-3" />
-              <span>{language === 'el' ? 'Επεξεργασία' : 'Processing'}</span>
+      <TabsList className="grid w-full grid-cols-5 lg:grid-cols-10 h-auto p-1 bg-slate-100">
+        {availableTabs.map((tab) => {
+          const Icon = tab.icon;
+          return (
+            <TabsTrigger
+              key={tab.id}
+              value={tab.id}
+              className="flex flex-col items-center p-2 min-h-[60px] data-[state=active]:bg-white data-[state=active]:shadow-sm"
+            >
+              <div className="flex items-center space-x-1">
+                <Icon className="w-4 h-4" />
+                {tab.premium && (
+                  <Crown className="w-3 h-3 text-yellow-500" />
+                )}
+              </div>
+              <span className="text-xs mt-1 leading-none">{tab.label}</span>
             </TabsTrigger>
-            <TabsTrigger value="batches" className="text-xs sm:text-sm flex items-center space-x-1">
-              <Database className="w-3 h-3" />
-              <span>{language === 'el' ? 'Παρτίδες' : 'Batches'}</span>
-            </TabsTrigger>
-            <TabsTrigger value="dashboard" className="text-xs sm:text-sm flex items-center space-x-1">
-              <BarChart3 className="w-3 h-3" />
-              <span>{language === 'el' ? 'Dashboard' : 'Dashboard'}</span>
-            </TabsTrigger>
-          </>
-        )}
-        <TabsTrigger value="costs" className="text-xs sm:text-sm">
-          {language === 'el' ? 'Κόστη' : 'Costs'}
-        </TabsTrigger>
-        <TabsTrigger value="transport" className="text-xs sm:text-sm">
-          {language === 'el' ? 'Μεταφορά' : 'Transport'}
-        </TabsTrigger>
-        <TabsTrigger value="analysis" className="text-xs sm:text-sm">
-          {language === 'el' ? 'Ανάλυση' : 'Analysis'}
-        </TabsTrigger>
-        <TabsTrigger value="sustainability" className="text-xs sm:text-sm flex items-center space-x-1">
-          <Leaf className="w-3 h-3" />
-          <span>{language === 'el' ? 'Βιωσιμότητα' : 'Sustainability'}</span>
-        </TabsTrigger>
-        <TabsTrigger value="advanced" className="text-xs sm:text-sm flex items-center space-x-1">
-          <Crown className="w-3 h-3" />
-          <span>{language === 'el' ? 'Προχωρημένα' : 'Advanced'}</span>
-        </TabsTrigger>
-        <TabsTrigger value="tools" className="text-xs sm:text-sm flex items-center space-x-1">
-          <Sparkles className="w-3 h-3" />
-          <span>{language === 'el' ? 'Εργαλεία' : 'Tools'}</span>
-        </TabsTrigger>
+          );
+        })}
       </TabsList>
 
-      <div className="p-6">
-        <TabsContent value="basics" className="mt-0">
-          <ProductBasics 
-            formData={formData} 
-            updateFormData={updateFormData}
-          />
-        </TabsContent>
-
-        {isPremium && (
-          <>
-            <TabsContent value="processing" className="mt-0">
-              <ProcessingPhases 
-                formData={formData} 
-                updateFormData={updateFormData}
-              />
-            </TabsContent>
-
-            <TabsContent value="batches" className="mt-0" data-tour="batch">
-              <BatchManagement />
-            </TabsContent>
-
-            <TabsContent value="dashboard" className="mt-0">
-              <Dashboard />
-            </TabsContent>
-          </>
-        )}
-
-        <TabsContent value="costs" className="mt-0">
-          <CostsTab formData={formData} updateFormData={updateFormData} />
-        </TabsContent>
-
-        <TabsContent value="transport" className="mt-0">
-          <TransportTab formData={formData} updateFormData={updateFormData} />
-        </TabsContent>
-
-        <TabsContent value="analysis" className="mt-0">
-          <AnalysisTab formData={formData} updateFormData={updateFormData} />
-        </TabsContent>
-
-        <TabsContent value="sustainability" className="mt-0">
-          <SustainabilitySection formData={formData} results={results} />
-        </TabsContent>
-
-        <TabsContent value="advanced" className="mt-0">
-          <div className="space-y-6">
-            {!isPremium ? (
-              <div className="text-center p-8 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
-                <Crown className="w-16 h-16 mx-auto text-purple-400 mb-4" />
-                <h3 className="text-xl font-bold text-purple-800 mb-2">
-                  {language === 'el' ? 'Αναβάθμιση σε Premium' : 'Upgrade to Premium'}
+      {tabs.map((tab) => {
+        const Component = tab.component;
+        return (
+          <TabsContent key={tab.id} value={tab.id} className="mt-6">
+            {tab.premium && !isPremium ? (
+              <div className="text-center py-12 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border-2 border-dashed border-purple-200">
+                <Crown className="w-16 h-16 text-purple-400 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-purple-800 mb-2">
+                  {language === "el" ? "Premium Χαρακτηριστικό" : "Premium Feature"}
                 </h3>
                 <p className="text-purple-600 mb-4">
-                  {language === 'el' 
-                    ? 'Ξεκλειδώστε προχωρημένες λειτουργίες κοστολόγησης'
-                    : 'Unlock advanced costing features'
-                  }
+                  {language === "el"
+                    ? "Αυτή η λειτουργία απαιτεί Premium συνδρομή."
+                    : "This feature requires Premium subscription."}
                 </p>
-                <Button 
+                <Badge
+                  className="bg-purple-600 hover:bg-purple-700 cursor-pointer"
                   onClick={() => setIsPremium(true)}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                 >
-                  <Crown className="w-4 h-4 mr-2" />
-                  {language === 'el' ? 'Ενεργοποίηση Premium' : 'Enable Premium'}
-                </Button>
+                  {language === "el" ? "Ενεργοποίηση Premium" : "Activate Premium"}
+                </Badge>
               </div>
             ) : (
-              <>
-                <div className="flex items-center justify-center mb-6">
-                  <Badge variant="secondary" className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 text-lg">
-                    <Crown className="w-5 h-5 mr-2" />
-                    {language === 'el' ? 'Προχωρημένες Δυνατότητες' : 'Advanced Features'}
-                  </Badge>
-                </div>
-                
-                <AdvancedAnalysisTab 
-                  formData={formData} 
-                  updateFormData={updateFormData} 
-                  results={results} 
-                />
-                
-                <ScenarioAnalysis formData={formData} />
-                
-                <RevenueForecasting formData={formData} results={results} />
-
-                {results && (
-                  <AdvancedFinancialModels />
-                )}
-              </>
+              <Component
+                formData={formData}
+                updateFormData={updateFormData}
+                results={results}
+                isPremium={isPremium}
+              />
             )}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="tools" className="mt-0">
-          <div className="space-y-6">
-            <StatisticalModels formData={formData} results={results} />
-            <FinancialGlossary />
-            <SeafoodProcessingFeatures />
-          </div>
-        </TabsContent>
-      </div>
+          </TabsContent>
+        );
+      })}
     </Tabs>
   );
 };

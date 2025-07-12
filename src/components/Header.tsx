@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -26,7 +27,6 @@ interface HeaderProps {
   setShowFileUpload: (value: boolean) => void;
   showExamples?: boolean;
   setShowExamples?: (value: boolean) => void;
-  onShowGuide?: () => void;
   onShowGuide?: () => void;
   onOpenCommandPalette?: () => void;
   activeTab?: string;
@@ -71,7 +71,7 @@ const Header: React.FC<HeaderProps> = ({
   const premiumFeatures = [
     language === "el" ? "Φάσεις Επεξεργασίας" : "Processing Phases",
     language === "el" ? "Διαχείριση Παρτίδων" : "Batch Management",
-    language === "el" ? "Προχωρημένη Ανά��υση" : "Advanced Analysis",
+    language === "el" ? "Προχωρημένη Ανάλυση" : "Advanced Analysis",
     language === "el" ? "Εποχιακοί Συντελεστές" : "Seasonal Factors",
     language === "el" ? "AI Προβλέψεις" : "AI Predictions",
   ];

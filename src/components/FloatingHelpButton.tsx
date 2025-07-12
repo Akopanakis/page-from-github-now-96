@@ -30,7 +30,6 @@ const FloatingHelpButton: React.FC<FloatingHelpButtonProps> = ({
       label: language === "el" ? "Συχνές Ερωτήσεις" : "FAQ",
       description: language === "el" ? "Απαντήσεις σε κοινές ερωτήσεις" : "Answers to common questions",
       onClick: () => {
-        // Create FAQ modal content
         const faqContent = language === "el" ? `
 🔷 ΣΥΧΝΕΣ ΕΡΩΤΗΣΕΙΣ - KostoPro
 

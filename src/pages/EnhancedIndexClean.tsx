@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,8 +23,10 @@ import PDFExport from "@/components/PDFExport";
 import DataExport from "@/components/DataExport";
 import CompanySettings from "@/components/CompanySettings";
 import ExampleData from "@/components/ExampleData";
+import ExamplesSelector from "@/components/ExamplesSelector";
 import UserGuide from "@/components/UserGuide";
 import FloatingHelpButton from "@/components/FloatingHelpButton";
+import SustainabilitySection from "@/components/SustainabilitySection";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import QuickActions from "@/components/QuickActions";
 import QuickAccessCard from "@/components/QuickAccessCard";
@@ -246,6 +249,7 @@ const EnhancedIndexClean = () => {
   const [isPremium, setIsPremium] = useState(false);
   const [showCommandPalette, setShowCommandPalette] = useState(false);
   const [showExampleData, setShowExampleData] = useState(false);
+  const [showExamplesSelector, setShowExamplesSelector] = useState(false);
   const [showUserGuide, setShowUserGuide] = useState(false);
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo>(() => {
     return safeGetJSON("companyInfo", { logoUrl: "", name: "", address: "" });
@@ -314,8 +318,12 @@ const EnhancedIndexClean = () => {
     safeSetJSON("companyInfo", info);
   };
 
-  const loadExampleData = () => {
+  const loadExampleData = (data?: any) => {
+    if (data) {
+      updateFormData(data);
+    }
     setShowExampleData(false);
+    setShowExamplesSelector(false);
   };
 
   const handleFileUpload = (data: any) => {
@@ -325,6 +333,13 @@ const EnhancedIndexClean = () => {
   // Render main content based on active tab
   const renderMainContent = () => {
     switch (activeTab) {
+      case "sustainability":
+        return (
+          <SustainabilitySection 
+            formData={formData}
+            results={results}
+          />
+        );
       case "market-intelligence":
         return (
           <React.Suspense
@@ -390,6 +405,18 @@ const EnhancedIndexClean = () => {
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-gray-50">
+        {/* Header with Examples button */}
+        <Header
+          isPremium={isPremium}
+          setIsPremium={setIsPremium}
+          showFileUpload={showFileUpload}
+          setShowFileUpload={setShowFileUpload}
+          onShowGuide={() => setShowUserGuide(true)}
+          onOpenCommandPalette={() => setShowCommandPalette(true)}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+        />
+
         {/* Responsive Navigation */}
         <ResponsiveNavigation
           activeTab={activeTab}
@@ -408,16 +435,26 @@ const EnhancedIndexClean = () => {
               />
             </div>
 
-            {/* Quick Actions */}
-            <QuickActions
-              onCalculate={calculate}
-              onReset={resetForm}
-              onLoadExample={loadExampleData}
-              isCalculating={isCalculating}
-              hasResults={!!rawResults}
-              isPremium={isPremium}
-              className="mb-6"
-            />
+            {/* Quick Actions with Examples */}
+            <div className="mb-6 flex flex-wrap gap-4 items-center">
+              <QuickActions
+                onCalculate={calculate}
+                onReset={resetForm}
+                onLoadExample={() => setShowExamplesSelector(true)}
+                isCalculating={isCalculating}
+                hasResults={!!rawResults}
+                isPremium={isPremium}
+                className="flex-1"
+              />
+              <Button
+                onClick={() => setShowExamplesSelector(true)}
+                variant="outline"
+                className="flex items-center space-x-2 border-green-200 text-green-600 hover:bg-green-50"
+              >
+                <PlayCircle className="w-4 h-4" />
+                <span>Παραδείγματα</span>
+              </Button>
+            </div>
 
             {/* File Upload Section */}
             {showFileUpload && (
@@ -449,7 +486,7 @@ const EnhancedIndexClean = () => {
               <div className="space-y-6">
                 {/* Results Panel */}
                 <CompactResultsPanel
-                  results={rawResults || results}
+                  results={results}
                   formData={formData}
                 />
 
@@ -483,6 +520,12 @@ const EnhancedIndexClean = () => {
           isVisible={showExampleData}
           onLoadExample={loadExampleData}
           onClose={() => setShowExampleData(false)}
+        />
+
+        <ExamplesSelector
+          isOpen={showExamplesSelector}
+          onLoadExample={loadExampleData}
+          onClose={() => setShowExamplesSelector(false)}
         />
 
         <UserGuide
