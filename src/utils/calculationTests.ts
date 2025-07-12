@@ -1,3 +1,4 @@
+
 import { FormData, CalculationResults } from './calc';
 
 // Mock calculation function for testing
@@ -34,7 +35,6 @@ const mockCalculateResults = (data: Partial<FormData>): CalculationResults => {
     totalDirectCosts: purchaseCost,
     totalIndirectCosts: 0,
     totalTransportCosts: 0,
-    totalPackagingCosts: 0,
     totalProcessingCosts: 0,
     totalOverheadCosts: 0,
     finalPrice: sellingPrice / netWeight,

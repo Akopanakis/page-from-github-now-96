@@ -1,3 +1,4 @@
+
 import { CalculationResults } from "../utils/calc";
 import type { FormData } from "../utils/calc";
 
@@ -36,7 +37,6 @@ const calculateResults = (inputData: Partial<FormData>): CalculationResults => {
     totalDirectCosts: purchaseCost,
     totalIndirectCosts: 0,
     totalTransportCosts: 0,
-    totalPackagingCosts: 0,
     totalProcessingCosts: 0,
     totalOverheadCosts: 0,
     finalPrice: sellingPrice / netWeight,
