@@ -10,7 +10,6 @@ import { format } from "date-fns"
 import { Input } from "@/components/ui/input"
 import { addDays } from 'date-fns';
 import { DateRange } from "react-day-picker"
-import { PageLayout } from '@/components/layouts/PageLayout';
 
 interface AnalyticsRecord {
   id: string;
@@ -31,7 +30,7 @@ interface AnalyticsRecord {
 }
 
 const FinancialAnalytics: React.FC = () => {
-  const [date, setDate] = useState<DateRange>({
+  const [date, setDate] = useState<DateRange | undefined>({
     from: addDays(new Date(), -7),
     to: new Date(),
   })
@@ -158,7 +157,9 @@ const FinancialAnalytics: React.FC = () => {
   }));
 
   return (
-    <PageLayout title="Financial Analytics">
+    <div className="container mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-8">Financial Analytics</h1>
+      
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         {performanceIndicators.map((metric) => (
           <Card key={metric.id}>
@@ -256,7 +257,7 @@ const FinancialAnalytics: React.FC = () => {
           </PopoverContent>
         </Popover>
       </div>
-    </PageLayout>
+    </div>
   );
 };
 

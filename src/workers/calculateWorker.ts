@@ -1,5 +1,4 @@
 
-
 import { CalculationResults } from "../utils/calc";
 import type { FormData } from "../utils/calc";
 
@@ -45,17 +44,26 @@ const calculateResults = (inputData: Partial<FormData>): CalculationResults => {
     finalPrice: sellingPrice / netWeight,
     grossProfit: sellingPrice - totalCost,
     costPerKg: totalCost / netWeight,
+    costPerUnit: totalCost / quantity,
+    netPrice: sellingPrice / netWeight,
+    netProfit: sellingPrice - totalCost,
+    breakEvenPrice: totalCost / netWeight,
+    recommendedSellingPrice: sellingPrice / netWeight,
+    competitivePosition: 'competitive',
+    efficiencyScore: 100 - waste,
+    
     breakdown: {
-      purchase: purchaseCost,
+      materials: purchaseCost,
+      labor: 0,
       processing: 0,
       transport: 0,
-      other: 0
+      overhead: 0,
+      packaging: 0
     },
     
     costBreakdown: [
-      { category: 'Purchase', value: purchaseCost, percentage: 100 }
+      { category: 'Purchase', amount: purchaseCost, percentage: 100 }
     ],
-    recommendedSellingPrice: sellingPrice / netWeight,
     competitorAnalysis: {
       ourPrice: sellingPrice / netWeight,
       competitor1Diff: 0,
@@ -79,4 +87,3 @@ self.onmessage = function (e: MessageEvent<Partial<FormData>>) {
     self.postMessage(null);
   }
 };
-
