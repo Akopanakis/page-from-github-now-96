@@ -106,7 +106,7 @@ const DataExport: React.FC<DataExportProps> = ({ formData, results }) => {
         "%",
       ]);
       csvData.push([
-        language === "el" ? "Αποτελέσμα��α" : "Results",
+        language === "el" ? "Αποτελέσματα" : "Results",
         language === "el" ? "Καθαρό Κέρδος" : "Net Profit",
         results.grossProfit || 0,
         "€",
