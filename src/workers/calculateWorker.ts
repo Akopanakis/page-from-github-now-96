@@ -1,4 +1,5 @@
 
+
 import { CalculationResults } from "../utils/calc";
 import type { FormData } from "../utils/calc";
 
@@ -16,12 +17,14 @@ const calculateResults = (inputData: Partial<FormData>): CalculationResults => {
   const profitPerKg = netWeight > 0 ? (sellingPrice - totalCost) / netWeight : 0;
   
   return {
+    // Core financial metrics
     totalCost,
     totalCostWithVat: totalCost * 1.24,
     sellingPrice: sellingPrice / netWeight,
     profitPerKg,
     profitMargin,
     netWeight,
+    rawWeight: quantity,
     purchaseCost,
     laborCost: 0,
     packagingCost: 0,
@@ -30,7 +33,28 @@ const calculateResults = (inputData: Partial<FormData>): CalculationResults => {
     vatAmount: totalCost * 0.24,
     finalProcessedWeight: netWeight,
     totalWastePercentage: waste,
-    costBreakdown: [],
+    
+    // Additional required properties
+    totalDirectCosts: purchaseCost,
+    totalIndirectCosts: 0,
+    totalTransportCosts: 0,
+    totalLaborCosts: 0,
+    totalPackagingCosts: 0,
+    totalProcessingCosts: 0,
+    totalOverheadCosts: 0,
+    finalPrice: sellingPrice / netWeight,
+    grossProfit: sellingPrice - totalCost,
+    costPerKg: totalCost / netWeight,
+    breakdown: {
+      purchase: purchaseCost,
+      processing: 0,
+      transport: 0,
+      other: 0
+    },
+    
+    costBreakdown: [
+      { category: 'Purchase', value: purchaseCost, percentage: 100 }
+    ],
     recommendedSellingPrice: sellingPrice / netWeight,
     competitorAnalysis: {
       ourPrice: sellingPrice / netWeight,
@@ -55,3 +79,4 @@ self.onmessage = function (e: MessageEvent<Partial<FormData>>) {
     self.postMessage(null);
   }
 };
+

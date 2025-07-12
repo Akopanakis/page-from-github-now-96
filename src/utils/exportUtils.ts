@@ -1,3 +1,4 @@
+
 import * as XLSX from 'xlsx';
 import { CalculationResults, FormData } from './calc';
 
@@ -65,3 +66,68 @@ export const downloadBlob = (blob: Blob, filename: string) => {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 };
+
+// Export functions used by expenses
+export interface ExportData {
+  [key: string]: any;
+}
+
+export const exportToCSV = (
+  data: ExportData | ExportData[],
+  filename: string = 'export'
+) => {
+  const rows = Array.isArray(data) ? data : [data];
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const csv = XLSX.utils.sheet_to_csv(ws);
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  downloadBlob(blob, `${filename}.csv`);
+};
+
+export const exportToXLSX = (
+  data: ExportData | ExportData[],
+  filename: string = 'export'
+) => {
+  const rows = Array.isArray(data) ? data : [data];
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+  XLSX.writeFile(wb, `${filename}.xlsx`);
+};
+
+export interface PDFSectionOptions {
+  charts?: boolean;
+  tables?: boolean;
+  comments?: boolean;
+}
+
+export interface PDFExportOptions {
+  sections: PDFSectionOptions;
+  theme?: 'light' | 'dark';
+  qrUrl?: string;
+}
+
+export const exportToPDF = async (
+  html: string,
+  filename: string = 'export',
+  options: PDFExportOptions
+) => {
+  try {
+    const { jsPDF } = await import('jspdf');
+    const doc = new jsPDF('p', 'pt', 'a4');
+    
+    const container = document.createElement('div');
+    container.innerHTML = html;
+    document.body.appendChild(container);
+    
+    await doc.html(container, {
+      html2canvas: { scale: 0.7 },
+    });
+    
+    document.body.removeChild(container);
+    doc.save(`${filename}.pdf`);
+  } catch (error) {
+    console.error('Error exporting PDF:', error);
+    throw error;
+  }
+};
+

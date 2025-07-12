@@ -1,4 +1,5 @@
 
+
 export const loadApexCharts = async () => {
   if (typeof window !== 'undefined') {
     try {
@@ -97,7 +98,7 @@ export const loadSortable = async () => {
   return null;
 };
 
-// Main library loader object with waitForLibrary method
+// Main library loader object with all required methods
 export const libraryLoader = {
   waitForLibrary: async (libraryName: string) => {
     switch (libraryName) {
@@ -119,5 +120,18 @@ export const libraryLoader = {
         console.warn(`Unknown library: ${libraryName}`);
         return null;
     }
+  },
+  
+  load: async (libraryName: string) => {
+    return await libraryLoader.waitForLibrary(libraryName);
+  },
+  
+  loadAllLibraries: async () => {
+    const libraries = ['chart', 'xlsx', 'flatpickr', 'html2canvas', 'sortable', 'jspdf', 'apexcharts'];
+    const results = await Promise.allSettled(
+      libraries.map(lib => libraryLoader.waitForLibrary(lib))
+    );
+    return results;
   }
 };
+

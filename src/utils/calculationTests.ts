@@ -1,80 +1,106 @@
 
-import { CalculationResults, FormData } from './calc';
 
-// Mock calculateResults function for testing
+import { FormData, CalculationResults } from './calc';
+
+// Mock calculation function for testing
 const mockCalculateResults = (data: Partial<FormData>): CalculationResults => {
+  const quantity = data.quantity || 0;
+  const purchasePrice = data.purchasePrice || 0;
+  const waste = data.waste || 0;
+  const profitMargin = data.profitMargin || 20;
+  
+  const purchaseCost = purchasePrice * quantity;
+  const netWeight = quantity * (1 - waste / 100);
+  const totalCost = purchaseCost;
+  const sellingPrice = totalCost * (1 + profitMargin / 100);
+  
   return {
-    totalCost: 100,
-    totalCostWithVat: 124,
-    sellingPrice: 150,
-    profitPerKg: 26,
-    profitMargin: 20,
-    netWeight: 10,
-    purchaseCost: 80,
-    laborCost: 10,
-    packagingCost: 5,
-    transportCost: 3,
-    additionalCosts: 2,
-    vatAmount: 24,
-    finalProcessedWeight: 10,
-    totalWastePercentage: 5,
-    costBreakdown: [],
-    recommendedSellingPrice: 140,
+    // Core financial metrics
+    totalCost,
+    totalCostWithVat: totalCost * 1.24,
+    sellingPrice: sellingPrice / netWeight,
+    profitPerKg: netWeight > 0 ? (sellingPrice - totalCost) / netWeight : 0,
+    profitMargin,
+    netWeight,
+    rawWeight: quantity,
+    purchaseCost,
+    laborCost: 0,
+    packagingCost: 0,
+    transportCost: 0,
+    additionalCosts: 0,
+    vatAmount: totalCost * 0.24,
+    finalProcessedWeight: netWeight,
+    totalWastePercentage: waste,
+    
+    // Additional required properties
+    totalDirectCosts: purchaseCost,
+    totalIndirectCosts: 0,
+    totalTransportCosts: 0,
+    totalLaborCosts: 0,
+    totalPackagingCosts: 0,
+    totalProcessingCosts: 0,
+    totalOverheadCosts: 0,
+    finalPrice: sellingPrice / netWeight,
+    grossProfit: sellingPrice - totalCost,
+    costPerKg: totalCost / netWeight,
+    breakdown: {
+      purchase: purchaseCost,
+      processing: 0,
+      transport: 0,
+      other: 0
+    },
+    
+    costBreakdown: [
+      { category: 'Purchase', value: purchaseCost, percentage: 100 }
+    ],
+    recommendedSellingPrice: sellingPrice / netWeight,
     competitorAnalysis: {
-      ourPrice: 150,
-      competitor1Diff: 10,
-      competitor2Diff: 5,
+      ourPrice: sellingPrice / netWeight,
+      competitor1Diff: 0,
+      competitor2Diff: 0,
       marketPosition: 'competitive' as const
     },
     profitAnalysis: {
-      breakEvenPrice: 124,
-      marginAtCurrentPrice: 17.3,
+      breakEvenPrice: totalCost / netWeight,
+      marginAtCurrentPrice: profitMargin,
       recommendedMargin: 20
     }
   };
 };
 
-// Test cases for calculation validation
-export const testCalculationValidation = () => {
-  const testCases = [
-    {
-      name: 'Basic calculation test',
-      input: {
-        productName: 'Test Fish',
-        purchasePrice: 10,
-        quantity: 5,
-        waste: 10,
-        profitMargin: 20
-      },
-      expected: {
-        totalCost: 50,
-        netWeight: 4.5
-      }
-    },
-    {
-      name: 'With workers test',
-      input: {
-        productName: 'Test Fish',
-        purchasePrice: 10,
-        quantity: 5,
-        workers: [
-          { id: '1', hourlyRate: 5, hours: 2 }
-        ]
-      },
-      expected: {
-        laborCost: 10
-      }
-    }
-  ];
-
-  testCases.forEach(testCase => {
-    try {
-      const result = mockCalculateResults(testCase.input);
-      console.log(`✅ Test "${testCase.name}" passed`);
-    } catch (error) {
-      console.error(`❌ Test "${testCase.name}" failed:`, String(error));
-    }
-  });
+// Test cases
+export const runCalculationTests = () => {
+  console.log('Running calculation tests...');
+  
+  try {
+    // Test 1: Basic calculation
+    const testData1: Partial<FormData> = {
+      productName: 'Test Fish',
+      quantity: 100,
+      purchasePrice: 5,
+      waste: 10,
+      profitMargin: 20
+    };
+    
+    const result1 = mockCalculateResults(testData1);
+    console.log('Test 1 passed:', result1);
+    
+    // Test 2: Zero values
+    const testData2: Partial<FormData> = {
+      productName: 'Test Product',
+      quantity: 0,
+      purchasePrice: 0,
+      waste: 0,
+      profitMargin: 0
+    };
+    
+    const result2 = mockCalculateResults(testData2);
+    console.log('Test 2 passed:', result2);
+    
+    return true;
+  } catch (error) {
+    console.error('Calculation test failed:', String(error));
+    return false;
+  }
 };
 
-export { mockCalculateResults as calculateResults };

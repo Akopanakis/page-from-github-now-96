@@ -1,4 +1,5 @@
 
+
 import { FormData } from './calc'
 
 export interface ValidationResult {
@@ -86,15 +87,22 @@ export const validateFormData = (data: Partial<FormData>): ValidationResult => {
   // Processing phases validation - allow missing or invalid phases
   if (data.processingPhases && Array.isArray(data.processingPhases)) {
     data.processingPhases.forEach((p, idx) => {
-      if (
-        p != null &&
-        ((p.wastePercentage !== undefined && (typeof p.wastePercentage !== 'number' || Number.isNaN(p.wastePercentage))) ||
-         (p.addedWeight !== undefined && (typeof p.addedWeight !== 'number' || Number.isNaN(p.addedWeight))))
-      ) {
-        console.debug(`Processing phase ${idx} has invalid data, will use defaults`)
+      if (p != null) {
+        // Check if phase has waste or weight properties (different naming conventions)
+        const wasteValue = (p as any).wastePercentage || (p as any).waste || (p as any).lossPercentage;
+        const weightValue = (p as any).addedWeight || (p as any).weight || (p as any).additionalWeight;
+        
+        if (wasteValue !== undefined && (typeof wasteValue !== 'number' || Number.isNaN(wasteValue))) {
+          console.debug(`Processing phase ${idx} has invalid waste data, will use defaults`)
+        }
+        
+        if (weightValue !== undefined && (typeof weightValue !== 'number' || Number.isNaN(weightValue))) {
+          console.debug(`Processing phase ${idx} has invalid weight data, will use defaults`)
+        }
       }
     })
   }
 
   return { valid: errors.length === 0, errors }
 }
+
