@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -44,6 +43,7 @@ import {
   safeGetItem,
   safeSetItem,
 } from "@/utils/safeStorage";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Lazy load heavy components
 const MarketIntelligenceSystemEnhanced = React.lazy(
@@ -269,6 +269,7 @@ const EnhancedIndexClean = () => {
   const [transportLegs, setTransportLegs] = useState<TransportLeg[]>([]);
 
   const backToTopRef = useRef<HTMLButtonElement>(null);
+  const { language } = useLanguage();
 
   // Load saved premium status
   useEffect(() => {
@@ -452,7 +453,7 @@ const EnhancedIndexClean = () => {
                 className="flex items-center space-x-2 border-green-200 text-green-600 hover:bg-green-50"
               >
                 <PlayCircle className="w-4 h-4" />
-                <span>Παραδείγματα</span>
+                <span>{language === 'el' ? 'Παραδείγματα' : 'Examples'}</span>
               </Button>
             </div>
 
@@ -473,7 +474,7 @@ const EnhancedIndexClean = () => {
                       <div className="p-2 bg-white/20 rounded-lg mr-3">
                         <LayoutGrid className="w-6 h-6" />
                       </div>
-                      <span>KostoPro - Ολοκληρωμένο Σύστημα Κοστολόγησης</span>
+                      <span>{language === 'el' ? 'KostoPro - Ολοκληρωμένο Σύστημα Κοστολόγησης' : 'KostoPro - Integrated Costing System'}</span>
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-0">
