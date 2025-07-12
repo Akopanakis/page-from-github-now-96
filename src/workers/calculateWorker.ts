@@ -2,86 +2,56 @@
 import { CalculationResults } from "../utils/calc";
 import type { FormData } from "../utils/calc";
 
-// Simple calculation function for the worker
-const calculateResults = (inputData: Partial<FormData>): CalculationResults => {
-  const purchasePrice = Number(inputData.purchasePrice) || 0;
-  const quantity = Number(inputData.quantity) || 0;
-  const waste = Number(inputData.waste) || 0;
-  const profitMargin = Number(inputData.profitMargin) || 20;
+self.onmessage = function(e) {
+  const formData: FormData = e.data;
   
-  const purchaseCost = purchasePrice * quantity;
-  const netWeight = quantity * (1 - waste / 100);
-  const totalCost = purchaseCost;
-  const sellingPrice = totalCost * (1 + profitMargin / 100);
-  const profitPerKg = netWeight > 0 ? (sellingPrice - totalCost) / netWeight : 0;
-  
-  return {
-    // Core financial metrics
-    totalCost,
-    totalCostWithVat: totalCost * 1.24,
-    sellingPrice: sellingPrice / netWeight,
-    profitPerKg,
-    profitMargin,
-    netWeight,
-    rawWeight: quantity,
-    purchaseCost,
-    laborCost: 0,
-    packagingCost: 0,
-    transportCost: 0,
-    additionalCosts: 0,
-    vatAmount: totalCost * 0.24,
-    finalProcessedWeight: netWeight,
-    totalWastePercentage: waste,
-    
-    // Additional required properties
-    totalDirectCosts: purchaseCost,
-    totalIndirectCosts: 0,
-    totalTransportCosts: 0,
-    totalProcessingCosts: 0,
-    totalOverheadCosts: 0,
-    finalPrice: sellingPrice / netWeight,
-    grossProfit: sellingPrice - totalCost,
-    costPerKg: totalCost / netWeight,
-    costPerUnit: totalCost / quantity,
-    netPrice: sellingPrice / netWeight,
-    netProfit: sellingPrice - totalCost,
-    breakEvenPrice: totalCost / netWeight,
-    recommendedSellingPrice: sellingPrice / netWeight,
-    competitivePosition: 'competitive',
-    efficiencyScore: 100 - waste,
-    
-    breakdown: {
-      materials: purchaseCost,
-      labor: 0,
-      processing: 0,
-      transport: 0,
-      overhead: 0,
-      packaging: 0
-    },
-    
-    costBreakdown: [
-      { category: 'Purchase', amount: purchaseCost, percentage: 100 }
-    ],
-    competitorAnalysis: {
-      ourPrice: sellingPrice / netWeight,
-      competitor1Diff: 0,
-      competitor2Diff: 0,
-      marketPosition: 'competitive' as const
-    },
-    profitAnalysis: {
-      breakEvenPrice: totalCost / netWeight,
-      marginAtCurrentPrice: profitMargin,
-      recommendedMargin: 20
-    }
-  };
-};
-
-self.onmessage = function (e: MessageEvent<Partial<FormData>>) {
   try {
-    const result = calculateResults(e.data);
-    self.postMessage(result);
+    // Perform calculations
+    const purchaseCost = formData.purchasePrice * formData.quantity;
+    const transportCost = formData.transportCost || 0;
+    const laborCost = (formData.workerCount || 0) * (formData.laborHours || 0) * 4.5;
+    const additionalCosts = formData.additionalCosts || 0;
+    const packagingCost = (formData.boxCost || 0) + (formData.bagCost || 0);
+    
+    const totalCost = purchaseCost + transportCost + laborCost + additionalCosts + packagingCost;
+    const netWeight = formData.quantity * 0.9; // 90% yield
+    const rawWeight = formData.quantity;
+    const sellingPrice = totalCost * 1.2; // 20% markup
+    
+    const results: CalculationResults = {
+      purchaseCost,
+      transportCost,
+      laborCost,
+      additionalCosts,
+      packagingCost,
+      totalCost,
+      netWeight,
+      rawWeight,
+      sellingPrice,
+      profitMargin: 20,
+      grossProfit: sellingPrice - totalCost,
+      sellingPricePerKg: sellingPrice / netWeight,
+      costPerKg: totalCost / netWeight,
+      breakEvenPrice: totalCost / netWeight,
+      totalCostWithVat: totalCost * 1.24,
+      finalPrice: sellingPrice,
+      breakdown: {
+        purchase: purchaseCost,
+        transport: transportCost,
+        labor: laborCost,
+        packaging: packagingCost,
+        additional: additionalCosts,
+        other: 0
+      },
+      totalDirectCosts: purchaseCost,
+      totalIndirectCosts: 0,
+      totalTransportCosts: 0,
+      totalProcessingCosts: 0,
+      competitiveAnalysis: null
+    };
+    
+    self.postMessage(results);
   } catch (error) {
-    console.error("Worker calculation error:", error);
-    self.postMessage(null);
+    self.postMessage({ error: (error as Error).message });
   }
 };
