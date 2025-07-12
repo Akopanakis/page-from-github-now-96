@@ -1,4 +1,3 @@
-
 import { CalculationResults } from "../utils/calc";
 import type { FormData } from "../utils/calc";
 

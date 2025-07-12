@@ -1,4 +1,3 @@
-
 import { FormData, CalculationResults } from './calc';
 
 // Mock calculation function for testing
