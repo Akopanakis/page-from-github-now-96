@@ -37,7 +37,6 @@ const calculateResults = (inputData: Partial<FormData>): CalculationResults => {
     totalDirectCosts: purchaseCost,
     totalIndirectCosts: 0,
     totalTransportCosts: 0,
-    totalLaborCosts: 0,
     totalPackagingCosts: 0,
     totalProcessingCosts: 0,
     totalOverheadCosts: 0,
