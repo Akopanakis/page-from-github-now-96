@@ -29,7 +29,7 @@ const translations = {
     "product.name": "Όνομα Προϊόντος",
     "product.type": "Τύπος Προϊόντος",
     "product.weight": "Βάρος (kg)",
-    "product.quantity": "Ποσότητα",
+    "product.quantity": "Ποσό��ητα",
     "product.origin": "Προέλευση",
     "product.quality": "Ποιότητα",
     "product.notes": "Σημειώσεις",
@@ -349,14 +349,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Save language preference
   useEffect(() => {
-    localStorage.setItem("kostopro-language", language);
+    safeSetItem("kostopro-language", language);
     // Update document language attribute
     document.documentElement.lang = language;
   }, [language]);
 
   // Save currency preference
   useEffect(() => {
-    localStorage.setItem("kostopro-currency", currency);
+    safeSetItem("kostopro-currency", currency);
   }, [currency]);
 
   return (
