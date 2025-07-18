@@ -19,6 +19,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocation } from "wouter";
 import MegaMenu from "@/components/layout/MegaMenu";
+import { safeGetItem, safeSetItem } from "@/utils/safeStorage";
 
 interface HeaderProps {
   isPremium: boolean;
@@ -49,7 +50,7 @@ const Header: React.FC<HeaderProps> = ({
   const [isDarkMode, setIsDarkMode] = React.useState(false);
 
   React.useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
+    const savedTheme = safeGetItem("theme");
     if (savedTheme === "dark") {
       setIsDarkMode(true);
       document.body.classList.add("dark");
@@ -61,10 +62,10 @@ const Header: React.FC<HeaderProps> = ({
     setIsDarkMode(newTheme);
     if (newTheme) {
       document.body.classList.add("dark");
-      localStorage.setItem("theme", "dark");
+      safeSetItem("theme", "dark");
     } else {
       document.body.classList.remove("dark");
-      localStorage.setItem("theme", "light");
+      safeSetItem("theme", "light");
     }
   };
 

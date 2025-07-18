@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { safeGetItem, safeSetItem } from "../utils/safeStorage";
 
 interface LanguageContextType {
   language: "el" | "en";
@@ -28,7 +29,7 @@ const translations = {
     "product.name": "Όνομα Προϊόντος",
     "product.type": "Τύπος Προϊόντος",
     "product.weight": "Βάρος (kg)",
-    "product.quantity": "Ποσότητα",
+    "product.quantity": "Ποσό��ητα",
     "product.origin": "Προέλευση",
     "product.quality": "Ποιότητα",
     "product.notes": "Σημειώσεις",
@@ -329,12 +330,12 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [language, setLanguage] = useState<"el" | "en">(() => {
-    const saved = localStorage.getItem("kostopro-language");
+    const saved = safeGetItem("kostopro-language");
     return (saved as "el" | "en") || "el";
   });
 
   const [currency, setCurrency] = useState<"EUR" | "USD">(() => {
-    const saved = localStorage.getItem("kostopro-currency");
+    const saved = safeGetItem("kostopro-currency");
     return (saved as "EUR" | "USD") || "EUR";
   });
 
@@ -348,14 +349,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Save language preference
   useEffect(() => {
-    localStorage.setItem("kostopro-language", language);
+    safeSetItem("kostopro-language", language);
     // Update document language attribute
     document.documentElement.lang = language;
   }, [language]);
 
   // Save currency preference
   useEffect(() => {
-    localStorage.setItem("kostopro-currency", currency);
+    safeSetItem("kostopro-currency", currency);
   }, [currency]);
 
   return (

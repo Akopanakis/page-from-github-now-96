@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { safeGetJSON, safeSetJSON } from "@/utils/safeStorage";
 import {
   LayoutDashboard,
   Calculator,
@@ -510,25 +511,20 @@ const EnhancedNavigationSystem: React.FC<EnhancedNavigationSystemProps> = ({
 
   // Load favorites and recent items from localStorage
   useEffect(() => {
-    const savedFavorites = localStorage.getItem("navigation-favorites");
-    const savedRecents = localStorage.getItem("navigation-recent");
+    const savedFavorites = safeGetJSON("navigation-favorites", []);
+    const savedRecents = safeGetJSON("navigation-recent", []);
 
-    if (savedFavorites) {
-      setFavoriteItems(JSON.parse(savedFavorites));
-    }
-
-    if (savedRecents) {
-      setRecentItems(JSON.parse(savedRecents));
-    }
+    setFavoriteItems(savedFavorites);
+    setRecentItems(savedRecents);
   }, []);
 
   // Save to localStorage when favorites change
   useEffect(() => {
-    localStorage.setItem("navigation-favorites", JSON.stringify(favoriteItems));
+    safeSetJSON("navigation-favorites", favoriteItems);
   }, [favoriteItems]);
 
   useEffect(() => {
-    localStorage.setItem("navigation-recent", JSON.stringify(recentItems));
+    safeSetJSON("navigation-recent", recentItems);
   }, [recentItems]);
 
   const toggleFavorite = (itemId: string) => {

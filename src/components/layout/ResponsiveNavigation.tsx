@@ -9,6 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { safeGetJSON, safeSetJSON } from "@/utils/safeStorage";
 import {
   Menu,
   Home,
@@ -214,21 +215,15 @@ const ResponsiveNavigation: React.FC<ResponsiveNavigationProps> = ({
         0,
         5,
       );
-      localStorage.setItem("recent-navigation", JSON.stringify(updated));
+      safeSetJSON("recent-navigation", updated);
       return updated;
     });
   };
 
   // Load recent items
   useEffect(() => {
-    const saved = localStorage.getItem("recent-navigation");
-    if (saved) {
-      try {
-        setRecentItems(JSON.parse(saved));
-      } catch (e) {
-        console.error("Failed to load recent navigation items:", e);
-      }
-    }
+    const saved = safeGetJSON("recent-navigation", []);
+    setRecentItems(saved);
   }, []);
 
   // Mobile Bottom Navigation
