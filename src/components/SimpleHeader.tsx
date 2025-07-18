@@ -6,6 +6,7 @@ import { Fish, Home, Receipt, BarChart3, Globe2, User } from "lucide-react";
 import { useLocation } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { safeGetItem, safeSetItem } from "@/utils/safeStorage";
 
 export default function SimpleHeader() {
   const { language, setLanguage, currency, setCurrency } = useLanguage();
@@ -14,7 +15,7 @@ export default function SimpleHeader() {
   const [isDarkMode, setIsDarkMode] = React.useState(false);
 
   React.useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
+    const savedTheme = safeGetItem("theme");
     if (savedTheme === "dark") {
       setIsDarkMode(true);
       document.documentElement.classList.add("dark");
@@ -26,10 +27,10 @@ export default function SimpleHeader() {
     setIsDarkMode(newTheme);
     if (newTheme) {
       document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
+      safeSetItem("theme", "dark");
     } else {
       document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
+      safeSetItem("theme", "light");
     }
   };
 
