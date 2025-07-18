@@ -1,5 +1,6 @@
 import { Expense, CreateExpenseData, UpdateExpenseData } from "@/types/expense";
 import { generateExpenseData } from "@/utils/stubData";
+import { safeGetJSON, safeSetJSON } from "@/utils/safeStorage";
 
 const STORAGE_KEY = "expenses";
 
@@ -16,7 +17,7 @@ const getCurrentTimestamp = (): string => {
 // Get expenses from localStorage with stub data fallback
 const getExpensesFromStorage = (): Expense[] => {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = safeGetJSON<Expense[] | null>(STORAGE_KEY, null);
     if (!stored) {
       // Initialize with stub data if no data exists
       const stubData = generateExpenseData(50);
@@ -32,10 +33,10 @@ const getExpensesFromStorage = (): Expense[] => {
         status: item.status,
         batch: item.batch,
       }));
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(expenseData));
+      safeSetJSON(STORAGE_KEY, expenseData);
       return expenseData;
     }
-    return JSON.parse(stored);
+    return stored;
   } catch (error) {
     console.error("Error reading expenses from localStorage:", error);
     return [];
@@ -45,7 +46,7 @@ const getExpensesFromStorage = (): Expense[] => {
 // Save expenses to localStorage
 const saveExpensesToStorage = (expenses: Expense[]): void => {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
+    safeSetJSON(STORAGE_KEY, expenses);
   } catch (error) {
     console.error("Error saving expenses to localStorage:", error);
     throw new Error("Failed to save expenses");
