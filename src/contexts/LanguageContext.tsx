@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { safeGetItem, safeSetItem } from "../utils/safeStorage";
 
 interface LanguageContextType {
   language: "el" | "en";
@@ -94,7 +95,7 @@ const translations = {
     // Financial Models
     "financial.ratios": "Χρηματοοικονομικοί Δείκτες",
     "financial.npv": "Καθαρή Παρούσα Αξία",
-    "financial.irr": "Εσωτερικός Συντελεστής Απόδοσης",
+    "financial.irr": "Εσωτερικός Συντελεστής Απόδ��σης",
     "financial.payback": "Περίοδος Αποπληρωμής",
     "financial.profitability": "Δείκτης Κερδοφορίας",
 
