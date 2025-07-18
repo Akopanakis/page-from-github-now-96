@@ -95,7 +95,7 @@ const translations = {
     // Financial Models
     "financial.ratios": "Χρηματοοικονομικοί Δείκτες",
     "financial.npv": "Καθαρή Παρούσα Αξία",
-    "financial.irr": "Εσωτερικός Συντελεστής Απόδ��σης",
+    "financial.irr": "Εσωτερικός Συντελεστής Απόδοσης",
     "financial.payback": "Περίοδος Αποπληρωμής",
     "financial.profitability": "Δείκτης Κερδοφορίας",
 
@@ -330,12 +330,12 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [language, setLanguage] = useState<"el" | "en">(() => {
-    const saved = localStorage.getItem("kostopro-language");
+    const saved = safeGetItem("kostopro-language");
     return (saved as "el" | "en") || "el";
   });
 
   const [currency, setCurrency] = useState<"EUR" | "USD">(() => {
-    const saved = localStorage.getItem("kostopro-currency");
+    const saved = safeGetItem("kostopro-currency");
     return (saved as "EUR" | "USD") || "EUR";
   });
 
