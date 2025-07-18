@@ -6,6 +6,12 @@ import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
+  safeGetItem,
+  safeSetItem,
+  safeGetJSON,
+  safeSetJSON,
+} from "@/utils/safeStorage";
+import {
   Fish,
   Calculator,
   BarChart3,
@@ -64,36 +70,28 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const { language, t } = useLanguage();
   const [isCollapsed, setIsCollapsed] = useState(() => {
-    const saved = localStorage.getItem("kostopro-sidebar-collapsed");
+    const saved = safeGetItem("kostopro-sidebar-collapsed");
     return saved === "true";
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [favorites, setFavorites] = useState<string[]>(() => {
-    const saved = localStorage.getItem("kostopro-sidebar-favorites");
-    return saved ? JSON.parse(saved) : [];
+    return safeGetJSON("kostopro-sidebar-favorites", []);
   });
   const [collapsedSections, setCollapsedSections] = useState<string[]>(() => {
-    const saved = localStorage.getItem("kostopro-sidebar-collapsed-sections");
-    return saved ? JSON.parse(saved) : [];
+    return safeGetJSON("kostopro-sidebar-collapsed-sections", []);
   });
 
   // Save states
   useEffect(() => {
-    localStorage.setItem("kostopro-sidebar-collapsed", isCollapsed.toString());
+    safeSetItem("kostopro-sidebar-collapsed", isCollapsed.toString());
   }, [isCollapsed]);
 
   useEffect(() => {
-    localStorage.setItem(
-      "kostopro-sidebar-favorites",
-      JSON.stringify(favorites),
-    );
+    safeSetJSON("kostopro-sidebar-favorites", favorites);
   }, [favorites]);
 
   useEffect(() => {
-    localStorage.setItem(
-      "kostopro-sidebar-collapsed-sections",
-      JSON.stringify(collapsedSections),
-    );
+    safeSetJSON("kostopro-sidebar-collapsed-sections", collapsedSections);
   }, [collapsedSections]);
 
   const navigationItems = [
