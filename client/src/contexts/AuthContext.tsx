@@ -1,5 +1,11 @@
-
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { safeGetJSON, safeSetJSON, safeRemoveItem } from "../utils/safeStorage";
 
 interface User {
   id: string;
@@ -22,7 +28,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
@@ -37,9 +43,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     // Check for existing session on mount
-    const storedUser = localStorage.getItem('kostopro_user');
+    const storedUser = safeGetJSON<User | null>("kostopro_user", null);
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      setUser(storedUser);
     }
     setIsLoading(false);
   }, []);
@@ -48,18 +54,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     try {
       // Mock authentication - in real app this would call your auth service
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       const mockUser: User = {
-        id: '1',
+        id: "1",
         email,
-        isPremium: false
+        isPremium: false,
       };
-      
+
       setUser(mockUser);
-      localStorage.setItem('kostopro_user', JSON.stringify(mockUser));
+      safeSetJSON("kostopro_user", mockUser);
     } catch (error) {
-      throw new Error('Invalid credentials');
+      throw new Error("Invalid credentials");
     } finally {
       setIsLoading(false);
     }
@@ -69,18 +75,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     try {
       // Mock signup - in real app this would call your auth service
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       const mockUser: User = {
         id: Date.now().toString(),
         email,
-        isPremium: false
+        isPremium: false,
       };
-      
+
       setUser(mockUser);
-      localStorage.setItem('kostopro_user', JSON.stringify(mockUser));
+      safeSetJSON("kostopro_user", mockUser);
     } catch (error) {
-      throw new Error('Signup failed');
+      throw new Error("Signup failed");
     } finally {
       setIsLoading(false);
     }
@@ -88,27 +94,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('kostopro_user');
+    safeRemoveItem("kostopro_user");
   };
 
   const upgradeToPremium = async (): Promise<void> => {
-    if (!user) throw new Error('No user logged in');
-    
+    if (!user) throw new Error("No user logged in");
+
     setIsLoading(true);
     try {
       // Mock premium upgrade - in real app this would call your payment service
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       const updatedUser: User = {
         ...user,
         isPremium: true,
-        subscriptionDate: new Date().toISOString()
+        subscriptionDate: new Date().toISOString(),
       };
-      
+
       setUser(updatedUser);
-      localStorage.setItem('kostopro_user', JSON.stringify(updatedUser));
+      safeSetJSON("kostopro_user", updatedUser);
     } catch (error) {
-      throw new Error('Premium upgrade failed');
+      throw new Error("Premium upgrade failed");
     } finally {
       setIsLoading(false);
     }
@@ -120,12 +126,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     logout,
     signup,
     upgradeToPremium,
-    isLoading
+    isLoading,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
