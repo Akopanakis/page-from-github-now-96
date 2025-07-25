@@ -233,6 +233,20 @@ export function calculateCosts(formData: FormData): CalculationResults {
   // Material costs
   const materialCosts = purchasePrice * rawWeight;
 
+  // Packaging costs calculation
+  const bagWeight = parseFloat(String(formData.bagWeight)) || 5;
+  const bagsPerKgGelatin = parseFloat(String(formData.bagsPerKgGelatin)) || 35;
+  const gelatinCostPerKg = parseFloat(String(formData.gelatinCostPerKg)) || 3.15;
+  const boxCostPerUnit = parseFloat(String(formData.boxCostPerUnit)) || 0.59;
+  const bagsPerBox = parseFloat(String(formData.bagsPerBox)) || 2;
+
+  const totalBags = Math.ceil(netWeight / bagWeight);
+  const gelatinNeeded = totalBags / bagsPerKgGelatin;
+  const gelatinCost = gelatinNeeded * gelatinCostPerKg;
+  const totalBoxes = Math.ceil(totalBags / bagsPerBox);
+  const boxCost = totalBoxes * boxCostPerUnit;
+  const packagingCosts = gelatinCost + boxCost;
+
   // Total costs
   const totalCost = materialCosts + totalDirectCosts + totalIndirectCosts + totalTransportCosts + totalProcessingCosts;
 
@@ -393,7 +407,7 @@ export function validateFormData(formData: FormData): string[] {
   const errors: string[] = [];
 
   if (!formData.productName || formData.productName.trim() === "") {
-    errors.push("Το όνομα προϊόντος είναι υποχρεωτικό");
+    errors.push("Το όνομα προϊόντος εί��αι υποχρεωτικό");
   }
 
   if (!formData.weight || formData.weight <= 0) {
@@ -405,7 +419,7 @@ export function validateFormData(formData: FormData): string[] {
   }
 
   if (formData.vatRate < 0 || formData.vatRate > 30) {
-    errors.push("Ο συντελεστής ΦΠΑ πρέπει να είναι μετ��ξύ 0% και 30%");
+    errors.push("Ο συντελεστής ΦΠΑ πρέπει να είναι μεταξύ 0% και 30%");
   }
 
   const totalLoss =
