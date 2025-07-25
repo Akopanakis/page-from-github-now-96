@@ -33,10 +33,11 @@ interface ComprehensiveBatchFormProps {
   onCalculate?: () => void;
 }
 
-const ComprehensiveBatchForm: React.FC<ComprehensiveBatchFormProps> = ({ 
-  formData, 
-  updateFormData, 
-  isPremium 
+const ComprehensiveBatchForm: React.FC<ComprehensiveBatchFormProps> = ({
+  formData,
+  updateFormData,
+  isPremium,
+  onCalculate
 }) => {
   const { language } = useLanguage();
   const [expandedSections, setExpandedSections] = useState({
@@ -193,7 +194,7 @@ const ComprehensiveBatchForm: React.FC<ComprehensiveBatchFormProps> = ({
             {formData.weight && formData.purchasePrice && (
               <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <div className="flex justify-between items-center">
-                  <span className="font-medium">Συνολικό Κόστο�� Αγοράς:</span>
+                  <span className="font-medium">Συνολικό Κόστος Αγοράς:</span>
                   <div className="text-right">
                     <div className="text-lg font-bold text-blue-700">
                       €{rawMaterialCost.toFixed(2)}
@@ -399,7 +400,7 @@ const ComprehensiveBatchForm: React.FC<ComprehensiveBatchFormProps> = ({
                 className="text-orange-600 border-orange-600 hover:bg-orange-50"
               >
                 <Layers className="w-4 h-4 mr-2" />
-                Χρησιμοποιήστε Φάσεις Επεξεργασίας για λεπτομερή ανάλυση
+                Χρησιμοποιήστε Φάσεις Επεξεργασίας για λεπτομε��ή ανάλυση
               </Button>
             </div>
           </CardContent>
