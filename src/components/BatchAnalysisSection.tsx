@@ -73,8 +73,9 @@ const BatchAnalysisSection: React.FC<BatchAnalysisSectionProps> = ({
   const calculateBatchData = () => {
     const rawWeight = formData.weight || 900; // Default example value
     const workers = formData.workers || [{ id: "1", hourlyRate: 5, hours: 1 }];
-    const totalHours = workers.reduce((sum, worker) => sum + worker.hours, 0);
-    const totalLaborCost = workers.reduce((sum, worker) => sum + (worker.hourlyRate * worker.hours), 0) * rawWeight/100; // Scale for realistic cost
+    const totalHours = workers.reduce((sum, worker) => sum + (worker.hours || 0), 0);
+    const avgHourlyRate = workers.length > 0 ? workers.reduce((sum, worker) => sum + (worker.hourlyRate || 0), 0) / workers.length : 5;
+    const totalLaborCost = Math.max(avgHourlyRate * totalHours * (rawWeight/100), 310); // Ensure minimum realistic cost
     
     // Calculate final product weight (after cleaning & grilling)
     const yieldPercentage = 99; // From requirements
