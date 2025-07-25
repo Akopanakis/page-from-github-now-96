@@ -189,7 +189,13 @@ export function calculateCosts(formData: FormData): CalculationResults {
 
   // Weight calculations
   const rawWeight = weight * quantity;
-  const weightAfterLosses = rawWeight * (1 - totalLossPercentage / 100);
+
+  // Use final product weights if provided, otherwise calculate from losses
+  const finalCleanWeight = parseFloat(String(formData.finalCleanWeight)) || 0;
+  const finalGrillWeight = parseFloat(String(formData.finalGrillWeight)) || 0;
+  const totalFinalWeight = finalCleanWeight + finalGrillWeight;
+
+  const weightAfterLosses = totalFinalWeight > 0 ? totalFinalWeight : rawWeight * (1 - totalLossPercentage / 100);
   const netWeight = weightAfterLosses * (1 + glazingPercentage / 100);
 
   // Cost calculations
@@ -399,7 +405,7 @@ export function validateFormData(formData: FormData): string[] {
   }
 
   if (formData.vatRate < 0 || formData.vatRate > 30) {
-    errors.push("Ο συντελεστής ΦΠΑ πρέπει να είναι μεταξύ 0% και 30%");
+    errors.push("Ο συντελεστής ΦΠΑ πρέπει να είναι μετ��ξύ 0% και 30%");
   }
 
   const totalLoss =
