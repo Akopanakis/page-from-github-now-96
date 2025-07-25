@@ -50,9 +50,19 @@ const WorkersTab: React.FC<WorkersTabProps> = ({ formData, updateFormData }) => 
     updateFormData({ workers: updatedWorkers });
   };
 
-  const totalLaborCost = workers.reduce((total: number, worker: Worker) => 
+  const totalLaborCost = workers.reduce((total: number, worker: Worker) =>
     total + (worker.hourlyRate * worker.hours), 0
   );
+
+  // Calculate total cost from phase-specific workers
+  const phaseSpecificLaborCost = processingPhases.reduce((total: number, phase: any) => {
+    if (phase.workers && phase.workers.length > 0) {
+      return total + phase.workers.reduce((phaseTotal: number, worker: any) =>
+        phaseTotal + (worker.hourlyRate * worker.hours), 0
+      );
+    }
+    return total;
+  }, 0);
 
   return (
     <div className="space-y-6 p-6">
@@ -65,7 +75,7 @@ const WorkersTab: React.FC<WorkersTabProps> = ({ formData, updateFormData }) => 
             </div>
             <Button onClick={addWorker} size="sm">
               <Plus className="w-4 h-4 mr-2" />
-              {language === 'el' ? 'Προσθ��κη Εργάτη' : 'Add Worker'}
+              {language === 'el' ? 'Προσθήκη Εργάτη' : 'Add Worker'}
             </Button>
           </CardTitle>
         </CardHeader>
