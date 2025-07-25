@@ -56,7 +56,7 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({ formData, updateFormData, i
                   <SelectItem value="fish">{language === 'el' ? 'Ψάρι' : 'Fish'}</SelectItem>
                   <SelectItem value="shellfish">{language === 'el' ? 'Όστρακα' : 'Shellfish'}</SelectItem>
                   <SelectItem value="crustacean">{language === 'el' ? 'Καρκινοειδή' : 'Crustaceans'}</SelectItem>
-                  <SelectItem value="mollusks">{language === 'el' ? 'Μαλάκια' : 'Mollusks'}</SelectItem>
+                  <SelectItem value="mollusks">{language === 'el' ? '��αλάκια' : 'Mollusks'}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -128,6 +128,13 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({ formData, updateFormData, i
           </div>
         </CardContent>
       </Card>
+
+      {/* Processing Phases Section */}
+      <ProcessingPhases
+        formData={formData}
+        updateFormData={updateFormData}
+        isPremium={isPremium}
+      />
     </div>
   );
 };
