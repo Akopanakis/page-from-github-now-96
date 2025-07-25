@@ -1,12 +1,5 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { Fish, Package, MapPin } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
-import ProcessingPhases from '@/components/ProcessingPhases';
+import ComprehensiveBatchForm from '@/components/ComprehensiveBatchForm';
 
 interface BasicInfoTabProps {
   formData: any;
@@ -40,7 +33,7 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({ formData, updateFormData, i
                 id="productName"
                 value={formData.productName || ''}
                 onChange={(e) => handleChange('productName', e.target.value)}
-                placeholder={language === 'el' ? 'π.χ. Φρέσκο Τσιπούρα' : 'e.g. Fresh Sea Bream'}
+                placeholder={language === 'el' ? 'π.χ. ��ρέσκο Τσιπούρα' : 'e.g. Fresh Sea Bream'}
               />
             </div>
             
@@ -56,7 +49,7 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({ formData, updateFormData, i
                   <SelectItem value="fish">{language === 'el' ? 'Ψάρι' : 'Fish'}</SelectItem>
                   <SelectItem value="shellfish">{language === 'el' ? 'Όστρακα' : 'Shellfish'}</SelectItem>
                   <SelectItem value="crustacean">{language === 'el' ? 'Καρκινοειδή' : 'Crustaceans'}</SelectItem>
-                  <SelectItem value="mollusks">{language === 'el' ? '��αλάκια' : 'Mollusks'}</SelectItem>
+                  <SelectItem value="mollusks">{language === 'el' ? 'Μαλάκια' : 'Mollusks'}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
