@@ -54,23 +54,9 @@ const MainTabs: React.FC<MainTabsProps> = ({
   const tabs = [
     {
       id: "basics",
-      label: language === "el" ? "Βασικά Στοιχεία" : "Basic Info",
+      label: language === "el" ? "Στοιχεία Παρτίδας" : "Batch Info",
       icon: Calculator,
       component: BasicInfoTab,
-      premium: false,
-    },
-    {
-      id: "costs",
-      label: language === "el" ? "Κόστη" : "Costs",
-      icon: TrendingUp,
-      component: CostsTab,
-      premium: false,
-    },
-    {
-      id: "transport",
-      label: language === "el" ? "Μεταφορά" : "Transport",
-      icon: Truck,
-      component: TransportTab,
       premium: false,
     },
     {
@@ -81,17 +67,17 @@ const MainTabs: React.FC<MainTabsProps> = ({
       premium: false,
     },
     {
-      id: "analysis",
-      label: language === "el" ? "Ανάλυση" : "Analysis",
-      icon: BarChart3,
-      component: AnalysisTab,
+      id: "batch-analysis",
+      label: language === "el" ? "Ανάλυση & Benchmark" : "Analysis & Benchmark",
+      icon: BarChart2,
+      component: BatchAnalysisSection,
       premium: false,
     },
     {
-      id: "batch-analysis",
-      label: language === "el" ? "Ανάλυση Παρτίδας" : "Batch Analysis",
-      icon: BarChart2,
-      component: BatchAnalysisSection,
+      id: "reports",
+      label: language === "el" ? "Αναφορές" : "Reports",
+      icon: FileText,
+      component: ReportsTab,
       premium: false,
     },
     {
@@ -100,27 +86,6 @@ const MainTabs: React.FC<MainTabsProps> = ({
       icon: Target,
       component: AdvancedAnalysisTab,
       premium: true,
-    },
-    {
-      id: "financial-models",
-      label: language === "el" ? "Χρηματοοικονομικά Μοντέλα" : "Financial Models",
-      icon: Award,
-      component: AdvancedFinancialModels,
-      premium: true,
-    },
-    {
-      id: "sustainability",
-      label: language === "el" ? "Βιωσιμότητα" : "Sustainability",
-      icon: Leaf,
-      component: SustainabilitySection,
-      premium: true,
-    },
-    {
-      id: "reports",
-      label: language === "el" ? "Αναφορές" : "Reports",
-      icon: FileText,
-      component: ReportsTab,
-      premium: false,
     },
     {
       id: "settings",
