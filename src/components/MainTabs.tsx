@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +25,7 @@ import ReportsTab from "@/components/ReportsTab";
 import SettingsTab from "@/components/SettingsTab";
 import SustainabilitySection from "@/components/SustainabilitySection";
 import AdvancedFinancialModels from "@/components/AdvancedFinancialModels";
+import BatchAnalysisSection from "@/components/BatchAnalysisSection";
 
 interface MainTabsProps {
   activeTab: string;
