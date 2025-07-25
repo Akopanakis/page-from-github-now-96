@@ -184,6 +184,7 @@ const MainTabs: React.FC<MainTabsProps> = ({
                 updateFormData={updateFormData}
                 results={results}
                 isPremium={isPremium}
+                onCalculate={calculate}
               />
             )}
           </TabsContent>
