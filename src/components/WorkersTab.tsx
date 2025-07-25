@@ -22,6 +22,12 @@ interface WorkersTabProps {
 const WorkersTab: React.FC<WorkersTabProps> = ({ formData, updateFormData }) => {
   const { language } = useLanguage();
   const workers = formData.workers || [{ id: '1', hourlyRate: 4.5, hours: 1 }];
+  const processingPhases = formData.processingPhases || [];
+
+  // Check if any processing phases have their own workers
+  const hasPhaseSpecificWorkers = processingPhases.some((phase: any) =>
+    phase.workers && phase.workers.length > 0
+  );
 
   const addWorker = () => {
     const newWorker = {
@@ -59,7 +65,7 @@ const WorkersTab: React.FC<WorkersTabProps> = ({ formData, updateFormData }) => 
             </div>
             <Button onClick={addWorker} size="sm">
               <Plus className="w-4 h-4 mr-2" />
-              {language === 'el' ? 'Προσθήκη Εργάτη' : 'Add Worker'}
+              {language === 'el' ? 'Προσθ��κη Εργάτη' : 'Add Worker'}
             </Button>
           </CardTitle>
         </CardHeader>
