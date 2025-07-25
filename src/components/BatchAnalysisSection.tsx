@@ -65,6 +65,18 @@ const BatchAnalysisSection: React.FC<BatchAnalysisSectionProps> = ({
   formData,
   results,
 }) => {
+  // Early return if no data available
+  if (!formData || !results) {
+    return (
+      <Card>
+        <CardContent className="p-8 text-center">
+          <div className="text-muted-foreground">
+            Παρακαλώ πραγματοποιήστε έναν υπολογισμό πρώτα για να δείτε την ανάλυση παρτίδας.
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
   const [showBenchmarkComparison, setShowBenchmarkComparison] = useState(true);
   const [benchmarkSettings, setBenchmarkSettings] = useState<BenchmarkSettings>(DEFAULT_BENCHMARK);
   const [showSettings, setShowSettings] = useState(false);
@@ -548,7 +560,7 @@ const BatchAnalysisSection: React.FC<BatchAnalysisSectionProps> = ({
                 <Badge variant="secondary" className="text-lg">
                   {Math.round(
                     (benchmarkData.filter(item => 
-                      item.metric === "Απόδο��η (%)" 
+                      item.metric === "Απόδοση (%)" 
                         ? item.our >= item.benchmark 
                         : item.our <= item.benchmark
                     ).length / benchmarkData.length) * 100
