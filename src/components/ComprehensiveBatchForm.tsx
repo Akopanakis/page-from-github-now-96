@@ -30,6 +30,7 @@ interface ComprehensiveBatchFormProps {
   formData: any;
   updateFormData: (data: any) => void;
   isPremium?: boolean;
+  onCalculate?: () => void;
 }
 
 const ComprehensiveBatchForm: React.FC<ComprehensiveBatchFormProps> = ({ 
@@ -192,7 +193,7 @@ const ComprehensiveBatchForm: React.FC<ComprehensiveBatchFormProps> = ({
             {formData.weight && formData.purchasePrice && (
               <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <div className="flex justify-between items-center">
-                  <span className="font-medium">Συνολικό Κόστος Αγοράς:</span>
+                  <span className="font-medium">Συνολικό Κόστο�� Αγοράς:</span>
                   <div className="text-right">
                     <div className="text-lg font-bold text-blue-700">
                       €{rawMaterialCost.toFixed(2)}
