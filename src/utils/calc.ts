@@ -295,11 +295,11 @@ export function calculateCosts(formData: FormData): CalculationResults {
   // Detailed breakdown
   const breakdown = {
     materials: materialCosts,
-    labor: totalDirectCosts * 0.4,
+    labor: totalDirectCosts * 0.4 + totalProcessingCosts * 0.5, // Include processing labor
     processing: totalProcessingCosts,
     transport: totalTransportCosts,
     overhead: totalIndirectCosts,
-    packaging: totalDirectCosts * 0.1,
+    packaging: packagingCosts,
   };
 
   const costBreakdown = [
