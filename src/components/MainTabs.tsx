@@ -100,7 +100,7 @@ const MainTabs: React.FC<MainTabsProps> = ({
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-5 lg:grid-cols-10 h-auto p-1 bg-slate-100">
+      <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 h-auto p-1 bg-slate-100">
         {availableTabs.map((tab) => {
           const Icon = tab.icon;
           return (
