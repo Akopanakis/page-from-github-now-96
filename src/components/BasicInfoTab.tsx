@@ -5,6 +5,7 @@ interface BasicInfoTabProps {
   formData: any;
   updateFormData: (data: any) => void;
   isPremium?: boolean;
+  onCalculate?: () => void;
 }
 
 const BasicInfoTab: React.FC<BasicInfoTabProps> = ({ formData, updateFormData, isPremium }) => {
