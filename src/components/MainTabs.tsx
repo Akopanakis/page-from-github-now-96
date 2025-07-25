@@ -47,6 +47,7 @@ const MainTabs: React.FC<MainTabsProps> = ({
   formData,
   updateFormData,
   results,
+  calculate,
 }) => {
   const { language } = useLanguage();
 
