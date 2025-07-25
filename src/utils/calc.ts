@@ -210,9 +210,17 @@ export function calculateCosts(formData: FormData): CalculationResults {
     0,
   );
 
-  // Processing costs
+  // Processing costs including per-phase workers
   const totalProcessingCosts = processingPhases.reduce(
-    (sum, phase) => sum + (phase.costPerKg || 0) * rawWeight,
+    (sum, phase) => {
+      const phaseCostPerKg = (phase.costPerKg || 0) * rawWeight;
+      // Add worker costs for this phase if they exist
+      const phaseWorkerCosts = (phase.workers || []).reduce(
+        (workerSum, worker) => workerSum + (worker.hourlyRate || 0) * (worker.hours || 0),
+        0,
+      );
+      return sum + phaseCostPerKg + phaseWorkerCosts;
+    },
     0,
   );
 
