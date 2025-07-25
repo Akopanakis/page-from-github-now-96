@@ -86,6 +86,13 @@ const MainTabs: React.FC<MainTabsProps> = ({
       premium: false,
     },
     {
+      id: "batch-analysis",
+      label: language === "el" ? "Ανάλυση Παρτίδας" : "Batch Analysis",
+      icon: BarChart2,
+      component: BatchAnalysisSection,
+      premium: false,
+    },
+    {
       id: "advanced-analysis",
       label: language === "el" ? "Προχωρημένη Ανάλυση" : "Advanced Analysis",
       icon: Target,
@@ -166,7 +173,7 @@ const MainTabs: React.FC<MainTabsProps> = ({
                   className="bg-purple-600 hover:bg-purple-700 cursor-pointer"
                   onClick={() => setIsPremium(true)}
                 >
-                  {language === "el" ? "Ενεργο��οίηση Premium" : "Activate Premium"}
+                  {language === "el" ? "Ενεργοποίηση Premium" : "Activate Premium"}
                 </Badge>
               </div>
             ) : (
