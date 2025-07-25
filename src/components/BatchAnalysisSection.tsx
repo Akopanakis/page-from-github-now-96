@@ -85,7 +85,7 @@ const BatchAnalysisSection: React.FC<BatchAnalysisSectionProps> = ({
     
     // Calculate costs
     const rawMaterialCost = rawWeight * (formData.purchasePrice || 5.7);
-    const laborCost = totalLaborCost || 310; // Default from requirements
+    const laborCost = totalLaborCost;
     
     // Packaging costs - dynamic calculation
     // 1 kg gelatin = 35 bags, 1 bag = 5 kg product, 1 box = 2 bags
@@ -548,7 +548,7 @@ const BatchAnalysisSection: React.FC<BatchAnalysisSectionProps> = ({
                 <Badge variant="secondary" className="text-lg">
                   {Math.round(
                     (benchmarkData.filter(item => 
-                      item.metric === "Απόδοση (%)" 
+                      item.metric === "Απόδο��η (%)" 
                         ? item.our >= item.benchmark 
                         : item.our <= item.benchmark
                     ).length / benchmarkData.length) * 100
