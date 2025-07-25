@@ -248,7 +248,7 @@ export function calculateCosts(formData: FormData): CalculationResults {
   const packagingCosts = gelatinCost + boxCost;
 
   // Total costs
-  const totalCost = materialCosts + totalDirectCosts + totalIndirectCosts + totalTransportCosts + totalProcessingCosts;
+  const totalCost = materialCosts + totalDirectCosts + totalIndirectCosts + totalTransportCosts + totalProcessingCosts + packagingCosts;
 
   // Cost per unit calculations - prevent division by zero
   const costPerKg = netWeight > 0 ? totalCost / netWeight : 0;
@@ -407,7 +407,7 @@ export function validateFormData(formData: FormData): string[] {
   const errors: string[] = [];
 
   if (!formData.productName || formData.productName.trim() === "") {
-    errors.push("Το όνομα προϊόντος εί��αι υποχρεωτικό");
+    errors.push("Το όνομα προϊόντος είναι υποχρεωτικό");
   }
 
   if (!formData.weight || formData.weight <= 0) {
