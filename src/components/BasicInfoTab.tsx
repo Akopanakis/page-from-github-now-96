@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -7,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Fish, Package, MapPin } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import ProcessingPhases from '@/components/ProcessingPhases';
 
 interface BasicInfoTabProps {
   formData: any;
