@@ -13,6 +13,7 @@ import {
   Target,
   Award,
   Crown,
+  BarChart2,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import BasicInfoTab from "@/components/BasicInfoTab";
@@ -165,7 +166,7 @@ const MainTabs: React.FC<MainTabsProps> = ({
                   className="bg-purple-600 hover:bg-purple-700 cursor-pointer"
                   onClick={() => setIsPremium(true)}
                 >
-                  {language === "el" ? "Ενεργοποίηση Premium" : "Activate Premium"}
+                  {language === "el" ? "Ενεργο��οίηση Premium" : "Activate Premium"}
                 </Badge>
               </div>
             ) : (
