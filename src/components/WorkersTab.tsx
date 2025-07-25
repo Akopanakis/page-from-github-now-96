@@ -88,7 +88,7 @@ const WorkersTab: React.FC<WorkersTabProps> = ({ formData, updateFormData }) => 
               <Info className="w-4 h-4" />
               <span>
                 {language === 'el'
-                  ? 'Κάποιες φάσεις επεξεργασίας έχουν δικούς τους εργάτες.'
+                  ? '��άποιες φάσεις επεξεργασίας έχουν δικούς τους εργάτες.'
                   : 'Some processing phases have their own workers.'}
               </span>
             </div>
@@ -140,15 +140,46 @@ const WorkersTab: React.FC<WorkersTabProps> = ({ formData, updateFormData }) => 
             </div>
           ))}
 
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <div className="flex justify-between items-center">
-              <span className="font-semibold">
-                {language === 'el' ? 'Συνολικό Εργατικό Κόστος:' : 'Total Labor Cost:'}
-              </span>
-              <span className="text-xl font-bold text-blue-600">
-                €{totalLaborCost.toFixed(2)}
-              </span>
+          {/* Summary */}
+          <div className="mt-6 space-y-4">
+            <div className="p-4 bg-blue-50 rounded-lg">
+              <div className="flex justify-between items-center">
+                <span className="font-semibold">
+                  {language === 'el' ? 'Γενικευμένοι Εργάτες:' : 'General Workers:'}
+                </span>
+                <span className="text-xl font-bold text-blue-600">
+                  €{totalLaborCost.toFixed(2)}
+                </span>
+              </div>
             </div>
+
+            {hasPhaseSpecificWorkers && (
+              <>
+                <div className="p-4 bg-green-50 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold">
+                      {language === 'el' ? 'Εργάτες Φάσεων:' : 'Phase Workers:'}
+                    </span>
+                    <span className="text-xl font-bold text-green-600">
+                      €{phaseSpecificLaborCost.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="p-4 bg-gray-100 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold text-lg">
+                      {language === 'el' ? 'Συνολικό Εργατικό Κόστος:' : 'Total Labor Cost:'}
+                    </span>
+                    <span className="text-2xl font-bold text-gray-800">
+                      €{(totalLaborCost + phaseSpecificLaborCost).toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </CardContent>
       </Card>
