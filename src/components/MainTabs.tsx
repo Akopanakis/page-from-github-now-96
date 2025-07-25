@@ -36,6 +36,7 @@ interface MainTabsProps {
   formData: any;
   updateFormData: (data: any) => void;
   results: any;
+  calculate?: () => void;
 }
 
 const MainTabs: React.FC<MainTabsProps> = ({
