@@ -8,12 +8,13 @@ interface BasicInfoTabProps {
   onCalculate?: () => void;
 }
 
-const BasicInfoTab: React.FC<BasicInfoTabProps> = ({ formData, updateFormData, isPremium }) => {
+const BasicInfoTab: React.FC<BasicInfoTabProps> = ({ formData, updateFormData, isPremium, onCalculate }) => {
   return (
     <ComprehensiveBatchForm
       formData={formData}
       updateFormData={updateFormData}
       isPremium={isPremium}
+      onCalculate={onCalculate}
     />
   );
 };
