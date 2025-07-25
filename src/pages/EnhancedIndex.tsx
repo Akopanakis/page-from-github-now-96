@@ -243,7 +243,7 @@ const EnhancedIndex = () => {
   const results = rawResults || createDefaultResults();
 
   // Core state
-  const [activeTab, setActiveTab] = useState("comprehensive-dashboard");
+  const [activeTab, setActiveTab] = useState("basics");
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
   const [showCommandPalette, setShowCommandPalette] = useState(false);
