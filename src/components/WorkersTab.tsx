@@ -1,11 +1,12 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Users, Plus, Trash2 } from 'lucide-react';
+import { Users, Plus, Trash2, Info, Settings } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 
 interface Worker {
   id: string;
