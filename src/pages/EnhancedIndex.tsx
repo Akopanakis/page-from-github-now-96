@@ -531,6 +531,7 @@ const EnhancedIndex = () => {
             formData={formData}
             updateFormData={updateFormData}
             results={results}
+            calculate={calculate}
           />
         );
     }
