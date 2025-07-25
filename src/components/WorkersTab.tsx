@@ -71,13 +71,28 @@ const WorkersTab: React.FC<WorkersTabProps> = ({ formData, updateFormData }) => 
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Users className="w-5 h-5" />
-              <span>{language === 'el' ? 'Εργατικό Κόστος' : 'Labor Cost'}</span>
+              <span>{language === 'el' ? 'Γενικευμένοι Εργάτες' : 'General Workers'}</span>
+              {hasPhaseSpecificWorkers && (
+                <Badge variant="secondary">
+                  {language === 'el' ? 'Συμπληρωματικό' : 'Supplementary'}
+                </Badge>
+              )}
             </div>
             <Button onClick={addWorker} size="sm">
               <Plus className="w-4 h-4 mr-2" />
               {language === 'el' ? 'Προσθήκη Εργάτη' : 'Add Worker'}
             </Button>
           </CardTitle>
+          {hasPhaseSpecificWorkers && (
+            <div className="text-sm text-muted-foreground flex items-center space-x-2">
+              <Info className="w-4 h-4" />
+              <span>
+                {language === 'el'
+                  ? 'Κάποιες φάσεις επεξεργασίας έχουν δικούς τους εργάτες.'
+                  : 'Some processing phases have their own workers.'}
+              </span>
+            </div>
+          )}
         </CardHeader>
         <CardContent className="space-y-4">
           {workers.map((worker: Worker, index: number) => (
