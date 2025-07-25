@@ -368,7 +368,7 @@ const ComprehensiveBatchForm: React.FC<ComprehensiveBatchFormProps> = ({
               <div className="flex items-center space-x-2 mb-3">
                 <Info className="w-4 h-4 text-orange-600" />
                 <span className="text-sm font-medium text-orange-800">
-                  Παράδειγμα από την αναφορά σας:
+                  Πα��άδειγμα από την αναφορά σας:
                 </span>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
@@ -400,7 +400,7 @@ const ComprehensiveBatchForm: React.FC<ComprehensiveBatchFormProps> = ({
                 className="text-orange-600 border-orange-600 hover:bg-orange-50"
               >
                 <Layers className="w-4 h-4 mr-2" />
-                Χρησιμοποιήστε Φάσεις Επεξεργασίας για λεπτομε��ή ανάλυση
+                Χρησιμοποιήστε Φάσεις Επεξεργασίας για λεπτομερή ανάλυση
               </Button>
             </div>
           </CardContent>
@@ -526,10 +526,11 @@ const ComprehensiveBatchForm: React.FC<ComprehensiveBatchFormProps> = ({
 
       {/* Quick Action Buttons */}
       <div className="flex justify-center space-x-4 pt-6">
-        <Button 
+        <Button
           size="lg"
           className="bg-blue-600 hover:bg-blue-700"
           disabled={completion < 50}
+          onClick={onCalculate}
         >
           <Calculator className="w-5 h-5 mr-2" />
           Υπολογισμός Παρτίδας
