@@ -1,4 +1,3 @@
-
 export interface Worker {
   id: string;
   hourlyRate: number;
@@ -13,6 +12,7 @@ export interface ProcessingPhase {
   duration: number;
   temperature: number;
   description: string;
+  workers?: Worker[]; // Optional workers for this specific phase
 }
 
 export interface CostItem {
