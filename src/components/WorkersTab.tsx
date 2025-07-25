@@ -88,7 +88,7 @@ const WorkersTab: React.FC<WorkersTabProps> = ({ formData, updateFormData }) => 
               <Info className="w-4 h-4" />
               <span>
                 {language === 'el'
-                  ? '��άποιες φάσεις επεξεργασίας έχουν δικούς τους εργάτες.'
+                  ? 'Κάποιες φάσεις επεξεργασίας έχουν δικούς τους εργάτες.'
                   : 'Some processing phases have their own workers.'}
               </span>
             </div>
@@ -183,6 +183,50 @@ const WorkersTab: React.FC<WorkersTabProps> = ({ formData, updateFormData }) => 
           </div>
         </CardContent>
       </Card>
+
+      {/* Phase-Specific Workers Summary */}
+      {hasPhaseSpecificWorkers && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Settings className="w-5 h-5" />
+              <span>{language === 'el' ? 'Εργάτες ανά Φάση Επεξεργασίας' : 'Workers by Processing Phase'}</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {processingPhases.map((phase: any, index: number) => {
+                if (!phase.workers || phase.workers.length === 0) return null;
+
+                const phaseCost = phase.workers.reduce((total: number, worker: any) =>
+                  total + (worker.hourlyRate * worker.hours), 0
+                );
+
+                return (
+                  <div key={phase.id} className="p-4 border rounded-lg">
+                    <div className="flex justify-between items-center mb-3">
+                      <h4 className="font-medium">{phase.name || `Φάση ${index + 1}`}</h4>
+                      <Badge variant="outline">€{phaseCost.toFixed(2)}</Badge>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {phase.workers.map((worker: any, workerIndex: number) => (
+                        <div key={worker.id} className="text-sm bg-gray-50 p-2 rounded">
+                          <div className="font-medium">
+                            {language === 'el' ? `Εργάτης ${workerIndex + 1}` : `Worker ${workerIndex + 1}`}
+                          </div>
+                          <div className="text-muted-foreground">
+                            €{worker.hourlyRate}/h × {worker.hours}h = €{(worker.hourlyRate * worker.hours).toFixed(2)}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
