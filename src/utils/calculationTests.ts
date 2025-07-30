@@ -1,4 +1,3 @@
-
 import { FormData, CalculationResults } from './calc';
 
 // Mock calculation function for testing
@@ -33,12 +32,12 @@ export function mockCalculateResults(formData: FormData): CalculationResults {
     totalCostWithVat: totalCost * 1.24,
     finalPrice: sellingPrice,
     breakdown: {
-      purchase: purchaseCost,
+      materials: purchaseCost,
       transport: transportCost,
       labor: laborCost,
       packaging: packagingCost,
-      additional: additionalCosts,
-      other: 0
+      processing: 0,
+      overhead: additionalCosts
     },
     totalDirectCosts: purchaseCost,
     totalIndirectCosts: 0,
