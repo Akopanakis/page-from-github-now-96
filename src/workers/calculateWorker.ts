@@ -1,4 +1,3 @@
-
 import { CalculationResults } from "../utils/calc";
 import type { FormData } from "../utils/calc";
 
@@ -36,12 +35,12 @@ self.onmessage = function(e) {
       totalCostWithVat: totalCost * 1.24,
       finalPrice: sellingPrice,
       breakdown: {
-        purchase: purchaseCost,
+        materials: purchaseCost,
         transport: transportCost,
         labor: laborCost,
         packaging: packagingCost,
-        additional: additionalCosts,
-        other: 0
+        processing: 0,
+        overhead: additionalCosts
       },
       totalDirectCosts: purchaseCost,
       totalIndirectCosts: 0,
