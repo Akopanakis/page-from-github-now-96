@@ -14,6 +14,7 @@ import {
   Award,
   Crown,
   BarChart2,
+  Factory,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import BasicInfoTab from "@/components/BasicInfoTab";
