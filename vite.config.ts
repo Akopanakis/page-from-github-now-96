@@ -57,11 +57,20 @@ export default defineConfig(({ mode }) => ({
             "./src/components/ExecutiveDashboard.tsx",
             "./src/components/AdvancedAnalysisTab.tsx",
             "./src/components/AnalysisTab.tsx",
+            "./src/components/BatchAnalysisSection.tsx",
           ],
           "dashboard-components": [
             "./src/components/AdvancedDashboard.tsx",
             "./src/components/CompactResultsPanel.tsx",
             "./src/components/Sidebar.tsx",
+            "./src/components/layout/MobileNavigation.tsx",
+            "./src/components/layout/MobileBottomNav.tsx",
+          ],
+          "production-components": [
+            "./src/components/production/InsertFinalProductBatchForm.tsx",
+            "./src/components/production/FinalProductStockManager.tsx",
+            "./src/components/production/FinalProductReports.tsx",
+            "./src/pages/production/FinalProductBatchPage.tsx",
           ],
           "premium-components": [
             "./src/components/ScenarioAnalysis.tsx",
