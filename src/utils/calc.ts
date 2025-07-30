@@ -91,6 +91,23 @@ export interface FormData {
   shelfLife: number;
   customerPrice: number;
   seasonalMultiplier: number;
+
+  // Final product weights
+  finalCleanWeight?: number;
+  finalGrillWeight?: number;
+
+  // Packaging properties
+  bagWeight?: number;
+  bagsPerKgGelatin?: number;
+  gelatinCostPerKg?: number;
+  boxCostPerUnit?: number;
+  bagsPerBox?: number;
+
+  // Labor and transport
+  transportCost?: number;
+  workerCount?: number;
+  laborHours?: number;
+  additionalCosts?: number;
 }
 
 export interface CalculationResults {
