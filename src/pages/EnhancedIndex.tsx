@@ -556,20 +556,19 @@ const EnhancedIndex = () => {
           <OnboardingTour />
         </div>
 
+        {/* Mobile Navigation */}
+        <MobileNavigation
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          isPremium={isPremium}
+        />
+
         {/* Main Layout */}
         <div className="flex">
-          {/* Sidebar */}
+          {/* Desktop Sidebar */}
           <div
-            className={`transition-all duration-300 ${
-              isMobile ? "fixed inset-y-0 left-0 z-50" : "relative"
-            } ${
-              sidebarCollapsed
-                ? isMobile
-                  ? "-translate-x-full"
-                  : "w-16"
-                : isMobile
-                  ? "w-64"
-                  : "w-72"
+            className={`hidden lg:block transition-all duration-300 ${
+              sidebarCollapsed ? "w-16" : "w-72"
             }`}
           >
             <Sidebar
@@ -579,14 +578,6 @@ const EnhancedIndex = () => {
               className="h-screen"
             />
           </div>
-
-          {/* Mobile sidebar backdrop */}
-          {isMobile && !sidebarCollapsed && (
-            <div
-              className="fixed inset-0 bg-black bg-opacity-50 z-40"
-              onClick={() => setSidebarCollapsed(true)}
-            />
-          )}
 
           {/* Main Content */}
           <div className="flex-1 min-h-screen">
