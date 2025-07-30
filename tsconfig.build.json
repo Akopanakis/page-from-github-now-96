@@ -9,6 +9,8 @@
   "exclude": [
     "src/utils/calculationTests.ts",
     "src/workers/calculateWorker.ts",
-    "src/components/ComprehensiveBatchForm.tsx"
+    "src/components/ComprehensiveBatchForm.tsx",
+    "src/utils/calc.ts",
+    "src/components/expenses/ExpenseForm.tsx"
   ]
 }
