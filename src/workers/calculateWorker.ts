@@ -29,7 +29,7 @@ self.onmessage = function(e) {
       sellingPrice,
       profitMargin: 20,
       grossProfit: sellingPrice - totalCost,
-      sellingPricePerKg: sellingPrice / netWeight,
+      sellingPrice: sellingPrice / netWeight,
       costPerKg: totalCost / netWeight,
       breakEvenPrice: totalCost / netWeight,
       totalCostWithVat: totalCost * 1.24,
