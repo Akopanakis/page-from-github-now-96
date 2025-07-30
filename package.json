@@ -4,18 +4,19 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "vite --host",
+    "build": "tsc && vite build",
     "build:dev": "vite build --mode development",
     "start": "vite preview",
-    "preview": "vite preview",
+    "preview": "vite preview --host",
     "build-only": "vite build",
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx --max-warnings 0",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "audit-fix": "npm audit fix",
     "bundle-analyzer": "npm run build && npx vite-bundle-analyzer dist",
-    "vercel-build": "npm run build"
+    "vercel-build": "npm run build",
+    "postinstall": "npm run type-check"
   },
   "dependencies": {
     "@builder.io/react": "^8.2.5",
