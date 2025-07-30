@@ -291,7 +291,7 @@ const MobileTestPage: React.FC = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <TouchIcon className="w-5 h-5 text-purple-600" />
+              <TouchpadIcon className="w-5 h-5 text-purple-600" />
               <span>Mobile Features Test</span>
             </CardTitle>
           </CardHeader>
@@ -307,7 +307,7 @@ const MobileTestPage: React.FC = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <Button className="h-12 touch-target">Touch Test Button</Button>
                   <Button variant="outline" className="h-12 touch-target">
-                    <TouchIcon className="w-4 h-4 mr-2" />
+                    <TouchpadIcon className="w-4 h-4 mr-2" />
                     Touch Icon
                   </Button>
                 </div>
