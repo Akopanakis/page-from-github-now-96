@@ -43,7 +43,7 @@ export function mockCalculateResults(formData: FormData): CalculationResults {
     totalIndirectCosts: 0,
     totalTransportCosts: 0,
     totalProcessingCosts: 0,
-    finalPrice: sellingPrice / netWeight,
+
     competitiveAnalysis: null
   };
 }
