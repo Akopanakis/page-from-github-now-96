@@ -7,16 +7,17 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { 
-  Package, 
-  TrendingDown, 
-  TrendingUp, 
-  AlertTriangle, 
-  CheckCircle, 
+import {
+  Package,
+  TrendingDown,
+  TrendingUp,
+  AlertTriangle,
+  CheckCircle,
   DollarSign,
   Calendar,
   Hash,
-  Scale
+  Scale,
+  Calculator
 } from 'lucide-react';
 import { 
   FinalProductStock, 
