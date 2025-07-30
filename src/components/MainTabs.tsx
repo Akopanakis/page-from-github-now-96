@@ -27,6 +27,7 @@ import SettingsTab from "@/components/SettingsTab";
 import SustainabilitySection from "@/components/SustainabilitySection";
 import AdvancedFinancialModels from "@/components/AdvancedFinancialModels";
 import BatchAnalysisSection from "@/components/BatchAnalysisSection";
+import FinalProductBatchPage from "@/pages/production/FinalProductBatchPage";
 
 interface MainTabsProps {
   activeTab: string;
