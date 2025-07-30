@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +13,8 @@ import {
   Target,
   Award,
   Crown,
+  BarChart2,
+  Factory,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import BasicInfoTab from "@/components/BasicInfoTab";
@@ -26,6 +27,8 @@ import ReportsTab from "@/components/ReportsTab";
 import SettingsTab from "@/components/SettingsTab";
 import SustainabilitySection from "@/components/SustainabilitySection";
 import AdvancedFinancialModels from "@/components/AdvancedFinancialModels";
+import BatchAnalysisSection from "@/components/BatchAnalysisSection";
+import FinalProductBatchPage from "@/pages/production/FinalProductBatchPage";
 
 interface MainTabsProps {
   activeTab: string;
@@ -35,6 +38,7 @@ interface MainTabsProps {
   formData: any;
   updateFormData: (data: any) => void;
   results: any;
+  calculate?: () => void;
 }
 
 const MainTabs: React.FC<MainTabsProps> = ({
@@ -45,29 +49,16 @@ const MainTabs: React.FC<MainTabsProps> = ({
   formData,
   updateFormData,
   results,
+  calculate,
 }) => {
   const { language } = useLanguage();
 
   const tabs = [
     {
       id: "basics",
-      label: language === "el" ? "Βασικά Στοιχεία" : "Basic Info",
+      label: language === "el" ? "Στοιχεία Παρτίδας" : "Batch Info",
       icon: Calculator,
       component: BasicInfoTab,
-      premium: false,
-    },
-    {
-      id: "costs",
-      label: language === "el" ? "Κόστη" : "Costs",
-      icon: TrendingUp,
-      component: CostsTab,
-      premium: false,
-    },
-    {
-      id: "transport",
-      label: language === "el" ? "Μεταφορά" : "Transport",
-      icon: Truck,
-      component: TransportTab,
       premium: false,
     },
     {
@@ -78,10 +69,24 @@ const MainTabs: React.FC<MainTabsProps> = ({
       premium: false,
     },
     {
-      id: "analysis",
-      label: language === "el" ? "Ανάλυση" : "Analysis",
-      icon: BarChart3,
-      component: AnalysisTab,
+      id: "batch-analysis",
+      label: language === "el" ? "Ανάλυση & Benchmark" : "Analysis & Benchmark",
+      icon: BarChart2,
+      component: BatchAnalysisSection,
+      premium: false,
+    },
+    {
+      id: "final-products",
+      label: language === "el" ? "Τελικά Προϊόντα" : "Final Products",
+      icon: Factory,
+      component: FinalProductBatchPage,
+      premium: false,
+    },
+    {
+      id: "reports",
+      label: language === "el" ? "Αναφορές" : "Reports",
+      icon: FileText,
+      component: ReportsTab,
       premium: false,
     },
     {
@@ -90,27 +95,6 @@ const MainTabs: React.FC<MainTabsProps> = ({
       icon: Target,
       component: AdvancedAnalysisTab,
       premium: true,
-    },
-    {
-      id: "financial-models",
-      label: language === "el" ? "Χρηματοοικονομικά Μοντέλα" : "Financial Models",
-      icon: Award,
-      component: AdvancedFinancialModels,
-      premium: true,
-    },
-    {
-      id: "sustainability",
-      label: language === "el" ? "Βιωσιμότητα" : "Sustainability",
-      icon: Leaf,
-      component: SustainabilitySection,
-      premium: true,
-    },
-    {
-      id: "reports",
-      label: language === "el" ? "Αναφορές" : "Reports",
-      icon: FileText,
-      component: ReportsTab,
-      premium: false,
     },
     {
       id: "settings",
@@ -125,7 +109,7 @@ const MainTabs: React.FC<MainTabsProps> = ({
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-5 lg:grid-cols-10 h-auto p-1 bg-slate-100">
+      <TabsList className="grid w-full grid-cols-3 lg:grid-cols-7 h-auto p-1 bg-slate-100">
         {availableTabs.map((tab) => {
           const Icon = tab.icon;
           return (
@@ -174,6 +158,7 @@ const MainTabs: React.FC<MainTabsProps> = ({
                 updateFormData={updateFormData}
                 results={results}
                 isPremium={isPremium}
+                onCalculate={calculate}
               />
             )}
           </TabsContent>

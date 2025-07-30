@@ -50,6 +50,7 @@ import FinancialAnalyticsPage from "@/pages/analytics/FinancialAnalytics";
 import CommandPalette from "@/components/layout/CommandPalette";
 import FloatingActionButton from "@/components/ui/FloatingActionButton";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
+import MobileNavigation from "@/components/layout/MobileNavigation";
 import { CompanyInfo } from "@/types/company";
 import { FormData, CalculationResults } from "@/utils/calc";
 import { libraryLoader } from "@/utils/libraryLoader";
@@ -243,7 +244,7 @@ const EnhancedIndex = () => {
   const results = rawResults || createDefaultResults();
 
   // Core state
-  const [activeTab, setActiveTab] = useState("comprehensive-dashboard");
+  const [activeTab, setActiveTab] = useState("basics");
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
   const [showCommandPalette, setShowCommandPalette] = useState(false);
@@ -531,6 +532,7 @@ const EnhancedIndex = () => {
             formData={formData}
             updateFormData={updateFormData}
             results={results}
+            calculate={calculate}
           />
         );
     }
@@ -554,20 +556,19 @@ const EnhancedIndex = () => {
           <OnboardingTour />
         </div>
 
+        {/* Mobile Navigation */}
+        <MobileNavigation
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          isPremium={isPremium}
+        />
+
         {/* Main Layout */}
         <div className="flex">
-          {/* Sidebar */}
+          {/* Desktop Sidebar */}
           <div
-            className={`transition-all duration-300 ${
-              isMobile ? "fixed inset-y-0 left-0 z-50" : "relative"
-            } ${
-              sidebarCollapsed
-                ? isMobile
-                  ? "-translate-x-full"
-                  : "w-16"
-                : isMobile
-                  ? "w-64"
-                  : "w-72"
+            className={`hidden lg:block transition-all duration-300 ${
+              sidebarCollapsed ? "w-16" : "w-72"
             }`}
           >
             <Sidebar
@@ -578,29 +579,9 @@ const EnhancedIndex = () => {
             />
           </div>
 
-          {/* Mobile sidebar backdrop */}
-          {isMobile && !sidebarCollapsed && (
-            <div
-              className="fixed inset-0 bg-black bg-opacity-50 z-40"
-              onClick={() => setSidebarCollapsed(true)}
-            />
-          )}
-
           {/* Main Content */}
           <div className="flex-1 min-h-screen">
-            <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-4 md:py-6 lg:py-8">
-              {/* Mobile sidebar toggle */}
-              {isMobile && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                  className="mb-4 md:hidden"
-                >
-                  <Menu className="w-4 h-4 mr-2" />
-                  Menu
-                </Button>
-              )}
+            <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-4 md:py-6 lg:py-8 pt-16 lg:pt-8">
 
               {/* Breadcrumbs */}
               <div className="mb-4">
@@ -647,7 +628,7 @@ const EnhancedIndex = () => {
               )}
 
               {/* Main Content Grid */}
-              <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-1 gap-4 md:gap-6 lg:gap-8">
+              <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-1 gap-4 md:gap-6 lg:gap-8 mb-20 lg:mb-0">
                 {/* Left Column - Form */}
                 <div
                   className="xl:col-span-2 animate-in slide-in-from-left duration-500"

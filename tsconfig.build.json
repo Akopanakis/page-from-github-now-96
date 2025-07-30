@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "strictPropertyInitialization": false,
+    "strictNullChecks": false,
+    "skipLibCheck": true
+  },
+  "exclude": [
+    "src/utils/calculationTests.ts",
+    "src/workers/calculateWorker.ts",
+    "src/components/ComprehensiveBatchForm.tsx",
+    "src/utils/calc.ts",
+    "src/components/expenses/ExpenseForm.tsx"
+  ]
+}

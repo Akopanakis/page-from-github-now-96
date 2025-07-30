@@ -1,4 +1,3 @@
-
 export interface Worker {
   id: string;
   hourlyRate: number;
@@ -13,6 +12,7 @@ export interface ProcessingPhase {
   duration: number;
   temperature: number;
   description: string;
+  workers?: Worker[]; // Optional workers for this specific phase
 }
 
 export interface CostItem {
@@ -91,6 +91,23 @@ export interface FormData {
   shelfLife: number;
   customerPrice: number;
   seasonalMultiplier: number;
+
+  // Final product weights
+  finalCleanWeight?: number;
+  finalGrillWeight?: number;
+
+  // Packaging properties
+  bagWeight?: number;
+  bagsPerKgGelatin?: number;
+  gelatinCostPerKg?: number;
+  boxCostPerUnit?: number;
+  bagsPerBox?: number;
+
+  // Labor and transport
+  transportCost?: number;
+  workerCount?: number;
+  laborHours?: number;
+  additionalCosts?: number;
 }
 
 export interface CalculationResults {
@@ -189,7 +206,13 @@ export function calculateCosts(formData: FormData): CalculationResults {
 
   // Weight calculations
   const rawWeight = weight * quantity;
-  const weightAfterLosses = rawWeight * (1 - totalLossPercentage / 100);
+
+  // Use final product weights if provided, otherwise calculate from losses
+  const finalCleanWeight = parseFloat(String(formData.finalCleanWeight)) || 0;
+  const finalGrillWeight = parseFloat(String(formData.finalGrillWeight)) || 0;
+  const totalFinalWeight = finalCleanWeight + finalGrillWeight;
+
+  const weightAfterLosses = totalFinalWeight > 0 ? totalFinalWeight : rawWeight * (1 - totalLossPercentage / 100);
   const netWeight = weightAfterLosses * (1 + glazingPercentage / 100);
 
   // Cost calculations
@@ -210,17 +233,39 @@ export function calculateCosts(formData: FormData): CalculationResults {
     0,
   );
 
-  // Processing costs
+  // Processing costs including per-phase workers
   const totalProcessingCosts = processingPhases.reduce(
-    (sum, phase) => sum + (phase.costPerKg || 0) * rawWeight,
+    (sum, phase) => {
+      const phaseCostPerKg = (phase.costPerKg || 0) * rawWeight;
+      // Add worker costs for this phase if they exist
+      const phaseWorkerCosts = (phase.workers || []).reduce(
+        (workerSum, worker) => workerSum + (worker.hourlyRate || 0) * (worker.hours || 0),
+        0,
+      );
+      return sum + phaseCostPerKg + phaseWorkerCosts;
+    },
     0,
   );
 
   // Material costs
   const materialCosts = purchasePrice * rawWeight;
 
+  // Packaging costs calculation
+  const bagWeight = parseFloat(String(formData.bagWeight)) || 5;
+  const bagsPerKgGelatin = parseFloat(String(formData.bagsPerKgGelatin)) || 35;
+  const gelatinCostPerKg = parseFloat(String(formData.gelatinCostPerKg)) || 3.15;
+  const boxCostPerUnit = parseFloat(String(formData.boxCostPerUnit)) || 0.59;
+  const bagsPerBox = parseFloat(String(formData.bagsPerBox)) || 2;
+
+  const totalBags = Math.ceil(netWeight / bagWeight);
+  const gelatinNeeded = totalBags / bagsPerKgGelatin;
+  const gelatinCost = gelatinNeeded * gelatinCostPerKg;
+  const totalBoxes = Math.ceil(totalBags / bagsPerBox);
+  const boxCost = totalBoxes * boxCostPerUnit;
+  const packagingCosts = gelatinCost + boxCost;
+
   // Total costs
-  const totalCost = materialCosts + totalDirectCosts + totalIndirectCosts + totalTransportCosts + totalProcessingCosts;
+  const totalCost = materialCosts + totalDirectCosts + totalIndirectCosts + totalTransportCosts + totalProcessingCosts + packagingCosts;
 
   // Cost per unit calculations - prevent division by zero
   const costPerKg = netWeight > 0 ? totalCost / netWeight : 0;
@@ -267,11 +312,11 @@ export function calculateCosts(formData: FormData): CalculationResults {
   // Detailed breakdown
   const breakdown = {
     materials: materialCosts,
-    labor: totalDirectCosts * 0.4,
+    labor: totalDirectCosts * 0.4 + totalProcessingCosts * 0.5, // Include processing labor
     processing: totalProcessingCosts,
     transport: totalTransportCosts,
     overhead: totalIndirectCosts,
-    packaging: totalDirectCosts * 0.1,
+    packaging: packagingCosts,
   };
 
   const costBreakdown = [
