@@ -628,7 +628,7 @@ const EnhancedIndex = () => {
               )}
 
               {/* Main Content Grid */}
-              <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-1 gap-4 md:gap-6 lg:gap-8">
+              <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-1 gap-4 md:gap-6 lg:gap-8 mb-20 lg:mb-0">
                 {/* Left Column - Form */}
                 <div
                   className="xl:col-span-2 animate-in slide-in-from-left duration-500"
