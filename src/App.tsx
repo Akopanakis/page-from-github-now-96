@@ -92,6 +92,14 @@ function App() {
                     </Suspense>
                   )}
                 />
+                <Route
+                  path="/mobile-test"
+                  component={() => (
+                    <Suspense fallback={<LoadingSkeleton type="dashboard" />}>
+                      <MobileTestPage />
+                    </Suspense>
+                  )}
+                />
                 <Route path="/login" component={Login} />
                 <Route path="/signup" component={Signup} />
                 <Route path="/profile" component={Profile} />
