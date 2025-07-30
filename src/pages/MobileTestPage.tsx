@@ -11,7 +11,7 @@ import {
   CheckCircle, 
   AlertCircle, 
   Zap, 
-  TouchIcon,
+  TouchpadIcon,
   Monitor,
   Tablet,
   Navigation
