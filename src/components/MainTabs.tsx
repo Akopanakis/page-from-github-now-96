@@ -76,6 +76,13 @@ const MainTabs: React.FC<MainTabsProps> = ({
       premium: false,
     },
     {
+      id: "final-products",
+      label: language === "el" ? "Τελικά Προϊόντα" : "Final Products",
+      icon: Factory,
+      component: FinalProductBatchPage,
+      premium: false,
+    },
+    {
       id: "reports",
       label: language === "el" ? "Αναφορές" : "Reports",
       icon: FileText,
